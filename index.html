@@ -9,9 +9,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- RESET & BASE --- */
+        /* --- RESET & BASE (SCROLLING FIX APPLIED HERE) --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Roboto', sans-serif; background: #e3e3e3; margin: 0; padding: 0; color: #333; line-height: 1.5; }
+        
+        html, body {
+            overflow-y: auto !important; /* Force scrolling */
+            height: auto !important;     /* Don't lock height */
+            min-height: 100%;            /* Ensure it covers screen */
+            margin: 0; 
+            padding: 0;
+            font-family: 'Roboto', sans-serif; 
+            background: #e3e3e3; 
+            color: #333; 
+            line-height: 1.5;
+            overflow-x: hidden;          /* Prevent side scroll */
+        }
+
         a { text-decoration: none; color: inherit; }
         ul { list-style: none; padding: 0; margin: 0; }
 
@@ -299,9 +312,6 @@
             font-weight: bold;
             font-size: 11px;
         }
-
-        /* Helper */
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -331,3 +341,126 @@
         <div class="section-header">
             <i class="fas fa-chart-bar"></i> Live Community Votes
         </div>
+
+        <div class="match-card" onclick="window.location.href='choose.html'">
+            <div class="teams-row">
+                <span>Team A</span>
+                <span class="vs">VS</span>
+                <span>Team B</span>
+            </div>
+            <div class="vote-bar-container">
+                <div class="bar-1" style="width: 72%"></div>
+                <div class="bar-2" style="width: 28%"></div>
+            </div>
+            <div class="vote-stats">
+                <span>72% Team A</span>
+                <span>28% Team B</span>
+            </div>
+        </div>
+
+        <div class="match-card" onclick="window.location.href='choose.html'">
+            <div class="teams-row">
+                <span>Team C</span>
+                <span class="vs">VS</span>
+                <span>Team D</span>
+            </div>
+            <div class="vote-bar-container">
+                <div class="bar-1" style="width: 45%"></div>
+                <div class="bar-2" style="width: 55%"></div>
+            </div>
+            <div class="vote-stats">
+                <span>45% Team C</span>
+                <span>55% Team D</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-grid">
+        <div class="feature-box">
+            <i class="fas fa-poll feature-icon"></i>
+            <div class="feature-title">Live Match Votes</div>
+            <div class="feature-desc">See real-time community consensus before you decide.</div>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-search-dollar feature-icon"></i>
+            <div class="feature-title">Predictor Transparency</div>
+            <div class="feature-desc">Full stats and reasoning history visible for every expert.</div>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-user-check feature-icon"></i>
+            <div class="feature-title">Trusted Predictors</div>
+            <div class="feature-desc">Verified experts and top-performing community members.</div>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-mobile-alt feature-icon"></i>
+            <div class="feature-title">Mobile-First</div>
+            <div class="feature-desc">Optimized for speed and simplicity on your phone.</div>
+        </div>
+    </section>
+
+    <section class="social-proof">
+        <div class="proof-text">Growing community of active football fans</div>
+        <div class="proof-sub">Join thousands of predictors across the EAC region.</div>
+    </section>
+
+    <section class="roles-section">
+        <h3 style="text-align:center; font-size:16px; margin-bottom:20px; color:#333;">CHOOSE YOUR PATH</h3>
+        
+        <div class="role-card">
+            <div class="role-title role-user"><i class="fas fa-user"></i> User Account</div>
+            <ul class="role-list">
+                <li>Vote on upcoming matches</li>
+                <li>Chat with other fans and predictors</li>
+                <li>Follow your favorite experts</li>
+                <li>Earn points for correct votes</li>
+            </ul>
+            <div class="trial-badge">3-DAY FREE TRIAL • NO CARD REQUIRED</div>
+        </div>
+
+        <div class="role-card">
+            <div class="role-title role-pred"><i class="fas fa-star"></i> Predictor Account</div>
+            <ul class="role-list">
+                <li>Monetize your football knowledge</li>
+                <li>Build a following</li>
+                <li>Paid plans only (No free trial)</li>
+                <li>Exclusive creator tools</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <h3 style="text-align:center; font-size:16px; margin-bottom:20px; color:#333;">FREQUENTLY ASKED QUESTIONS</h3>
+
+        <div class="faq-item">
+            <div class="faq-q">What is ORAFUT?</div>
+            <div class="faq-a">ORAFUT is a social prediction platform where users can vote on match outcomes and follow expert predictors.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Difference between User and Predictor?</div>
+            <div class="faq-a">Users consume content and vote. Predictors are verified experts who create detailed analysis and can earn money.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Is the free trial really free?</div>
+            <div class="faq-a">Yes. Users get 3 days of full access completely free. No payment details required to start.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do predictions work?</div>
+            <div class="faq-a">Predictors post their analysis. The community votes. You see the data in real-time to make informed decisions.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Is ORAFUT mobile-friendly?</div>
+            <div class="faq-a">Absolutely. ORAFUT is built mobile-first, ensuring a fast and smooth experience on any smartphone.</div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 ORAFUT</p>
+        <div style="margin: 15px 0;">
+            <a href="terms.html">Terms of Service</a> | <a href="privacy.html">Privacy Policy</a>
+        </div>
+        
+        <a href="https://btem.vercel.app" class="btem-link" target="_blank">Part of the BTEM Org.</a>
+    </footer>
+
+</body>
+</html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ORAFUT | Predict & Win</title>
+    <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -15,11 +16,9 @@
 
         /* --- COLORS (BetPawa Palette) --- */
         :root {
-            --bp-dark: #262626;      /* Header Dark */
-            --bp-green: #99d605;     /* Lime Green */
+            --bp-dark: #262626;
+            --bp-green: #99d605;
             --bp-green-dark: #84bd00;
-            --bp-grey-bg: #f0f0f0;
-            --bp-text-main: #333333;
         }
 
         /* --- HEADER --- */
@@ -44,82 +43,44 @@
 
         /* --- HERO SECTION --- */
         .hero {
-            background: var(--bp-dark); /* Solid dark background */
+            background: var(--bp-dark);
             color: white;
             padding: 30px 20px 40px;
             text-align: center;
             border-bottom: 4px solid var(--bp-green);
         }
-        .hero h1 {
-            font-family: 'Roboto Condensed', sans-serif;
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            line-height: 1.1;
-        }
-        .hero p {
-            color: #ccc;
-            font-size: 15px;
-            margin: 0 0 25px 0;
-            line-height: 1.4;
-        }
+        .hero h1 { font-family: 'Roboto Condensed', sans-serif; font-size: 32px; margin: 0 0 10px 0; line-height: 1.1; }
+        .hero p { color: #ccc; font-size: 15px; margin: 0 0 25px 0; line-height: 1.4; }
         .hero-btn {
-            display: block;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            background: var(--bp-green);
-            color: var(--bp-dark);
-            font-weight: 900;
-            font-size: 18px;
-            padding: 15px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 0 var(--bp-green-dark); /* 3D Button effect */
+            display: block; width: 100%; max-width: 300px; margin: 0 auto;
+            background: var(--bp-green); color: var(--bp-dark); font-weight: 900;
+            font-size: 18px; padding: 15px; border-radius: 4px; text-transform: uppercase;
+            box-shadow: 0 4px 0 var(--bp-green-dark);
         }
         .hero-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--bp-green-dark); }
 
-        /* --- FEATURES STRIP --- */
-        .features {
-            display: flex;
-            justify-content: space-around;
-            background: white;
-            padding: 15px 0;
-            border-bottom: 1px solid #ddd;
-        }
+        /* --- FEATURES --- */
+        .features { display: flex; justify-content: space-around; background: white; padding: 15px 0; border-bottom: 1px solid #ddd; }
         .feat-item { text-align: center; font-size: 12px; color: #555; }
         .feat-item i { display: block; font-size: 20px; color: var(--bp-green-dark); margin-bottom: 5px; }
 
-        /* --- LIVE PREVIEW (Static Visual) --- */
+        /* --- PREVIEW --- */
         .section-title { padding: 15px; font-weight: 700; color: #444; font-size: 14px; display: flex; align-items: center; }
         .section-title i { margin-right: 8px; color: var(--bp-green-dark); }
 
         .demo-card {
-            background: white;
-            margin: 0 10px 10px;
-            padding: 12px;
-            border-radius: 4px;
-            border-bottom: 2px solid #ddd;
-            opacity: 0.8; /* Slight fade to show it's a preview */
-            pointer-events: none; /* Not clickable */
+            background: white; margin: 0 10px 10px; padding: 12px;
+            border-radius: 4px; border-bottom: 2px solid #ddd; opacity: 0.8; pointer-events: none;
         }
         .demo-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .demo-team { font-weight: bold; font-size: 15px; }
-        .demo-odds { display: flex; gap: 5px; }
         .demo-odd-box { background: #f4f4f4; padding: 8px 15px; border-radius: 3px; font-weight: bold; font-size: 13px; color: #333; }
         .demo-tag { background: #ffcc00; font-size: 10px; padding: 2px 5px; border-radius: 2px; font-weight: bold; }
 
         /* --- FOOTER --- */
-        .footer {
-            background: #333;
-            color: #888;
-            padding: 30px 20px;
-            text-align: center;
-            font-size: 12px;
-            margin-top: 20px;
-        }
+        .footer { background: #333; color: #888; padding: 30px 20px; text-align: center; font-size: 12px; margin-top: 20px; }
         .footer a { color: #ccc; margin: 0 5px; text-decoration: underline; }
         .payment-icons { margin-top: 15px; font-size: 24px; color: #fff; }
-        .payment-icons i { margin: 0 5px; }
 
         /* Loading Overlay */
         #auth-loading {
@@ -151,51 +112,23 @@
     </div>
 
     <div class="features">
-        <div class="feat-item">
-            <i class="fas fa-check-circle"></i>
-            Vote Matches
-        </div>
-        <div class="feat-item">
-            <i class="fas fa-users"></i>
-            Follow Gurus
-        </div>
-        <div class="feat-item">
-            <i class="fas fa-coins"></i>
-            Earn Points
-        </div>
+        <div class="feat-item"><i class="fas fa-check-circle"></i>Vote Matches</div>
+        <div class="feat-item"><i class="fas fa-users"></i>Follow Gurus</div>
+        <div class="feat-item"><i class="fas fa-coins"></i>Earn Points</div>
     </div>
 
-    <div class="section-title">
-        <i class="fas fa-fire"></i> TRENDING NOW
+    <div class="section-title"><i class="fas fa-fire"></i> TRENDING NOW</div>
+
+    <div class="demo-card">
+        <div class="demo-row"><span style="font-size:11px; color:#888;">Premier League • 20:00</span><span class="demo-tag">LIVE</span></div>
+        <div class="demo-row"><div class="demo-team">Arsenal</div><div class="demo-odd-box" style="background:var(--bp-green);">1</div></div>
+        <div class="demo-row"><div class="demo-team">Liverpool</div><div class="demo-odd-box">2</div></div>
     </div>
 
     <div class="demo-card">
-        <div class="demo-row">
-            <span style="font-size:11px; color:#888;">Premier League • 20:00</span>
-            <span class="demo-tag">LIVE</span>
-        </div>
-        <div class="demo-row">
-            <div class="demo-team">Arsenal</div>
-            <div class="demo-odd-box" style="background:var(--bp-green);">1</div>
-        </div>
-        <div class="demo-row">
-            <div class="demo-team">Liverpool</div>
-            <div class="demo-odd-box">2</div>
-        </div>
-    </div>
-
-    <div class="demo-card">
-        <div class="demo-row">
-            <span style="font-size:11px; color:#888;">La Liga • 22:00</span>
-        </div>
-        <div class="demo-row">
-            <div class="demo-team">Real Madrid</div>
-            <div class="demo-odd-box">1</div>
-        </div>
-        <div class="demo-row">
-            <div class="demo-team">Barcelona</div>
-            <div class="demo-odd-box">2</div>
-        </div>
+        <div class="demo-row"><span style="font-size:11px; color:#888;">La Liga • 22:00</span></div>
+        <div class="demo-row"><div class="demo-team">Real Madrid</div><div class="demo-odd-box">1</div></div>
+        <div class="demo-row"><div class="demo-team">Barcelona</div><div class="demo-odd-box">2</div></div>
     </div>
 
     <div style="text-align:center; padding: 20px;">
@@ -204,52 +137,51 @@
 
     <div class="footer">
         <p>&copy; 2026 ORAFUT. All rights reserved.</p>
-        <p>
-            <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a>
-        </p>
-        <div class="payment-icons">
-            <i class="fas fa-mobile-alt"></i> <i class="fas fa-shield-alt"></i>
-        </div>
+        <p><a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a></p>
+        <div class="payment-icons"><i class="fas fa-mobile-alt"></i> <i class="fas fa-shield-alt"></i></div>
         <p style="margin-top:10px; opacity: 0.6;">Powered by Paypack Rwanda</p>
     </div>
 
     <script type="module">
+        // Import Logic
         import { auth, db } from './firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-        // Auto-redirect if already logged in
+        // Logic: Check if user is logged in
         onAuthStateChanged(auth, async (user) => {
             const loader = document.getElementById('auth-loading');
             
             if (user) {
-                // User is signed in, check role to redirect correctly
                 try {
-                    // Check 'users' collection first
+                    // Check User Role
                     let userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists()) {
-                        window.location.href = 'users/home.html';
-                        return;
-                    }
+                    if (userDoc.exists()) { window.location.href = 'users/home.html'; return; }
 
-                    // Check 'predictors' collection
                     let predDoc = await getDoc(doc(db, 'predictors', user.uid));
-                    if (predDoc.exists()) {
-                        window.location.href = 'predictors/home.html';
-                        return;
-                    }
+                    if (predDoc.exists()) { window.location.href = 'predictors/home.html'; return; }
                     
-                    // Admin check could go here if needed, or fallback
-                    loader.style.display = 'none'; // Stop loading if no role found (weird state)
+                    // If no role found (rare), just remove loader
+                    if(loader) loader.style.display = 'none';
                 } catch (e) {
-                    console.error("Login check failed", e);
-                    loader.style.display = 'none';
+                    console.error("Auth check failed:", e);
+                    if(loader) loader.style.display = 'none';
                 }
             } else {
-                // Not logged in, show landing page
-                loader.style.display = 'none';
+                // Not logged in -> Show Landing Page
+                if(loader) loader.style.display = 'none';
             }
         });
+    </script>
+    
+    <script>
+        setTimeout(() => {
+            const l = document.getElementById('auth-loading');
+            if(l && l.style.display !== 'none') {
+                console.warn("Loader timed out. Firebase might be blocked or missing.");
+                l.style.display = 'none';
+            }
+        }, 3000); // 3 seconds timeout
     </script>
 </body>
 </html>

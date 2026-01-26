@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ORAFUT | Predict & Win</title>
+    <title>ORAFUT | Football Predictions</title>
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,20 +11,24 @@
     <style>
         /* --- RESET & BASE --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Roboto', sans-serif; background: #e3e3e3; margin: 0; padding: 0; color: #333; }
+        body { font-family: 'Roboto', sans-serif; background: #e3e3e3; margin: 0; padding: 0; color: #333; line-height: 1.5; }
         a { text-decoration: none; color: inherit; }
+        ul { list-style: none; padding: 0; margin: 0; }
 
-        /* --- COLORS (BetPawa Palette) --- */
+        /* --- COLOR PALETTE (Sky Blue Edition) --- */
         :root {
-            --bp-dark: #262626;
-            --bp-green: #99d605;
-            --bp-green-dark: #84bd00;
+            --or-dark: #262626;       /* BetPawa-style dark header */
+            --or-blue: #00a2ff;       /* Premium Sky Blue */
+            --or-blue-dark: #0081cc;  /* Darker shade for interaction */
+            --or-grey-bg: #f0f0f0;
+            --or-text-main: #333333;
+            --or-text-light: #777777;
         }
 
-        /* --- HEADER --- */
+        /* --- 1. HEADER --- */
         .top-header {
-            background-color: var(--bp-dark);
-            height: 50px;
+            background-color: var(--or-dark);
+            height: 54px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -34,154 +38,296 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .logo { font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 24px; color: white; letter-spacing: -0.5px; }
-        .logo span { color: var(--bp-green); }
+        .logo { 
+            font-family: 'Roboto Condensed', sans-serif; 
+            font-weight: 700; 
+            font-size: 24px; 
+            color: white; 
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+        .logo span { color: var(--or-blue); }
         
-        .header-actions { display: flex; gap: 10px; }
-        .btn-login { color: white; font-size: 14px; font-weight: bold; background: transparent; border: none; padding: 5px 10px; cursor: pointer; }
-        .btn-join-header { background: var(--bp-green); color: var(--bp-dark); font-weight: bold; font-size: 13px; padding: 6px 12px; border-radius: 2px; border: none; cursor: pointer; }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            background: var(--bp-dark);
+        .btn-login-header {
             color: white;
-            padding: 30px 20px 40px;
+            font-size: 14px;
+            font-weight: bold;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-login-header:active { background: rgba(255,255,255,0.1); }
+
+        /* --- 2. HERO SECTION --- */
+        .hero {
+            background: var(--or-dark);
+            color: white;
+            padding: 40px 20px 50px;
             text-align: center;
-            border-bottom: 4px solid var(--bp-green);
+            border-bottom: 4px solid var(--or-blue);
         }
-        .hero h1 { font-family: 'Roboto Condensed', sans-serif; font-size: 32px; margin: 0 0 10px 0; line-height: 1.1; }
-        .hero p { color: #ccc; font-size: 15px; margin: 0 0 25px 0; line-height: 1.4; }
-        .hero-btn {
-            display: block; width: 100%; max-width: 300px; margin: 0 auto;
-            background: var(--bp-green); color: var(--bp-dark); font-weight: 900;
-            font-size: 18px; padding: 15px; border-radius: 4px; text-transform: uppercase;
-            box-shadow: 0 4px 0 var(--bp-green-dark);
+        .quote {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 14px;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
         }
-        .hero-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--bp-green-dark); }
-
-        /* --- FEATURES --- */
-        .features { display: flex; justify-content: space-around; background: white; padding: 15px 0; border-bottom: 1px solid #ddd; }
-        .feat-item { text-align: center; font-size: 12px; color: #555; }
-        .feat-item i { display: block; font-size: 20px; color: var(--bp-green-dark); margin-bottom: 5px; }
-
-        /* --- PREVIEW --- */
-        .section-title { padding: 15px; font-weight: 700; color: #444; font-size: 14px; display: flex; align-items: center; }
-        .section-title i { margin-right: 8px; color: var(--bp-green-dark); }
-
-        .demo-card {
-            background: white; margin: 0 10px 10px; padding: 12px;
-            border-radius: 4px; border-bottom: 2px solid #ddd; opacity: 0.8; pointer-events: none;
+        .slogan {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--or-blue);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
-        .demo-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .demo-team { font-weight: bold; font-size: 15px; }
-        .demo-odd-box { background: #f4f4f4; padding: 8px 15px; border-radius: 3px; font-weight: bold; font-size: 13px; color: #333; }
-        .demo-tag { background: #ffcc00; font-size: 10px; padding: 2px 5px; border-radius: 2px; font-weight: bold; }
-
-        /* --- FOOTER --- */
-        .footer { background: #333; color: #888; padding: 30px 20px; text-align: center; font-size: 12px; margin-top: 20px; }
-        .footer a { color: #ccc; margin: 0 5px; text-decoration: underline; }
-        .payment-icons { margin-top: 15px; font-size: 24px; color: #fff; }
-
-        /* Loading Overlay */
-        #auth-loading {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 2000;
-            display: flex; justify-content: center; align-items: center;
-            color: var(--bp-green-dark); font-weight: bold;
+        .hero h1 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 28px;
+            margin: 0 0 15px 0;
+            line-height: 1.2;
+            font-weight: 700;
         }
+        .hero-subtext {
+            color: #ccc;
+            font-size: 15px;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            line-height: 1.4;
+        }
+        
+        .cta-container { display: flex; gap: 10px; justify-content: center; }
+        
+        .btn-primary {
+            display: inline-block;
+            background: var(--or-blue);
+            color: white;
+            font-weight: 900;
+            font-size: 16px;
+            padding: 14px 24px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: none;
+            box-shadow: 0 4px 0 var(--or-blue-dark);
+            cursor: pointer;
+            width: 140px;
+        }
+        .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--or-blue-dark); }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: white;
+            font-weight: 900;
+            font-size: 16px;
+            padding: 14px 24px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: 2px solid #555;
+            cursor: pointer;
+            width: 140px;
+        }
+        .btn-secondary:active { background: rgba(255,255,255,0.05); }
+
+        /* --- 3. LIVE MATCH PREVIEW --- */
+        .preview-section {
+            padding: 20px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+        }
+        .section-header i { margin-right: 8px; color: var(--or-blue); }
+
+        .match-card {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer; /* Redirects to choose.html */
+            border-left: 4px solid var(--or-blue);
+            transition: transform 0.1s;
+        }
+        .match-card:active { transform: scale(0.98); }
+        
+        .teams-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        .vs { color: #999; font-weight: 400; font-size: 12px; margin: 0 10px; }
+
+        /* Fake Voting Bars */
+        .vote-bar-container {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            margin-top: 8px;
+        }
+        .bar-1 { background: var(--or-blue); height: 100%; }
+        .bar-2 { background: #ccc; height: 100%; }
+        .vote-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #777;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* --- 4. FEATURES --- */
+        .features-grid {
+            background: white;
+            padding: 30px 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .feature-box { text-align: center; }
+        .feature-icon {
+            font-size: 24px;
+            color: var(--or-blue);
+            margin-bottom: 10px;
+        }
+        .feature-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; color: var(--or-text-main); }
+        .feature-desc { font-size: 12px; color: #777; line-height: 1.3; }
+
+        /* --- 5. SOCIAL PROOF --- */
+        .social-proof {
+            text-align: center;
+            padding: 30px 20px;
+            background: #eef7ff; /* Very light blue tint */
+            color: var(--or-text-main);
+        }
+        .proof-text { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
+        .proof-sub { font-size: 13px; color: #666; }
+
+        /* --- 6. ROLES EXPLANATION --- */
+        .roles-section {
+            padding: 30px 20px;
+            background: white;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .role-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .role-title { font-weight: 900; font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; }
+        .role-title i { margin-right: 10px; font-size: 16px; }
+        .role-user { color: var(--or-blue); }
+        .role-pred { color: #d4a017; /* Gold-ish for paid */ }
+        
+        .role-list li {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            padding-left: 15px;
+            position: relative;
+        }
+        .role-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ccc;
+        }
+        .trial-badge {
+            display: inline-block;
+            background: #e6f7ff;
+            color: var(--or-blue-dark);
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        /* --- 7. FAQ --- */
+        .faq-section {
+            padding: 30px 20px;
+            background: #e3e3e3;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .faq-q { font-weight: 700; font-size: 14px; margin-bottom: 5px; color: var(--or-dark); }
+        .faq-a { font-size: 13px; color: #666; line-height: 1.4; }
+
+        /* --- 8. FOOTER --- */
+        .footer {
+            background: var(--or-dark);
+            color: #888;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .footer a { color: #ccc; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .footer a:hover { color: white; }
+        .btem-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 15px;
+            border: 1px solid #444;
+            border-radius: 20px;
+            color: var(--or-blue) !important;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        /* Helper */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="auth-loading">
-        <i class="fas fa-circle-notch fa-spin"></i> &nbsp; ORAFUT
-    </div>
-
-    <div class="top-header">
+    <header class="top-header">
         <div class="logo">ORA<span>FUT</span></div>
-        <div class="header-actions">
-            <button class="btn-login" onclick="window.location.href='choose.html'">Login</button>
-            <button class="btn-join-header" onclick="window.location.href='choose.html'">JOIN NOW</button>
+        <button class="btn-login-header" onclick="window.location.href='choose.html'">LOGIN</button>
+    </header>
+
+    <section class="hero">
+        <div class="quote">"Luck is what happens when preparation meets opportunity."</div>
+        <div class="slogan">No better football predictions & social network than this</div>
+        
+        <h1>JOIN THE WINNING<br>COMMUNITY</h1>
+        
+        <p class="hero-subtext">
+            ORAFUT is the ultimate football prediction platform powered by community wisdom AND expert predictors.
+        </p>
+
+        <div class="cta-container">
+            <button class="btn-primary" onclick="window.location.href='choose.html'">JOIN NOW</button>
+            <button class="btn-secondary" onclick="window.location.href='choose.html'">LOGIN</button>
         </div>
-    </div>
+    </section>
 
-    <div class="hero">
-        <h1>PREDICT. WIN.<br>GET PAID.</h1>
-        <p>The #1 Social Prediction Platform in East Africa. Join the community of winners today.</p>
-        <a href="choose.html" class="hero-btn">JOIN FREE NOW</a>
-    </div>
-
-    <div class="features">
-        <div class="feat-item"><i class="fas fa-check-circle"></i>Vote Matches</div>
-        <div class="feat-item"><i class="fas fa-users"></i>Follow Gurus</div>
-        <div class="feat-item"><i class="fas fa-coins"></i>Earn Points</div>
-    </div>
-
-    <div class="section-title"><i class="fas fa-fire"></i> TRENDING NOW</div>
-
-    <div class="demo-card">
-        <div class="demo-row"><span style="font-size:11px; color:#888;">Premier League • 20:00</span><span class="demo-tag">LIVE</span></div>
-        <div class="demo-row"><div class="demo-team">Arsenal</div><div class="demo-odd-box" style="background:var(--bp-green);">1</div></div>
-        <div class="demo-row"><div class="demo-team">Liverpool</div><div class="demo-odd-box">2</div></div>
-    </div>
-
-    <div class="demo-card">
-        <div class="demo-row"><span style="font-size:11px; color:#888;">La Liga • 22:00</span></div>
-        <div class="demo-row"><div class="demo-team">Real Madrid</div><div class="demo-odd-box">1</div></div>
-        <div class="demo-row"><div class="demo-team">Barcelona</div><div class="demo-odd-box">2</div></div>
-    </div>
-
-    <div style="text-align:center; padding: 20px;">
-        <a href="choose.html" style="color:var(--bp-green-dark); font-weight:bold; font-size:14px;">View All Matches ></a>
-    </div>
-
-    <div class="footer">
-        <p>&copy; 2026 ORAFUT. All rights reserved.</p>
-        <p><a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a></p>
-        <div class="payment-icons"><i class="fas fa-mobile-alt"></i> <i class="fas fa-shield-alt"></i></div>
-        <p style="margin-top:10px; opacity: 0.6;">Powered by Paypack Rwanda</p>
-    </div>
-
-    <script type="module">
-        // Import Logic
-        import { auth, db } from './firebase-config.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-        // Logic: Check if user is logged in
-        onAuthStateChanged(auth, async (user) => {
-            const loader = document.getElementById('auth-loading');
-            
-            if (user) {
-                try {
-                    // Check User Role
-                    let userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists()) { window.location.href = 'users/home.html'; return; }
-
-                    let predDoc = await getDoc(doc(db, 'predictors', user.uid));
-                    if (predDoc.exists()) { window.location.href = 'predictors/home.html'; return; }
-                    
-                    // If no role found (rare), just remove loader
-                    if(loader) loader.style.display = 'none';
-                } catch (e) {
-                    console.error("Auth check failed:", e);
-                    if(loader) loader.style.display = 'none';
-                }
-            } else {
-                // Not logged in -> Show Landing Page
-                if(loader) loader.style.display = 'none';
-            }
-        });
-    </script>
-    
-    <script>
-        setTimeout(() => {
-            const l = document.getElementById('auth-loading');
-            if(l && l.style.display !== 'none') {
-                console.warn("Loader timed out. Firebase might be blocked or missing.");
-                l.style.display = 'none';
-            }
-        }, 3000); // 3 seconds timeout
-    </script>
-</body>
-</html>
+    <section class="preview-section">
+        <div class="section-header">
+            <i class="fas fa-chart-bar"></i> Live Community Votes
+        </div>

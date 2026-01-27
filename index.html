@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ORAFUT | The #1 Social Prediction Platform</title>
+    <title>ORAFUT | The #1 Football Predictions & Social Network</title>
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -22,17 +22,21 @@
             --or-text-muted: #666666;  /* Secondary Text */
             --or-border: #e0e0e0;      /* Borders */
             --or-white: #ffffff;
-            --or-gold: #d4af37;        /* Premium Accents */
+            --or-success: #10b981;     /* Green for votes */
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
             --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
             --radius: 6px;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+        }
 
         html, body {
-            margin: 0; padding: 0;
             font-family: 'Roboto', sans-serif;
             background-color: #f4f7f6;
             color: var(--or-text);
@@ -43,23 +47,42 @@
         }
 
         a { text-decoration: none; color: inherit; transition: color 0.2s ease; }
-        ul { list-style: none; padding: 0; margin: 0; }
+        ul { list-style: none; }
         button { font-family: 'Roboto Condensed', sans-serif; cursor: pointer; border: none; outline: none; }
 
         /* =========================================
            2. UTILITY CLASSES
            ========================================= */
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
         .text-center { text-align: center; }
         .text-blue { color: var(--or-blue); }
         .bg-white { background: var(--or-white); }
         .section-padding { padding: 60px 0; }
-        .hidden { display: none; }
         
         /* Typography */
-        h1, h2, h3, h4 { font-family: 'Roboto Condensed', sans-serif; margin-top: 0; }
-        .section-title { font-size: 28px; font-weight: 700; color: var(--or-header); margin-bottom: 10px; text-transform: uppercase; letter-spacing: -0.5px; }
-        .section-subtitle { font-size: 16px; color: var(--or-text-muted); max-width: 600px; margin: 0 auto 40px; }
+        h1, h2, h3, h4 { 
+            font-family: 'Roboto Condensed', sans-serif; 
+            margin-top: 0; 
+            line-height: 1.2;
+        }
+        .section-title { 
+            font-size: 28px; 
+            font-weight: 700; 
+            color: var(--or-header); 
+            margin-bottom: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: -0.5px; 
+        }
+        .section-subtitle { 
+            font-size: 16px; 
+            color: var(--or-text-muted); 
+            max-width: 600px; 
+            margin: 0 auto 40px; 
+        }
 
         /* =========================================
            3. HEADER & NAVIGATION
@@ -109,7 +132,10 @@
             text-transform: uppercase;
             transition: all 0.3s ease;
         }
-        .btn-login:hover { background: rgba(255,255,255,0.1); border-color: var(--or-white); }
+        .btn-login:hover { 
+            background: rgba(255,255,255,0.1); 
+            border-color: var(--or-white); 
+        }
 
         /* =========================================
            4. HERO SECTION
@@ -134,23 +160,17 @@
             border-radius: 50%;
         }
 
-        .hero-badge {
-            display: inline-block;
-            background: rgba(0,162,255,0.15);
-            color: var(--or-blue);
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 20px;
+        .hero .quote {
+            opacity: 0.7;
+            font-style: italic;
             margin-bottom: 20px;
-            border: 1px solid rgba(0,162,255,0.3);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 16px;
+            color: #cccccc;
+            font-weight: 300;
         }
 
         .hero h1 {
             font-size: 42px;
-            line-height: 1.1;
             margin-bottom: 20px;
             font-weight: 900;
         }
@@ -162,6 +182,7 @@
             max-width: 500px;
             margin: 0 auto 40px;
             font-weight: 300;
+            line-height: 1.6;
         }
 
         .hero-actions {
@@ -169,6 +190,7 @@
             flex-direction: column;
             gap: 15px;
             align-items: center;
+            margin-top: 30px;
         }
 
         .btn-primary {
@@ -180,15 +202,16 @@
             border-radius: var(--radius);
             text-transform: uppercase;
             box-shadow: 0 4px 0 var(--or-blue-dark);
-            transition: transform 0.1s;
+            transition: transform 0.1s, background 0.3s;
             width: 100%;
             max-width: 300px;
         }
+        .btn-primary:hover { background: var(--or-blue-dark); }
         .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--or-blue-dark); }
 
         .btn-secondary {
             background: transparent;
-            border: 2px solid #555;
+            border: 2px solid rgba(255,255,255,0.3);
             color: #ddd;
             font-size: 16px;
             font-weight: 700;
@@ -197,31 +220,108 @@
             text-transform: uppercase;
             width: 100%;
             max-width: 300px;
+            transition: all 0.3s;
         }
-
-        /* Marquee Strip */
-        .marquee-strip {
-            background: var(--or-blue);
-            color: white;
-            padding: 10px 0;
-            font-size: 13px;
-            font-weight: 700;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        .btn-secondary:hover { 
+            border-color: var(--or-white); 
+            background: rgba(255,255,255,0.1); 
         }
 
         /* =========================================
-           5. FEATURES GRID
+           5. LIVE MATCH VOTES PREVIEW
            ========================================= */
-        .features-section { background: var(--or-white); }
+        .votes-section {
+            background: var(--or-white);
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--or-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .match-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--or-border);
+            text-align: center;
+        }
+
+        .match-teams {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--or-header);
+            margin-bottom: 10px;
+        }
+
+        .match-league {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .match-body {
+            padding: 20px;
+        }
+
+        .vote-label {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .vote-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .vote-fill {
+            height: 100%;
+            background: var(--or-success);
+            border-radius: 4px;
+            width: 65%;
+        }
+
+        .vote-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--or-text);
+        }
+
+        .join-note {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--or-text-muted);
+            font-size: 14px;
+        }
+
+        /* =========================================
+           6. WHY ORAFUT SECTION
+           ========================================= */
+        .features-section { 
+            background: #f4f7f6; 
+        }
         
         .features-grid {
             display: grid;
@@ -231,120 +331,206 @@
         }
 
         .feature-card {
-            background: #f9f9f9;
+            background: white;
             padding: 30px;
             border-radius: 8px;
             border: 1px solid #eee;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--or-blue); }
+        .feature-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: var(--shadow-md); 
+            border-color: var(--or-blue); 
+        }
 
         .f-icon {
-            width: 60px; height: 60px;
+            width: 60px; 
+            height: 60px;
             background: var(--or-blue-light);
             color: var(--or-blue);
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; margin-bottom: 20px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 24px; 
+            margin-bottom: 20px;
         }
 
-        .f-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--or-header); }
-        .f-desc { font-size: 14px; color: var(--or-text-muted); line-height: 1.5; }
+        .f-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            margin-bottom: 10px; 
+            color: var(--or-header); 
+        }
+        .f-desc { 
+            font-size: 14px; 
+            color: var(--or-text-muted); 
+            line-height: 1.5; 
+        }
 
         /* =========================================
-           6. HOW IT WORKS (Timeline)
+           7. PREDICTORS & OPPORTUNITIES
            ========================================= */
-        .how-section { background: #f4f7f6; }
-        
-        .steps-container {
-            position: relative;
-            max-width: 800px;
+        .predictors-section {
+            background: var(--or-white);
+        }
+
+        .opportunities-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .opp-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+
+        .opp-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--or-header);
+            margin-bottom: 15px;
+        }
+
+        .opp-desc {
+            color: var(--or-text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 700px;
             margin: 0 auto;
         }
-        .steps-container::before {
-            content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
-            width: 2px; background: #ddd;
-        }
 
-        .step-item {
-            position: relative;
-            padding-left: 60px;
-            margin-bottom: 40px;
+        .opp-highlight {
+            display: inline-block;
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 20px;
+            border: 1px solid var(--or-blue);
         }
-        .step-number {
-            position: absolute; left: 0; top: 0;
-            width: 42px; height: 42px;
-            background: var(--or-blue);
-            color: white;
-            font-weight: 900;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 4px solid #f4f7f6;
-            box-shadow: 0 0 0 2px var(--or-blue);
-        }
-        .step-title { font-size: 18px; font-weight: 700; margin-bottom: 5px; }
-        .step-text { font-size: 14px; color: var(--or-text-muted); }
 
         /* =========================================
-           7. PRICING / ROLES TABLE
+           8. COMMUNITY STATS
            ========================================= */
-        .roles-section { background: var(--or-white); }
+        .stats-bar {
+            background: var(--or-header);
+            color: white;
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .stat-item { 
+            margin: 15px; 
+            min-width: 120px;
+        }
+        .stat-number { 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: var(--or-blue); 
+            display: block; 
+        }
+        .stat-label { 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: #999; 
+        }
 
-        .roles-grid {
+        /* =========================================
+           9. HOW IT WORKS
+           ========================================= */
+        .how-section { 
+            background: #f4f7f6; 
+        }
+        
+        .roles-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .role-card {
-            border: 1px solid var(--or-border);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
             background: white;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--or-border);
+            transition: transform 0.3s ease;
+        }
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
         .role-header {
-            padding: 30px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
             border-bottom: 1px solid var(--or-border);
         }
-        .role-header.blue { background: linear-gradient(to bottom, #f0f9ff, white); }
-        .role-header.gold { background: linear-gradient(to bottom, #fffdf0, white); }
 
-        .role-name { font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .role-price { font-size: 32px; font-weight: 700; color: var(--or-header); }
-        .role-period { font-size: 14px; color: var(--or-text-muted); font-weight: 400; }
-
-        .role-features { padding: 30px; }
-        .feature-list li {
-            margin-bottom: 15px;
-            font-size: 14px;
-            display: flex; align-items: center;
-            color: #555;
+        .role-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 15px;
         }
-        .feature-list li i { margin-right: 12px; font-size: 16px; }
-        .feature-list li i.check { color: var(--or-blue); }
-        .feature-list li i.lock { color: #ccc; }
 
-        .trial-badge {
-            background: var(--or-blue);
-            color: white;
-            font-size: 12px;
+        .role-title {
+            font-size: 20px;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 12px;
-            position: absolute;
-            top: 15px; right: 15px;
+            color: var(--or-header);
+        }
+
+        .role-features li {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--or-text);
+            display: flex;
+            align-items: flex-start;
+        }
+        .role-features li i {
+            color: var(--or-blue);
+            margin-right: 10px;
+            margin-top: 3px;
+            font-size: 14px;
         }
 
         /* =========================================
-           8. FAQ ACCORDION
+           10. FAQ SECTION
            ========================================= */
-        .faq-section { background: #f4f7f6; }
+        .faq-section { 
+            background: var(--or-white); 
+        }
 
-        .accordion { max-width: 700px; margin: 0 auto; }
+        .accordion { 
+            max-width: 700px; 
+            margin: 0 auto; 
+        }
         
         .faq-item {
             background: white;
@@ -352,6 +538,7 @@
             margin-bottom: 10px;
             box-shadow: var(--shadow-sm);
             overflow: hidden;
+            border: 1px solid var(--or-border);
         }
         
         .faq-question {
@@ -365,7 +552,10 @@
             transition: background 0.2s;
         }
         .faq-question:hover { background: #f9f9f9; }
-        .faq-question i { color: var(--or-blue); transition: transform 0.3s; }
+        .faq-question i { 
+            color: var(--or-blue); 
+            transition: transform 0.3s; 
+        }
         
         .faq-answer {
             max-height: 0;
@@ -376,27 +566,38 @@
             font-size: 14px;
             line-height: 1.6;
         }
-        .faq-answer.open { padding-bottom: 20px; }
-        .faq-question.active i { transform: rotate(180deg); }
-
-        /* =========================================
-           9. STATS COUNTER
-           ========================================= */
-        .stats-bar {
-            background: var(--or-header);
-            color: white;
-            padding: 40px 0;
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            flex-wrap: wrap;
+        .faq-answer.open { 
+            padding: 0 20px 20px; 
         }
-        .stat-item { margin: 15px; }
-        .stat-number { font-size: 32px; font-weight: 900; color: var(--or-blue); display: block; }
-        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #999; }
+        .faq-question.active i { 
+            transform: rotate(180deg); 
+        }
 
         /* =========================================
-           10. FOOTER
+           11. FINAL CTA
+           ========================================= */
+        .final-cta {
+            background: linear-gradient(135deg, var(--or-header) 0%, #000000 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .cta-subtitle {
+            font-size: 18px;
+            color: #cccccc;
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+
+        /* =========================================
+           12. FOOTER
            ========================================= */
         .footer {
             background: #111;
@@ -410,15 +611,26 @@
             gap: 40px;
             margin-bottom: 40px;
         }
-        .footer h4 { color: white; font-size: 16px; margin-bottom: 20px; }
-        .footer ul li { margin-bottom: 10px; }
-        .footer ul li a:hover { color: var(--or-blue); }
+        .footer h4 { 
+            color: white; 
+            font-size: 16px; 
+            margin-bottom: 20px; 
+        }
+        .footer ul li { 
+            margin-bottom: 10px; 
+        }
+        .footer ul li a:hover { 
+            color: var(--or-blue); 
+        }
         
         .footer-btm {
             border-top: 1px solid #222;
             padding-top: 30px;
             text-align: center;
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px;
         }
         .btem-badge {
             border: 1px solid #333;
@@ -428,23 +640,37 @@
             color: var(--or-blue);
             transition: 0.3s;
         }
-        .btem-badge:hover { border-color: var(--or-blue); background: rgba(0,162,255,0.05); }
+        .btem-badge:hover { 
+            border-color: var(--or-blue); 
+            background: rgba(0,162,255,0.05); 
+        }
 
-        /* Mobile specific adjustments */
-        @media (max-width: 600px) {
+        /* =========================================
+           13. MOBILE RESPONSIVE
+           ========================================= */
+        @media (max-width: 768px) {
             .hero h1 { font-size: 32px; }
-            .steps-container::before { left: 15px; }
-            .step-number { width: 32px; height: 32px; font-size: 14px; }
-            .step-item { padding-left: 45px; }
+            .section-title { font-size: 24px; }
+            .section-padding { padding: 40px 0; }
+            .hero-actions { flex-direction: column; }
+            .btn-primary, .btn-secondary { max-width: 100%; }
+            .stats-bar { flex-direction: column; gap: 30px; }
+            .opportunities-box { padding: 30px 20px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 28px; }
+            .nav-container { padding: 0 15px; }
+            .logo { font-size: 22px; }
+            .btn-login { padding: 6px 15px; font-size: 13px; }
+            .hero { padding: 60px 20px 80px; }
+            .match-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <div id="auth-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;display:flex;justify-content:center;align-items:center;">
-        <i class="fas fa-circle-notch fa-spin" style="color:#00a2ff;font-size:24px;"></i>
-    </div>
-
+    <!-- 1. HEADER -->
     <header class="top-header">
         <div class="nav-container">
             <a href="#" class="logo">
@@ -457,167 +683,222 @@
         </div>
     </header>
 
+    <!-- 2. HERO SECTION -->
     <section class="hero">
         <div class="container">
-            <div class="hero-badge">Part of the BTEM Org.</div>
-            
-            <div class="quote" style="opacity:0.7; font-style:italic; margin-bottom:10px;">
-                "Success implies the courage to bet on your ideas."
+            <div class="quote">
+                "The ball is round. The game lasts 90 minutes. Everything else is theory."
             </div>
 
             <h1>NO BETTER FOOTBALL<br><span>PREDICTIONS</span> & SOCIAL<br>NETWORK THAN THIS.</h1>
             
             <p class="hero-desc">
-                Join the fastest growing community of football analysts in East Africa. 
-                Vote on matches, follow verified experts, and turn your sports knowledge into social proof.
+                ORAFUT is a football-focused social platform where users and expert predictors share match predictions, 
+                vote on live games, chat in real time, and build football reputation together.
             </p>
 
             <div class="hero-actions">
                 <button class="btn-primary" onclick="window.location.href='choose.html'">Join Now</button>
-                <button class="btn-secondary" onclick="window.location.href='choose.html'">Explore</button>
-            </div>
-            
-            <div style="margin-top: 30px; font-size: 12px; opacity: 0.6;">
-                <i class="fas fa-check"></i> No credit card required for trial
+                <button class="btn-secondary" onclick="window.location.href='choose.html'">Login</button>
             </div>
         </div>
     </section>
 
-    <div class="marquee-strip">
-        <div class="marquee-content">
-            LIVE VOTING OPEN • EPL MATCHWEEK 24 • REAL MADRID vs BARCELONA • FOLLOW TOP PREDICTORS • EARN POINTS • JOIN THE LEADERBOARD • LIVE VOTING OPEN • EPL MATCHWEEK 24
-        </div>
-    </div>
+    <!-- 3. LIVE MATCH VOTES PREVIEW -->
+    <section class="section-padding votes-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Live Community Votes</h2>
+                <p class="section-subtitle">See what the community is predicting for upcoming matches</p>
+            </div>
 
-    <div class="stats-bar">
-        <div class="stat-item">
-            <span class="stat-number">10k+</span>
-            <span class="stat-label">Active Users</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">50+</span>
-            <span class="stat-label">Verified Gurus</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">92%</span>
-            <span class="stat-label">Accuracy Rate</span>
-        </div>
-    </div>
+            <div class="match-grid">
+                <!-- Match 1 -->
+                <div class="match-card">
+                    <div class="match-header">
+                        <div class="match-teams">Manchester United vs Liverpool</div>
+                        <div class="match-league">Premier League • Today 15:00</div>
+                    </div>
+                    <div class="match-body">
+                        <span class="vote-label">Live community votes</span>
+                        <div class="vote-bar">
+                            <div class="vote-fill"></div>
+                        </div>
+                        <div class="vote-stats">
+                            <span>MU: 35%</span>
+                            <span>Draw: 20%</span>
+                            <span>LIV: 45%</span>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Match 2 -->
+                <div class="match-card">
+                    <div class="match-header">
+                        <div class="match-teams">Real Madrid vs Barcelona</div>
+                        <div class="match-league">La Liga • Tomorrow 20:00</div>
+                    </div>
+                    <div class="match-body">
+                        <span class="vote-label">Live community votes</span>
+                        <div class="vote-bar">
+                            <div class="vote-fill" style="width: 58%;"></div>
+                        </div>
+                        <div class="vote-stats">
+                            <span>RM: 58%</span>
+                            <span>Draw: 15%</span>
+                            <span>BAR: 27%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="join-note">
+                Join ORAFUT to vote, follow predictors, and discuss matches live.
+            </p>
+        </div>
+    </section>
+
+    <!-- 4. WHY ORAFUT -->
     <section class="section-padding features-section">
         <div class="container">
             <div class="text-center">
-                <h2 class="section-title">Why Choose ORAFUT?</h2>
-                <p class="section-subtitle">We combine the thrill of betting-style UI with the safety of a social network.</p>
+                <h2 class="section-title">Why ORAFUT?</h2>
+                <p class="section-subtitle">The perfect blend of social networking and football intelligence</p>
             </div>
 
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="f-icon"><i class="fas fa-poll"></i></div>
-                    <h3 class="f-title">Live Match Votes</h3>
-                    <p class="f-desc">Don't guess. See what thousands of other fans are predicting in real-time before the match starts.</p>
+                    <h3 class="f-title">Live Match Voting</h3>
+                    <p class="f-desc">Participate in real-time voting for upcoming matches and see community sentiment evolve.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="f-icon"><i class="fas fa-chart-line"></i></div>
-                    <h3 class="f-title">Predictor Transparency</h3>
-                    <p class="f-desc">We track every prediction. See a Guru's win rate and history before you decide to follow their advice.</p>
+                    <h3 class="f-title">Transparent Predictions</h3>
+                    <p class="f-desc">Every predictor's track record is visible, helping you make informed decisions.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="f-icon"><i class="fas fa-certificate"></i></div>
-                    <h3 class="f-title">Trusted Experts</h3>
-                    <p class="f-desc">Our "Predictor" role is reserved for serious analysts who provide reasoning, not just random picks.</p>
+                    <h3 class="f-title">Trusted Predictors</h3>
+                    <p class="f-desc">Follow verified football experts who provide analysis, not just predictions.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="f-icon"><i class="fas fa-comments"></i></div>
+                    <h3 class="f-title">Real-time Chat & Interaction</h3>
+                    <p class="f-desc">Discuss matches, share insights, and connect with fellow football fans live.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="f-icon"><i class="fas fa-users"></i></div>
+                    <h3 class="f-title">Community-Driven Intelligence</h3>
+                    <p class="f-desc">Collective wisdom of thousands of football enthusiasts working together.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="f-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <h3 class="f-title">Mobile-First Design</h3>
-                    <p class="f-desc">Built for speed. Works perfectly on 3G networks and all smartphone sizes across the EAC region.</p>
+                    <h3 class="f-title">Mobile-First Experience</h3>
+                    <p class="f-desc">Designed for football fans on the go, with smooth performance on all devices.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- 5. PREDICTORS & OPPORTUNITIES -->
+    <section class="section-padding predictors-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">For Predictors & Football Analysts</h2>
+                <p class="section-subtitle">Build your reputation and connect with football fans</p>
+            </div>
+
+            <div class="opportunities-box">
+                <div class="opp-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="opp-title">Build Your Football Legacy</h3>
+                <p class="opp-desc">
+                    Predictors on ORAFUT build followers, gain trust through accurate predictions, 
+                    earn wins, stars, and badges, and may unlock monetization opportunities based on 
+                    performance and community impact.
+                </p>
+                <div class="opp-highlight">Performance-Based Opportunities</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. COMMUNITY ACTIVITY -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-number">15,842+</span>
+            <span class="stat-label">Active Members</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">3,207+</span>
+            <span class="stat-label">Matches Discussed</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">48,936+</span>
+            <span class="stat-label">Predictions Shared</span>
+        </div>
+    </div>
+
+    <!-- 7. HOW ORAFUT WORKS -->
     <section class="section-padding how-section">
         <div class="container">
             <div class="text-center">
-                <h2 class="section-title">How It Works</h2>
-                <p class="section-subtitle">Start your journey from rookie to expert in 3 simple steps.</p>
+                <h2 class="section-title">How ORAFUT Works</h2>
+                <p class="section-subtitle">Two roles, one football community</p>
             </div>
 
-            <div class="steps-container">
-                <div class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Create Your Account</div>
-                    <div class="step-text">Sign up in seconds. Users get a 3-day free trial to explore everything. Predictors sign up to monetize.</div>
-                </div>
-                <div class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Vote & Discuss</div>
-                    <div class="step-text">Participate in community polls, read expert analysis, and chat with other fans in real-time.</div>
-                </div>
-                <div class="step-item">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Win & Climb</div>
-                    <div class="step-text">Earn points for correct votes. Reach the top of the leaderboard and get invited to become a paid Predictor.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-padding roles-section">
-        <div class="container">
-            <div class="text-center">
-                <h2 class="section-title">Choose Your Path</h2>
-                <p class="section-subtitle">Are you a fan looking to learn, or an expert looking to earn?</p>
-            </div>
-
-            <div class="roles-grid">
+            <div class="roles-container">
+                <!-- USERS -->
                 <div class="role-card">
-                    <div class="trial-badge">3-DAY FREE TRIAL</div>
-                    <div class="role-header blue">
-                        <div class="role-name text-blue">User</div>
-                        <div class="role-price">Free<span style="font-size:16px;"> / trial</span></div>
-                        <div class="role-period">Then low monthly sub</div>
+                    <div class="role-header">
+                        <div class="role-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="role-title">Users</div>
                     </div>
-                    <div class="role-features">
-                        <ul class="feature-list">
-                            <li><i class="fas fa-check-circle check"></i> Vote on all matches</li>
-                            <li><i class="fas fa-check-circle check"></i> Access community chats</li>
-                            <li><i class="fas fa-check-circle check"></i> Follow top Predictors</li>
-                            <li><i class="fas fa-lock lock"></i> Monetize content</li>
-                        </ul>
-                        <button class="btn-primary" style="margin-top:20px;" onclick="window.location.href='choose.html'">Start User Trial</button>
-                    </div>
+                    <ul class="role-features">
+                        <li><i class="fas fa-check"></i> Vote on matches & follow predictors</li>
+                        <li><i class="fas fa-check"></i> Chat with the football community</li>
+                        <li><i class="fas fa-check"></i> Earn points from correct votes</li>
+                        <li><i class="fas fa-check"></i> Build your football profile</li>
+                        <li><i class="fas fa-check"></i> Follow teams & expert predictors</li>
+                        <li><i class="fas fa-check"></i> Participate in live discussions</li>
+                    </ul>
                 </div>
 
-                <div class="role-card" style="border-color: var(--or-gold);">
-                    <div class="trial-badge" style="background:var(--or-gold);">BEST VALUE</div>
-                    <div class="role-header gold">
-                        <div class="role-name" style="color: #b8860b;">Predictor</div>
-                        <div class="role-price">Paid</div>
-                        <div class="role-period">Entry Fee Required</div>
+                <!-- PREDICTORS -->
+                <div class="role-card">
+                    <div class="role-header">
+                        <div class="role-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="role-title">Predictors</div>
                     </div>
-                    <div class="role-features">
-                        <ul class="feature-list">
-                            <li><i class="fas fa-check-circle check" style="color:#b8860b;"></i> <b>Monetize your posts</b></li>
-                            <li><i class="fas fa-check-circle check" style="color:#b8860b;"></i> Build a paid following</li>
-                            <li><i class="fas fa-check-circle check" style="color:#b8860b;"></i> Access Creator Tools</li>
-                            <li><i class="fas fa-check-circle check" style="color:#b8860b;"></i> Verified 'Guru' Badge</li>
-                        </ul>
-                        <button class="btn-primary" style="margin-top:20px; background: #b8860b; box-shadow: 0 4px 0 #8a6608;" onclick="window.location.href='choose.html'">Become a Guru</button>
-                    </div>
+                    <ul class="role-features">
+                        <li><i class="fas fa-check"></i> Post predictions & analysis</li>
+                        <li><i class="fas fa-check"></i> Gain followers & build audience</li>
+                        <li><i class="fas fa-check"></i> Earn wins, stars & badges</li>
+                        <li><i class="fas fa-check"></i> Build credibility through performance</li>
+                        <li><i class="fas fa-check"></i> Share football knowledge</li>
+                        <li><i class="fas fa-check"></i> Unlock opportunities through impact</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- 8. FAQ -->
     <section class="section-padding faq-section">
         <div class="container">
             <div class="text-center">
                 <h2 class="section-title">Frequently Asked Questions</h2>
-                <div style="height:20px;"></div>
+                <p class="section-subtitle">Everything you need to know about ORAFUT</p>
             </div>
 
             <div class="accordion">
@@ -627,43 +908,77 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>ORAFUT is a hybrid platform: part football prediction tracker, part social network. Unlike betting sites where you play against the house, ORAFUT connects you with experts ("Predictors") to help you make better decisions.</p>
+                        <p>ORAFUT is a football-focused social platform that combines community voting, expert predictions, and real-time discussions. It's where football fans connect, share insights, and build their football reputation together.</p>
                     </div>
                 </div>
                 
                 <div class="faq-item">
                     <div class="faq-question">
-                        Is the Free Trial genuinely free?
+                        Who is a predictor on ORAFUT?
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>Yes. You get 3 days of full "User" access. You do not need to enter any payment information to start the trial. It expires automatically.</p>
+                        <p>A predictor is a football analyst or enthusiast who shares match predictions and analysis with the community. Predictors build followers, earn recognition through accurate predictions, and contribute to the platform's football intelligence.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">
-                        Can I become a Predictor later?
+                        Who is a user on ORAFUT?
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>Yes. If you start as a User and consistently make correct votes (earning points), our system may invite you to upgrade. Alternatively, you can sign up directly as a Predictor if you are confident.</p>
+                        <p>A user is any football fan who joins ORAFUT to vote on matches, follow predictors, participate in discussions, and enjoy football content. Users earn points for correct votes and build their football profile.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">
-                        How do payments work?
+                        How do votes work on ORAFUT?
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>We use Paypack Rwanda for secure Mobile Money transactions (MTN/Airtel). Payments are processed instantly and securely.</p>
+                        <p>Users can vote on upcoming matches by selecting their predicted outcome. The community's collective votes are displayed as percentages. Users earn points for correct votes, which contribute to their profile score.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Can predictors earn from ORAFUT?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Predictors on ORAFUT focus on building their reputation and followers through accurate predictions and valuable analysis. Based on performance and community impact, predictors may unlock various opportunities on the platform.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Is ORAFUT mobile-first?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! ORAFUT is designed with mobile users in mind. The platform works beautifully on smartphones, tablets, and desktops, ensuring football fans can participate anytime, anywhere.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- 9. FINAL CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2 class="cta-title">Ready to Join the Football Community?</h2>
+            <p class="cta-subtitle">
+                Join thousands of football fans and experts who are already making better predictions together.
+            </p>
+            <button class="btn-primary" onclick="window.location.href='choose.html'" style="max-width: 300px;">
+                Join ORAFUT Now
+            </button>
+        </div>
+    </section>
+
+    <!-- 10. FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -673,19 +988,29 @@
                     </div>
                     <p style="opacity:0.8;">The ultimate destination for football intelligence in East Africa.</p>
                     <div style="margin-top:15px;">
-                        <i class="fab fa-twitter" style="margin-right:15px; cursor:pointer;"></i>
-                        <i class="fab fa-instagram" style="margin-right:15px; cursor:pointer;"></i>
-                        <i class="fab fa-facebook" style="cursor:pointer;"></i>
+                        <i class="fab fa-twitter" style="margin-right:15px; cursor:pointer; font-size:18px;"></i>
+                        <i class="fab fa-instagram" style="margin-right:15px; cursor:pointer; font-size:18px;"></i>
+                        <i class="fab fa-facebook" style="cursor:pointer; font-size:18px;"></i>
                     </div>
                 </div>
                 
                 <div>
-                    <h4>Quick Links</h4>
+                    <h4>About</h4>
                     <ul>
-                        <li><a href="choose.html">Login / Sign Up</a></li>
-                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Community</a></li>
                         <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact Support</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Partnerships</a></li>
+                        <li><a href="#">Media</a></li>
+                        <li><a href="#">Suggestions</a></li>
                     </ul>
                 </div>
 
@@ -695,7 +1020,7 @@
                         <li><a href="terms.html">Terms of Service</a></li>
                         <li><a href="privacy.html">Privacy Policy</a></li>
                         <li><a href="#">Cookie Policy</a></li>
-                        <li><a href="#">Dispute Resolution</a></li>
+                        <li><a href="#">Community Guidelines</a></li>
                     </ul>
                 </div>
             </div>
@@ -703,65 +1028,63 @@
             <div class="footer-btm">
                 <div>&copy; 2026 ORAFUT. All rights reserved.</div>
                 <a href="https://btem.vercel.app" target="_blank" class="btem-badge">
-                    Part of the BTEM Org.
+                    PART OF THE BTEM Org.
                 </a>
             </div>
         </div>
     </footer>
 
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-        // 1. Auth Check
-        onAuthStateChanged(auth, async (user) => {
-            const loader = document.getElementById('auth-loading');
+    <script>
+        // Simple FAQ functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
             
-            if (user) {
-                try {
-                    let userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists()) { window.location.href = 'users/home.html'; return; }
-
-                    let predDoc = await getDoc(doc(db, 'predictors', user.uid));
-                    if (predDoc.exists()) { window.location.href = 'predictors/home.html'; return; }
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    // Toggle current question
+                    this.classList.toggle('active');
                     
-                    if(loader) loader.style.display = 'none';
-                } catch (e) {
-                    console.error("Auth error", e);
-                    if(loader) loader.style.display = 'none';
-                }
-            } else {
-                if(loader) loader.style.display = 'none';
-            }
-        });
-
-        // 2. FAQ Logic (Native JS)
-        const faqs = document.querySelectorAll('.faq-question');
-        faqs.forEach(faq => {
-            faq.addEventListener('click', () => {
-                const answer = faq.nextElementSibling;
-                const icon = faq.querySelector('i');
-                
-                // Toggle current
-                faq.classList.toggle('active');
-                if (answer.style.maxHeight) {
-                    answer.style.maxHeight = null;
-                    answer.classList.remove('open');
-                } else {
-                    answer.style.maxHeight = answer.scrollHeight + "px";
-                    answer.classList.add('open');
-                }
+                    // Get the answer element
+                    const answer = this.nextElementSibling;
+                    
+                    // Toggle answer visibility
+                    if (answer.style.maxHeight) {
+                        answer.style.maxHeight = null;
+                        answer.classList.remove('open');
+                    } else {
+                        answer.style.maxHeight = answer.scrollHeight + "px";
+                        answer.classList.add('open');
+                    }
+                    
+                    // Close other answers (optional - can be removed for multiple open)
+                    faqQuestions.forEach(otherQuestion => {
+                        if (otherQuestion !== this) {
+                            otherQuestion.classList.remove('active');
+                            const otherAnswer = otherQuestion.nextElementSibling;
+                            otherAnswer.style.maxHeight = null;
+                            otherAnswer.classList.remove('open');
+                        }
+                    });
+                });
+            });
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 60,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
         });
     </script>
-    
-    <script>
-        setTimeout(() => {
-            const l = document.getElementById('auth-loading');
-            if(l && l.style.display !== 'none') l.style.display = 'none';
-        }, 3000);
-    </script>
-
 </body>
 </html>

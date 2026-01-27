@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ORAFUT | Choose Account</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           1. CORE VARIABLES - LIGHT THEME
+           ========================================= */
+        :root {
+            --or-light-bg: #f8f9fa;
+            --or-white: #ffffff;
+            --or-blue: #00a2ff;
+            --or-blue-dark: #007acc;
+            --or-blue-light: #e6f6ff;
+            --or-gold: #d4af37;
+            --or-gold-light: #fff8e1;
+            --or-text: #333333;
+            --or-text-muted: #666666;
+            --or-border: #e0e0e0;
+            --or-border-dark: #cccccc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+            --transition: all 0.25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--or-light-bg);
+            color: var(--or-text);
+            line-height: 1.6;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. MAIN CONTAINER - MOBILE ONLY
+           ========================================= */
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* Hide on desktop */
+        @media (min-width: 769px) {
+            body::before {
+                content: "This page is optimized for mobile devices only.";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--or-light-bg);
+                color: var(--or-text);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                font-size: 18px;
+                font-weight: 500;
+                z-index: 9999;
+            }
+        }
+
+        /* =========================================
+           3. HEADER - SQUARE DESIGN
+           ========================================= */
+        .header {
+            background: var(--or-white);
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--or-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .logo i { color: var(--or-blue); font-size: 20px; }
+        .logo span { color: var(--or-blue); }
+
+        .page-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: var(--or-text-muted);
+        }
+
+        /* =========================================
+           4. ACCOUNT TYPE SELECTION - SQUARE CARDS
+           ========================================= */
+        .selection-section {
+            flex: 1;
+            padding: 24px 16px;
+        }
+
+        .selection-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--or-text-muted);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .account-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .account-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .account-card:active {
+            background: var(--or-light-bg);
+            transform: translateY(1px);
+        }
+
+        .account-card.user {
+            border-left: 4px solid var(--or-blue);
+        }
+
+        .account-card.predictor {
+            border-left: 4px solid var(--or-gold);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .user .card-icon {
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+        }
+
+        .predictor .card-icon {
+            background: var(--or-gold-light);
+            color: var(--or-gold);
+        }
+
+        .card-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user .card-title { color: var(--or-blue); }
+        .predictor .card-title { color: var(--or-gold); }
+
+        .card-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            text-transform: uppercase;
+        }
+
+        .user .card-badge {
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+        }
+
+        .predictor .card-badge {
+            background: var(--or-gold-light);
+            color: var(--or-gold);
+        }
+
+        .card-description {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user .card-action { color: var(--or-blue); }
+        .predictor .card-action { color: var(--or-gold); }
+
+        /* =========================================
+           5. LOGIN SECTION - SQUARE BUTTON
+           ========================================= */
+        .login-section {
+            padding: 24px 16px;
+            border-top: 1px solid var(--or-border);
+            background: var(--or-white);
+        }
+
+        .login-text {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--or-border-dark);
+            color: var(--or-text);
+            padding: 16px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:active {
+            background: var(--or-light-bg);
+            border-color: var(--or-blue);
+        }
+
+        /* =========================================
+           6. OVERLAY - FULL SCREEN MOBILE
+           ========================================= */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .overlay-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--or-light-bg);
+            z-index: 1001;
+            transition: right 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .overlay-panel.active {
+            right: 0;
+        }
+
+        /* =========================================
+           7. PANEL HEADER - SQUARE DESIGN
+           ========================================= */
+        .panel-header {
+            background: var(--or-white);
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--or-text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 16px;
+        }
+
+        .btn-close:active {
+            color: var(--or-text);
+        }
+
+        .panel-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--or-text);
+        }
+
+        /* =========================================
+           8. PANEL CONTENT - SQUARE DESIGN
+           ========================================= */
+        .panel-content {
+            flex: 1;
+            padding: 20px 16px;
+        }
+
+        .role-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .role-indicator.user {
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+            border: 1px solid var(--or-border);
+        }
+
+        .role-indicator.predictor {
+            background: var(--or-gold-light);
+            color: var(--or-gold);
+            border: 1px solid var(--or-border);
+        }
+
+        .panel-subtitle {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* =========================================
+           9. FORMS - SQUARE INPUTS
+           ========================================= */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--or-text);
+        }
+
+        .form-input {
+            padding: 14px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            color: var(--or-text);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .form-input.error {
+            border-color: #ff4444;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* =========================================
+           10. AUTH SELECTOR - SQUARE BUTTONS
+           ========================================= */
+        .auth-selector {
+            margin: 20px 0;
+        }
+
+        .auth-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--or-text);
+            margin-bottom: 12px;
+        }
+
+        .auth-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .auth-option {
+            padding: 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-option.active {
+            background: var(--or-blue-light);
+            border-color: var(--or-blue);
+            color: var(--or-blue);
+        }
+
+        .auth-option i {
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .auth-rules {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .pin-container,
+        .password-container {
+            display: none;
+        }
+
+        .pin-inputs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .pin-input {
+            width: 100%;
+            height: 48px;
+            text-align: center;
+            font-size: 20px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            color: var(--or-text);
+        }
+
+        .pin-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+        }
+
+        /* =========================================
+           11. SUBMIT BUTTONS - SQUARE DESIGN
+           ========================================= */
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: var(--or-blue);
+            color: var(--or-white);
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .btn-submit:active:not(:disabled) {
+            background: var(--or-blue-dark);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit.predictor {
+            background: var(--or-gold);
+            color: #1a1a1a;
+        }
+
+        .btn-submit.predictor:active:not(:disabled) {
+            background: #b8860b;
+        }
+
+        /* =========================================
+           12. FOOTER - SQUARE DESIGN
+           ========================================= */
+        .footer {
+            padding: 20px 16px;
+            border-top: 1px solid var(--or-border);
+            background: var(--or-white);
+        }
+
+        .footer-text {
+            color: var(--or-text-muted);
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .footer a {
+            color: var(--or-blue);
+            text-decoration: none;
+        }
+
+        .footer a:active {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           13. LOADING OVERLAY
+           ========================================= */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--or-border);
+            border-top-color: var(--or-blue);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           14. UTILITY CLASSES
+           ========================================= */
+        .hidden {
+            display: none !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+
+        /* =========================================
+           15. SCROLL BAR STYLING
+           ========================================= */
+        .overlay-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .overlay-panel::-webkit-scrollbar-track {
+            background: var(--or-light-bg);
+        }
+
+        .overlay-panel::-webkit-scrollbar-thumb {
+            background: var(--or-border);
+        }
+
+        .overlay-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--or-border-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <a href="index.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                ORA<span>FUT</span>
+            </a>
+            <div class="page-title">Choose Account Type</div>
+        </div>
+
+        <!-- Account Selection -->
+        <div class="selection-section">
+            <div class="selection-title">How would you like to join ORAFUT?</div>
+            
+            <div class="account-cards">
+                <!-- User Card -->
+                <div class="account-card user" onclick="showSignupOverlay('user')">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">
+                                <span>USER</span>
+                                <span class="card-badge">Most Popular</span>
+                            </h3>
+                        </div>
+                    </div>
+                    <p class="card-description">
+                        Vote on matches, follow predictors & teams, chat with the community, and earn points.
+                    </p>
+                    <div class="card-action">
+                        <span>Create User Account</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Predictor Card -->
+                <div class="account-card predictor" onclick="showSignupOverlay('predictor')">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">
+                                <span>PREDICTOR (GURU)</span>
+                                <span class="card-badge">Expert</span>
+                            </h3>
+                        </div>
+                    </div>
+                    <p class="card-description">
+                        Share predictions, post analysis, build followers, earn wins, stars, badges, and unlock opportunities.
+                    </p>
+                    <div class="card-action">
+                        <span>Become a Predictor</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section">
+            <div class="login-text">Already have an account?</div>
+            <button class="btn-login" onclick="showLoginOverlay()">
+                <i class="fas fa-sign-in-alt"></i>
+                LOGIN
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                By continuing, you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>
+            </p>
+            <p class="footer-text" style="margin-top: 8px;">
+                &copy; 2026 ORAFUT. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <!-- Overlay Background -->
+    <div class="overlay" id="overlay" onclick="closeOverlay()"></div>
+
+    <!-- Signup Panel -->
+    <div class="overlay-panel" id="signupPanel">
+        <div class="panel-header">
+            <button class="btn-close" onclick="closeOverlay()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="panel-title">Create Account</div>
+        </div>
+
+        <div class="panel-content">
+            <div class="role-indicator user" id="roleIndicator">
+                <i class="fas fa-user"></i>
+                <span>Signing up as USER</span>
+            </div>
+
+            <p class="panel-subtitle">Join thousands of football fans making better predictions together</p>
+
+            <div class="form-container">
+                <form id="signupForm">
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label class="form-label" for="signupUsername">Username *</label>
+                        <input type="text" 
+                               id="signupUsername" 
+                               class="form-input" 
+                               placeholder="Choose username"
+                               maxlength="20"
+                               required>
+                        <div class="error-message" id="usernameError">Username is required</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label class="form-label" for="signupEmail">Email *</label>
+                        <input type="email" 
+                               id="signupEmail" 
+                               class="form-input" 
+                               placeholder="you@example.com"
+                               required>
+                        <div class="error-message" id="emailError">Valid email required</div>
+                    </div>
+
+                    <!-- Auth Method -->
+                    <div class="auth-selector">
+                        <div class="auth-title">Choose authentication:</div>
+                        <div class="auth-options">
+                            <div class="auth-option active" onclick="selectAuthMethod('pin')" id="pinOption">
+                                <i class="fas fa-key"></i>
+                                Use PIN
+                            </div>
+                            <div class="auth-option" onclick="selectAuthMethod('password')" id="passwordOption">
+                                <i class="fas fa-lock"></i>
+                                Use Password
+                            </div>
+                        </div>
+                        
+                        <div class="auth-rules">
+                            <span id="pinRules">PIN: Exactly 6 numbers</span>
+                            <span id="passwordRules" class="hidden">Password: Minimum 5 characters</span>
+                        </div>
+                    </div>
+
+                    <!-- PIN Input -->
+                    <div class="pin-container" id="pinContainer">
+                        <div class="form-group">
+                            <label class="form-label">Enter 6-digit PIN</label>
+                            <div class="pin-inputs">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                            </div>
+                            <div class="error-message" id="pinError">Enter 6 digits</div>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="password-container" id="passwordContainer">
+                        <div class="form-group">
+                            <label class="form-label" for="signupPassword">Password</label>
+                            <input type="password" 
+                                   id="signupPassword" 
+                                   class="form-input" 
+                                   placeholder="Enter password"
+                                   minlength="5">
+                            <div class="error-message" id="passwordError">Min. 5 characters</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="signupSubmit" disabled>
+                        CREATE ACCOUNT
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Panel -->
+    <div class="overlay-panel" id="loginPanel">
+        <div class="panel-header">
+            <button class="btn-close" onclick="closeOverlay()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="panel-title">Welcome Back</div>
+        </div>
+
+        <div class="panel-content">
+            <p class="panel-subtitle">Login to continue your football journey</p>
+
+            <div class="form-container">
+                <form id="loginForm">
+                    <!-- Username/Email -->
+                    <div class="form-group">
+                        <label class="form-label" for="loginIdentifier">Username or Email *</label>
+                        <input type="text" 
+                               id="loginIdentifier" 
+                               class="form-input" 
+                               placeholder="Enter username or email"
+                               required>
+                        <div class="error-message" id="loginIdentifierError">Required field</div>
+                    </div>
+
+                    <!-- Auth Method -->
+                    <div class="auth-selector">
+                        <div class="auth-title">Choose authentication:</div>
+                        <div class="auth-options">
+                            <div class="auth-option active" onclick="selectLoginAuthMethod('pin')" id="loginPinOption">
+                                <i class="fas fa-key"></i>
+                                Use PIN
+                            </div>
+                            <div class="auth-option" onclick="selectLoginAuthMethod('password')" id="loginPasswordOption">
+                                <i class="fas fa-lock"></i>
+                                Use Password
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PIN Input -->
+                    <div class="pin-container" id="loginPinContainer">
+                        <div class="form-group">
+                            <label class="form-label">Enter 6-digit PIN</label>
+                            <div class="pin-inputs">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                                <input type="tel" class="pin-input" maxlength="1" pattern="\d*" inputmode="numeric">
+                            </div>
+                            <div class="error-message" id="loginPinError">Enter 6-digit PIN</div>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="password-container" id="loginPasswordContainer">
+                        <div class="form-group">
+                            <label class="form-label" for="loginPassword">Password</label>
+                            <input type="password" 
+                                   id="loginPassword" 
+                                   class="form-input" 
+                                   placeholder="Enter password">
+                            <div class="error-message" id="loginPasswordError">Enter password</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="loginSubmit" disabled>
+                        LOGIN
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase config
+        import { auth, db } from './firebase-config.js';
+        import { 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            updateProfile,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            doc, 
+            setDoc, 
+            getDoc,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // Global variables
+        let selectedRole = 'user';
+        let selectedAuthMethod = 'pin';
+        let selectedLoginAuthMethod = 'pin';
+
+        // UI Elements
+        const overlay = document.getElementById('overlay');
+        const signupPanel = document.getElementById('signupPanel');
+        const loginPanel = document.getElementById('loginPanel');
+        const roleIndicator = document.getElementById('roleIndicator');
+        const loading = document.getElementById('loading');
+
+        // Check existing auth state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                checkUserRoleAndRedirect(user.uid);
+            }
+        });
+
+        async function checkUserRoleAndRedirect(uid) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', uid));
+                if (userDoc.exists()) {
+                    window.location.href = 'user/dashboard.html';
+                    return;
+                }
+
+                const predDoc = await getDoc(doc(db, 'predictors', uid));
+                if (predDoc.exists()) {
+                    window.location.href = 'predictor/dashboard.html';
+                    return;
+                }
+            } catch (error) {
+                console.error('Role check error:', error);
+            }
+        }
+
+        // Show signup overlay
+        window.showSignupOverlay = function(role) {
+            selectedRole = role;
+            
+            // Update role indicator
+            roleIndicator.className = `role-indicator ${role}`;
+            roleIndicator.innerHTML = `
+                <i class="fas fa-${role === 'user' ? 'user' : 'chart-line'}"></i>
+                <span>Signing up as ${role === 'user' ? 'USER' : 'PREDICTOR (GURU)'}</span>
+            `;
+
+            // Update submit button
+            const submitBtn = document.getElementById('signupSubmit');
+            if (role === 'predictor') {
+                submitBtn.className = 'btn-submit predictor';
+                submitBtn.textContent = 'BECOME A PREDICTOR';
+            } else {
+                submitBtn.className = 'btn-submit';
+                submitBtn.textContent = 'CREATE ACCOUNT';
+            }
+
+            // Reset form
+            document.getElementById('signupForm').reset();
+            resetPINInputs();
+            updateSubmitButtonState();
+            
+            // Show overlay
+            overlay.classList.add('active');
+            signupPanel.classList.add('active');
+            loginPanel.classList.remove('active');
+            
+            // Focus
+            setTimeout(() => {
+                document.getElementById('signupUsername').focus();
+            }, 350);
+        };
+
+        // Show login overlay
+        window.showLoginOverlay = function() {
+            document.getElementById('loginForm').reset();
+            resetLoginPINInputs();
+            updateLoginSubmitButtonState();
+            
+            overlay.classList.add('active');
+            loginPanel.classList.add('active');
+            signupPanel.classList.remove('active');
+            
+            setTimeout(() => {
+                document.getElementById('loginIdentifier').focus();
+            }, 350);
+        };
+
+        // Close overlay
+        window.closeOverlay = function() {
+            overlay.classList.remove('active');
+            signupPanel.classList.remove('active');
+            loginPanel.classList.remove('active');
+        };
+
+        // Select auth method for signup
+        window.selectAuthMethod = function(method) {
+            selectedAuthMethod = method;
+            
+            // Update UI
+            document.getElementById('pinOption').classList.toggle('active', method === 'pin');
+            document.getElementById('passwordOption').classList.toggle('active', method === 'password');
+            document.getElementById('pinContainer').style.display = method === 'pin' ? 'block' : 'none';
+            document.getElementById('passwordContainer').style.display = method === 'password' ? 'block' : 'none';
+            document.getElementById('pinRules').classList.toggle('hidden', method !== 'pin');
+            document.getElementById('passwordRules').classList.toggle('hidden', method !== 'password');
+            
+            updateSubmitButtonState();
+            
+            // Focus
+            if (method === 'pin') {
+                setTimeout(() => {
+                    document.querySelectorAll('.pin-input')[0]?.focus();
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('signupPassword')?.focus();
+                }, 100);
+            }
+        };
+
+        // Select auth method for login
+        window.selectLoginAuthMethod = function(method) {
+            selectedLoginAuthMethod = method;
+            
+            document.getElementById('loginPinOption').classList.toggle('active', method === 'pin');
+            document.getElementById('loginPasswordOption').classList.toggle('active', method === 'password');
+            document.getElementById('loginPinContainer').style.display = method === 'pin' ? 'block' : 'none';
+            document.getElementById('loginPasswordContainer').style.display = method === 'password' ? 'block' : 'none';
+            
+            updateLoginSubmitButtonState();
+            
+            if (method === 'pin') {
+                setTimeout(() => {
+                    document.querySelectorAll('#loginPinContainer .pin-input')[0]?.focus();
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('loginPassword')?.focus();
+                }, 100);
+            }
+        };
+
+        // PIN input handling
+        function setupPINInputs() {
+            const pinInputs = document.querySelectorAll('.pin-input');
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                    selectedAuthMethod === 'pin' ? updateSubmitButtonState() : updateLoginSubmitButtonState();
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        function resetPINInputs() {
+            document.querySelectorAll('.pin-input').forEach(input => {
+                input.value = '';
+            });
+        }
+
+        function resetLoginPINInputs() {
+            document.querySelectorAll('#loginPinContainer .pin-input').forEach(input => {
+                input.value = '';
+            });
+        }
+
+        function getPINValue() {
+            return Array.from(document.querySelectorAll('.pin-input'))
+                .map(input => input.value)
+                .join('');
+        }
+
+        function getLoginPINValue() {
+            return Array.from(document.querySelectorAll('#loginPinContainer .pin-input'))
+                .map(input => input.value)
+                .join('');
+        }
+
+        // Form validation
+        function validateSignupForm() {
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const pin = getPINValue();
+            
+            let isValid = true;
+            
+            if (!username) {
+                showError('usernameError', 'Username is required');
+                isValid = false;
+            } else {
+                hideError('usernameError');
+            }
+            
+            if (!email || !isValidEmail(email)) {
+                showError('emailError', 'Valid email required');
+                isValid = false;
+            } else {
+                hideError('emailError');
+            }
+            
+            if (selectedAuthMethod === 'pin') {
+                if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+                    showError('pinError', 'Enter 6 digits');
+                    isValid = false;
+                } else {
+                    hideError('pinError');
+                }
+            } else {
+                if (!password || password.length < 5) {
+                    showError('passwordError', 'Min. 5 characters');
+                    isValid = false;
+                } else {
+                    hideError('passwordError');
+                }
+            }
+            
+            return isValid;
+        }
+
+        function validateLoginForm() {
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const pin = getLoginPINValue();
+            
+            let isValid = true;
+            
+            if (!identifier) {
+                showError('loginIdentifierError', 'Required');
+                isValid = false;
+            } else {
+                hideError('loginIdentifierError');
+            }
+            
+            if (selectedLoginAuthMethod === 'pin') {
+                if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+                    showError('loginPinError', 'Enter 6-digit PIN');
+                    isValid = false;
+                } else {
+                    hideError('loginPinError');
+                }
+            } else {
+                if (!password) {
+                    showError('loginPasswordError', 'Enter password');
+                    isValid = false;
+                } else {
+                    hideError('loginPasswordError');
+                }
+            }
+            
+            return isValid;
+        }
+
+        // Helper functions
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.add('show');
+        }
+
+        function hideError(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.remove('show');
+        }
+
+        // Update button states
+        function updateSubmitButtonState() {
+            const username = document.getElementById('signupUsername')?.value.trim() || '';
+            const email = document.getElementById('signupEmail')?.value.trim() || '';
+            const password = document.getElementById('signupPassword')?.value || '';
+            const pin = getPINValue();
+            
+            let isValid = true;
+            
+            if (!username || !email) isValid = false;
+            
+            if (selectedAuthMethod === 'pin') {
+                if (pin.length !== 6 || !/^\d+$/.test(pin)) isValid = false;
+            } else {
+                if (!password || password.length < 5) isValid = false;
+            }
+            
+            document.getElementById('signupSubmit').disabled = !isValid;
+        }
+
+        function updateLoginSubmitButtonState() {
+            const identifier = document.getElementById('loginIdentifier')?.value.trim() || '';
+            const password = document.getElementById('loginPassword')?.value || '';
+            const pin = getLoginPINValue();
+            
+            let isValid = true;
+            
+            if (!identifier) isValid = false;
+            
+            if (selectedLoginAuthMethod === 'pin') {
+                if (pin.length !== 6 || !/^\d+$/.test(pin)) isValid = false;
+            } else {
+                if (!password) isValid = false;
+            }
+            
+            document.getElementById('loginSubmit').disabled = !isValid;
+        }
+
+        // Form submission - Signup
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateSignupForm()) return;
+            
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = selectedAuthMethod === 'password' 
+                ? document.getElementById('signupPassword').value 
+                : getPINValue();
+            
+            loading.classList.add('active');
+            
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                await updateProfile(user, {
+                    displayName: username
+                });
+                
+                const userData = {
+                    uid: user.uid,
+                    username: username,
+                    email: email,
+                    role: selectedRole,
+                    authMethod: selectedAuthMethod,
+                    createdAt: serverTimestamp(),
+                    points: 0,
+                    predictions: 0,
+                    accuracy: 0,
+                    followers: 0
+                };
+                
+                const collectionName = selectedRole === 'user' ? 'users' : 'predictors';
+                await setDoc(doc(db, collectionName, user.uid), userData);
+                
+                if (selectedRole === 'user') {
+                    window.location.href = 'user/dashboard.html';
+                } else {
+                    window.location.href = 'predictor/dashboard.html';
+                }
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                
+                let errorMessage = 'Failed. Try again.';
+                
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'Email already registered. Login instead.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Weak password.';
+                        break;
+                }
+                
+                alert(errorMessage);
+                loading.classList.remove('active');
+            }
+        });
+
+        // Form submission - Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateLoginForm()) return;
+            
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = selectedLoginAuthMethod === 'password'
+                ? document.getElementById('loginPassword').value
+                : getLoginPINValue();
+            
+            const email = identifier.includes('@') ? identifier : `${identifier}@orafut.com`;
+            
+            loading.classList.add('active');
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeOverlay();
+                loading.classList.remove('active');
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                let errorMessage = 'Login failed. Try again.';
+                
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'Account not found.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Wrong credentials.';
+                        break;
+                }
+                
+                alert(errorMessage);
+                loading.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        setupPINInputs();
+        selectAuthMethod('pin');
+        selectLoginAuthMethod('pin');
+
+        // Add input listeners
+        document.getElementById('signupUsername').addEventListener('input', updateSubmitButtonState);
+        document.getElementById('signupEmail').addEventListener('input', updateSubmitButtonState);
+        document.getElementById('signupPassword').addEventListener('input', updateSubmitButtonState);
+        document.getElementById('loginIdentifier').addEventListener('input', updateLoginSubmitButtonState);
+        document.getElementById('loginPassword').addEventListener('input', updateLoginSubmitButtonState);
+    </script>
+</body>
+</html>

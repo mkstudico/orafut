@@ -263,18 +263,78 @@
         }
 
         /* =========================================
-           6. LIVE MATCH VOTES CARDS
+           6. TOP MATCHES CAROUSEL
            ========================================= */
-        .match-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .match-card {
+        .top-matches-carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
             background: var(--or-white);
             border: 1px solid var(--or-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
             padding: 16px;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+        }
+
+        .carousel-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--or-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-indicator.active {
+            background: var(--or-blue);
+            transform: scale(1.2);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--or-text);
+            font-size: 18px;
+            box-shadow: var(--shadow-md);
+            z-index: 2;
+        }
+
+        .carousel-nav.prev {
+            left: 12px;
+        }
+
+        .carousel-nav.next {
+            right: 12px;
+        }
+
+        /* Match card inside carousel */
+        .match-card {
+            background: var(--or-white);
             cursor: pointer;
             transition: var(--transition);
         }
@@ -313,6 +373,11 @@
             color: #6b7280;
         }
 
+        .match-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
         .teams-container {
             display: flex;
             align-items: center;
@@ -329,8 +394,8 @@
         }
 
         .team-logo {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: var(--or-light-bg);
             display: flex;
@@ -346,8 +411,8 @@
         }
 
         .team-name {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             text-align: center;
         }
 
@@ -355,161 +420,314 @@
             font-family: 'Roboto Condensed', sans-serif;
             font-weight: 700;
             color: var(--or-text-muted);
-            padding: 0 8px;
+            padding: 0 12px;
+            font-size: 18px;
         }
 
-        .vote-percentages {
-            display: flex;
-            gap: 4px;
+        .match-info {
+            text-align: center;
             margin-top: 16px;
-        }
-
-        .vote-bar {
-            flex: 1;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            background: var(--or-light-bg);
-        }
-
-        .vote-fill {
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .vote-fill.team-a {
-            background: var(--or-blue);
-        }
-
-        .vote-fill.team-b {
-            background: #ef4444;
-        }
-
-        .vote-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
             color: var(--or-text-muted);
-            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .match-time {
+            font-weight: 600;
+            color: var(--or-text);
         }
 
         /* =========================================
-           7. COMMUNITY POSTS
+           7. AD SPACE
            ========================================= */
-        .post-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .ad-space {
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none; /* Hidden by default */
         }
 
-        .post-card {
+        .ad-space.visible {
+            display: block;
+        }
+
+        .ad-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        /* =========================================
+           8. SEARCH BAR
+           ========================================= */
+        .search-container {
+            margin: 16px 0;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
             background: var(--or-white);
             border: 1px solid var(--or-border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--or-text);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--or-text-muted);
+            font-size: 18px;
+        }
+
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+
+        .search-results.visible {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--or-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: var(--or-light-bg);
+        }
+
+        .result-teams {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .result-league {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* =========================================
+           9. TODAY & TOMORROW MATCHES (HORIZONTAL)
+           ========================================= */
+        .matches-horizontal {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 8px 0 16px 0;
+            margin: 0 -16px;
+            padding-left: 16px;
+        }
+
+        .matches-horizontal::-webkit-scrollbar {
+            display: none;
+        }
+
+        .matches-grid {
+            display: inline-flex;
+            gap: 12px;
+        }
+
+        .small-match-card {
+            display: inline-block;
+            min-width: 160px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .small-match-card:active {
+            background: var(--or-light-bg);
+            transform: translateY(1px);
+        }
+
+        .small-match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .small-match-time {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            font-weight: 500;
+        }
+
+        .small-teams-container {
+            margin: 12px 0;
+        }
+
+        .small-team {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .small-team:last-child {
+            margin-bottom: 0;
+        }
+
+        .small-team-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--or-light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .small-team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .small-team-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .small-match-league {
+            font-size: 11px;
+            color: var(--or-text-muted);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* =========================================
+           10. ALL MATCHES SECTION (VERTICAL + FILTERS)
+           ========================================= */
+        .all-matches-section {
+            margin-top: 24px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            color: var(--or-text);
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--or-blue);
+        }
+
+        .all-matches-search {
+            margin-bottom: 16px;
+        }
+
+        .all-matches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .full-match-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
             padding: 16px;
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .post-card:active {
+        .full-match-card:active {
             background: var(--or-light-bg);
             transform: translateY(1px);
         }
 
-        .post-header {
+        .full-match-header {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 12px;
         }
 
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--or-light-bg);
+        .full-match-league {
+            font-size: 14px;
+            color: var(--or-text-muted);
+            font-weight: 500;
+        }
+
+        .full-match-date {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .full-teams-container {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            justify-content: space-between;
+            margin: 16px 0;
         }
 
-        .author-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .author-info {
+        .full-team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
             flex: 1;
         }
 
-        .author-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--or-text);
-        }
-
-        .author-role {
-            font-size: 12px;
-            color: var(--or-text-muted);
-        }
-
-        .post-content {
-            color: var(--or-text);
-            margin-bottom: 16px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        .post-content.preview {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .post-stats {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 14px;
-            color: var(--or-text-muted);
-        }
-
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* =========================================
-           8. SUGGESTIONS SECTION
-           ========================================= */
-        .suggestions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .suggestion-card {
-            background: var(--or-white);
-            border: 1px solid var(--or-border);
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .suggestion-card:active {
-            background: var(--or-light-bg);
-            transform: translateY(1px);
-        }
-
-        .suggestion-avatar {
-            width: 60px;
-            height: 60px;
+        .full-team-logo {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            margin: 0 auto 8px;
             background: var(--or-light-bg);
             display: flex;
             align-items: center;
@@ -517,42 +735,48 @@
             overflow: hidden;
         }
 
-        .suggestion-avatar img {
+        .full-team-logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .suggestion-name {
-            font-weight: 600;
+        .full-team-name {
             font-size: 14px;
-            margin-bottom: 4px;
+            font-weight: 600;
+            text-align: center;
         }
 
-        .suggestion-meta {
+        .full-vs {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            color: var(--or-text-muted);
+            padding: 0 16px;
+            font-size: 16px;
+        }
+
+        .full-match-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--or-border);
+        }
+
+        .match-venue {
             font-size: 12px;
             color: var(--or-text-muted);
         }
 
-        .follow-btn {
-            margin-top: 8px;
-            padding: 6px 12px;
-            background: var(--or-blue);
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .vote-count {
             font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .follow-btn:active {
-            background: var(--or-blue-dark);
+            color: var(--or-text-muted);
+            font-weight: 500;
         }
 
         /* =========================================
-           9. EMPTY STATES
+           11. EMPTY STATES
            ========================================= */
         .empty-state {
             text-align: center;
@@ -582,7 +806,7 @@
         }
 
         /* =========================================
-           10. BOTTOM NAVIGATION
+           12. BOTTOM NAVIGATION
            ========================================= */
         .bottom-nav {
             position: fixed;
@@ -626,7 +850,7 @@
         }
 
         /* =========================================
-           11. SKY-BLUE LOADING CIRCLE
+           13. SKY-BLUE LOADING CIRCLE
            ========================================= */
         .skyblue-loading {
             position: fixed;
@@ -660,21 +884,15 @@
         }
 
         /* =========================================
-           12. UTILITY CLASSES
+           14. UTILITY CLASSES
            ========================================= */
         .hidden {
             display: none !important;
         }
 
         /* =========================================
-           13. MOBILE OPTIMIZATIONS
+           15. MOBILE OPTIMIZATIONS
            ========================================= */
-        @media (max-width: 480px) {
-            .suggestions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         @media (min-width: 769px) {
             body::before {
                 content: "This page is optimized for mobile devices only.";
@@ -735,22 +953,107 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Section 1: Live Match Votes -->
-            <h2 class="section-title">Live Match Votes</h2>
-            <div class="match-cards" id="matchCards">
-                <!-- Dynamic match cards will be inserted here from Firebase -->
+            <!-- 1️⃣ TOP MATCHES SECTION -->
+            <div class="top-matches-section">
+                <h2 class="section-title">Top Matches</h2>
+                <div class="top-matches-carousel" id="topMatchesCarousel">
+                    <button class="carousel-nav prev" onclick="prevSlide()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-nav next" onclick="nextSlide()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-container" id="carouselContainer">
+                        <!-- Dynamic top match slides will be inserted here from Firebase -->
+                    </div>
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        <!-- Dynamic indicators will be inserted here -->
+                    </div>
+                </div>
             </div>
 
-            <!-- Section 2: Community Posts -->
-            <h2 class="section-title">Community Posts</h2>
-            <div class="post-cards" id="postCards">
-                <!-- Dynamic post cards will be inserted here from Firebase -->
+            <!-- 2️⃣ AD SPACE SECTION -->
+            <div class="ad-space" id="adSpace">
+                <!-- Dynamic ad image will be inserted here from Firebase -->
             </div>
 
-            <!-- Section 3: Suggestions -->
-            <h2 class="section-title" id="suggestionsTitle">Suggestions</h2>
-            <div class="suggestions-grid" id="suggestionsGrid">
-                <!-- Dynamic suggestions will be inserted here from Firebase -->
+            <!-- 3️⃣ SEARCH BAR SECTION -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           class="search-input" 
+                           id="globalSearchInput"
+                           placeholder="Search matches, teams, leagues...">
+                    <div class="search-results" id="searchResults">
+                        <!-- Dynamic search results will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4️⃣ TODAY MATCHES SECTION -->
+            <div class="today-matches-section">
+                <h2 class="section-title">TODAY</h2>
+                <div class="matches-horizontal">
+                    <div class="matches-grid" id="todayMatchesGrid">
+                        <!-- Dynamic today matches will be inserted here from Firebase -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5️⃣ TOMORROW MATCHES SECTION -->
+            <div class="tomorrow-matches-section">
+                <h2 class="section-title">TOMORROW</h2>
+                <div class="matches-horizontal">
+                    <div class="matches-grid" id="tomorrowMatchesGrid">
+                        <!-- Dynamic tomorrow matches will be inserted here from Firebase -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6️⃣ ALL MATCHES SECTION -->
+            <div class="all-matches-section">
+                <h2 class="section-title">ALL Matches</h2>
+                
+                <!-- Filters -->
+                <div class="filters-container">
+                    <select class="filter-select" id="leagueFilter">
+                        <option value="">All Leagues</option>
+                        <!-- Dynamic league options will be inserted here -->
+                    </select>
+                    
+                    <select class="filter-select" id="dateFilter">
+                        <option value="all">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="this_week">This Week</option>
+                        <option value="next_week">Next Week</option>
+                    </select>
+                    
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="live">Live</option>
+                        <option value="pending">Pending Results</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <!-- Search within ALL matches -->
+                <div class="all-matches-search">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               class="search-input" 
+                               id="allMatchesSearch"
+                               placeholder="Search within all matches...">
+                    </div>
+                </div>
+                
+                <!-- ALL Matches List -->
+                <div class="all-matches-list" id="allMatchesList">
+                    <!-- Dynamic all matches will be inserted here from Firebase -->
+                </div>
             </div>
         </div>
 
@@ -842,20 +1145,46 @@
             query, 
             where, 
             getDocs, 
-            limit,
-            orderBy,
             getDoc,
-            doc
+            doc,
+            orderBy,
+            limit
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
         const skyblueLoading = document.getElementById('skyblueLoading');
-        const matchCards = document.getElementById('matchCards');
-        const postCards = document.getElementById('postCards');
-        const suggestionsGrid = document.getElementById('suggestionsGrid');
-        const suggestionsTitle = document.getElementById('suggestionsTitle');
         const notificationBtn = document.getElementById('notificationBtn');
         const notificationBadge = document.getElementById('notificationBadge');
+        
+        // Top Matches
+        const topMatchesCarousel = document.getElementById('topMatchesCarousel');
+        const carouselContainer = document.getElementById('carouselContainer');
+        const carouselIndicators = document.getElementById('carouselIndicators');
+        
+        // Ad Space
+        const adSpace = document.getElementById('adSpace');
+        
+        // Search
+        const globalSearchInput = document.getElementById('globalSearchInput');
+        const searchResults = document.getElementById('searchResults');
+        
+        // Today & Tomorrow Matches
+        const todayMatchesGrid = document.getElementById('todayMatchesGrid');
+        const tomorrowMatchesGrid = document.getElementById('tomorrowMatchesGrid');
+        
+        // All Matches
+        const leagueFilter = document.getElementById('leagueFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const allMatchesSearch = document.getElementById('allMatchesSearch');
+        const allMatchesList = document.getElementById('allMatchesList');
+        
+        // Global variables
+        let allMatches = [];
+        let filteredMatches = [];
+        let currentCarouselSlide = 0;
+        let carouselSlides = [];
+        let carouselInterval;
 
         // Check authentication and redirect
         onAuthStateChanged(auth, async (user) => {
@@ -899,14 +1228,26 @@
             skyblueLoading.classList.add('active');
 
             try {
-                // Load matches (limit to 2 as specified)
-                await loadMatches();
+                // Load all matches first
+                await loadAllMatches();
                 
-                // Load community posts
-                await loadPosts();
+                // Load top matches (manually selected by admin)
+                await loadTopMatches();
                 
-                // Load suggestions
-                await loadSuggestions(userId);
+                // Load ad space
+                await loadAdSpace();
+                
+                // Load today's matches
+                await loadTodayMatches();
+                
+                // Load tomorrow's matches
+                await loadTomorrowMatches();
+                
+                // Initialize search functionality
+                initializeSearch();
+                
+                // Initialize filter functionality
+                initializeFilters();
 
             } catch (error) {
                 console.error('Dashboard load error:', error);
@@ -916,326 +1257,806 @@
             }
         }
 
-        async function loadMatches() {
+        async function loadAllMatches() {
             try {
-                // Query matches from Firebase
+                // Query all matches from Firebase
                 const matchesQuery = query(
                     collection(db, 'matches'),
-                    where('status', 'in', ['live', 'upcoming']),
-                    orderBy('timestamp', 'desc'),
-                    limit(2)
+                    orderBy('startTime', 'asc')
                 );
 
                 const matchesSnapshot = await getDocs(matchesQuery);
                 
                 if (matchesSnapshot.empty) {
-                    // Show empty state
-                    matchCards.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-futbol"></i>
+                    allMatches = [];
+                    showEmptyStateForAllMatches();
+                    return;
+                }
+
+                allMatches = [];
+                const leagues = new Set();
+                
+                matchesSnapshot.forEach((docSnapshot) => {
+                    const match = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    // Add to all matches
+                    allMatches.push(match);
+                    
+                    // Add league to set for filter options
+                    if (match.league) {
+                        leagues.add(match.league);
+                    }
+                    
+                    // Convert timestamp if needed
+                    if (match.startTime && typeof match.startTime.toDate === 'function') {
+                        match.startTime = match.startTime.toDate();
+                    }
+                    
+                    // Determine match status based on current time
+                    match.status = determineMatchStatus(match);
+                });
+
+                // Populate league filter options
+                leagues.forEach(league => {
+                    const option = document.createElement('option');
+                    option.value = league;
+                    option.textContent = league;
+                    leagueFilter.appendChild(option);
+                });
+
+                // Initially show all matches
+                filteredMatches = [...allMatches];
+                renderAllMatches();
+
+            } catch (error) {
+                console.error('All matches load error:', error);
+                showEmptyStateForAllMatches();
+                showNotification('error', 'Unable to load matches. Please check your connection.');
+            }
+        }
+
+        function determineMatchStatus(match) {
+            const now = new Date();
+            
+            if (!match.startTime) return 'pending';
+            
+            const startTime = new Date(match.startTime);
+            const endTime = new Date(startTime.getTime() + 90 * 60 * 1000); // +90 minutes
+            
+            // Check if match has already started
+            if (match.result) {
+                return 'completed';
+            }
+            
+            // If match started more than 12 hours ago and no result, hide it
+            const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+            if (startTime < twelveHoursAgo && !match.result) {
+                return 'hidden'; // This match should not be shown
+            }
+            
+            if (now < startTime) {
+                return 'upcoming';
+            } else if (now >= startTime && now <= endTime) {
+                return 'live';
+            } else {
+                return 'pending'; // Match ended but no result yet
+            }
+        }
+
+        async function loadTopMatches() {
+            try {
+                // Query top matches (manually selected by admin)
+                const topMatchesQuery = query(
+                    collection(db, 'matches'),
+                    where('isTopMatch', '==', true),
+                    orderBy('startTime', 'asc'),
+                    limit(5) // Limit to 5 top matches
+                );
+
+                const topMatchesSnapshot = await getDocs(topMatchesQuery);
+                
+                if (topMatchesSnapshot.empty) {
+                    // Show empty state for top matches
+                    carouselContainer.innerHTML = `
+                        <div class="carousel-slide">
+                            <div class="empty-state" style="border: none; box-shadow: none;">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h3 class="empty-state-title">No Top Matches</h3>
+                                <p class="empty-state-text">
+                                    Admins haven't selected any top matches yet.
+                                </p>
                             </div>
-                            <h3 class="empty-state-title">No Matches Available</h3>
-                            <p class="empty-state-text">
-                                There are currently no matches to vote on. Check back soon!
-                            </p>
                         </div>
+                    `;
+                    carouselIndicators.innerHTML = `
+                        <div class="carousel-indicator active"></div>
                     `;
                     return;
                 }
 
                 // Clear existing content
-                matchCards.innerHTML = '';
-
-                // Create match cards
-                matchesSnapshot.forEach((docSnapshot) => {
-                    const match = docSnapshot.data();
-                    const matchCard = createMatchCard(match);
-                    matchCards.appendChild(matchCard);
+                carouselContainer.innerHTML = '';
+                carouselIndicators.innerHTML = '';
+                carouselSlides = [];
+                
+                // Create slides
+                let slideIndex = 0;
+                topMatchesSnapshot.forEach((docSnapshot) => {
+                    const match = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    // Convert timestamp if needed
+                    if (match.startTime && typeof match.startTime.toDate === 'function') {
+                        match.startTime = match.startTime.toDate();
+                    }
+                    
+                    // Determine status
+                    match.status = determineMatchStatus(match);
+                    
+                    // Skip hidden matches
+                    if (match.status === 'hidden') return;
+                    
+                    const slide = createTopMatchSlide(match, slideIndex);
+                    carouselContainer.appendChild(slide);
+                    carouselSlides.push(slide);
+                    
+                    // Create indicator
+                    const indicator = document.createElement('div');
+                    indicator.className = `carousel-indicator ${slideIndex === 0 ? 'active' : ''}`;
+                    indicator.onclick = () => goToSlide(slideIndex);
+                    carouselIndicators.appendChild(indicator);
+                    
+                    slideIndex++;
                 });
 
-            } catch (error) {
-                console.error('Matches load error:', error);
-                matchCards.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="fas fa-exclamation-circle"></i>
+                // Start auto-rotation if we have slides
+                if (carouselSlides.length > 1) {
+                    startCarouselRotation();
+                }
+
+                // If no slides were created (all hidden)
+                if (carouselSlides.length === 0) {
+                    carouselContainer.innerHTML = `
+                        <div class="carousel-slide">
+                            <div class="empty-state" style="border: none; box-shadow: none;">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h3 class="empty-state-title">No Top Matches Available</h3>
+                                <p class="empty-state-text">
+                                    Check back later for featured matches.
+                                </p>
+                            </div>
                         </div>
-                        <h3 class="empty-state-title">Unable to Load Matches</h3>
-                        <p class="empty-state-text">
-                            Please check your connection and try again.
-                        </p>
+                    `;
+                    carouselIndicators.innerHTML = `
+                        <div class="carousel-indicator active"></div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Top matches load error:', error);
+                carouselContainer.innerHTML = `
+                    <div class="carousel-slide">
+                        <div class="empty-state" style="border: none; box-shadow: none;">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <h3 class="empty-state-title">Unable to Load Top Matches</h3>
+                            <p class="empty-state-text">
+                                Please check your connection and try again.
+                            </p>
+                        </div>
                     </div>
+                `;
+                carouselIndicators.innerHTML = `
+                    <div class="carousel-indicator active"></div>
                 `;
             }
         }
 
-        function createMatchCard(match) {
-            const card = document.createElement('div');
-            card.className = 'match-card';
-            card.onclick = () => {
-                window.location.href = `viewvotes.html?matchId=${match.matchId || ''}`;
+        function createTopMatchSlide(match, index) {
+            const slide = document.createElement('div');
+            slide.className = 'carousel-slide';
+            slide.dataset.index = index;
+            slide.onclick = () => {
+                window.location.href = `viewvotes.html?matchId=${match.id}`;
             };
 
-            // Calculate percentages
-            const totalVotes = (match.teamAVotes || 0) + (match.teamBVotes || 0);
-            const teamAPercent = totalVotes > 0 ? Math.round((match.teamAVotes || 0) / totalVotes * 100) : 0;
-            const teamBPercent = totalVotes > 0 ? Math.round((match.teamBVotes || 0) / totalVotes * 100) : 0;
+            // Format date and time
+            const matchDate = match.startTime ? 
+                match.startTime.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                }) : 'Date TBD';
+            
+            const matchTime = match.startTime ? 
+                match.startTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : 'Time TBD';
 
-            // Status class
+            // Status text and class
             let statusClass = 'upcoming';
             let statusText = 'Upcoming';
             if (match.status === 'live') {
                 statusClass = 'live';
                 statusText = 'Live';
-            } else if (match.status === 'closed') {
+            } else if (match.status === 'pending') {
+                statusClass = 'pending';
+                statusText = 'Pending';
+            } else if (match.status === 'completed') {
                 statusClass = 'closed';
-                statusText = 'Closed';
+                statusText = 'Completed';
             }
 
-            card.innerHTML = `
-                <div class="match-header">
-                    <h3>${match.matchName || 'Match'}</h3>
-                    <span class="match-status ${statusClass}">${statusText}</span>
-                </div>
-                
-                <div class="teams-container">
-                    <div class="team">
-                        <div class="team-logo">
-                            ${match.teamALogo ? 
-                                `<img src="${match.teamALogo}" alt="${match.teamAName || 'Team A'}">` :
-                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
-                            }
-                        </div>
-                        <div class="team-name">${match.teamAName || 'Team A'}</div>
+            slide.innerHTML = `
+                <div class="match-card">
+                    <div class="match-header">
+                        <h3 style="font-size: 18px;">${match.matchName || 'Featured Match'}</h3>
+                        <span class="match-status ${statusClass}">${statusText}</span>
                     </div>
                     
-                    <div class="vs">VS</div>
-                    
-                    <div class="team">
-                        <div class="team-logo">
-                            ${match.teamBLogo ? 
-                                `<img src="${match.teamBLogo}" alt="${match.teamBName || 'Team B'}">` :
-                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
-                            }
+                    <div class="teams-container">
+                        <div class="team">
+                            <div class="team-logo">
+                                ${match.teamALogo ? 
+                                    `<img src="${match.teamALogo}" alt="${match.teamAName || 'Team A'}">` :
+                                    `<i class="fas fa-shield-alt" style="font-size: 32px; color: var(--or-text-muted);"></i>`
+                                }
+                            </div>
+                            <div class="team-name">${match.teamAName || 'Team A'}</div>
                         </div>
-                        <div class="team-name">${match.teamBName || 'Team B'}</div>
+                        
+                        <div class="vs">VS</div>
+                        
+                        <div class="team">
+                            <div class="team-logo">
+                                ${match.teamBLogo ? 
+                                    `<img src="${match.teamBLogo}" alt="${match.teamBName || 'Team B'}">` :
+                                    `<i class="fas fa-shield-alt" style="font-size: 32px; color: var(--or-text-muted);"></i>`
+                                }
+                            </div>
+                            <div class="team-name">${match.teamBName || 'Team B'}</div>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="vote-percentages">
-                    <div class="vote-bar">
-                        <div class="vote-fill team-a" style="width: ${teamAPercent}%"></div>
+                    
+                    <div class="match-info">
+                        <div class="match-time">${matchTime} • ${matchDate}</div>
+                        ${match.league ? `<div style="margin-top: 4px;">${match.league}</div>` : ''}
                     </div>
-                    <div class="vote-bar">
-                        <div class="vote-fill team-b" style="width: ${teamBPercent}%"></div>
-                    </div>
-                </div>
-                
-                <div class="vote-labels">
-                    <span>${teamAPercent}%</span>
-                    <span>${teamBPercent}%</span>
                 </div>
             `;
 
-            return card;
+            return slide;
         }
 
-        async function loadPosts() {
+        async function loadAdSpace() {
             try {
-                // Query posts from Firebase (combined from users and predictors)
-                const usersPostsQuery = query(
-                    collection(db, 'posts'),
-                    where('type', 'in', ['user', 'predictor']),
-                    orderBy('timestamp', 'desc'),
-                    limit(10)
+                // Query active ad from Firebase
+                const adsQuery = query(
+                    collection(db, 'ads'),
+                    where('isActive', '==', true),
+                    where('placement', '==', 'dashboard_top'),
+                    orderBy('createdAt', 'desc'),
+                    limit(1)
                 );
 
-                const postsSnapshot = await getDocs(usersPostsQuery);
+                const adsSnapshot = await getDocs(adsQuery);
                 
-                if (postsSnapshot.empty) {
-                    // Show empty state
-                    postCards.innerHTML = `
-                        <div class="empty-state">
+                if (adsSnapshot.empty) {
+                    // Hide ad space if no active ad
+                    adSpace.classList.remove('visible');
+                    return;
+                }
+
+                const ad = adsSnapshot.docs[0].data();
+                
+                // Show ad space
+                adSpace.classList.add('visible');
+                adSpace.innerHTML = `
+                    <img src="${ad.imageUrl}" alt="${ad.title || 'Advertisement'}" class="ad-image">
+                `;
+
+            } catch (error) {
+                console.error('Ad load error:', error);
+                // Hide ad space on error
+                adSpace.classList.remove('visible');
+            }
+        }
+
+        async function loadTodayMatches() {
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                
+                // Filter matches for today
+                const todayMatches = allMatches.filter(match => {
+                    if (!match.startTime) return false;
+                    if (match.status === 'hidden') return false;
+                    
+                    const matchDate = new Date(match.startTime);
+                    matchDate.setHours(0, 0, 0, 0);
+                    
+                    return matchDate.getTime() === today.getTime();
+                });
+                
+                // Sort by time
+                todayMatches.sort((a, b) => {
+                    return new Date(a.startTime) - new Date(b.startTime);
+                });
+                
+                // Clear existing content
+                todayMatchesGrid.innerHTML = '';
+                
+                if (todayMatches.length === 0) {
+                    todayMatchesGrid.innerHTML = `
+                        <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none;">
                             <div class="empty-state-icon">
-                                <i class="fas fa-newspaper"></i>
+                                <i class="fas fa-calendar-day"></i>
                             </div>
-                            <h3 class="empty-state-title">No Posts Yet</h3>
+                            <h3 class="empty-state-title">No Matches Today</h3>
                             <p class="empty-state-text">
-                                Be the first to post in the community!
+                                No matches scheduled for today.
                             </p>
                         </div>
                     `;
                     return;
                 }
-
-                // Clear existing content
-                postCards.innerHTML = '';
-
-                // Create post cards
-                postsSnapshot.forEach((docSnapshot) => {
-                    const post = docSnapshot.data();
-                    const postCard = createPostCard(post);
-                    postCards.appendChild(postCard);
+                
+                // Create match cards
+                todayMatches.forEach(match => {
+                    const card = createSmallMatchCard(match);
+                    todayMatchesGrid.appendChild(card);
                 });
 
             } catch (error) {
-                console.error('Posts load error:', error);
-                postCards.innerHTML = `
-                    <div class="empty-state">
+                console.error('Today matches error:', error);
+                todayMatchesGrid.innerHTML = `
+                    <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none;">
                         <div class="empty-state-icon">
                             <i class="fas fa-exclamation-circle"></i>
                         </div>
-                        <h3 class="empty-state-title">Unable to Load Posts</h3>
+                        <h3 class="empty-state-title">Unable to Load</h3>
                         <p class="empty-state-text">
-                            Please check your connection and try again.
+                            Failed to load today's matches.
                         </p>
                     </div>
                 `;
             }
         }
 
-        function createPostCard(post) {
-            const card = document.createElement('div');
-            card.className = 'post-card';
-            card.onclick = () => {
-                window.location.href = `viewpost.html?postId=${post.postId || ''}`;
-            };
-
-            // Determine role text
-            let roleText = 'User';
-            if (post.authorRole === 'predictor') {
-                roleText = 'Predictor';
-            }
-
-            card.innerHTML = `
-                <div class="post-header">
-                    <div class="author-avatar">
-                        ${post.authorPhoto ? 
-                            `<img src="${post.authorPhoto}" alt="${post.authorName || 'Author'}">` :
-                            `<i class="fas fa-user" style="font-size: 20px; color: var(--or-text-muted);"></i>`
-                        }
-                    </div>
-                    <div class="author-info">
-                        <div class="author-name">${post.authorName || 'Unknown User'}</div>
-                        <div class="author-role">${roleText}</div>
-                    </div>
-                </div>
-                
-                <div class="post-content preview">
-                    ${post.content || 'No content available.'}
-                </div>
-                
-                <div class="post-stats">
-                    <div class="stat">
-                        <i class="fas fa-heart" style="color: #ef4444;"></i>
-                        <span>${post.likes || 0}</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-comment" style="color: var(--or-blue);"></i>
-                        <span>${post.comments || 0}</span>
-                    </div>
-                </div>
-            `;
-
-            return card;
-        }
-
-        async function loadSuggestions(userId) {
+        async function loadTomorrowMatches() {
             try {
-                // Query suggested predictors (excluding already followed)
-                const predictorsQuery = query(
-                    collection(db, 'predictors'),
-                    limit(4)
-                );
-
-                const predictorsSnapshot = await getDocs(predictorsQuery);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const dayAfterTomorrow = new Date(tomorrow);
+                dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
                 
-                if (predictorsSnapshot.empty) {
-                    // Hide suggestions section if no data
-                    suggestionsTitle.classList.add('hidden');
-                    suggestionsGrid.classList.add('hidden');
+                // Filter matches for tomorrow
+                const tomorrowMatches = allMatches.filter(match => {
+                    if (!match.startTime) return false;
+                    if (match.status === 'hidden') return false;
+                    
+                    const matchDate = new Date(match.startTime);
+                    matchDate.setHours(0, 0, 0, 0);
+                    
+                    return matchDate.getTime() === tomorrow.getTime();
+                });
+                
+                // Sort by time
+                tomorrowMatches.sort((a, b) => {
+                    return new Date(a.startTime) - new Date(b.startTime);
+                });
+                
+                // Clear existing content
+                tomorrowMatchesGrid.innerHTML = '';
+                
+                if (tomorrowMatches.length === 0) {
+                    tomorrowMatchesGrid.innerHTML = `
+                        <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none;">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Matches Tomorrow</h3>
+                            <p class="empty-state-text">
+                                No matches scheduled for tomorrow.
+                            </p>
+                        </div>
+                    `;
                     return;
                 }
-
-                // Clear existing content
-                suggestionsGrid.innerHTML = '';
-
-                // Create suggestion cards
-                predictorsSnapshot.forEach((docSnapshot) => {
-                    const predictor = docSnapshot.data();
-                    if (predictor.uid === userId) return; // Don't suggest self
-                    
-                    const suggestionCard = createSuggestionCard(predictor);
-                    suggestionsGrid.appendChild(suggestionCard);
+                
+                // Create match cards
+                tomorrowMatches.forEach(match => {
+                    const card = createSmallMatchCard(match);
+                    tomorrowMatchesGrid.appendChild(card);
                 });
 
-                // If no cards were added (only self), hide section
-                if (suggestionsGrid.children.length === 0) {
-                    suggestionsTitle.classList.add('hidden');
-                    suggestionsGrid.classList.add('hidden');
-                }
-
             } catch (error) {
-                console.error('Suggestions load error:', error);
-                suggestionsTitle.classList.add('hidden');
-                suggestionsGrid.classList.add('hidden');
+                console.error('Tomorrow matches error:', error);
+                tomorrowMatchesGrid.innerHTML = `
+                    <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none;">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load</h3>
+                        <p class="empty-state-text">
+                            Failed to load tomorrow's matches.
+                        </p>
+                    </div>
+                `;
             }
         }
 
-        function createSuggestionCard(predictor) {
+        function createSmallMatchCard(match) {
             const card = document.createElement('div');
-            card.className = 'suggestion-card';
+            card.className = 'small-match-card';
             card.onclick = () => {
-                window.location.href = `predictor/profile.html?id=${predictor.uid}`;
+                window.location.href = `viewvotes.html?matchId=${match.id}`;
             };
 
+            // Format time
+            const matchTime = match.startTime ? 
+                match.startTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : 'TBD';
+
             card.innerHTML = `
-                <div class="suggestion-avatar">
-                    ${predictor.profilePic ? 
-                        `<img src="${predictor.profilePic}" alt="${predictor.username || 'Predictor'}">` :
-                        `<i class="fas fa-chart-line" style="font-size: 28px; color: var(--or-gold);"></i>`
+                <div class="small-match-header">
+                    <span class="small-match-time">${matchTime}</span>
+                    ${match.status === 'live' ? 
+                        '<span style="color: var(--error); font-size: 10px; font-weight: bold;">LIVE</span>' : 
+                        ''
                     }
                 </div>
-                <div class="suggestion-name">${predictor.username || 'Predictor'}</div>
-                <div class="suggestion-meta">
-                    ${predictor.accuracy ? `${predictor.accuracy}% accuracy` : 'New predictor'}
+                
+                <div class="small-teams-container">
+                    <div class="small-team">
+                        <div class="small-team-logo">
+                            ${match.teamALogo ? 
+                                `<img src="${match.teamALogo}" alt="${match.teamAName || 'Team A'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 16px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="small-team-name">${match.teamAName || 'Team A'}</div>
+                    </div>
+                    
+                    <div class="small-team">
+                        <div class="small-team-logo">
+                            ${match.teamBLogo ? 
+                                `<img src="${match.teamBLogo}" alt="${match.teamBName || 'Team B'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 16px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="small-team-name">${match.teamBName || 'Team B'}</div>
+                    </div>
                 </div>
-                <button class="follow-btn" onclick="event.stopPropagation(); followPredictor('${predictor.uid}')">
-                    Follow
-                </button>
+                
+                <div class="small-match-league">
+                    ${match.league || 'Match'}
+                </div>
             `;
 
             return card;
+        }
+
+        function showEmptyStateForAllMatches() {
+            allMatchesList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h3 class="empty-state-title">No Matches Available</h3>
+                    <p class="empty-state-text">
+                        There are currently no matches scheduled.
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderAllMatches() {
+            // Clear existing content
+            allMatchesList.innerHTML = '';
+            
+            if (filteredMatches.length === 0) {
+                showEmptyStateForAllMatches();
+                return;
+            }
+            
+            // Create match cards
+            filteredMatches.forEach(match => {
+                // Skip hidden matches
+                if (match.status === 'hidden') return;
+                
+                const card = createFullMatchCard(match);
+                allMatchesList.appendChild(card);
+            });
+        }
+
+        function createFullMatchCard(match) {
+            const card = document.createElement('div');
+            card.className = 'full-match-card';
+            card.onclick = () => {
+                window.location.href = `viewvotes.html?matchId=${match.id}`;
+            };
+
+            // Format date and time
+            const matchDate = match.startTime ? 
+                match.startTime.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                }) : 'Date TBD';
+            
+            const matchTime = match.startTime ? 
+                match.startTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : 'Time TBD';
+
+            // Status
+            let statusText = '';
+            if (match.status === 'live') {
+                statusText = '<span style="color: var(--error); font-weight: bold;">• LIVE</span>';
+            } else if (match.status === 'pending') {
+                statusText = '<span style="color: var(--warning);">Pending Result</span>';
+            }
+
+            card.innerHTML = `
+                <div class="full-match-header">
+                    <div class="full-match-league">
+                        ${match.league || 'Football Match'} ${statusText}
+                    </div>
+                    <div class="full-match-date">
+                        ${matchDate} • ${matchTime}
+                    </div>
+                </div>
+                
+                <div class="full-teams-container">
+                    <div class="full-team">
+                        <div class="full-team-logo">
+                            ${match.teamALogo ? 
+                                `<img src="${match.teamALogo}" alt="${match.teamAName || 'Team A'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="full-team-name">${match.teamAName || 'Team A'}</div>
+                    </div>
+                    
+                    <div class="full-vs">VS</div>
+                    
+                    <div class="full-team">
+                        <div class="full-team-logo">
+                            ${match.teamBLogo ? 
+                                `<img src="${match.teamBLogo}" alt="${match.teamBName || 'Team B'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="full-team-name">${match.teamBName || 'Team B'}</div>
+                    </div>
+                </div>
+                
+                <div class="full-match-footer">
+                    <div class="match-venue">
+                        ${match.venue || 'Venue TBD'}
+                    </div>
+                    <div class="vote-count">
+                        ${(match.teamAVotes || 0) + (match.teamBVotes || 0)} votes
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function initializeSearch() {
+            globalSearchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                
+                if (searchTerm.length === 0) {
+                    searchResults.classList.remove('visible');
+                    return;
+                }
+                
+                // Filter matches based on search term
+                const results = allMatches.filter(match => {
+                    if (match.status === 'hidden') return false;
+                    
+                    return (
+                        (match.matchName && match.matchName.toLowerCase().includes(searchTerm)) ||
+                        (match.teamAName && match.teamAName.toLowerCase().includes(searchTerm)) ||
+                        (match.teamBName && match.teamBName.toLowerCase().includes(searchTerm)) ||
+                        (match.league && match.league.toLowerCase().includes(searchTerm))
+                    );
+                }).slice(0, 10); // Limit to 10 results
+                
+                displaySearchResults(results);
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!globalSearchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.remove('visible');
+                }
+            });
+        }
+
+        function displaySearchResults(results) {
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="search-result-item" style="text-align: center; color: var(--or-text-muted);">
+                        No matches found
+                    </div>
+                `;
+            } else {
+                results.forEach(match => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.onclick = () => {
+                        window.location.href = `viewvotes.html?matchId=${match.id}`;
+                        searchResults.classList.remove('visible');
+                        globalSearchInput.value = '';
+                    };
+                    
+                    resultItem.innerHTML = `
+                        <div class="result-teams">
+                            ${match.teamAName || 'Team A'} vs ${match.teamBName || 'Team B'}
+                        </div>
+                        <div class="result-league">
+                            ${match.league || 'Match'} • 
+                            ${match.startTime ? 
+                                match.startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 
+                                'Date TBD'
+                            }
+                        </div>
+                    `;
+                    
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            searchResults.classList.add('visible');
+        }
+
+        function initializeFilters() {
+            // Filter change handlers
+            leagueFilter.addEventListener('change', filterMatches);
+            dateFilter.addEventListener('change', filterMatches);
+            statusFilter.addEventListener('change', filterMatches);
+            allMatchesSearch.addEventListener('input', filterMatches);
+        }
+
+        function filterMatches() {
+            const league = leagueFilter.value;
+            const date = dateFilter.value;
+            const status = statusFilter.value;
+            const searchTerm = allMatchesSearch.value.trim().toLowerCase();
+            
+            filteredMatches = allMatches.filter(match => {
+                // Skip hidden matches
+                if (match.status === 'hidden') return false;
+                
+                // League filter
+                if (league && match.league !== league) return false;
+                
+                // Status filter
+                if (status !== 'all' && match.status !== status) return false;
+                
+                // Date filter
+                if (date !== 'all') {
+                    const matchDate = match.startTime ? new Date(match.startTime) : null;
+                    if (!matchDate) return false;
+                    
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    matchDate.setHours(0, 0, 0, 0);
+                    
+                    if (date === 'today') {
+                        if (matchDate.getTime() !== today.getTime()) return false;
+                    } else if (date === 'tomorrow') {
+                        if (matchDate.getTime() !== tomorrow.getTime()) return false;
+                    } else if (date === 'this_week') {
+                        const weekStart = new Date(today);
+                        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                        const weekEnd = new Date(weekStart);
+                        weekEnd.setDate(weekEnd.getDate() + 7);
+                        
+                        if (matchDate < weekStart || matchDate >= weekEnd) return false;
+                    } else if (date === 'next_week') {
+                        const nextWeekStart = new Date(today);
+                        nextWeekStart.setDate(nextWeekStart.getDate() + (7 - nextWeekStart.getDay()));
+                        const nextWeekEnd = new Date(nextWeekStart);
+                        nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
+                        
+                        if (matchDate < nextWeekStart || matchDate >= nextWeekEnd) return false;
+                    }
+                }
+                
+                // Search filter
+                if (searchTerm && !(
+                    (match.matchName && match.matchName.toLowerCase().includes(searchTerm)) ||
+                    (match.teamAName && match.teamAName.toLowerCase().includes(searchTerm)) ||
+                    (match.teamBName && match.teamBName.toLowerCase().includes(searchTerm)) ||
+                    (match.league && match.league.toLowerCase().includes(searchTerm))
+                )) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            renderAllMatches();
+        }
+
+        // Carousel functions
+        function startCarouselRotation() {
+            clearInterval(carouselInterval);
+            carouselInterval = setInterval(() => {
+                nextSlide();
+            }, 5000); // Rotate every 5 seconds
+        }
+
+        window.nextSlide = function() {
+            if (carouselSlides.length === 0) return;
+            
+            currentCarouselSlide = (currentCarouselSlide + 1) % carouselSlides.length;
+            updateCarousel();
+        };
+
+        window.prevSlide = function() {
+            if (carouselSlides.length === 0) return;
+            
+            currentCarouselSlide = (currentCarouselSlide - 1 + carouselSlides.length) % carouselSlides.length;
+            updateCarousel();
+        };
+
+        window.goToSlide = function(index) {
+            if (index < 0 || index >= carouselSlides.length) return;
+            
+            currentCarouselSlide = index;
+            updateCarousel();
+        };
+
+        function updateCarousel() {
+            const translateX = -currentCarouselSlide * 100;
+            carouselContainer.style.transform = `translateX(${translateX}%)`;
+            
+            // Update indicators
+            const indicators = carouselIndicators.querySelectorAll('.carousel-indicator');
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentCarouselSlide);
+            });
+            
+            // Reset rotation timer
+            if (carouselSlides.length > 1) {
+                clearInterval(carouselInterval);
+                startCarouselRotation();
+            }
         }
 
         // Notification bell click handler
         notificationBtn.addEventListener('click', () => {
-            // This would open a notification panel
-            // For now, show a notification
             showNotification('info', 'Notifications feature coming soon!');
         });
-
-        // Global function to follow predictor
-        window.followPredictor = async function(predictorId) {
-            skyblueLoading.classList.add('active');
-            
-            try {
-                // Get current user
-                const user = auth.currentUser;
-                if (!user) return;
-
-                // In a real app, you would add to follows collection
-                // For now, show success message
-                showNotification('success', 'Now following this predictor!');
-                
-            } catch (error) {
-                console.error('Follow error:', error);
-                showNotification('error', 'Failed to follow. Please try again.');
-            } finally {
-                skyblueLoading.classList.remove('active');
-            }
-        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

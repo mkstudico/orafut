@@ -1,1 +1,1254 @@
-tst
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ORAFUT | User Dashboard</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           1. CORE VARIABLES - LIGHT THEME
+           ========================================= */
+        :root {
+            --or-light-bg: #f8f9fa;
+            --or-white: #ffffff;
+            --or-blue: #00a2ff;
+            --or-blue-dark: #007acc;
+            --or-blue-light: #e6f6ff;
+            --or-gold: #d4af37;
+            --or-gold-light: #fff8e1;
+            --or-text: #333333;
+            --or-text-muted: #666666;
+            --or-border: #e0e0e0;
+            --or-border-dark: #cccccc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+            --transition: all 0.25s ease;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #00a2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--or-light-bg);
+            color: var(--or-text);
+            line-height: 1.6;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. PREMIUM NOTIFICATION COMPONENT
+           ========================================= */
+        .notification-container {
+            position: fixed;
+            top: env(safe-area-inset-top, 20px);
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .notification {
+            position: relative;
+            background: var(--or-white);
+            border-radius: 100px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            max-width: 400px;
+            width: 90%;
+            transform-origin: center;
+            opacity: 0;
+            transform: scale(0.5) translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: all;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            border-radius: 14px;
+            max-width: 90%;
+        }
+
+        .notification-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--or-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-loading {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 162, 255, 0.1);
+            border-top-color: var(--or-blue);
+            border-radius: 50%;
+            animation: notification-spin 0.8s linear infinite;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease 0.3s;
+        }
+
+        .notification.show .notification-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .notification.error .notification-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .notification.info .notification-icon {
+            background: rgba(0, 162, 255, 0.1);
+            color: var(--info);
+        }
+
+        .notification.warning .notification-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--or-text);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--or-text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+            transition: color 0.2s;
+        }
+
+        .notification-close:hover {
+            color: var(--or-text);
+        }
+
+        @keyframes notification-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           3. MAIN CONTAINER STRUCTURE
+           ========================================= */
+        .dashboard-container {
+            min-height: 100vh;
+            padding-bottom: 70px; /* Space for bottom nav */
+            position: relative;
+        }
+
+        /* =========================================
+           4. TOP HEADER BAR
+           ========================================= */
+        .top-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .logo i { color: var(--or-blue); font-size: 20px; }
+        .logo span { color: var(--or-blue); }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--or-text-muted);
+            cursor: pointer;
+            padding: 8px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+            border: 2px solid var(--or-white);
+        }
+
+        /* =========================================
+           5. MAIN CONTENT SECTIONS
+           ========================================= */
+        .main-content {
+            padding: 16px;
+        }
+
+        .section-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 16px 0;
+            color: var(--or-text);
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* =========================================
+           6. LIVE MATCH VOTES CARDS
+           ========================================= */
+        .match-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .match-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .match-card:active {
+            background: var(--or-light-bg);
+            transform: translateY(1px);
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .match-status {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .match-status.live {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .match-status.upcoming {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .match-status.closed {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .teams-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--or-light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .vs {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            color: var(--or-text-muted);
+            padding: 0 8px;
+        }
+
+        .vote-percentages {
+            display: flex;
+            gap: 4px;
+            margin-top: 16px;
+        }
+
+        .vote-bar {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--or-light-bg);
+        }
+
+        .vote-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .vote-fill.team-a {
+            background: var(--or-blue);
+        }
+
+        .vote-fill.team-b {
+            background: #ef4444;
+        }
+
+        .vote-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-top: 4px;
+        }
+
+        /* =========================================
+           7. COMMUNITY POSTS
+           ========================================= */
+        .post-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .post-card:active {
+            background: var(--or-light-bg);
+            transform: translateY(1px);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--or-light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info {
+            flex: 1;
+        }
+
+        .author-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--or-text);
+        }
+
+        .author-role {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .post-content {
+            color: var(--or-text);
+            margin-bottom: 16px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .post-content.preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--or-text-muted);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* =========================================
+           8. SUGGESTIONS SECTION
+           ========================================= */
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .suggestion-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .suggestion-card:active {
+            background: var(--or-light-bg);
+            transform: translateY(1px);
+        }
+
+        .suggestion-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            background: var(--or-light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .suggestion-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .suggestion-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .suggestion-meta {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .follow-btn {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: var(--or-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .follow-btn:active {
+            background: var(--or-blue-dark);
+        }
+
+        /* =========================================
+           9. EMPTY STATES
+           ========================================= */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            color: var(--or-text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--or-text);
+        }
+
+        .empty-state-text {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           10. BOTTOM NAVIGATION
+           ========================================= */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--or-white);
+            border-top: 1px solid var(--or-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--or-text-muted);
+            transition: var(--transition);
+            padding: 4px 8px;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: var(--or-blue);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================
+           11. SKY-BLUE LOADING CIRCLE
+           ========================================= */
+        .skyblue-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .skyblue-loading.active {
+            display: flex;
+        }
+
+        .skyblue-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 162, 255, 0.1);
+            border-top: 4px solid var(--or-blue);
+            border-radius: 50%;
+            animation: skyblue-spin 1s linear infinite;
+        }
+
+        @keyframes skyblue-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           12. UTILITY CLASSES
+           ========================================= */
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================================
+           13. MOBILE OPTIMIZATIONS
+           ========================================= */
+        @media (max-width: 480px) {
+            .suggestions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 769px) {
+            body::before {
+                content: "This page is optimized for mobile devices only.";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--or-light-bg);
+                color: var(--or-text);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                font-size: 18px;
+                font-weight: 500;
+                z-index: 9999;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Notification Component -->
+    <div class="notification-container" id="notificationContainer">
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="notification-text" id="notificationText"></div>
+                <button class="notification-close" id="notificationCloseButton">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sky Blue Loading Circle -->
+    <div class="skyblue-loading" id="skyblueLoading">
+        <div class="skyblue-spinner"></div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Top Header -->
+        <div class="top-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                ORA<span>FUT</span>
+            </a>
+            
+            <button class="notification-btn" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge"></span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Section 1: Live Match Votes -->
+            <h2 class="section-title">Live Match Votes</h2>
+            <div class="match-cards" id="matchCards">
+                <!-- Dynamic match cards will be inserted here from Firebase -->
+            </div>
+
+            <!-- Section 2: Community Posts -->
+            <h2 class="section-title">Community Posts</h2>
+            <div class="post-cards" id="postCards">
+                <!-- Dynamic post cards will be inserted here from Firebase -->
+            </div>
+
+            <!-- Section 3: Suggestions -->
+            <h2 class="section-title" id="suggestionsTitle">Suggestions</h2>
+            <div class="suggestions-grid" id="suggestionsGrid">
+                <!-- Dynamic suggestions will be inserted here from Firebase -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="posts.html" class="nav-item">
+                <i class="fas fa-newspaper nav-icon"></i>
+                <span class="nav-label">Posts</span>
+            </a>
+            <a href="predictors.html" class="nav-item">
+                <i class="fas fa-users nav-icon"></i>
+                <span class="nav-label">Predictors</span>
+            </a>
+            <a href="messages.html" class="nav-item">
+                <i class="fas fa-comments nav-icon"></i>
+                <span class="nav-label">Messages</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Global notification functions
+        function showNotification(type, message) {
+            const notification = document.getElementById('notification');
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationText = document.getElementById('notificationText');
+            
+            // Set notification type
+            notification.className = `notification ${type}`;
+            
+            // Set icon based on type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                case 'info':
+                default:
+                    icon = '<i class="fas fa-info-circle"></i>';
+                    break;
+            }
+            
+            notificationIcon.innerHTML = icon;
+            notificationText.textContent = message;
+            
+            // Start animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 50);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Initialize notification close button
+        document.getElementById('notificationCloseButton').addEventListener('click', hideNotification);
+    </script>
+
+    <script type="module">
+        // Import Firebase config
+        import { auth, db } from './firebase-config.js';
+        import { 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            collection, 
+            query, 
+            where, 
+            getDocs, 
+            limit,
+            orderBy,
+            getDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // UI Elements
+        const skyblueLoading = document.getElementById('skyblueLoading');
+        const matchCards = document.getElementById('matchCards');
+        const postCards = document.getElementById('postCards');
+        const suggestionsGrid = document.getElementById('suggestionsGrid');
+        const suggestionsTitle = document.getElementById('suggestionsTitle');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationBadge = document.getElementById('notificationBadge');
+
+        // Check authentication and redirect
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in, redirect to choose.html
+                window.location.href = '../choose.html';
+                return;
+            }
+
+            try {
+                // Check if user is actually a user (not predictor)
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const predDoc = await getDoc(doc(db, 'predictors', user.uid));
+
+                if (!userDoc.exists() && predDoc.exists()) {
+                    // User is a predictor, redirect to predictor dashboard
+                    window.location.href = '../predictor/dashboard.html';
+                    return;
+                }
+
+                if (!userDoc.exists() && !predDoc.exists()) {
+                    // User not found in either collection, sign out
+                    await signOut(auth);
+                    window.location.href = '../choose.html';
+                    return;
+                }
+
+                // User is authenticated and is a user, load dashboard data
+                loadDashboardData(user.uid);
+
+            } catch (error) {
+                console.error('Auth check error:', error);
+                showNotification('error', 'Authentication error. Please login again.');
+                setTimeout(() => {
+                    window.location.href = '../choose.html';
+                }, 2000);
+            }
+        });
+
+        async function loadDashboardData(userId) {
+            skyblueLoading.classList.add('active');
+
+            try {
+                // Load matches (limit to 2 as specified)
+                await loadMatches();
+                
+                // Load community posts
+                await loadPosts();
+                
+                // Load suggestions
+                await loadSuggestions(userId);
+
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+                showNotification('error', 'Failed to load dashboard data. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+            }
+        }
+
+        async function loadMatches() {
+            try {
+                // Query matches from Firebase
+                const matchesQuery = query(
+                    collection(db, 'matches'),
+                    where('status', 'in', ['live', 'upcoming']),
+                    orderBy('timestamp', 'desc'),
+                    limit(2)
+                );
+
+                const matchesSnapshot = await getDocs(matchesQuery);
+                
+                if (matchesSnapshot.empty) {
+                    // Show empty state
+                    matchCards.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Matches Available</h3>
+                            <p class="empty-state-text">
+                                There are currently no matches to vote on. Check back soon!
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Clear existing content
+                matchCards.innerHTML = '';
+
+                // Create match cards
+                matchesSnapshot.forEach((docSnapshot) => {
+                    const match = docSnapshot.data();
+                    const matchCard = createMatchCard(match);
+                    matchCards.appendChild(matchCard);
+                });
+
+            } catch (error) {
+                console.error('Matches load error:', error);
+                matchCards.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load Matches</h3>
+                        <p class="empty-state-text">
+                            Please check your connection and try again.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function createMatchCard(match) {
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            card.onclick = () => {
+                window.location.href = `viewvotes.html?matchId=${match.matchId || ''}`;
+            };
+
+            // Calculate percentages
+            const totalVotes = (match.teamAVotes || 0) + (match.teamBVotes || 0);
+            const teamAPercent = totalVotes > 0 ? Math.round((match.teamAVotes || 0) / totalVotes * 100) : 0;
+            const teamBPercent = totalVotes > 0 ? Math.round((match.teamBVotes || 0) / totalVotes * 100) : 0;
+
+            // Status class
+            let statusClass = 'upcoming';
+            let statusText = 'Upcoming';
+            if (match.status === 'live') {
+                statusClass = 'live';
+                statusText = 'Live';
+            } else if (match.status === 'closed') {
+                statusClass = 'closed';
+                statusText = 'Closed';
+            }
+
+            card.innerHTML = `
+                <div class="match-header">
+                    <h3>${match.matchName || 'Match'}</h3>
+                    <span class="match-status ${statusClass}">${statusText}</span>
+                </div>
+                
+                <div class="teams-container">
+                    <div class="team">
+                        <div class="team-logo">
+                            ${match.teamALogo ? 
+                                `<img src="${match.teamALogo}" alt="${match.teamAName || 'Team A'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="team-name">${match.teamAName || 'Team A'}</div>
+                    </div>
+                    
+                    <div class="vs">VS</div>
+                    
+                    <div class="team">
+                        <div class="team-logo">
+                            ${match.teamBLogo ? 
+                                `<img src="${match.teamBLogo}" alt="${match.teamBName || 'Team B'}">` :
+                                `<i class="fas fa-shield-alt" style="font-size: 24px; color: var(--or-text-muted);"></i>`
+                            }
+                        </div>
+                        <div class="team-name">${match.teamBName || 'Team B'}</div>
+                    </div>
+                </div>
+                
+                <div class="vote-percentages">
+                    <div class="vote-bar">
+                        <div class="vote-fill team-a" style="width: ${teamAPercent}%"></div>
+                    </div>
+                    <div class="vote-bar">
+                        <div class="vote-fill team-b" style="width: ${teamBPercent}%"></div>
+                    </div>
+                </div>
+                
+                <div class="vote-labels">
+                    <span>${teamAPercent}%</span>
+                    <span>${teamBPercent}%</span>
+                </div>
+            `;
+
+            return card;
+        }
+
+        async function loadPosts() {
+            try {
+                // Query posts from Firebase (combined from users and predictors)
+                const usersPostsQuery = query(
+                    collection(db, 'posts'),
+                    where('type', 'in', ['user', 'predictor']),
+                    orderBy('timestamp', 'desc'),
+                    limit(10)
+                );
+
+                const postsSnapshot = await getDocs(usersPostsQuery);
+                
+                if (postsSnapshot.empty) {
+                    // Show empty state
+                    postCards.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Posts Yet</h3>
+                            <p class="empty-state-text">
+                                Be the first to post in the community!
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Clear existing content
+                postCards.innerHTML = '';
+
+                // Create post cards
+                postsSnapshot.forEach((docSnapshot) => {
+                    const post = docSnapshot.data();
+                    const postCard = createPostCard(post);
+                    postCards.appendChild(postCard);
+                });
+
+            } catch (error) {
+                console.error('Posts load error:', error);
+                postCards.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load Posts</h3>
+                        <p class="empty-state-text">
+                            Please check your connection and try again.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function createPostCard(post) {
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            card.onclick = () => {
+                window.location.href = `viewpost.html?postId=${post.postId || ''}`;
+            };
+
+            // Determine role text
+            let roleText = 'User';
+            if (post.authorRole === 'predictor') {
+                roleText = 'Predictor';
+            }
+
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="author-avatar">
+                        ${post.authorPhoto ? 
+                            `<img src="${post.authorPhoto}" alt="${post.authorName || 'Author'}">` :
+                            `<i class="fas fa-user" style="font-size: 20px; color: var(--or-text-muted);"></i>`
+                        }
+                    </div>
+                    <div class="author-info">
+                        <div class="author-name">${post.authorName || 'Unknown User'}</div>
+                        <div class="author-role">${roleText}</div>
+                    </div>
+                </div>
+                
+                <div class="post-content preview">
+                    ${post.content || 'No content available.'}
+                </div>
+                
+                <div class="post-stats">
+                    <div class="stat">
+                        <i class="fas fa-heart" style="color: #ef4444;"></i>
+                        <span>${post.likes || 0}</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-comment" style="color: var(--or-blue);"></i>
+                        <span>${post.comments || 0}</span>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        async function loadSuggestions(userId) {
+            try {
+                // Query suggested predictors (excluding already followed)
+                const predictorsQuery = query(
+                    collection(db, 'predictors'),
+                    limit(4)
+                );
+
+                const predictorsSnapshot = await getDocs(predictorsQuery);
+                
+                if (predictorsSnapshot.empty) {
+                    // Hide suggestions section if no data
+                    suggestionsTitle.classList.add('hidden');
+                    suggestionsGrid.classList.add('hidden');
+                    return;
+                }
+
+                // Clear existing content
+                suggestionsGrid.innerHTML = '';
+
+                // Create suggestion cards
+                predictorsSnapshot.forEach((docSnapshot) => {
+                    const predictor = docSnapshot.data();
+                    if (predictor.uid === userId) return; // Don't suggest self
+                    
+                    const suggestionCard = createSuggestionCard(predictor);
+                    suggestionsGrid.appendChild(suggestionCard);
+                });
+
+                // If no cards were added (only self), hide section
+                if (suggestionsGrid.children.length === 0) {
+                    suggestionsTitle.classList.add('hidden');
+                    suggestionsGrid.classList.add('hidden');
+                }
+
+            } catch (error) {
+                console.error('Suggestions load error:', error);
+                suggestionsTitle.classList.add('hidden');
+                suggestionsGrid.classList.add('hidden');
+            }
+        }
+
+        function createSuggestionCard(predictor) {
+            const card = document.createElement('div');
+            card.className = 'suggestion-card';
+            card.onclick = () => {
+                window.location.href = `predictor/profile.html?id=${predictor.uid}`;
+            };
+
+            card.innerHTML = `
+                <div class="suggestion-avatar">
+                    ${predictor.profilePic ? 
+                        `<img src="${predictor.profilePic}" alt="${predictor.username || 'Predictor'}">` :
+                        `<i class="fas fa-chart-line" style="font-size: 28px; color: var(--or-gold);"></i>`
+                    }
+                </div>
+                <div class="suggestion-name">${predictor.username || 'Predictor'}</div>
+                <div class="suggestion-meta">
+                    ${predictor.accuracy ? `${predictor.accuracy}% accuracy` : 'New predictor'}
+                </div>
+                <button class="follow-btn" onclick="event.stopPropagation(); followPredictor('${predictor.uid}')">
+                    Follow
+                </button>
+            `;
+
+            return card;
+        }
+
+        // Notification bell click handler
+        notificationBtn.addEventListener('click', () => {
+            // This would open a notification panel
+            // For now, show a notification
+            showNotification('info', 'Notifications feature coming soon!');
+        });
+
+        // Global function to follow predictor
+        window.followPredictor = async function(predictorId) {
+            skyblueLoading.classList.add('active');
+            
+            try {
+                // Get current user
+                const user = auth.currentUser;
+                if (!user) return;
+
+                // In a real app, you would add to follows collection
+                // For now, show success message
+                showNotification('success', 'Now following this predictor!');
+                
+            } catch (error) {
+                console.error('Follow error:', error);
+                showNotification('error', 'Failed to follow. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set active nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.href === window.location.href) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

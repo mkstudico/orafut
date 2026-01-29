@@ -853,6 +853,11 @@
             display: block;
         }
 
+        /* Remove required attribute from hidden predictor fields */
+        .predictor-fields .form-input[required] {
+            /* Will be handled by JavaScript validation */
+        }
+
         /* =========================================
            15. SUBMIT BUTTONS - SQUARE DESIGN
            ========================================= */
@@ -997,7 +1002,7 @@
                     <i class="fas fa-check"></i>
                 </div>
                 <div class="notification-text" id="notificationText"></div>
-                <button class="notification-close" onclick="hideNotification()">
+                <button class="notification-close" id="notificationCloseButton">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1333,7 +1338,7 @@
                         <!-- Country -->
                         <div class="form-group">
                             <label class="form-label" for="predictorCountry">Country *</label>
-                            <select id="predictorCountry" class="form-input" required>
+                            <select id="predictorCountry" class="form-input">
                                 <option value="">Select Country</option>
                                 <option value="RW">Rwanda</option>
                                 <option value="UG">Uganda</option>
@@ -1352,8 +1357,7 @@
                             <input type="text" 
                                    id="predictorCity" 
                                    class="form-input" 
-                                   placeholder="Enter your city"
-                                   required>
+                                   placeholder="Enter your city">
                             <div class="error-message" id="cityError">City is required</div>
                         </div>
 
@@ -1363,8 +1367,7 @@
                             <input type="tel" 
                                    id="predictorPhone" 
                                    class="form-input" 
-                                   placeholder="+250 78X XXX XXX"
-                                   required>
+                                   placeholder="+250 78X XXX XXX">
                             <div class="error-message" id="phoneError">Valid phone number required</div>
                         </div>
                     </div>
@@ -1502,45 +1505,8 @@
         </div>
     </div>
 
-    <script type="module">
-        // Import Firebase config
-        import { auth, db, IMGBB_KEY } from './firebase-config.js';
-        import { 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            updateProfile,
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { 
-            doc, 
-            setDoc, 
-            getDoc,
-            query,
-            where,
-            collection,
-            getDocs,
-            serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-        // Global variables
-        let selectedRole = 'user';
-        let selectedAuthMethod = 'pin';
-        let selectedLoginAuthMethod = 'pin';
-        let profilePicUrl = '';
-        let profilePicFile = null;
-
-        // UI Elements
-        const overlay = document.getElementById('overlay');
-        const agreementsPanel = document.getElementById('agreementsPanel');
-        const signupPanel = document.getElementById('signupPanel');
-        const loginPanel = document.getElementById('loginPanel');
-        const skyblueLoading = document.getElementById('skyblueLoading');
-        const predictorFields = document.getElementById('predictorFields');
-        const profilePicInput = document.getElementById('profilePicInput');
-        const profilePicPreview = document.getElementById('profilePicPreview');
-        const signupFormContainer = document.getElementById('signupFormContainer');
-
-        // Premium Notification Functions
+    <script>
+        // Global notification functions
         function showNotification(type, message) {
             const notification = document.getElementById('notification');
             const notificationIcon = document.getElementById('notificationIcon');
@@ -1585,6 +1551,48 @@
             const notification = document.getElementById('notification');
             notification.classList.remove('show');
         }
+
+        // Initialize notification close button
+        document.getElementById('notificationCloseButton').addEventListener('click', hideNotification);
+    </script>
+
+    <script type="module">
+        // Import Firebase config
+        import { auth, db, IMGBB_KEY } from './firebase-config.js';
+        import { 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            updateProfile,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            doc, 
+            setDoc, 
+            getDoc,
+            query,
+            where,
+            collection,
+            getDocs,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // Global variables
+        let selectedRole = 'user';
+        let selectedAuthMethod = 'pin';
+        let selectedLoginAuthMethod = 'pin';
+        let profilePicUrl = '';
+        let profilePicFile = null;
+
+        // UI Elements
+        const overlay = document.getElementById('overlay');
+        const agreementsPanel = document.getElementById('agreementsPanel');
+        const signupPanel = document.getElementById('signupPanel');
+        const loginPanel = document.getElementById('loginPanel');
+        const skyblueLoading = document.getElementById('skyblueLoading');
+        const predictorFields = document.getElementById('predictorFields');
+        const profilePicInput = document.getElementById('profilePicInput');
+        const profilePicPreview = document.getElementById('profilePicPreview');
+        const signupFormContainer = document.getElementById('signupFormContainer');
 
         // Check existing auth state
         onAuthStateChanged(auth, (user) => {
@@ -1671,12 +1679,22 @@
                 signupSubmit.className = 'btn-submit';
                 signupSubmit.textContent = 'CREATE ACCOUNT';
                 predictorFields.classList.remove('show');
+                
+                // Remove required attributes from hidden predictor fields
+                document.getElementById('predictorCountry').removeAttribute('required');
+                document.getElementById('predictorCity').removeAttribute('required');
+                document.getElementById('predictorPhone').removeAttribute('required');
             } else {
                 roleIndicator.className = 'role-indicator predictor';
                 roleIndicator.innerHTML = '<i class="fas fa-chart-line"></i><span>Signing up as PREDICTOR (GURU)</span>';
                 signupSubmit.className = 'btn-submit predictor';
                 signupSubmit.textContent = 'BECOME A PREDICTOR';
                 predictorFields.classList.add('show');
+                
+                // Add required attributes to predictor fields
+                document.getElementById('predictorCountry').setAttribute('required', 'true');
+                document.getElementById('predictorCity').setAttribute('required', 'true');
+                document.getElementById('predictorPhone').setAttribute('required', 'true');
             }
             
             // Reset form
@@ -1806,6 +1824,38 @@
             } catch (error) {
                 console.error('Username check error:', error);
                 return false;
+            }
+        }
+
+        // Function to get user's email by username
+        async function getEmailByUsername(username) {
+            try {
+                // Check in users collection
+                const usersQuery = query(
+                    collection(db, 'users'),
+                    where('username', '==', username)
+                );
+                const usersSnapshot = await getDocs(usersQuery);
+                
+                if (!usersSnapshot.empty) {
+                    return usersSnapshot.docs[0].data().email;
+                }
+                
+                // Check in predictors collection
+                const predictorsQuery = query(
+                    collection(db, 'predictors'),
+                    where('username', '==', username)
+                );
+                const predictorsSnapshot = await getDocs(predictorsQuery);
+                
+                if (!predictorsSnapshot.empty) {
+                    return predictorsSnapshot.docs[0].data().email;
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('Get email error:', error);
+                return null;
             }
         }
 
@@ -2212,12 +2262,24 @@
                 ? document.getElementById('loginPassword').value
                 : getLoginPINValue();
             
-            // Try both username and email login
-            let email = identifier.includes('@') ? identifier : `${identifier}@orafut.com`;
-            
             skyblueLoading.classList.add('active');
             
             try {
+                let email = identifier;
+                
+                // If identifier doesn't contain @, it might be a username
+                if (!identifier.includes('@')) {
+                    // Try to get email by username
+                    email = await getEmailByUsername(identifier);
+                    if (!email) {
+                        showError('loginIdentifierError', 'Username not found');
+                        showNotification('error', 'Username not found. Please check and try again.');
+                        skyblueLoading.classList.remove('active');
+                        return;
+                    }
+                }
+                
+                // Attempt login with email
                 await signInWithEmailAndPassword(auth, email, password);
                 showNotification('success', 'Login successful! Welcome back.');
                 closeOverlay();

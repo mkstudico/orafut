@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ORAFUT | Posts</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           1. CORE VARIABLES - LIGHT THEME
+           ========================================= */
+        :root {
+            --or-light-bg: #f8f9fa;
+            --or-white: #ffffff;
+            --or-blue: #00a2ff;
+            --or-blue-dark: #007acc;
+            --or-blue-light: #e6f6ff;
+            --or-gold: #d4af37;
+            --or-gold-light: #fff8e1;
+            --or-text: #333333;
+            --or-text-muted: #666666;
+            --or-border: #e0e0e0;
+            --or-border-dark: #cccccc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+            --transition: all 0.25s ease;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #00a2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--or-light-bg);
+            color: var(--or-text);
+            line-height: 1.6;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. PREMIUM NOTIFICATION COMPONENT
+           ========================================= */
+        .notification-container {
+            position: fixed;
+            top: env(safe-area-inset-top, 20px);
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .notification {
+            position: relative;
+            background: var(--or-white);
+            border-radius: 100px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            max-width: 400px;
+            width: 90%;
+            transform-origin: center;
+            opacity: 0;
+            transform: scale(0.5) translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: all;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            border-radius: 14px;
+            max-width: 90%;
+        }
+
+        .notification-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--or-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-loading {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 162, 255, 0.1);
+            border-top-color: var(--or-blue);
+            border-radius: 50%;
+            animation: notification-spin 0.8s linear infinite;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease 0.3s;
+        }
+
+        .notification.show .notification-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .notification.error .notification-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .notification.info .notification-icon {
+            background: rgba(0, 162, 255, 0.1);
+            color: var(--info);
+        }
+
+        .notification.warning .notification-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--or-text);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--or-text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+            transition: color 0.2s;
+        }
+
+        .notification-close:hover {
+            color: var(--or-text);
+        }
+
+        @keyframes notification-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           3. MAIN CONTAINER STRUCTURE
+           ========================================= */
+        .dashboard-container {
+            min-height: 100vh;
+            padding-bottom: 70px; /* Space for bottom nav */
+            position: relative;
+        }
+
+        /* =========================================
+           4. TOP HEADER BAR
+           ========================================= */
+        .top-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .logo i { color: var(--or-blue); font-size: 20px; }
+        .logo span { color: var(--or-blue); }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--or-text-muted);
+            cursor: pointer;
+            padding: 8px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+            border: 2px solid var(--or-white);
+        }
+
+        /* =========================================
+           5. MAIN CONTENT SECTIONS
+           ========================================= */
+        .main-content {
+            padding: 16px;
+        }
+
+        .section-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 16px 0;
+            color: var(--or-text);
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* =========================================
+           6. POSTS STYLES
+           ========================================= */
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .post-author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--or-light-bg);
+            flex-shrink: 0;
+        }
+
+        .post-author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-author-info {
+            flex: 1;
+        }
+
+        .post-author-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .post-author-title {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: var(--or-text-muted);
+        }
+
+        .post-content {
+            padding: 0 16px 16px 16px;
+        }
+
+        .post-text {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .post-media {
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .post-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 16px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--or-border);
+            color: var(--or-text-muted);
+            font-size: 14px;
+        }
+
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stories-section {
+            margin-bottom: 24px;
+        }
+
+        .stories-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 8px 0 16px 0;
+            margin: 0 -16px;
+            padding-left: 16px;
+        }
+
+        .stories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 80px;
+        }
+
+        .story-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid var(--or-blue);
+            padding: 3px;
+            background: var(--or-white);
+        }
+
+        .story-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .story-author {
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* =========================================
+           7. EMPTY STATES
+           ========================================= */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            color: var(--or-text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--or-text);
+        }
+
+        .empty-state-text {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           8. BOTTOM NAVIGATION
+           ========================================= */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--or-white);
+            border-top: 1px solid var(--or-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--or-text-muted);
+            transition: var(--transition);
+            padding: 4px 8px;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: var(--or-blue);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================
+           9. SKY-BLUE LOADING CIRCLE
+           ========================================= */
+        .skyblue-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .skyblue-loading.active {
+            display: flex;
+        }
+
+        .skyblue-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 162, 255, 0.1);
+            border-top: 4px solid var(--or-blue);
+            border-radius: 50%;
+            animation: skyblue-spin 1s linear infinite;
+        }
+
+        @keyframes skyblue-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           10. UTILITY CLASSES
+           ========================================= */
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================================
+           11. MOBILE OPTIMIZATIONS
+           ========================================= */
+        @media (min-width: 769px) {
+            body::before {
+                content: "This page is optimized for mobile devices only.";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--or-light-bg);
+                color: var(--or-text);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                font-size: 18px;
+                font-weight: 500;
+                z-index: 9999;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Notification Component -->
+    <div class="notification-container" id="notificationContainer">
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="notification-text" id="notificationText"></div>
+                <button class="notification-close" id="notificationCloseButton">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sky Blue Loading Circle -->
+    <div class="skyblue-loading" id="skyblueLoading">
+        <div class="skyblue-spinner"></div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Top Header -->
+        <div class="top-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                ORA<span>FUT</span>
+            </a>
+            
+            <button class="notification-btn" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge"></span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Stories Section -->
+            <div class="stories-section">
+                <h2 class="section-title">Stories</h2>
+                <div class="stories-container" id="storiesContainer">
+                    <!-- Dynamic stories will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="posts-section">
+                <h2 class="section-title">Latest Posts</h2>
+                <div class="posts-list" id="postsList">
+                    <!-- Dynamic posts will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="posts.html" class="nav-item active">
+                <i class="fas fa-newspaper nav-icon"></i>
+                <span class="nav-label">Posts</span>
+            </a>
+            <a href="predictors.html" class="nav-item">
+                <i class="fas fa-users nav-icon"></i>
+                <span class="nav-label">Predictors</span>
+            </a>
+            <a href="messages.html" class="nav-item">
+                <i class="fas fa-comments nav-icon"></i>
+                <span class="nav-label">Messages</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Global notification functions (SAME AS dashboard.html)
+        function showNotification(type, message) {
+            const notification = document.getElementById('notification');
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationText = document.getElementById('notificationText');
+            
+            // Set notification type
+            notification.className = `notification ${type}`;
+            
+            // Set icon based on type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                case 'info':
+                default:
+                    icon = '<i class="fas fa-info-circle"></i>';
+                    break;
+            }
+            
+            notificationIcon.innerHTML = icon;
+            notificationText.textContent = message;
+            
+            // Start animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 50);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Initialize notification close button
+        document.getElementById('notificationCloseButton').addEventListener('click', hideNotification);
+    </script>
+
+    <script type="module">
+        // Import Firebase config
+        import { auth, db } from './firebase-config.js';
+        import { 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            collection, 
+            query, 
+            where, 
+            getDocs, 
+            getDoc,
+            doc,
+            orderBy,
+            limit,
+            Timestamp
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // UI Elements
+        const skyblueLoading = document.getElementById('skyblueLoading');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const storiesContainer = document.getElementById('storiesContainer');
+        const postsList = document.getElementById('postsList');
+
+        // Check authentication and redirect
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in, redirect to choose.html
+                window.location.href = '../choose.html';
+                return;
+            }
+
+            try {
+                // Check if user is actually a user (not predictor)
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const predDoc = await getDoc(doc(db, 'predictors', user.uid));
+
+                if (!userDoc.exists() && predDoc.exists()) {
+                    // User is a predictor, redirect to predictor dashboard
+                    window.location.href = '../predictor/dashboard.html';
+                    return;
+                }
+
+                if (!userDoc.exists() && !predDoc.exists()) {
+                    // User not found in either collection, sign out
+                    await signOut(auth);
+                    window.location.href = '../choose.html';
+                    return;
+                }
+
+                // User is authenticated and is a user, load posts data
+                loadPostsData(user.uid);
+
+            } catch (error) {
+                console.error('Auth check error:', error);
+                showNotification('error', 'Authentication error. Please login again.');
+                setTimeout(() => {
+                    window.location.href = '../choose.html';
+                }, 2000);
+            }
+        });
+
+        async function loadPostsData(userId) {
+            skyblueLoading.classList.add('active');
+
+            try {
+                // Load stories from predictors
+                await loadStories();
+                
+                // Load posts from predictors
+                await loadPosts();
+
+            } catch (error) {
+                console.error('Posts load error:', error);
+                showNotification('error', 'Failed to load posts. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+            }
+        }
+
+        async function loadStories() {
+            try {
+                // Query active stories from predictors
+                const storiesQuery = query(
+                    collection(db, 'stories'),
+                    where('isActive', '==', true),
+                    orderBy('createdAt', 'desc'),
+                    limit(10)
+                );
+
+                const storiesSnapshot = await getDocs(storiesQuery);
+                
+                // Clear existing content
+                storiesContainer.innerHTML = '';
+                
+                if (storiesSnapshot.empty) {
+                    storiesContainer.innerHTML = `
+                        <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none; text-align: center;">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Stories</h3>
+                            <p class="empty-state-text">
+                                No active stories from predictors.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Create story items
+                storiesSnapshot.forEach((docSnapshot) => {
+                    const story = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    const storyItem = createStoryItem(story);
+                    storiesContainer.appendChild(storyItem);
+                });
+
+            } catch (error) {
+                console.error('Stories load error:', error);
+                storiesContainer.innerHTML = `
+                    <div class="empty-state" style="min-width: 100%; border: none; box-shadow: none; text-align: center;">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load</h3>
+                        <p class="empty-state-text">
+                            Failed to load stories.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function createStoryItem(story) {
+            const storyItem = document.createElement('div');
+            storyItem.className = 'story-item';
+            
+            storyItem.innerHTML = `
+                <div class="story-avatar">
+                    ${story.predictorAvatar ? 
+                        `<img src="${story.predictorAvatar}" alt="${story.predictorName || 'Predictor'}">` :
+                        `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 8px;"></i>`
+                    }
+                </div>
+                <div class="story-author">
+                    ${story.predictorName || 'Predictor'}
+                </div>
+            `;
+            
+            storyItem.onclick = () => {
+                // Story viewer logic would go here
+                showNotification('info', 'Story viewer coming soon!');
+            };
+            
+            return storyItem;
+        }
+
+        async function loadPosts() {
+            try {
+                // Query posts from predictors
+                const postsQuery = query(
+                    collection(db, 'posts'),
+                    orderBy('createdAt', 'desc')
+                );
+
+                const postsSnapshot = await getDocs(postsQuery);
+                
+                // Clear existing content
+                postsList.innerHTML = '';
+                
+                if (postsSnapshot.empty) {
+                    postsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Posts</h3>
+                            <p class="empty-state-text">
+                                No posts from predictors yet.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Create post cards
+                postsSnapshot.forEach((docSnapshot) => {
+                    const post = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    // Convert timestamp if needed
+                    if (post.createdAt && typeof post.createdAt.toDate === 'function') {
+                        post.createdAt = post.createdAt.toDate();
+                    }
+                    
+                    const postCard = createPostCard(post);
+                    postsList.appendChild(postCard);
+                });
+
+            } catch (error) {
+                console.error('Posts load error:', error);
+                postsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load Posts</h3>
+                        <p class="empty-state-text">
+                            Failed to load posts. Please check your connection.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function createPostCard(post) {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            
+            // Format time
+            const postTime = post.createdAt ? 
+                post.createdAt.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'Recently';
+            
+            postCard.innerHTML = `
+                <div class="post-header">
+                    <div class="post-author-avatar">
+                        ${post.authorAvatar ? 
+                            `<img src="${post.authorAvatar}" alt="${post.authorName || 'Predictor'}">` :
+                            `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 8px;"></i>`
+                        }
+                    </div>
+                    <div class="post-author-info">
+                        <div class="post-author-name">${post.authorName || 'Predictor'}</div>
+                        ${post.authorTitle ? `<div class="post-author-title">${post.authorTitle}</div>` : ''}
+                        <div class="post-time">${postTime}</div>
+                    </div>
+                </div>
+                
+                <div class="post-content">
+                    ${post.text ? `<div class="post-text">${post.text}</div>` : ''}
+                    
+                    ${post.imageUrl ? `
+                        <div class="post-media">
+                            <img src="${post.imageUrl}" alt="Post image">
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="post-stats">
+                    <div class="post-stat">
+                        <i class="fas fa-heart"></i>
+                        <span>${post.likes || 0}</span>
+                    </div>
+                    <div class="post-stat">
+                        <i class="fas fa-comment"></i>
+                        <span>${post.comments || 0}</span>
+                    </div>
+                    <div class="post-stat">
+                        <i class="fas fa-share"></i>
+                        <span>${post.shares || 0}</span>
+                    </div>
+                </div>
+            `;
+            
+            return postCard;
+        }
+
+        // Notification bell click handler
+        notificationBtn.addEventListener('click', () => {
+            showNotification('info', 'Notifications feature coming soon!');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set active nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.href === window.location.href) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

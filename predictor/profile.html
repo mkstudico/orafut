@@ -1,0 +1,1818 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ORAFUT | Profile</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           1. CORE VARIABLES - PREDICTOR THEME
+           ========================================= */
+        :root {
+            --or-light-bg: #f8f9fa;
+            --or-white: #ffffff;
+            --or-blue: #00a2ff;
+            --or-blue-dark: #007acc;
+            --or-blue-light: #e6f6ff;
+            --or-gold: #d4af37;
+            --or-gold-light: #fff8e1;
+            --or-text: #333333;
+            --or-text-muted: #666666;
+            --or-border: #e0e0e0;
+            --or-border-dark: #cccccc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+            --transition: all 0.25s ease;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #00a2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--or-light-bg);
+            color: var(--or-text);
+            line-height: 1.6;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. PREMIUM NOTIFICATION COMPONENT
+           ========================================= */
+        .notification-container {
+            position: fixed;
+            top: env(safe-area-inset-top, 20px);
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .notification {
+            position: relative;
+            background: var(--or-white);
+            border-radius: 100px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            max-width: 400px;
+            width: 90%;
+            transform-origin: center;
+            opacity: 0;
+            transform: scale(0.5) translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: all;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            border-radius: 14px;
+            max-width: 90%;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease 0.3s;
+        }
+
+        .notification.show .notification-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .notification.error .notification-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .notification.info .notification-icon {
+            background: rgba(0, 162, 255, 0.1);
+            color: var(--info);
+        }
+
+        .notification.warning .notification-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--or-text);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--or-text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+            transition: color 0.2s;
+        }
+
+        .notification-close:hover {
+            color: var(--or-text);
+        }
+
+        /* =========================================
+           3. MAIN CONTAINER STRUCTURE
+           ========================================= */
+        .profile-container {
+            min-height: 100vh;
+            padding-bottom: 70px;
+            position: relative;
+        }
+
+        /* =========================================
+           4. TOP HEADER BAR
+           ========================================= */
+        .top-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .logo i { color: var(--or-blue); font-size: 20px; }
+        .logo span { color: var(--or-blue); }
+
+        .predictor-badge {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--or-text-muted);
+            cursor: pointer;
+            padding: 8px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+            border: 2px solid var(--or-white);
+        }
+
+        /* =========================================
+           5. PROFILE HEADER
+           ========================================= */
+        .profile-header {
+            padding: 24px 16px;
+            background: var(--or-white);
+            border-bottom: 1px solid var(--or-border);
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 16px;
+            background: var(--or-light-bg);
+            position: relative;
+            border: 3px solid var(--or-gold);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .change-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-name {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--or-text);
+            margin-bottom: 4px;
+        }
+
+        .profile-bio {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            margin-bottom: 12px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-country {
+            font-size: 14px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .profile-country i {
+            color: var(--or-gold);
+        }
+
+        /* =========================================
+           6. PROFILE STATS
+           ========================================= */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 16px;
+            background: var(--or-white);
+            border-bottom: 1px solid var(--or-border);
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--or-text);
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================
+           7. SUB-NAVIGATION
+           ========================================= */
+        .sub-navigation {
+            background: var(--or-white);
+            border-bottom: 1px solid var(--or-border);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .sub-nav-list {
+            display: inline-flex;
+            list-style: none;
+            padding: 0 16px;
+        }
+
+        .sub-nav-item {
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--or-text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sub-nav-item.active {
+            color: var(--or-gold);
+            border-bottom-color: var(--or-gold);
+        }
+
+        /* =========================================
+           8. CONTENT SECTIONS
+           ========================================= */
+        .content-section {
+            display: none;
+            padding: 16px;
+            background: var(--or-white);
+            min-height: 400px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--or-text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* =========================================
+           9. MATCHES SECTION
+           ========================================= */
+        .matches-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .match-tab {
+            padding: 10px 16px;
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--or-text);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .match-tab.active {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border-color: var(--or-gold);
+        }
+
+        .matches-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .match-filter {
+            padding: 10px 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--or-text);
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .matches-search {
+            margin-bottom: 16px;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--or-text);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--or-text-muted);
+            font-size: 18px;
+        }
+
+        .matches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .match-card:hover {
+            border-color: var(--or-gold);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .match-teams {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--or-text);
+        }
+
+        .match-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .match-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--or-border);
+        }
+
+        .match-league {
+            font-size: 14px;
+            color: var(--or-text-muted);
+        }
+
+        .match-time {
+            font-size: 14px;
+            color: var(--or-text);
+            font-weight: 500;
+        }
+
+        /* =========================================
+           10. SAVES SECTION
+           ========================================= */
+        .saves-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .save-card {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .save-card:hover {
+            border-color: var(--or-gold);
+        }
+
+        .save-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .save-author-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 12px;
+            background: var(--or-light-bg);
+        }
+
+        .save-author-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .save-author-info {
+            flex: 1;
+        }
+
+        .save-author-name {
+            font-weight: 600;
+            color: var(--or-text);
+            margin-bottom: 2px;
+        }
+
+        .save-time {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .save-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--or-text);
+            margin-bottom: 12px;
+            max-height: 3em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* =========================================
+           11. ANALYTICS SECTION
+           ========================================= */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .analytics-card {
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .analytics-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--or-text);
+            margin-bottom: 8px;
+        }
+
+        .analytics-label {
+            font-size: 14px;
+            color: var(--or-text-muted);
+        }
+
+        .comments-section {
+            margin-top: 24px;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment-card {
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-author-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 12px;
+            background: var(--or-light-bg);
+        }
+
+        .comment-author-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-author-name {
+            font-weight: 600;
+            color: var(--or-text);
+            font-size: 14px;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--or-text);
+        }
+
+        /* =========================================
+           12. MONETIZATION SECTION
+           ========================================= */
+        .monetization-info {
+            text-align: center;
+            padding: 24px 16px;
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .info-text {
+            font-size: 16px;
+            color: var(--or-text);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .progress-section {
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--or-text);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--or-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--or-gold);
+            transition: width 0.3s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* =========================================
+           13. EDIT PROFILE SECTION
+           ========================================= */
+        .edit-form {
+            padding: 16px 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--or-text);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--or-text);
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--or-text);
+            font-family: 'Roboto', sans-serif;
+            resize: vertical;
+            min-height: 100px;
+            transition: var(--transition);
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .save-changes-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 16px;
+        }
+
+        .save-changes-btn:hover {
+            background: #b8860b;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 8px;
+        }
+
+        .logout-btn:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        /* =========================================
+           14. EMPTY STATES
+           ========================================= */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            color: var(--or-text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--or-text);
+        }
+
+        .empty-state-text {
+            color: var(--or-text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           15. BOTTOM NAVIGATION
+           ========================================= */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--or-white);
+            border-top: 1px solid var(--or-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--or-text-muted);
+            transition: var(--transition);
+            padding: 4px 8px;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: var(--or-gold);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .create-btn {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: -20px;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .create-btn:active {
+            background: #b8860b;
+            transform: translateY(2px);
+        }
+
+        /* =========================================
+           16. SKY-BLUE LOADING CIRCLE
+           ========================================= */
+        .skyblue-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .skyblue-loading.active {
+            display: flex;
+        }
+
+        .skyblue-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 162, 255, 0.1);
+            border-top: 4px solid var(--or-blue);
+            border-radius: 50%;
+            animation: skyblue-spin 1s linear infinite;
+        }
+
+        @keyframes skyblue-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           17. UTILITY CLASSES
+           ========================================= */
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================================
+           18. MOBILE OPTIMIZATIONS
+           ========================================= */
+        @media (min-width: 769px) {
+            body::before {
+                content: "This page is optimized for mobile devices only.";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--or-light-bg);
+                color: var(--or-text);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                font-size: 18px;
+                font-weight: 500;
+                z-index: 9999;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Notification Component -->
+    <div class="notification-container" id="notificationContainer">
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="notification-text" id="notificationText"></div>
+                <button class="notification-close" id="notificationCloseButton">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sky Blue Loading Circle -->
+    <div class="skyblue-loading" id="skyblueLoading">
+        <div class="skyblue-spinner"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="profile-container">
+        <!-- Top Header -->
+        <div class="top-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                ORA<span>FUT</span>
+            </a>
+            
+            <div class="predictor-badge">
+                <i class="fas fa-chart-line"></i>
+                <span>PREDICTOR</span>
+            </div>
+            
+            <button class="notification-btn" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge"></span>
+            </button>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img id="profileImage" src="" alt="Profile Picture">
+                <button class="change-avatar-btn" onclick="changeProfilePicture()">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <h1 class="profile-name" id="profileName">Loading...</h1>
+            <p class="profile-bio" id="profileBio"></p>
+            <div class="profile-country" id="profileCountry">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Loading...</span>
+            </div>
+            
+            <!-- Log Out Button -->
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+            </button>
+        </div>
+
+        <!-- Profile Stats -->
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <div class="stat-value" id="statWins">0</div>
+                <div class="stat-label">Total Wins</div>
+            </div>
+            <div class="profile-stat">
+                <div class="stat-value" id="statStars">0</div>
+                <div class="stat-label">Stars</div>
+            </div>
+            <div class="profile-stat">
+                <div class="stat-value" id="statAccuracy">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Sub Navigation -->
+        <div class="sub-navigation">
+            <ul class="sub-nav-list">
+                <li class="sub-nav-item active" onclick="showSection('matches')">📊 MATCHES</li>
+                <li class="sub-nav-item" onclick="showSection('saves')">💾 SAVES</li>
+                <li class="sub-nav-item" onclick="showSection('analytics')">📈 ANALYTICS</li>
+                <li class="sub-nav-item" onclick="showSection('monetization')">💰 MONETIZATION</li>
+                <li class="sub-nav-item" onclick="showSection('edit')">✏️ EDIT PROFILE</li>
+            </ul>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- MATCHES Section -->
+            <div class="content-section active" id="matchesSection">
+                <div class="section-title">
+                    <span>My Matches</span>
+                </div>
+                
+                <!-- Match Tabs -->
+                <div class="matches-tabs">
+                    <div class="match-tab active" onclick="showMatchTab('unvoted')">Unvoted Matches</div>
+                    <div class="match-tab" onclick="showMatchTab('all')">All Matches</div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="matches-filters">
+                    <select class="match-filter" id="leagueFilter">
+                        <option value="">All Leagues</option>
+                        <!-- Dynamic league options -->
+                    </select>
+                    
+                    <select class="match-filter" id="dateFilter">
+                        <option value="all">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="this_week">This Week</option>
+                        <option value="next_week">Next Week</option>
+                    </select>
+                </div>
+                
+                <!-- Search -->
+                <div class="matches-search">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               class="search-input" 
+                               id="matchesSearch"
+                               placeholder="Search matches...">
+                    </div>
+                </div>
+                
+                <!-- Matches List -->
+                <div class="matches-list" id="matchesList">
+                    <!-- Dynamic matches -->
+                </div>
+            </div>
+
+            <!-- SAVES Section -->
+            <div class="content-section" id="savesSection">
+                <div class="section-title">
+                    <span>Saved Posts</span>
+                </div>
+                
+                <div class="saves-list" id="savesList">
+                    <!-- Dynamic saved posts -->
+                </div>
+            </div>
+
+            <!-- ANALYTICS Section -->
+            <div class="content-section" id="analyticsSection">
+                <div class="section-title">
+                    <span>Performance Analytics</span>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="analyticsWins">0</div>
+                        <div class="analytics-label">Total Wins</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="analyticsLosses">0</div>
+                        <div class="analytics-label">Total Losses</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="analyticsWinRate">0%</div>
+                        <div class="analytics-label">Win Rate</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="analyticsAvgOdds">0.0</div>
+                        <div class="analytics-label">Avg Odds</div>
+                    </div>
+                </div>
+                
+                <div class="comments-section">
+                    <h3 class="section-title">
+                        <span>Recent Comments</span>
+                    </h3>
+                    <div class="comments-list" id="commentsList">
+                        <!-- Dynamic comments -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- MONETIZATION Section -->
+            <div class="content-section" id="monetizationSection">
+                <div class="section-title">
+                    <span>Monetization Progress</span>
+                </div>
+                
+                <div class="monetization-info">
+                    <p class="info-text">
+                        Unfortunately, the site is still in development, so the Orafut monetization program will officially start on 15 September 2026.
+                    </p>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-title">
+                        <span>Likes Progress</span>
+                        <span id="likesProgressText">0/1000+</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="likesProgressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>From reasons, posts, stories</span>
+                        <span>Required: 1000+</span>
+                    </div>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-title">
+                        <span>Followers Progress</span>
+                        <span id="followersProgressText">0/10000+</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="followersProgressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>OR</span>
+                        <span>Required: 10000+</span>
+                    </div>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-title">
+                        <span>Wins Progress</span>
+                        <span id="winsProgressText">0/100+</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="winsProgressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>Required: 100+</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT PROFILE Section -->
+            <div class="content-section" id="editSection">
+                <div class="section-title">
+                    <span>Edit Profile</span>
+                </div>
+                
+                <div class="edit-form">
+                    <div class="form-group">
+                        <label class="form-label" for="editName">Full Name</label>
+                        <input type="text" 
+                               id="editName" 
+                               class="form-input" 
+                               placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editBio">Bio</label>
+                        <textarea id="editBio" 
+                                  class="form-textarea" 
+                                  placeholder="Tell us about yourself..."
+                                  maxlength="500"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCountry">Country</label>
+                        <input type="text" 
+                               id="editCountry" 
+                               class="form-input" 
+                               placeholder="Enter your country">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCity">City</label>
+                        <input type="text" 
+                               id="editCity" 
+                               class="form-input" 
+                               placeholder="Enter your city">
+                    </div>
+                    
+                    <button class="save-changes-btn" onclick="saveProfileChanges()">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="posts.html" class="nav-item">
+                <i class="fas fa-newspaper nav-icon"></i>
+                <span class="nav-label">Posts</span>
+            </a>
+            
+            <!-- CREATE Button (Center) -->
+            <button class="create-btn" onclick="openCreatePage()">
+                <i class="fas fa-plus"></i>
+            </button>
+            
+            <a href="messages.html" class="nav-item">
+                <i class="fas fa-comments nav-icon"></i>
+                <span class="nav-label">Messages</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Global notification functions
+        function showNotification(type, message) {
+            const notification = document.getElementById('notification');
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationText = document.getElementById('notificationText');
+            
+            // Set notification type
+            notification.className = `notification ${type}`;
+            
+            // Set icon based on type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                case 'info':
+                default:
+                    icon = '<i class="fas fa-info-circle"></i>';
+                    break;
+            }
+            
+            notificationIcon.innerHTML = icon;
+            notificationText.textContent = message;
+            
+            // Start animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 50);
+            
+            // Auto dismiss after 2 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 2000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Initialize notification close button
+        document.getElementById('notificationCloseButton').addEventListener('click', hideNotification);
+
+        // Section navigation
+        window.showSection = function(sectionId) {
+            // Update sub-nav active state
+            document.querySelectorAll('.sub-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId + 'Section').classList.add('active');
+        };
+
+        // Match tabs
+        window.showMatchTab = function(tabId) {
+            // Update tab active state
+            document.querySelectorAll('.match-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load matches for this tab
+            loadMatches(tabId);
+        };
+
+        // Logout function
+        window.logout = async function() {
+            try {
+                skyblueLoading.classList.add('active');
+                
+                // Import signOut from Firebase
+                const { signOut } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
+                const { auth } = await import('./firebase-config.js');
+                
+                await signOut(auth);
+                window.location.href = '../choose.html';
+                
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification('error', 'Failed to logout. Please try again.');
+                skyblueLoading.classList.remove('active');
+            }
+        };
+
+        // Change profile picture
+        window.changeProfilePicture = function() {
+            showNotification('info', 'Profile picture upload feature coming soon!');
+        };
+
+        // Save profile changes
+        window.saveProfileChanges = function() {
+            showNotification('success', 'Profile changes saved successfully!');
+        };
+
+        // Create button handler
+        window.openCreatePage = function() {
+            window.location.href = 'create.html';
+        };
+    </script>
+
+    <script type="module">
+        // Import Firebase config
+        import { auth, db } from './firebase-config.js';
+        import { 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            getDoc,
+            doc,
+            collection,
+            query,
+            where,
+            orderBy,
+            getDocs,
+            limit
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // UI Elements
+        const skyblueLoading = document.getElementById('skyblueLoading');
+        
+        // Profile elements
+        const profileImage = document.getElementById('profileImage');
+        const profileName = document.getElementById('profileName');
+        const profileBio = document.getElementById('profileBio');
+        const profileCountry = document.getElementById('profileCountry');
+        
+        // Stats elements
+        const statWins = document.getElementById('statWins');
+        const statStars = document.getElementById('statStars');
+        const statAccuracy = document.getElementById('statAccuracy');
+        
+        // Edit form elements
+        const editName = document.getElementById('editName');
+        const editBio = document.getElementById('editBio');
+        const editCountry = document.getElementById('editCountry');
+        const editCity = document.getElementById('editCity');
+        
+        // Analytics elements
+        const analyticsWins = document.getElementById('analyticsWins');
+        const analyticsLosses = document.getElementById('analyticsLosses');
+        const analyticsWinRate = document.getElementById('analyticsWinRate');
+        const analyticsAvgOdds = document.getElementById('analyticsAvgOdds');
+        
+        // Monetization elements
+        const likesProgressText = document.getElementById('likesProgressText');
+        const likesProgressFill = document.getElementById('likesProgressFill');
+        const followersProgressText = document.getElementById('followersProgressText');
+        const followersProgressFill = document.getElementById('followersProgressFill');
+        const winsProgressText = document.getElementById('winsProgressText');
+        const winsProgressFill = document.getElementById('winsProgressFill');
+
+        // Global variables
+        let currentPredictorId = null;
+        let searchTimeout = null;
+
+        // Check authentication and redirect
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in, redirect to choose.html
+                window.location.href = '../choose.html';
+                return;
+            }
+
+            try {
+                // Check if user is actually a predictor
+                const predDoc = await getDoc(doc(db, 'predictors', user.uid));
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+                if (!predDoc.exists() && userDoc.exists()) {
+                    // User is a normal user, redirect to user dashboard
+                    window.location.href = '../user/dashboard.html';
+                    return;
+                }
+
+                if (!predDoc.exists() && !userDoc.exists()) {
+                    // User not found in either collection, sign out
+                    await signOut(auth);
+                    window.location.href = '../choose.html';
+                    return;
+                }
+
+                // User is authenticated and is a predictor
+                currentPredictorId = user.uid;
+                loadProfileData(user.uid);
+
+            } catch (error) {
+                console.error('Auth check error:', error);
+                showNotification('error', 'Authentication error. Please login again.');
+                setTimeout(() => {
+                    window.location.href = '../choose.html';
+                }, 2000);
+            }
+        });
+
+        async function loadProfileData(predictorId) {
+            skyblueLoading.classList.add('active');
+
+            try {
+                // Load predictor data from Firebase
+                const predictorDoc = await getDoc(doc(db, 'predictors', predictorId));
+                
+                if (!predictorDoc.exists()) {
+                    showNotification('error', 'Profile data not found');
+                    return;
+                }
+
+                const predictor = predictorDoc.data();
+
+                // Update profile header
+                if (predictor.photoUrl) {
+                    profileImage.src = predictor.photoUrl;
+                } else {
+                    profileImage.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f8f9fa"/><text x="50" y="55" font-family="Arial" font-size="40" text-anchor="middle" fill="%23666666">?</text></svg>';
+                }
+
+                profileName.textContent = predictor.name || 'Predictor';
+                profileBio.textContent = predictor.bio || 'No bio yet';
+                
+                const location = [];
+                if (predictor.city) location.push(predictor.city);
+                if (predictor.country) location.push(predictor.country);
+                profileCountry.querySelector('span').textContent = location.join(', ') || 'Location not set';
+
+                // Update stats
+                statWins.textContent = predictor.wins || 0;
+                statStars.textContent = predictor.stars || 0;
+                statAccuracy.textContent = `${predictor.accuracy || 0}%`;
+
+                // Update edit form
+                editName.value = predictor.name || '';
+                editBio.value = predictor.bio || '';
+                editCountry.value = predictor.country || '';
+                editCity.value = predictor.city || '';
+
+                // Update analytics
+                analyticsWins.textContent = predictor.wins || 0;
+                analyticsLosses.textContent = predictor.losses || 0;
+                
+                const totalPredictions = (predictor.wins || 0) + (predictor.losses || 0);
+                const winRate = totalPredictions > 0 ? Math.round((predictor.wins || 0) / totalPredictions * 100) : 0;
+                analyticsWinRate.textContent = `${winRate}%`;
+                analyticsAvgOdds.textContent = predictor.averageOdds ? predictor.averageOdds.toFixed(2) : '0.0';
+
+                // Update monetization progress
+                const likes = predictor.totalLikes || 0;
+                const followers = predictor.followers || 0;
+                const wins = predictor.wins || 0;
+                
+                // Likes progress
+                const likesPercent = Math.min(100, (likes / 1000) * 100);
+                likesProgressText.textContent = `${likes}/1000+`;
+                likesProgressFill.style.width = `${likesPercent}%`;
+                
+                // Followers progress
+                const followersPercent = Math.min(100, (followers / 10000) * 100);
+                followersProgressText.textContent = `${followers}/10000+`;
+                followersProgressFill.style.width = `${followersPercent}%`;
+                
+                // Wins progress
+                const winsPercent = Math.min(100, (wins / 100) * 100);
+                winsProgressText.textContent = `${wins}/100+`;
+                winsProgressFill.style.width = `${winsPercent}%`;
+
+                // Load initial data for active section
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+                
+                if (tab) {
+                    // Show requested tab
+                    const subNavItem = document.querySelector(`.sub-nav-item[onclick*="${tab}"]`);
+                    if (subNavItem) {
+                        subNavItem.click();
+                    }
+                } else {
+                    // Load default section (matches)
+                    loadMatches('unvoted');
+                    loadSavedPosts();
+                    loadComments();
+                }
+
+            } catch (error) {
+                console.error('Profile load error:', error);
+                showNotification('error', 'Failed to load profile data. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+            }
+        }
+
+        async function loadMatches(tabType) {
+            try {
+                const matchesList = document.getElementById('matchesList');
+                matchesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-futbol"></i></div><h3 class="empty-state-title">Loading matches...</h3></div>';
+                
+                // In a real app, you would query Firebase for matches
+                // For now, show sample data
+                setTimeout(() => {
+                    if (tabType === 'unvoted') {
+                        matchesList.innerHTML = `
+                            <div class="match-card" onclick="openMatch('match1')">
+                                <div class="match-header">
+                                    <div class="match-teams">Manchester United vs Liverpool</div>
+                                    <div class="match-status">Upcoming</div>
+                                </div>
+                                <div class="match-details">
+                                    <div class="match-league">Premier League</div>
+                                    <div class="match-time">Tomorrow, 15:00</div>
+                                </div>
+                            </div>
+                            <div class="match-card" onclick="openMatch('match2')">
+                                <div class="match-header">
+                                    <div class="match-teams">Barcelona vs Real Madrid</div>
+                                    <div class="match-status">Upcoming</div>
+                                </div>
+                                <div class="match-details">
+                                    <div class="match-league">La Liga</div>
+                                    <div class="match-time">Sunday, 20:00</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        matchesList.innerHTML = `
+                            <div class="match-card" onclick="openMatch('match3')">
+                                <div class="match-header">
+                                    <div class="match-teams">Bayern Munich vs Dortmund</div>
+                                    <div class="match-status">Completed</div>
+                                </div>
+                                <div class="match-details">
+                                    <div class="match-league">Bundesliga</div>
+                                    <div class="match-time">Yesterday, 18:30</div>
+                                </div>
+                            </div>
+                            <div class="match-card" onclick="openMatch('match4')">
+                                <div class="match-header">
+                                    <div class="match-teams">PSG vs Marseille</div>
+                                    <div class="match-status">Live</div>
+                                </div>
+                                <div class="match-details">
+                                    <div class="match-league">Ligue 1</div>
+                                    <div class="match-time">Now</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }, 500);
+
+            } catch (error) {
+                console.error('Matches load error:', error);
+                const matchesList = document.getElementById('matchesList');
+                matchesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to load matches</h3>
+                        <p class="empty-state-text">Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadSavedPosts() {
+            try {
+                const savesList = document.getElementById('savesList');
+                savesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-bookmark"></i></div><h3 class="empty-state-title">Loading saved posts...</h3></div>';
+                
+                // In a real app, you would query Firebase for saved posts
+                // For now, show sample data
+                setTimeout(() => {
+                    const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+                    
+                    if (savedPosts.length === 0) {
+                        savesList.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-bookmark"></i>
+                                </div>
+                                <h3 class="empty-state-title">No saved posts</h3>
+                                <p class="empty-state-text">Save posts you like to find them here later.</p>
+                            </div>
+                        `;
+                    } else {
+                        // In a real app, you would fetch post details from Firebase
+                        savesList.innerHTML = `
+                            <div class="save-card" onclick="openPost('post1')">
+                                <div class="save-header">
+                                    <div class="save-author-img">
+                                        <i class="fas fa-user" style="font-size: 20px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                                    </div>
+                                    <div class="save-author-info">
+                                        <div class="save-author-name">John Predictor</div>
+                                        <div class="save-time">2 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="save-content">
+                                    My analysis of the upcoming Manchester derby suggests City has the upper hand due to their recent form.
+                                </div>
+                            </div>
+                        `;
+                    }
+                }, 500);
+
+            } catch (error) {
+                console.error('Saved posts load error:', error);
+                const savesList = document.getElementById('savesList');
+                savesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to load saved posts</h3>
+                        <p class="empty-state-text">Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadComments() {
+            try {
+                const commentsList = document.getElementById('commentsList');
+                commentsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-comments"></i></div><h3 class="empty-state-title">Loading comments...</h3></div>';
+                
+                // In a real app, you would query Firebase for comments
+                // For now, show sample data
+                setTimeout(() => {
+                    commentsList.innerHTML = `
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-author-img">
+                                    <i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                                </div>
+                                <div class="comment-author-name">User123</div>
+                            </div>
+                            <div class="comment-text">
+                                Great analysis! Your prediction was spot on.
+                            </div>
+                        </div>
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-author-img">
+                                    <i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                                </div>
+                                <div class="comment-author-name">FootballFan99</div>
+                            </div>
+                            <div class="comment-text">
+                                I disagree with your reasoning, but appreciate the detailed analysis.
+                            </div>
+                        </div>
+                    `;
+                }, 500);
+
+            } catch (error) {
+                console.error('Comments load error:', error);
+                const commentsList = document.getElementById('commentsList');
+                commentsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to load comments</h3>
+                        <p class="empty-state-text">Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        window.openMatch = function(matchId) {
+            window.location.href = `match.html?matchId=${matchId}`;
+        };
+
+        window.openPost = function(postId) {
+            window.location.href = `viewpost.html?postId=${postId}`;
+        };
+
+        // Search functionality with debounce
+        document.getElementById('matchesSearch').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Perform search
+                console.log('Searching for:', this.value);
+            }, 300);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set active nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.href === window.location.href) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

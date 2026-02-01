@@ -356,8 +356,23 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
         }
 
+        .post-stat:hover {
+            color: var(--or-blue);
+        }
+
+        .post-stat.active {
+            color: var(--or-blue);
+        }
+
+        .post-stat.active .fa-heart {
+            color: var(--error);
+        }
+
+        /* Stories Section */
         .stories-section {
             margin-bottom: 24px;
         }
@@ -381,6 +396,7 @@
             align-items: center;
             gap: 8px;
             min-width: 80px;
+            cursor: pointer;
         }
 
         .story-avatar {
@@ -409,6 +425,95 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            padding: 0 16px 16px 16px;
+            border-top: 1px solid var(--or-border);
+        }
+
+        .comment-input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 18px;
+            font-size: 14px;
+            color: var(--or-text);
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+        }
+
+        .comment-button {
+            background: var(--or-blue);
+            color: var(--or-white);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .comments-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-content {
+            flex: 1;
+            background: var(--or-light-bg);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            font-size: 10px;
+            color: var(--or-text-muted);
+            margin-top: 4px;
         }
 
         /* =========================================
@@ -698,7 +803,11 @@
             doc,
             orderBy,
             limit,
-            Timestamp
+            Timestamp,
+            addDoc,
+            updateDoc,
+            arrayUnion,
+            arrayRemove
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
@@ -707,6 +816,9 @@
         const notificationBadge = document.getElementById('notificationBadge');
         const storiesContainer = document.getElementById('storiesContainer');
         const postsList = document.getElementById('postsList');
+
+        let currentUserId = null;
+        let userLikedPosts = new Set();
 
         // Check authentication and redirect
         onAuthStateChanged(auth, async (user) => {
@@ -734,7 +846,8 @@
                     return;
                 }
 
-                // User is authenticated and is a user, load posts data
+                // User is authenticated and is a user
+                currentUserId = user.uid;
                 loadPostsData(user.uid);
 
             } catch (error) {
@@ -753,6 +866,9 @@
                 // Load stories from predictors
                 await loadStories();
                 
+                // Load user's liked posts
+                await loadUserLikedPosts(userId);
+                
                 // Load posts from predictors
                 await loadPosts();
 
@@ -766,12 +882,15 @@
 
         async function loadStories() {
             try {
-                // Query active stories from predictors
+                // Get current time
+                const now = new Date();
+                const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                
+                // Query active stories from predictors (last 24 hours)
                 const storiesQuery = query(
                     collection(db, 'stories'),
-                    where('isActive', '==', true),
-                    orderBy('createdAt', 'desc'),
-                    limit(10)
+                    where('createdAt', '>=', twentyFourHoursAgo),
+                    orderBy('createdAt', 'desc')
                 );
 
                 const storiesSnapshot = await getDocs(storiesQuery);
@@ -794,14 +913,34 @@
                     return;
                 }
 
-                // Create story items
+                // Group stories by predictor
+                const predictorStories = new Map();
+                
                 storiesSnapshot.forEach((docSnapshot) => {
                     const story = {
                         id: docSnapshot.id,
                         ...docSnapshot.data()
                     };
                     
-                    const storyItem = createStoryItem(story);
+                    if (!story.predictorId) return;
+                    
+                    if (!predictorStories.has(story.predictorId)) {
+                        predictorStories.set(story.predictorId, {
+                            predictorId: story.predictorId,
+                            predictorName: story.predictorName,
+                            predictorAvatar: story.predictorAvatar,
+                            latestStory: story,
+                            storyCount: 1
+                        });
+                    } else {
+                        const existing = predictorStories.get(story.predictorId);
+                        existing.storyCount++;
+                    }
+                });
+
+                // Create story items
+                predictorStories.forEach((predictorData) => {
+                    const storyItem = createStoryItem(predictorData);
                     storiesContainer.appendChild(storyItem);
                 });
 
@@ -821,28 +960,47 @@
             }
         }
 
-        function createStoryItem(story) {
+        function createStoryItem(predictorData) {
             const storyItem = document.createElement('div');
             storyItem.className = 'story-item';
             
             storyItem.innerHTML = `
                 <div class="story-avatar">
-                    ${story.predictorAvatar ? 
-                        `<img src="${story.predictorAvatar}" alt="${story.predictorName || 'Predictor'}">` :
+                    ${predictorData.predictorAvatar ? 
+                        `<img src="${predictorData.predictorAvatar}" alt="${predictorData.predictorName || 'Predictor'}">` :
                         `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 8px;"></i>`
+                    }
+                    ${predictorData.storyCount > 1 ? 
+                        `<span style="position: absolute; top: -5px; right: -5px; background: var(--or-blue); color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">${predictorData.storyCount}</span>` : 
+                        ''
                     }
                 </div>
                 <div class="story-author">
-                    ${story.predictorName || 'Predictor'}
+                    ${predictorData.predictorName || 'Predictor'}
                 </div>
             `;
             
             storyItem.onclick = () => {
-                // Story viewer logic would go here
-                showNotification('info', 'Story viewer coming soon!');
+                // Navigate to story viewer (would be implemented separately)
+                showNotification('info', 'Story viewer feature coming soon!');
             };
             
             return storyItem;
+        }
+
+        async function loadUserLikedPosts(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.likedPosts) {
+                        userLikedPosts = new Set(userData.likedPosts);
+                    }
+                }
+            } catch (error) {
+                console.error('Liked posts load error:', error);
+                userLikedPosts = new Set();
+            }
         }
 
         async function loadPosts() {
@@ -874,7 +1032,7 @@
                 }
 
                 // Create post cards
-                postsSnapshot.forEach((docSnapshot) => {
+                for (const docSnapshot of postsSnapshot.docs) {
                     const post = {
                         id: docSnapshot.id,
                         ...docSnapshot.data()
@@ -885,9 +1043,9 @@
                         post.createdAt = post.createdAt.toDate();
                     }
                     
-                    const postCard = createPostCard(post);
+                    const postCard = await createPostCard(post);
                     postsList.appendChild(postCard);
-                });
+                }
 
             } catch (error) {
                 console.error('Posts load error:', error);
@@ -905,18 +1063,16 @@
             }
         }
 
-        function createPostCard(post) {
+        async function createPostCard(post) {
             const postCard = document.createElement('div');
             postCard.className = 'post-card';
+            postCard.dataset.postId = post.id;
             
             // Format time
             const postTime = post.createdAt ? 
-                post.createdAt.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }) : 'Recently';
+                formatPostTime(post.createdAt) : 'Recently';
+            
+            const isLiked = userLikedPosts.has(post.id);
             
             postCard.innerHTML = `
                 <div class="post-header">
@@ -938,29 +1094,363 @@
                     
                     ${post.imageUrl ? `
                         <div class="post-media">
-                            <img src="${post.imageUrl}" alt="Post image">
+                            <img src="${post.imageUrl}" alt="Post image" style="cursor: pointer;" onclick="viewPostImage('${post.imageUrl}')">
                         </div>
                     ` : ''}
                 </div>
                 
                 <div class="post-stats">
-                    <div class="post-stat">
+                    <div class="post-stat ${isLiked ? 'active' : ''}" data-action="like">
                         <i class="fas fa-heart"></i>
                         <span>${post.likes || 0}</span>
                     </div>
-                    <div class="post-stat">
+                    <div class="post-stat" data-action="comment">
                         <i class="fas fa-comment"></i>
                         <span>${post.comments || 0}</span>
                     </div>
-                    <div class="post-stat">
+                    <div class="post-stat" data-action="share">
                         <i class="fas fa-share"></i>
                         <span>${post.shares || 0}</span>
                     </div>
                 </div>
+                
+                <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                    <div class="comment-input-container">
+                        <input type="text" 
+                               class="comment-input" 
+                               placeholder="Add a comment..."
+                               id="comment-input-${post.id}">
+                        <button class="comment-button" onclick="addComment('${post.id}')">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="comments-list" id="comments-list-${post.id}">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
             `;
+            
+            // Add event listeners for post actions
+            setTimeout(() => {
+                const likeBtn = postCard.querySelector('[data-action="like"]');
+                const commentBtn = postCard.querySelector('[data-action="comment"]');
+                const shareBtn = postCard.querySelector('[data-action="share"]');
+                
+                likeBtn.addEventListener('click', () => handleLikePost(post.id, postCard));
+                commentBtn.addEventListener('click', () => toggleComments(post.id));
+                shareBtn.addEventListener('click', () => handleSharePost(post.id));
+            }, 100);
             
             return postCard;
         }
+
+        function formatPostTime(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        async function handleLikePost(postId, postCard) {
+            if (!currentUserId) return;
+            
+            try {
+                const postRef = doc(db, 'posts', postId);
+                const userRef = doc(db, 'users', currentUserId);
+                
+                const isCurrentlyLiked = userLikedPosts.has(postId);
+                
+                if (isCurrentlyLiked) {
+                    // Unlike
+                    await updateDoc(postRef, {
+                        likes: (await getPostLikes(postId)) - 1
+                    });
+                    
+                    await updateDoc(userRef, {
+                        likedPosts: arrayRemove(postId)
+                    });
+                    
+                    userLikedPosts.delete(postId);
+                } else {
+                    // Like
+                    await updateDoc(postRef, {
+                        likes: (await getPostLikes(postId)) + 1
+                    });
+                    
+                    await updateDoc(userRef, {
+                        likedPosts: arrayUnion(postId)
+                    });
+                    
+                    userLikedPosts.add(postId);
+                }
+                
+                // Update UI
+                const likeStat = postCard.querySelector('[data-action="like"]');
+                const likeIcon = likeStat.querySelector('i');
+                const likeCountSpan = likeStat.querySelector('span');
+                
+                const currentLikes = parseInt(likeCountSpan.textContent) || 0;
+                const newLikes = isCurrentlyLiked ? currentLikes - 1 : currentLikes + 1;
+                
+                likeCountSpan.textContent = newLikes;
+                
+                if (isCurrentlyLiked) {
+                    likeStat.classList.remove('active');
+                    likeIcon.style.color = '';
+                } else {
+                    likeStat.classList.add('active');
+                    likeIcon.style.color = 'var(--error)';
+                }
+                
+            } catch (error) {
+                console.error('Like post error:', error);
+                showNotification('error', 'Failed to update like. Please try again.');
+            }
+        }
+
+        async function getPostLikes(postId) {
+            try {
+                const postDoc = await getDoc(doc(db, 'posts', postId));
+                if (postDoc.exists()) {
+                    return postDoc.data().likes || 0;
+                }
+                return 0;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            
+            if (commentsSection.style.display === 'none') {
+                commentsSection.style.display = 'block';
+                loadComments(postId, commentsList);
+            } else {
+                commentsSection.style.display = 'none';
+            }
+        }
+
+        async function loadComments(postId, commentsList) {
+            try {
+                const commentsQuery = query(
+                    collection(db, 'posts', postId, 'comments'),
+                    orderBy('createdAt', 'desc'),
+                    limit(20)
+                );
+
+                const commentsSnapshot = await getDocs(commentsQuery);
+                
+                commentsList.innerHTML = '';
+                
+                if (commentsSnapshot.empty) {
+                    commentsList.innerHTML = `
+                        <div style="text-align: center; color: var(--or-text-muted); padding: 20px;">
+                            No comments yet. Be the first!
+                        </div>
+                    `;
+                    return;
+                }
+                
+                commentsSnapshot.forEach((docSnapshot) => {
+                    const comment = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    const commentElement = createCommentElement(comment);
+                    commentsList.appendChild(commentElement);
+                });
+                
+            } catch (error) {
+                console.error('Load comments error:', error);
+                commentsList.innerHTML = `
+                    <div style="text-align: center; color: var(--error); padding: 20px;">
+                        Failed to load comments
+                    </div>
+                `;
+            }
+        }
+
+        function createCommentElement(comment) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-item';
+            
+            // Format time
+            const commentTime = comment.createdAt && typeof comment.createdAt.toDate === 'function' ?
+                formatPostTime(comment.createdAt.toDate()) : 'Recently';
+            
+            commentDiv.innerHTML = `
+                <div class="comment-avatar">
+                    ${comment.userAvatar ? 
+                        `<img src="${comment.userAvatar}" alt="${comment.userName || 'User'}">` :
+                        `<i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); padding: 8px;"></i>`
+                    }
+                </div>
+                <div class="comment-content">
+                    <div class="comment-author">${comment.userName || 'User'}</div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-time">${commentTime}</div>
+                </div>
+            `;
+            
+            return commentDiv;
+        }
+
+        async function addComment(postId) {
+            if (!currentUserId) return;
+            
+            const commentInput = document.getElementById(`comment-input-${postId}`);
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) {
+                showNotification('warning', 'Please enter a comment');
+                return;
+            }
+            
+            try {
+                // Get user info
+                const userDoc = await getDoc(doc(db, 'users', currentUserId));
+                if (!userDoc.exists()) return;
+                
+                const userData = userDoc.data();
+                
+                // Add comment
+                await addDoc(collection(db, 'posts', postId, 'comments'), {
+                    text: commentText,
+                    userId: currentUserId,
+                    userName: userData.name || 'User',
+                    userAvatar: userData.photoURL || null,
+                    createdAt: Timestamp.now()
+                });
+                
+                // Update post comment count
+                await updateDoc(doc(db, 'posts', postId), {
+                    comments: (await getPostComments(postId)) + 1
+                });
+                
+                // Clear input
+                commentInput.value = '';
+                
+                // Reload comments
+                const commentsList = document.getElementById(`comments-list-${postId}`);
+                loadComments(postId, commentsList);
+                
+                // Update comment count in stats
+                const commentStat = document.querySelector(`[data-post-id="${postId}"] [data-action="comment"] span`);
+                const currentComments = parseInt(commentStat.textContent) || 0;
+                commentStat.textContent = currentComments + 1;
+                
+                showNotification('success', 'Comment added!');
+                
+            } catch (error) {
+                console.error('Add comment error:', error);
+                showNotification('error', 'Failed to add comment. Please try again.');
+            }
+        }
+
+        async function getPostComments(postId) {
+            try {
+                const postDoc = await getDoc(doc(db, 'posts', postId));
+                if (postDoc.exists()) {
+                    return postDoc.data().comments || 0;
+                }
+                return 0;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        async function handleSharePost(postId) {
+            try {
+                // In a real app, this would use the Web Share API
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Check out this post on ORAFUT',
+                        text: 'No better football predictions & social network than this',
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    await navigator.clipboard.writeText(window.location.href);
+                    showNotification('success', 'Link copied to clipboard!');
+                    
+                    // Update share count
+                    const postRef = doc(db, 'posts', postId);
+                    await updateDoc(postRef, {
+                        shares: (await getPostShares(postId)) + 1
+                    });
+                    
+                    // Update UI
+                    const shareStat = document.querySelector(`[data-post-id="${postId}"] [data-action="share"] span`);
+                    const currentShares = parseInt(shareStat.textContent) || 0;
+                    shareStat.textContent = currentShares + 1;
+                }
+            } catch (error) {
+                console.error('Share post error:', error);
+                if (error.name !== 'AbortError') {
+                    showNotification('error', 'Failed to share post');
+                }
+            }
+        }
+
+        async function getPostShares(postId) {
+            try {
+                const postDoc = await getDoc(doc(db, 'posts', postId));
+                if (postDoc.exists()) {
+                    return postDoc.data().shares || 0;
+                }
+                return 0;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        // Global functions for image viewing
+        window.viewPostImage = function(imageUrl) {
+            // Create image viewer modal
+            const viewer = document.createElement('div');
+            viewer.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 9998;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            viewer.innerHTML = `
+                <div style="position: relative; max-width: 90%; max-height: 90%;">
+                    <img src="${imageUrl}" alt="Post image" style="max-width: 100%; max-height: 90vh; border-radius: 8px;">
+                    <button style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer;">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(viewer);
+            
+            viewer.onclick = function(e) {
+                if (e.target.tagName === 'BUTTON' || e.target === viewer) {
+                    document.body.removeChild(viewer);
+                }
+            };
+        };
 
         // Notification bell click handler
         notificationBtn.addEventListener('click', () => {

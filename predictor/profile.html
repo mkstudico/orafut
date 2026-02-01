@@ -288,6 +288,7 @@
             max-width: 300px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.4;
         }
 
         .profile-country {
@@ -512,8 +513,21 @@
             font-weight: 600;
             padding: 4px 8px;
             border-radius: 4px;
+        }
+
+        .status-upcoming {
             background: rgba(59, 130, 246, 0.1);
             color: #3b82f6;
+        }
+
+        .status-live {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .status-completed {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
         }
 
         .match-details {
@@ -813,6 +827,11 @@
 
         .save-changes-btn:hover {
             background: #b8860b;
+        }
+
+        .save-changes-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .logout-btn {
@@ -1239,11 +1258,12 @@
                 
                 <div class="edit-form">
                     <div class="form-group">
-                        <label class="form-label" for="editName">Full Name</label>
+                        <label class="form-label" for="editName">Full Name *</label>
                         <input type="text" 
                                id="editName" 
                                class="form-input" 
-                               placeholder="Enter your full name">
+                               placeholder="Enter your full name"
+                               required>
                     </div>
                     
                     <div class="form-group">
@@ -1252,25 +1272,39 @@
                                   class="form-textarea" 
                                   placeholder="Tell us about yourself..."
                                   maxlength="500"></textarea>
+                        <div style="text-align: right; font-size: 12px; color: var(--or-text-muted); margin-top: 4px;">
+                            <span id="bioCounter">0</span>/500 characters
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="editCountry">Country</label>
+                        <label class="form-label" for="editCountry">Country *</label>
                         <input type="text" 
                                id="editCountry" 
                                class="form-input" 
-                               placeholder="Enter your country">
+                               placeholder="Enter your country"
+                               required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="editCity">City</label>
+                        <label class="form-label" for="editCity">City *</label>
                         <input type="text" 
                                id="editCity" 
                                class="form-input" 
-                               placeholder="Enter your city">
+                               placeholder="Enter your city"
+                               required>
                     </div>
                     
-                    <button class="save-changes-btn" onclick="saveProfileChanges()">
+                    <div class="form-group">
+                        <label class="form-label" for="editPhone">Phone Number *</label>
+                        <input type="tel" 
+                               id="editPhone" 
+                               class="form-input" 
+                               placeholder="Enter your phone number"
+                               required>
+                    </div>
+                    
+                    <button class="save-changes-btn" id="saveChangesBtn" onclick="saveProfileChanges()">
                         Save Changes
                     </button>
                 </div>
@@ -1369,9 +1403,26 @@
             
             // Show selected section
             document.getElementById(sectionId + 'Section').classList.add('active');
+            
+            // Load data for the section
+            switch(sectionId) {
+                case 'matches':
+                    loadMatches(currentMatchTab);
+                    break;
+                case 'saves':
+                    loadSavedPosts();
+                    break;
+                case 'analytics':
+                    loadComments();
+                    break;
+                case 'edit':
+                    // Already loaded with profile data
+                    break;
+            }
         };
 
         // Match tabs
+        let currentMatchTab = 'unvoted';
         window.showMatchTab = function(tabId) {
             // Update tab active state
             document.querySelectorAll('.match-tab').forEach(tab => {
@@ -1379,48 +1430,19 @@
             });
             event.target.classList.add('active');
             
-            // Load matches for this tab
+            currentMatchTab = tabId;
             loadMatches(tabId);
         };
 
-        // Logout function
-        window.logout = async function() {
-            try {
-                skyblueLoading.classList.add('active');
-                
-                // Import signOut from Firebase
-                const { signOut } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
-                const { auth } = await import('./firebase-config.js');
-                
-                await signOut(auth);
-                window.location.href = '../choose.html';
-                
-            } catch (error) {
-                console.error('Logout error:', error);
-                showNotification('error', 'Failed to logout. Please try again.');
-                skyblueLoading.classList.remove('active');
-            }
-        };
-
-        // Change profile picture
-        window.changeProfilePicture = function() {
-            showNotification('info', 'Profile picture upload feature coming soon!');
-        };
-
-        // Save profile changes
-        window.saveProfileChanges = function() {
-            showNotification('success', 'Profile changes saved successfully!');
-        };
-
-        // Create button handler
-        window.openCreatePage = function() {
-            window.location.href = 'create.html';
-        };
+        // Bio character counter
+        document.getElementById('editBio').addEventListener('input', function() {
+            document.getElementById('bioCounter').textContent = this.value.length;
+        });
     </script>
 
     <script type="module">
         // Import Firebase config
-        import { auth, db } from './firebase-config.js';
+        import { auth, db, IMGBB_KEY } from './firebase-config.js';
         import { 
             onAuthStateChanged, 
             signOut 
@@ -1428,16 +1450,20 @@
         import { 
             getDoc,
             doc,
+            updateDoc,
             collection,
             query,
             where,
+            or,
             orderBy,
             getDocs,
-            limit
+            limit,
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
         const skyblueLoading = document.getElementById('skyblueLoading');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
         
         // Profile elements
         const profileImage = document.getElementById('profileImage');
@@ -1455,6 +1481,7 @@
         const editBio = document.getElementById('editBio');
         const editCountry = document.getElementById('editCountry');
         const editCity = document.getElementById('editCity');
+        const editPhone = document.getElementById('editPhone');
         
         // Analytics elements
         const analyticsWins = document.getElementById('analyticsWins');
@@ -1472,7 +1499,10 @@
 
         // Global variables
         let currentPredictorId = null;
+        let originalProfileData = {};
         let searchTimeout = null;
+        let allMatches = [];
+        let allLeagues = new Set();
 
         // Check authentication and redirect
         onAuthStateChanged(auth, async (user) => {
@@ -1526,6 +1556,7 @@
                 }
 
                 const predictor = predictorDoc.data();
+                originalProfileData = { ...predictor };
 
                 // Update profile header
                 if (predictor.photoUrl) {
@@ -1550,8 +1581,10 @@
                 // Update edit form
                 editName.value = predictor.name || '';
                 editBio.value = predictor.bio || '';
+                document.getElementById('bioCounter').textContent = (predictor.bio || '').length;
                 editCountry.value = predictor.country || '';
                 editCity.value = predictor.city || '';
+                editPhone.value = predictor.phone || '';
 
                 // Update analytics
                 analyticsWins.textContent = predictor.wins || 0;
@@ -1594,7 +1627,7 @@
                     }
                 } else {
                     // Load default section (matches)
-                    loadMatches('unvoted');
+                    loadAllMatches();
                     loadSavedPosts();
                     loadComments();
                 }
@@ -1607,62 +1640,150 @@
             }
         }
 
+        async function loadAllMatches() {
+            try {
+                // Load all matches to populate leagues filter
+                const matchesQuery = query(
+                    collection(db, 'matches'),
+                    orderBy('startTime', 'asc')
+                );
+
+                const matchesSnapshot = await getDocs(matchesQuery);
+                
+                allMatches = [];
+                allLeagues.clear();
+                
+                matchesSnapshot.forEach((docSnapshot) => {
+                    const match = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    // Convert timestamp if needed
+                    if (match.startTime && typeof match.startTime.toDate === 'function') {
+                        match.startTime = match.startTime.toDate();
+                    }
+                    
+                    allMatches.push(match);
+                    
+                    // Add league to filter options
+                    if (match.league) {
+                        allLeagues.add(match.league);
+                    }
+                });
+
+                // Populate league filter
+                const leagueFilter = document.getElementById('leagueFilter');
+                leagueFilter.innerHTML = '<option value="">All Leagues</option>';
+                allLeagues.forEach(league => {
+                    const option = document.createElement('option');
+                    option.value = league;
+                    option.textContent = league;
+                    leagueFilter.appendChild(option);
+                });
+
+                // Load initial matches
+                loadMatches('unvoted');
+
+            } catch (error) {
+                console.error('Matches load error:', error);
+                showNotification('error', 'Failed to load matches.');
+            }
+        }
+
         async function loadMatches(tabType) {
             try {
                 const matchesList = document.getElementById('matchesList');
                 matchesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-futbol"></i></div><h3 class="empty-state-title">Loading matches...</h3></div>';
                 
-                // In a real app, you would query Firebase for matches
-                // For now, show sample data
-                setTimeout(() => {
-                    if (tabType === 'unvoted') {
-                        matchesList.innerHTML = `
-                            <div class="match-card" onclick="openMatch('match1')">
-                                <div class="match-header">
-                                    <div class="match-teams">Manchester United vs Liverpool</div>
-                                    <div class="match-status">Upcoming</div>
-                                </div>
-                                <div class="match-details">
-                                    <div class="match-league">Premier League</div>
-                                    <div class="match-time">Tomorrow, 15:00</div>
-                                </div>
-                            </div>
-                            <div class="match-card" onclick="openMatch('match2')">
-                                <div class="match-header">
-                                    <div class="match-teams">Barcelona vs Real Madrid</div>
-                                    <div class="match-status">Upcoming</div>
-                                </div>
-                                <div class="match-details">
-                                    <div class="match-league">La Liga</div>
-                                    <div class="match-time">Sunday, 20:00</div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        matchesList.innerHTML = `
-                            <div class="match-card" onclick="openMatch('match3')">
-                                <div class="match-header">
-                                    <div class="match-teams">Bayern Munich vs Dortmund</div>
-                                    <div class="match-status">Completed</div>
-                                </div>
-                                <div class="match-details">
-                                    <div class="match-league">Bundesliga</div>
-                                    <div class="match-time">Yesterday, 18:30</div>
-                                </div>
-                            </div>
-                            <div class="match-card" onclick="openMatch('match4')">
-                                <div class="match-header">
-                                    <div class="match-teams">PSG vs Marseille</div>
-                                    <div class="match-status">Live</div>
-                                </div>
-                                <div class="match-details">
-                                    <div class="match-league">Ligue 1</div>
-                                    <div class="match-time">Now</div>
-                                </div>
-                            </div>
-                        `;
+                // Get predictor's votes
+                const votesQuery = query(
+                    collection(db, 'votes'),
+                    where('predictorId', '==', currentPredictorId)
+                );
+                
+                const votesSnapshot = await getDocs(votesQuery);
+                const votedMatchIds = new Set();
+                
+                votesSnapshot.forEach(voteDoc => {
+                    const vote = voteDoc.data();
+                    votedMatchIds.add(vote.matchId);
+                });
+
+                // Filter matches based on tab type
+                let filteredMatches = allMatches.filter(match => {
+                    // Skip matches that started more than 12 hours ago without result
+                    const now = new Date();
+                    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+                    
+                    if (match.startTime && match.startTime < twelveHoursAgo && !match.result) {
+                        return false;
                     }
-                }, 500);
+                    
+                    // Apply tab filter
+                    if (tabType === 'unvoted') {
+                        return !votedMatchIds.has(match.id);
+                    }
+                    return true; // 'all' tab shows all matches
+                });
+
+                // Apply additional filters
+                const leagueFilter = document.getElementById('leagueFilter').value;
+                const dateFilter = document.getElementById('dateFilter').value;
+                const searchTerm = document.getElementById('matchesSearch').value.toLowerCase();
+
+                if (leagueFilter) {
+                    filteredMatches = filteredMatches.filter(match => match.league === leagueFilter);
+                }
+
+                if (dateFilter !== 'all') {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    filteredMatches = filteredMatches.filter(match => {
+                        if (!match.startTime) return false;
+                        
+                        const matchDate = new Date(match.startTime);
+                        matchDate.setHours(0, 0, 0, 0);
+                        
+                        switch(dateFilter) {
+                            case 'today':
+                                return matchDate.getTime() === today.getTime();
+                            case 'tomorrow':
+                                return matchDate.getTime() === tomorrow.getTime();
+                            case 'this_week':
+                                const weekStart = new Date(today);
+                                weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                                const weekEnd = new Date(weekStart);
+                                weekEnd.setDate(weekEnd.getDate() + 7);
+                                return matchDate >= weekStart && matchDate < weekEnd;
+                            case 'next_week':
+                                const nextWeekStart = new Date(today);
+                                nextWeekStart.setDate(nextWeekStart.getDate() + (7 - nextWeekStart.getDay()));
+                                const nextWeekEnd = new Date(nextWeekStart);
+                                nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
+                                return matchDate >= nextWeekStart && matchDate < nextWeekEnd;
+                            default:
+                                return true;
+                        }
+                    });
+                }
+
+                if (searchTerm) {
+                    filteredMatches = filteredMatches.filter(match => {
+                        return (
+                            (match.teamAName && match.teamAName.toLowerCase().includes(searchTerm)) ||
+                            (match.teamBName && match.teamBName.toLowerCase().includes(searchTerm)) ||
+                            (match.league && match.league.toLowerCase().includes(searchTerm)) ||
+                            (match.matchName && match.matchName.toLowerCase().includes(searchTerm))
+                        );
+                    });
+                }
+
+                // Display matches
+                displayMatches(filteredMatches);
 
             } catch (error) {
                 console.error('Matches load error:', error);
@@ -1679,46 +1800,147 @@
             }
         }
 
+        function displayMatches(matches) {
+            const matchesList = document.getElementById('matchesList');
+            
+            if (matches.length === 0) {
+                matchesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        <h3 class="empty-state-title">No matches found</h3>
+                        <p class="empty-state-text">
+                            ${currentMatchTab === 'unvoted' ? 
+                                'You have voted on all available matches!' : 
+                                'No matches available with current filters.'
+                            }
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            matchesList.innerHTML = '';
+            
+            matches.forEach(match => {
+                const matchCard = createMatchCard(match);
+                matchesList.appendChild(matchCard);
+            });
+        }
+
+        function createMatchCard(match) {
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            card.onclick = () => {
+                window.location.href = `match.html?matchId=${match.id}`;
+            };
+
+            // Format date and time
+            const matchDate = match.startTime ? 
+                match.startTime.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                }) : 'Date TBD';
+            
+            const matchTime = match.startTime ? 
+                match.startTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : 'Time TBD';
+
+            // Determine status
+            let statusClass = 'status-upcoming';
+            let statusText = 'Upcoming';
+            
+            const now = new Date();
+            const startTime = match.startTime ? new Date(match.startTime) : null;
+            
+            if (match.result) {
+                statusClass = 'status-completed';
+                statusText = 'Completed';
+            } else if (startTime && now >= startTime) {
+                statusClass = 'status-live';
+                statusText = 'Live';
+            }
+
+            card.innerHTML = `
+                <div class="match-header">
+                    <div class="match-teams">
+                        ${match.teamAName || 'Team A'} vs ${match.teamBName || 'Team B'}
+                    </div>
+                    <div class="match-status ${statusClass}">
+                        ${statusText}
+                    </div>
+                </div>
+                <div class="match-details">
+                    <div class="match-league">
+                        ${match.league || 'Football Match'}
+                    </div>
+                    <div class="match-time">
+                        ${matchTime} • ${matchDate}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
         async function loadSavedPosts() {
             try {
                 const savesList = document.getElementById('savesList');
                 savesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-bookmark"></i></div><h3 class="empty-state-title">Loading saved posts...</h3></div>';
                 
-                // In a real app, you would query Firebase for saved posts
-                // For now, show sample data
-                setTimeout(() => {
-                    const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
-                    
-                    if (savedPosts.length === 0) {
-                        savesList.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-state-icon">
-                                    <i class="fas fa-bookmark"></i>
-                                </div>
-                                <h3 class="empty-state-title">No saved posts</h3>
-                                <p class="empty-state-text">Save posts you like to find them here later.</p>
+                // Get saved posts from localStorage (in real app, this would be from Firebase)
+                const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+                
+                if (savedPosts.length === 0) {
+                    savesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-bookmark"></i>
                             </div>
-                        `;
-                    } else {
-                        // In a real app, you would fetch post details from Firebase
-                        savesList.innerHTML = `
-                            <div class="save-card" onclick="openPost('post1')">
-                                <div class="save-header">
-                                    <div class="save-author-img">
-                                        <i class="fas fa-user" style="font-size: 20px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
-                                    </div>
-                                    <div class="save-author-info">
-                                        <div class="save-author-name">John Predictor</div>
-                                        <div class="save-time">2 hours ago</div>
-                                    </div>
-                                </div>
-                                <div class="save-content">
-                                    My analysis of the upcoming Manchester derby suggests City has the upper hand due to their recent form.
-                                </div>
-                            </div>
-                        `;
+                            <h3 class="empty-state-title">No saved posts</h3>
+                            <p class="empty-state-text">Save posts you like to find them here later.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Fetch saved posts from Firebase
+                savesList.innerHTML = '';
+                let loadedPosts = 0;
+                
+                for (const postId of savedPosts.slice(0, 10)) { // Limit to 10 posts
+                    try {
+                        const postDoc = await getDoc(doc(db, 'posts', postId));
+                        if (postDoc.exists()) {
+                            const post = {
+                                id: postDoc.id,
+                                ...postDoc.data()
+                            };
+                            
+                            const saveCard = createSaveCard(post);
+                            savesList.appendChild(saveCard);
+                            loadedPosts++;
+                        }
+                    } catch (error) {
+                        console.error(`Error loading post ${postId}:`, error);
                     }
-                }, 500);
+                }
+
+                if (loadedPosts === 0) {
+                    savesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <h3 class="empty-state-title">No saved posts found</h3>
+                            <p class="empty-state-text">Your saved posts may have been removed.</p>
+                        </div>
+                    `;
+                }
 
             } catch (error) {
                 console.error('Saved posts load error:', error);
@@ -1735,39 +1957,124 @@
             }
         }
 
+        function createSaveCard(post) {
+            const card = document.createElement('div');
+            card.className = 'save-card';
+            card.onclick = () => {
+                window.location.href = `viewpost.html?postId=${post.id}`;
+            };
+
+            // Format time
+            const postTime = post.createdAt?.toDate ? 
+                post.createdAt.toDate().toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric'
+                }) : 'Recently';
+
+            card.innerHTML = `
+                <div class="save-header">
+                    <div class="save-author-img">
+                        ${post.predictorPhoto ? 
+                            `<img src="${post.predictorPhoto}" alt="${post.predictorName || 'Predictor'}">` :
+                            `<i class="fas fa-user" style="font-size: 20px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>`
+                        }
+                    </div>
+                    <div class="save-author-info">
+                        <div class="save-author-name">
+                            ${post.predictorName || 'Predictor'}
+                        </div>
+                        <div class="save-time">
+                            ${postTime}
+                        </div>
+                    </div>
+                </div>
+                <div class="save-content">
+                    ${post.content ? 
+                        (post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content) : 
+                        'No content available'
+                    }
+                </div>
+            `;
+
+            return card;
+        }
+
         async function loadComments() {
             try {
                 const commentsList = document.getElementById('commentsList');
                 commentsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-comments"></i></div><h3 class="empty-state-title">Loading comments...</h3></div>';
                 
-                // In a real app, you would query Firebase for comments
-                // For now, show sample data
-                setTimeout(() => {
+                // Query comments on predictor's posts
+                const commentsQuery = query(
+                    collection(db, 'comments'),
+                    where('predictorId', '==', currentPredictorId),
+                    orderBy('createdAt', 'desc'),
+                    limit(10)
+                );
+
+                const commentsSnapshot = await getDocs(commentsQuery);
+                
+                commentsList.innerHTML = '';
+                
+                if (commentsSnapshot.empty) {
                     commentsList.innerHTML = `
-                        <div class="comment-card">
-                            <div class="comment-header">
-                                <div class="comment-author-img">
-                                    <i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
-                                </div>
-                                <div class="comment-author-name">User123</div>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-comments"></i>
                             </div>
-                            <div class="comment-text">
-                                Great analysis! Your prediction was spot on.
-                            </div>
-                        </div>
-                        <div class="comment-card">
-                            <div class="comment-header">
-                                <div class="comment-author-img">
-                                    <i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>
-                                </div>
-                                <div class="comment-author-name">FootballFan99</div>
-                            </div>
-                            <div class="comment-text">
-                                I disagree with your reasoning, but appreciate the detailed analysis.
-                            </div>
+                            <h3 class="empty-state-title">No comments yet</h3>
+                            <p class="empty-state-text">Comments on your posts will appear here.</p>
                         </div>
                     `;
-                }, 500);
+                    return;
+                }
+
+                // Load user data for each comment
+                for (const docSnapshot of commentsSnapshot.docs) {
+                    const comment = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    try {
+                        // Get user data
+                        const userDoc = await getDoc(doc(db, 'users', comment.userId));
+                        if (userDoc.exists()) {
+                            const user = userDoc.data();
+                            
+                            const commentCard = document.createElement('div');
+                            commentCard.className = 'comment-card';
+                            
+                            // Format time
+                            const commentTime = comment.createdAt?.toDate ? 
+                                comment.createdAt.toDate().toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric'
+                                }) : 'Recently';
+                            
+                            commentCard.innerHTML = `
+                                <div class="comment-header">
+                                    <div class="comment-author-img">
+                                        ${user.photoUrl ? 
+                                            `<img src="${user.photoUrl}" alt="${user.name || 'User'}">` :
+                                            `<i class="fas fa-user" style="font-size: 16px; color: var(--or-text-muted); display: flex; align-items: center; justify-content: center; height: 100%;"></i>`
+                                        }
+                                    </div>
+                                    <div class="comment-author-name">
+                                        ${user.name || 'User'} • ${commentTime}
+                                    </div>
+                                </div>
+                                <div class="comment-text">
+                                    ${comment.text || 'No comment text'}
+                                </div>
+                            `;
+                            
+                            commentsList.appendChild(commentCard);
+                        }
+                    } catch (error) {
+                        console.error('Error loading comment user data:', error);
+                    }
+                }
 
             } catch (error) {
                 console.error('Comments load error:', error);
@@ -1784,22 +2091,193 @@
             }
         }
 
-        window.openMatch = function(matchId) {
-            window.location.href = `match.html?matchId=${matchId}`;
+        window.changeProfilePicture = async function() {
+            // Create file input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('error', 'Image size must be less than 5MB');
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showNotification('error', 'Please select an image file');
+                    return;
+                }
+                
+                try {
+                    skyblueLoading.classList.add('active');
+                    
+                    // Upload to ImgBB
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Update profile picture in Firebase
+                        await updateDoc(doc(db, 'predictors', currentPredictorId), {
+                            photoUrl: result.data.url,
+                            updatedAt: serverTimestamp()
+                        });
+                        
+                        // Update local image
+                        profileImage.src = result.data.url;
+                        originalProfileData.photoUrl = result.data.url;
+                        
+                        showNotification('success', 'Profile picture updated successfully');
+                    } else {
+                        throw new Error('Upload failed: ' + (result.error?.message || 'Unknown error'));
+                    }
+                    
+                } catch (error) {
+                    console.error('Profile picture upload error:', error);
+                    showNotification('error', 'Failed to upload profile picture. Please try again.');
+                } finally {
+                    skyblueLoading.classList.remove('active');
+                }
+            };
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
         };
 
-        window.openPost = function(postId) {
-            window.location.href = `viewpost.html?postId=${postId}`;
+        window.saveProfileChanges = async function() {
+            // Validate required fields
+            if (!editName.value.trim()) {
+                showNotification('error', 'Full name is required');
+                editName.focus();
+                return;
+            }
+            
+            if (!editCountry.value.trim()) {
+                showNotification('error', 'Country is required');
+                editCountry.focus();
+                return;
+            }
+            
+            if (!editCity.value.trim()) {
+                showNotification('error', 'City is required');
+                editCity.focus();
+                return;
+            }
+            
+            if (!editPhone.value.trim()) {
+                showNotification('error', 'Phone number is required');
+                editPhone.focus();
+                return;
+            }
+
+            // Validate phone number format
+            const phoneRegex = /^[\d\s\-\+\(\)]{10,20}$/;
+            if (!phoneRegex.test(editPhone.value)) {
+                showNotification('error', 'Please enter a valid phone number');
+                editPhone.focus();
+                return;
+            }
+
+            try {
+                skyblueLoading.classList.add('active');
+                saveChangesBtn.disabled = true;
+
+                // Prepare update data
+                const updateData = {
+                    name: editName.value.trim(),
+                    bio: editBio.value.trim(),
+                    country: editCountry.value.trim(),
+                    city: editCity.value.trim(),
+                    phone: editPhone.value.trim(),
+                    updatedAt: serverTimestamp()
+                };
+
+                // Check if data has changed
+                let hasChanged = false;
+                for (const key in updateData) {
+                    if (key !== 'updatedAt' && updateData[key] !== originalProfileData[key]) {
+                        hasChanged = true;
+                        break;
+                    }
+                }
+
+                if (!hasChanged) {
+                    showNotification('info', 'No changes to save');
+                    return;
+                }
+
+                // Update in Firebase
+                await updateDoc(doc(db, 'predictors', currentPredictorId), updateData);
+                
+                // Update original data
+                originalProfileData = { ...originalProfileData, ...updateData };
+                
+                // Update profile header
+                profileName.textContent = editName.value.trim();
+                profileBio.textContent = editBio.value.trim();
+                
+                const location = [];
+                if (editCity.value.trim()) location.push(editCity.value.trim());
+                if (editCountry.value.trim()) location.push(editCountry.value.trim());
+                profileCountry.querySelector('span').textContent = location.join(', ') || 'Location not set';
+                
+                showNotification('success', 'Profile updated successfully');
+
+            } catch (error) {
+                console.error('Profile save error:', error);
+                showNotification('error', 'Failed to save profile. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+                saveChangesBtn.disabled = false;
+            }
+        };
+
+        window.logout = async function() {
+            try {
+                skyblueLoading.classList.add('active');
+                await signOut(auth);
+                window.location.href = '../choose.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification('error', 'Failed to logout. Please try again.');
+                skyblueLoading.classList.remove('active');
+            }
         };
 
         // Search functionality with debounce
         document.getElementById('matchesSearch').addEventListener('input', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                // Perform search
-                console.log('Searching for:', this.value);
+                loadMatches(currentMatchTab);
             }, 300);
         });
+
+        // Filter change handlers
+        document.getElementById('leagueFilter').addEventListener('change', () => {
+            loadMatches(currentMatchTab);
+        });
+
+        document.getElementById('dateFilter').addEventListener('change', () => {
+            loadMatches(currentMatchTab);
+        });
+
+        // Create button handler
+        window.openCreatePage = function() {
+            window.location.href = 'create.html';
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

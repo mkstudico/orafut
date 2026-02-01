@@ -299,6 +299,32 @@
             font-size: 18px;
         }
 
+        .filters-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter-pill {
+            padding: 8px 16px;
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--or-text);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .filter-pill.active {
+            background: var(--or-blue);
+            color: var(--or-white);
+            border-color: var(--or-blue);
+        }
+
         .predictors-list {
             display: flex;
             flex-direction: column;
@@ -314,10 +340,26 @@
             align-items: center;
             gap: 16px;
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .predictor-card:hover {
             box-shadow: var(--shadow-sm);
+        }
+
+        .predictor-rank {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--or-text-muted);
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .predictor-rank.top-3 {
+            color: var(--or-gold);
+            font-size: 24px;
         }
 
         .predictor-avatar {
@@ -327,6 +369,7 @@
             overflow: hidden;
             background: var(--or-light-bg);
             flex-shrink: 0;
+            position: relative;
         }
 
         .predictor-avatar img {
@@ -335,14 +378,34 @@
             object-fit: cover;
         }
 
+        .verified-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--or-blue);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid var(--or-white);
+        }
+
         .predictor-info {
             flex: 1;
+            min-width: 0;
         }
 
         .predictor-name {
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .predictor-title {
@@ -387,6 +450,38 @@
 
         .follow-button.unfollow {
             background: var(--error);
+        }
+
+        /* Predictor badges */
+        .badge-container {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            background: var(--or-gold-light);
+            color: var(--or-gold);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Special predictor highlight */
+        .predictor-card.featured {
+            border: 2px solid var(--or-gold);
+            background: var(--or-gold-light);
+        }
+
+        .featured-tag {
+            background: var(--or-gold);
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-left: auto;
         }
 
         /* =========================================
@@ -578,9 +673,18 @@
                 </div>
             </div>
 
+            <!-- Filters -->
+            <div class="filters-container">
+                <div class="filter-pill active" data-filter="all">All</div>
+                <div class="filter-pill" data-filter="top">Top Rated</div>
+                <div class="filter-pill" data-filter="verified">Verified</div>
+                <div class="filter-pill" data-filter="following">Following</div>
+                <div class="filter-pill" data-filter="local">Local</div>
+            </div>
+
             <!-- Predictors List -->
             <div class="predictors-section">
-                <h2 class="section-title">All Predictors</h2>
+                <h2 class="section-title">Football Predictors</h2>
                 <div class="predictors-list" id="predictorsList">
                     <!-- Dynamic predictors will be inserted here -->
                 </div>
@@ -677,9 +781,10 @@
             getDoc,
             doc,
             orderBy,
+            where,
             setDoc,
             deleteDoc,
-            onSnapshot
+            limit
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
@@ -687,11 +792,14 @@
         const notificationBtn = document.getElementById('notificationBtn');
         const notificationBadge = document.getElementById('notificationBadge');
         const searchInput = document.getElementById('searchInput');
+        const filtersContainer = document.getElementById('filtersContainer');
         const predictorsList = document.getElementById('predictorsList');
 
         let currentUserId = null;
+        let currentUserData = null;
         let allPredictors = [];
         let userFollowings = new Set();
+        let activeFilter = 'all';
 
         // Check authentication and redirect
         onAuthStateChanged(auth, async (user) => {
@@ -721,6 +829,7 @@
 
                 // User is authenticated and is a user
                 currentUserId = user.uid;
+                currentUserData = userDoc.data();
                 loadPredictorsData(user.uid);
 
             } catch (error) {
@@ -742,8 +851,9 @@
                 // Load all predictors
                 await loadAllPredictors();
                 
-                // Initialize search
+                // Initialize search and filters
                 initializeSearch();
+                initializeFilters();
 
             } catch (error) {
                 console.error('Predictors load error:', error);
@@ -775,10 +885,11 @@
 
         async function loadAllPredictors() {
             try {
-                // Query all predictors
+                // Query all predictors with performance data
                 const predictorsQuery = query(
                     collection(db, 'predictors'),
-                    orderBy('name')
+                    orderBy('wins', 'desc'),
+                    limit(50)
                 );
 
                 const predictorsSnapshot = await getDocs(predictorsQuery);
@@ -802,17 +913,20 @@
                     return;
                 }
 
-                // Create predictor cards
+                let rank = 1;
                 predictorsSnapshot.forEach((docSnapshot) => {
                     const predictor = {
                         id: docSnapshot.id,
                         ...docSnapshot.data()
                     };
                     
+                    predictor.rank = rank;
                     allPredictors.push(predictor);
-                    const predictorCard = createPredictorCard(predictor);
-                    predictorsList.appendChild(predictorCard);
+                    rank++;
                 });
+
+                // Render all predictors initially
+                renderPredictors(allPredictors);
 
             } catch (error) {
                 console.error('Predictors load error:', error);
@@ -830,35 +944,107 @@
             }
         }
 
+        function renderPredictors(predictors) {
+            predictorsList.innerHTML = '';
+            
+            if (predictors.length === 0) {
+                predictorsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="empty-state-title">No Predictors Found</h3>
+                        <p class="empty-state-text">
+                            No predictors match your criteria.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Apply active filter
+            let filteredPredictors = [...predictors];
+            
+            switch(activeFilter) {
+                case 'top':
+                    filteredPredictors = filteredPredictors.filter(p => p.rank <= 10);
+                    break;
+                case 'verified':
+                    filteredPredictors = filteredPredictors.filter(p => p.isVerified);
+                    break;
+                case 'following':
+                    filteredPredictors = filteredPredictors.filter(p => userFollowings.has(p.id));
+                    break;
+                case 'local':
+                    if (currentUserData?.country) {
+                        filteredPredictors = filteredPredictors.filter(p => 
+                            p.country === currentUserData.country
+                        );
+                    }
+                    break;
+            }
+            
+            filteredPredictors.forEach(predictor => {
+                const predictorCard = createPredictorCard(predictor);
+                predictorsList.appendChild(predictorCard);
+            });
+        }
+
         function createPredictorCard(predictor) {
             const card = document.createElement('div');
-            card.className = 'predictor-card';
+            card.className = `predictor-card ${predictor.isFeatured ? 'featured' : ''}`;
             card.dataset.id = predictor.id;
             
             const isFollowing = userFollowings.has(predictor.id);
+            const isTop3 = predictor.rank <= 3;
+            
+            // Calculate accuracy
+            const accuracy = predictor.predictions ? 
+                Math.round((predictor.wins || 0) / predictor.predictions * 100) : 0;
             
             card.innerHTML = `
+                <div class="predictor-rank ${isTop3 ? 'top-3' : ''}">
+                    ${predictor.rank}
+                </div>
+                
                 <div class="predictor-avatar">
                     ${predictor.photoURL ? 
                         `<img src="${predictor.photoURL}" alt="${predictor.name || 'Predictor'}">` :
                         `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 16px;"></i>`
                     }
+                    ${predictor.isVerified ? `<div class="verified-badge"><i class="fas fa-check"></i></div>` : ''}
                 </div>
                 
                 <div class="predictor-info">
-                    <div class="predictor-name">${predictor.name || 'Predictor'}</div>
+                    <div class="predictor-name">
+                        ${predictor.name || 'Predictor'}
+                        ${predictor.isFeatured ? `<span class="featured-tag">FEATURED</span>` : ''}
+                    </div>
+                    
                     ${predictor.title ? `<div class="predictor-title">${predictor.title}</div>` : ''}
                     
                     <div class="predictor-stats">
+                        <div class="predictor-stat">
+                            <i class="fas fa-trophy"></i>
+                            <span>${predictor.wins || 0} wins</span>
+                        </div>
                         <div class="predictor-stat">
                             <i class="fas fa-users"></i>
                             <span>${predictor.followers || 0} followers</span>
                         </div>
                         <div class="predictor-stat">
-                            <i class="fas fa-trophy"></i>
-                            <span>${predictor.accuracy || 'N/A'}% accuracy</span>
+                            <i class="fas fa-bullseye"></i>
+                            <span>${accuracy}% accuracy</span>
                         </div>
                     </div>
+                    
+                    ${predictor.specialties ? `
+                        <div class="badge-container">
+                            ${predictor.specialties.slice(0, 2).map(specialty => 
+                                `<div class="badge">${specialty}</div>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
                 </div>
                 
                 <button class="follow-button ${isFollowing ? 'following' : ''}" 
@@ -868,7 +1054,20 @@
                 </button>
             `;
             
+            // Add click event to view predictor profile
+            card.onclick = (e) => {
+                if (!e.target.closest('.follow-button')) {
+                    viewPredictorProfile(predictor.id);
+                }
+            };
+            
             return card;
+        }
+
+        function viewPredictorProfile(predictorId) {
+            // In a real app, this would navigate to predictor profile page
+            // For now, show notification
+            showNotification('info', 'Predictor profile viewer coming soon!');
         }
 
         async function followPredictor(predictorId) {
@@ -881,11 +1080,20 @@
                 });
                 
                 // Update predictor's follower count
-                // Note: This would require a Cloud Function for atomic updates
+                const predictorRef = doc(db, 'predictors', predictorId);
+                const predictorDoc = await getDoc(predictorRef);
+                if (predictorDoc.exists()) {
+                    const currentFollowers = predictorDoc.data().followers || 0;
+                    await updateDoc(predictorRef, {
+                        followers: currentFollowers + 1
+                    });
+                }
+                
                 userFollowings.add(predictorId);
                 
                 // Update UI
                 updateFollowButton(predictorId, true);
+                updatePredictorCard(predictorId, true);
                 
                 showNotification('success', 'Started following predictor');
                 
@@ -903,11 +1111,20 @@
                 await deleteDoc(doc(db, 'users', currentUserId, 'followings', predictorId));
                 
                 // Update predictor's follower count
-                // Note: This would require a Cloud Function for atomic updates
+                const predictorRef = doc(db, 'predictors', predictorId);
+                const predictorDoc = await getDoc(predictorRef);
+                if (predictorDoc.exists()) {
+                    const currentFollowers = predictorDoc.data().followers || 0;
+                    await updateDoc(predictorRef, {
+                        followers: Math.max(0, currentFollowers - 1)
+                    });
+                }
+                
                 userFollowings.delete(predictorId);
                 
                 // Update UI
                 updateFollowButton(predictorId, false);
+                updatePredictorCard(predictorId, false);
                 
                 showNotification('success', 'Unfollowed predictor');
                 
@@ -934,12 +1151,22 @@
             }
         }
 
+        function updatePredictorCard(predictorId, isFollowing) {
+            const card = document.querySelector(`[data-id="${predictorId}"]`);
+            if (card) {
+                const followersStat = card.querySelector('.predictor-stat:nth-child(2) span');
+                if (followersStat) {
+                    const currentFollowers = parseInt(followersStat.textContent) || 0;
+                    followersStat.textContent = isFollowing ? currentFollowers + 1 : Math.max(0, currentFollowers - 1);
+                }
+            }
+        }
+
         function initializeSearch() {
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.trim().toLowerCase();
                 
                 if (searchTerm.length === 0) {
-                    // Show all predictors
                     renderPredictors(allPredictors);
                     return;
                 }
@@ -948,7 +1175,10 @@
                 const filtered = allPredictors.filter(predictor => {
                     return (
                         (predictor.name && predictor.name.toLowerCase().includes(searchTerm)) ||
-                        (predictor.title && predictor.title.toLowerCase().includes(searchTerm))
+                        (predictor.title && predictor.title.toLowerCase().includes(searchTerm)) ||
+                        (predictor.specialties && predictor.specialties.some(s => 
+                            s.toLowerCase().includes(searchTerm)
+                        ))
                     );
                 });
                 
@@ -956,27 +1186,21 @@
             });
         }
 
-        function renderPredictors(predictors) {
-            predictorsList.innerHTML = '';
+        function initializeFilters() {
+            const filterPills = document.querySelectorAll('.filter-pill');
             
-            if (predictors.length === 0) {
-                predictorsList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <h3 class="empty-state-title">No Predictors Found</h3>
-                        <p class="empty-state-text">
-                            No predictors match your search.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            predictors.forEach(predictor => {
-                const predictorCard = createPredictorCard(predictor);
-                predictorsList.appendChild(predictorCard);
+            filterPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    // Update active pill
+                    filterPills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    
+                    // Update active filter
+                    activeFilter = pill.dataset.filter;
+                    
+                    // Re-render predictors
+                    renderPredictors(allPredictors);
+                });
             });
         }
 
@@ -984,6 +1208,8 @@
         predictorsList.addEventListener('click', (e) => {
             const followButton = e.target.closest('.follow-button');
             if (!followButton) return;
+            
+            e.stopPropagation();
             
             const predictorId = followButton.dataset.id;
             const action = followButton.dataset.action;

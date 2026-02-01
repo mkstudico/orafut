@@ -379,6 +379,7 @@
         .table-actions {
             display: flex;
             gap: 12px;
+            align-items: center;
         }
 
         .btn {
@@ -845,6 +846,144 @@
                 z-index: 9999;
             }
         }
+
+        /* =========================================
+           13. NEW STYLES FOR FEATURES
+           ========================================= */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-input {
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--admin-text);
+            background: var(--admin-card-bg);
+            width: 250px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(0, 162, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: var(--admin-text-muted);
+            font-size: 14px;
+        }
+
+        .multi-select-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: var(--admin-bg);
+            border-radius: 8px;
+        }
+
+        .multi-select-actions.hidden {
+            display: none;
+        }
+
+        .select-all-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--admin-primary);
+        }
+
+        .selectable-row:hover {
+            background: rgba(0, 162, 255, 0.05) !important;
+        }
+
+        .completed-matches-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--admin-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .completed-matches-toggle:hover {
+            background: var(--admin-border);
+        }
+
+        .completed-matches-toggle.active {
+            background: var(--admin-primary);
+            color: white;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--admin-text);
+            background: var(--admin-card-bg);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .dropdown-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--admin-text-muted);
+            pointer-events: none;
+        }
+
+        .match-filter-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            background: var(--admin-card-bg);
+            color: var(--admin-text);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: var(--admin-bg);
+        }
+
+        .filter-btn.active {
+            background: var(--admin-primary);
+            color: white;
+            border-color: var(--admin-primary);
+        }
     </style>
 </head>
 <body>
@@ -1006,10 +1145,38 @@
 
                 <!-- Teams Section -->
                 <div class="dashboard-section" id="teamsSection">
+                    <div class="multi-select-actions hidden" id="teamsMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllTeams" onchange="toggleSelectAllTeams()">
+                            <label for="selectAllTeams" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="teamsSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedTeams()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedTeams()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">Team Management</h2>
                             <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search teams..."
+                                           id="teamsSearch"
+                                           oninput="filterTeams()">
+                                </div>
+                                <button class="btn btn-secondary" onclick="openLeagueModal()">
+                                    <i class="fas fa-plus"></i>
+                                    Add League
+                                </button>
                                 <button class="btn btn-primary" onclick="openTeamModal()">
                                     <i class="fas fa-plus"></i>
                                     Add Team
@@ -1020,10 +1187,13 @@
                             <table class="data-table" id="teamsTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="teamsTableSelectAll" onchange="toggleSelectAllTeamsTable()">
+                                        </th>
                                         <th>Logo</th>
                                         <th>Team Name</th>
                                         <th>League</th>
-                                        <th>Country</th>
+                                        <th>Bio</th>
                                         <th>Status</th>
                                         <th>Created</th>
                                         <th>Actions</th>
@@ -1039,10 +1209,43 @@
 
                 <!-- Matches Section -->
                 <div class="dashboard-section" id="matchesSection">
+                    <div class="multi-select-actions hidden" id="matchesMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllMatches" onchange="toggleSelectAllMatches()">
+                            <label for="selectAllMatches" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="matchesSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedMatches()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedMatches()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">Match Management</h2>
                             <div class="table-actions">
+                                <div class="match-filter-container">
+                                    <div class="search-container">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" 
+                                               class="search-input" 
+                                               placeholder="Search matches..."
+                                               id="matchesSearch"
+                                               oninput="filterMatches()">
+                                    </div>
+                                    <button class="filter-btn active" onclick="toggleMatchFilter('all')" id="filterAll">
+                                        All Matches
+                                    </button>
+                                    <button class="filter-btn" onclick="toggleMatchFilter('completed')" id="filterCompleted">
+                                        <i class="fas fa-eye"></i>
+                                        Show Completed
+                                    </button>
+                                </div>
                                 <button class="btn btn-primary" onclick="openMatchModal()">
                                     <i class="fas fa-plus"></i>
                                     Create Match
@@ -1053,6 +1256,9 @@
                             <table class="data-table" id="matchesTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="matchesTableSelectAll" onchange="toggleSelectAllMatchesTable()">
+                                        </th>
                                         <th>Teams</th>
                                         <th>League</th>
                                         <th>Start Time</th>
@@ -1076,6 +1282,14 @@
                         <div class="table-header">
                             <h2 class="table-title">Pending Results</h2>
                             <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search pending results..."
+                                           id="resultsSearch"
+                                           oninput="filterResults()">
+                                </div>
                                 <button class="btn btn-secondary" onclick="recalculateAllWins()">
                                     <i class="fas fa-calculator"></i>
                                     Recalculate All Wins
@@ -1112,16 +1326,35 @@
 
                 <!-- Predictors Section -->
                 <div class="dashboard-section" id="predictorsSection">
+                    <div class="multi-select-actions hidden" id="predictorsMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllPredictors" onchange="toggleSelectAllPredictors()">
+                            <label for="selectAllPredictors" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="predictorsSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedPredictors()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedPredictors()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">Predictor Management</h2>
                             <div class="table-actions">
                                 <div style="display: flex; gap: 12px; align-items: center;">
-                                    <input type="text" 
-                                           class="form-input" 
-                                           placeholder="Search predictors..."
-                                           style="width: 200px;"
-                                           id="predictorSearch">
+                                    <div class="search-container">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" 
+                                               class="search-input" 
+                                               placeholder="Search predictors..."
+                                               id="predictorSearch"
+                                               oninput="filterPredictors()">
+                                    </div>
                                     <button class="btn btn-secondary" onclick="refreshPredictorRatings()">
                                         <i class="fas fa-sync-alt"></i>
                                         Refresh Ratings
@@ -1133,6 +1366,9 @@
                             <table class="data-table" id="predictorsTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="predictorsTableSelectAll" onchange="toggleSelectAllPredictorsTable()">
+                                        </th>
                                         <th>Username</th>
                                         <th>Wins</th>
                                         <th>Stars</th>
@@ -1154,21 +1390,43 @@
 
                 <!-- Users Section -->
                 <div class="dashboard-section" id="usersSection">
+                    <div class="multi-select-actions hidden" id="usersMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllUsers" onchange="toggleSelectAllUsers()">
+                            <label for="selectAllUsers" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="usersSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedUsers()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedUsers()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">User Management</h2>
                             <div class="table-actions">
-                                <input type="text" 
-                                       class="form-input" 
-                                       placeholder="Search users..."
-                                       style="width: 200px;"
-                                       id="userSearch">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search users..."
+                                           id="userSearch"
+                                           oninput="filterUsers()">
+                                </div>
                             </div>
                         </div>
                         <div class="table-container">
                             <table class="data-table" id="usersTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="usersTableSelectAll" onchange="toggleSelectAllUsersTable()">
+                                        </th>
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>Points</th>
@@ -1192,6 +1450,14 @@
                         <div class="table-header">
                             <h2 class="table-title">Content Reports</h2>
                             <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search reports..."
+                                           id="reportsSearch"
+                                           oninput="filterReports()">
+                                </div>
                                 <button class="btn btn-secondary" onclick="markAllReportsReviewed()">
                                     <i class="fas fa-check-double"></i>
                                     Mark All Reviewed
@@ -1222,6 +1488,22 @@
 
                 <!-- Notifications Section -->
                 <div class="dashboard-section" id="notificationsSection">
+                    <div class="multi-select-actions hidden" id="notificationsMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllNotifications" onchange="toggleSelectAllNotifications()">
+                            <label for="selectAllNotifications" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="notificationsSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedNotifications()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedNotifications()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container mb-4">
                         <div class="table-header">
                             <h2 class="table-title">Send Notification</h2>
@@ -1279,11 +1561,24 @@
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">Recent Notifications</h2>
+                            <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search notifications..."
+                                           id="notificationsSearch"
+                                           oninput="filterNotifications()">
+                                </div>
+                            </div>
                         </div>
                         <div class="table-container">
                             <table class="data-table" id="notificationsTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="notificationsTableSelectAll" onchange="toggleSelectAllNotificationsTable()">
+                                        </th>
                                         <th>Title</th>
                                         <th>Recipient</th>
                                         <th>Message</th>
@@ -1302,10 +1597,34 @@
 
                 <!-- Ads Section -->
                 <div class="dashboard-section" id="adsSection">
+                    <div class="multi-select-actions hidden" id="adsMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllAds" onchange="toggleSelectAllAds()">
+                            <label for="selectAllAds" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="adsSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedAds()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedAds()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">Advertisement Management</h2>
                             <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search ads..."
+                                           id="adsSearch"
+                                           oninput="filterAds()">
+                                </div>
                                 <button class="btn btn-primary" onclick="openAdModal()">
                                     <i class="fas fa-plus"></i>
                                     Create Ad
@@ -1316,6 +1635,9 @@
                             <table class="data-table" id="adsTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="adsTableSelectAll" onchange="toggleSelectAllAdsTable()">
+                                        </th>
                                         <th>Image</th>
                                         <th>Title</th>
                                         <th>Placement</th>
@@ -1337,10 +1659,34 @@
 
                 <!-- System Logs Section -->
                 <div class="dashboard-section" id="logsSection">
+                    <div class="multi-select-actions hidden" id="logsMultiSelectActions">
+                        <div class="select-all-checkbox">
+                            <input type="checkbox" id="selectAllLogs" onchange="toggleSelectAllLogs()">
+                            <label for="selectAllLogs" style="font-weight: 500;">Select All</label>
+                        </div>
+                        <span id="logsSelectedCount">0 selected</span>
+                        <div style="flex: 1;"></div>
+                        <button class="btn btn-danger" onclick="deleteSelectedLogs()">
+                            <i class="fas fa-trash"></i>
+                            Delete Selected
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSelectedLogs()">
+                            <i class="fas fa-download"></i>
+                            Export Selected
+                        </button>
+                    </div>
                     <div class="data-table-container">
                         <div class="table-header">
                             <h2 class="table-title">System Logs & Errors</h2>
                             <div class="table-actions">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" 
+                                           class="search-input" 
+                                           placeholder="Search logs..."
+                                           id="logsSearch"
+                                           oninput="filterLogs()">
+                                </div>
                                 <button class="btn btn-secondary" onclick="clearResolvedLogs()">
                                     <i class="fas fa-trash"></i>
                                     Clear Resolved
@@ -1355,6 +1701,9 @@
                             <table class="data-table" id="logsTable">
                                 <thead>
                                     <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" id="logsTableSelectAll" onchange="toggleSelectAllLogsTable()">
+                                        </th>
                                         <th>Type</th>
                                         <th>Error Code</th>
                                         <th>Message</th>
@@ -1376,6 +1725,47 @@
     </div>
 
     <!-- Modals -->
+    <!-- League Modal -->
+    <div class="modal-overlay" id="leagueModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="leagueModalTitle">Add New League</h3>
+                <button class="modal-close" onclick="closeLeagueModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="leagueForm">
+                    <input type="hidden" id="leagueId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label required">League Name</label>
+                            <input type="text" class="form-input" id="leagueName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">League Logo</label>
+                            <div class="upload-area" onclick="document.getElementById('leagueLogoInput').click()" id="leagueLogoUpload">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">Click to upload logo</div>
+                                <div class="upload-hint">PNG, JPG up to 2MB</div>
+                                <div class="image-preview" id="leagueLogoPreview" style="display: none;"></div>
+                            </div>
+                            <input type="file" id="leagueLogoInput" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeLeagueModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveLeague()">
+                    <span id="leagueSaveText">Save League</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Team Modal -->
     <div class="modal-overlay" id="teamModal">
         <div class="modal">
@@ -1395,11 +1785,14 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label required">League</label>
-                            <input type="text" class="form-input" id="teamLeague" required>
+                            <select class="form-select" id="teamLeague" required>
+                                <option value="">Select League</option>
+                                <!-- Dynamic league options will be inserted here -->
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Country</label>
-                            <input type="text" class="form-input" id="teamCountry">
+                            <label class="form-label">Bio/Description (Optional)</label>
+                            <textarea class="form-textarea" id="teamBio" placeholder="Team description..."></textarea>
                         </div>
                         <div class="form-group">
                             <label class="form-label required">Team Logo</label>
@@ -1427,7 +1820,7 @@
 
     <!-- Match Modal -->
     <div class="modal-overlay" id="matchModal">
-        <div class="modal">
+        <div class="modal" style="max-width: 700px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="matchModalTitle">Create Match</h3>
                 <button class="modal-close" onclick="closeMatchModal()">
@@ -1440,36 +1833,55 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label required">Team 1</label>
-                            <select class="form-select" id="team1Select" required>
-                                <option value="">Select Team 1</option>
+                            <div class="search-container" style="width: 100%;">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" 
+                                       class="search-input" 
+                                       id="team1Search"
+                                       placeholder="Search team 1..."
+                                       oninput="filterTeamSelect('team1Select', 'team1Search')"
+                                       style="width: 100%;">
+                            </div>
+                            <select class="form-select" id="team1Select" size="5" required style="height: 150px; margin-top: 8px;">
                                 <!-- Dynamic team options will be inserted here -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label required">Team 2</label>
-                            <select class="form-select" id="team2Select" required>
-                                <option value="">Select Team 2</option>
+                            <div class="search-container" style="width: 100%;">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" 
+                                       class="search-input" 
+                                       id="team2Search"
+                                       placeholder="Search team 2..."
+                                       oninput="filterTeamSelect('team2Select', 'team2Search')"
+                                       style="width: 100%;">
+                            </div>
+                            <select class="form-select" id="team2Select" size="5" required style="height: 150px; margin-top: 8px;">
                                 <!-- Dynamic team options will be inserted here -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label required">League</label>
-                            <input type="text" class="form-input" id="matchLeague" required>
+                            <select class="form-select" id="matchLeague" required>
+                                <option value="">Select League</option>
+                                <!-- Dynamic league options will be inserted here -->
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label required">Start Date & Time</label>
                             <input type="datetime-local" class="form-input" id="matchStartTime" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">YouTube Stream URL</label>
+                            <label class="form-label">YouTube Stream URL (Optional)</label>
                             <input type="url" class="form-input" id="youtubeUrl" placeholder="https://youtube.com/watch?v=...">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">IPTV Stream URL</label>
+                            <label class="form-label">IPTV Stream URL (Optional)</label>
                             <input type="url" class="form-input" id="iptvUrl" placeholder="https://iptv.example.com/stream">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Venue</label>
+                            <label class="form-label">Venue (Optional)</label>
                             <input type="text" class="form-input" id="matchVenue" placeholder="Stadium name">
                         </div>
                         <div class="form-checkbox">
@@ -1534,7 +1946,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeResultModal()">Cancel</button>
-                <button class="btn btn-success" onclick="saveResult()">
+                                <button class="btn btn-success" onclick="saveResult()">
                     <i class="fas fa-trophy"></i>
                     Save Result & Award Wins
                 </button>
@@ -1724,12 +2136,27 @@
         let selectedUserId = null;
         let selectedReportId = null;
         let selectedAdId = null;
+        let selectedLeagueId = null;
         let teams = [];
         let matches = [];
         let predictors = [];
         let users = [];
         let reports = [];
         let logs = [];
+        let leagues = [];
+        let ads = [];
+        let notifications = [];
+        let errors = [];
+        let showCompletedMatches = false;
+        
+        // Multi-select state
+        let selectedTeams = new Set();
+        let selectedMatches = new Set();
+        let selectedPredictors = new Set();
+        let selectedUsers = new Set();
+        let selectedAds = new Set();
+        let selectedNotifications = new Set();
+        let selectedLogs = new Set();
 
         // DOM Ready
         document.addEventListener('DOMContentLoaded', function() {
@@ -1892,6 +2319,7 @@
             // Setup file uploads
             setupFileUpload('teamLogoInput', 'teamLogoPreview', 'teamLogoUpload');
             setupFileUpload('adImageInput', 'adImagePreview', 'adImageUpload');
+            setupFileUpload('leagueLogoInput', 'leagueLogoPreview', 'leagueLogoUpload');
 
             // Setup notification form
             const notificationForm = document.getElementById('notificationForm');
@@ -1911,17 +2339,6 @@
                         specificGroup.style.display = this.value === 'specific' ? 'block' : 'none';
                     }
                 });
-            }
-
-            // Setup search inputs
-            const predictorSearch = document.getElementById('predictorSearch');
-            if (predictorSearch) {
-                predictorSearch.addEventListener('input', filterPredictors);
-            }
-
-            const userSearch = document.getElementById('userSearch');
-            if (userSearch) {
-                userSearch.addEventListener('input', filterUsers);
             }
 
             // Load initial data
@@ -1985,9 +2402,11 @@
             switch(section) {
                 case 'teams':
                     loadTeams();
+                    loadLeagues();
                     break;
                 case 'matches':
                     loadMatches();
+                    loadLeagues();
                     break;
                 case 'results':
                     loadPendingResults();
@@ -2114,6 +2533,153 @@
             }
         }
 
+        // League Management
+        async function loadLeagues() {
+            try {
+                if (!db) return;
+
+                const snapshot = await db.collection('leagues')
+                    .orderBy('name')
+                    .get();
+                
+                leagues = [];
+                snapshot.forEach(doc => {
+                    leagues.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                updateLeagueSelects();
+
+            } catch (error) {
+                console.error('Leagues load error:', error);
+            }
+        }
+
+        function updateLeagueSelects() {
+            const teamLeagueSelect = document.getElementById('teamLeague');
+            const matchLeagueSelect = document.getElementById('matchLeague');
+            
+            if (teamLeagueSelect) {
+                while (teamLeagueSelect.options.length > 1) teamLeagueSelect.remove(1);
+                leagues.forEach(league => {
+                    const option = document.createElement('option');
+                    option.value = league.id;
+                    option.textContent = league.name;
+                    teamLeagueSelect.appendChild(option);
+                });
+            }
+            
+            if (matchLeagueSelect) {
+                while (matchLeagueSelect.options.length > 1) matchLeagueSelect.remove(1);
+                leagues.forEach(league => {
+                    const option = document.createElement('option');
+                    option.value = league.id;
+                    option.textContent = league.name;
+                    matchLeagueSelect.appendChild(option);
+                });
+            }
+        }
+
+        function openLeagueModal(leagueId = null) {
+            const modal = document.getElementById('leagueModal');
+            const title = document.getElementById('leagueModalTitle');
+            const saveBtn = document.getElementById('leagueSaveText');
+
+            if (!modal || !title || !saveBtn) return;
+
+            if (leagueId) {
+                title.textContent = 'Edit League';
+                saveBtn.textContent = 'Update League';
+                selectedLeagueId = leagueId;
+                
+                const league = leagues.find(l => l.id === leagueId);
+                if (league) {
+                    setValue('leagueId', league.id);
+                    setValue('leagueName', league.name || '');
+                    
+                    if (league.logoUrl) {
+                        const preview = document.getElementById('leagueLogoPreview');
+                        if (preview) {
+                            preview.innerHTML = `<img src="${league.logoUrl}" alt="Preview">`;
+                            preview.style.display = 'block';
+                        }
+                        const uploadText = document.querySelector('#leagueLogoUpload .upload-text');
+                        if (uploadText) uploadText.textContent = 'Change logo';
+                    }
+                }
+            } else {
+                title.textContent = 'Add New League';
+                saveBtn.textContent = 'Save League';
+                selectedLeagueId = null;
+                const leagueForm = document.getElementById('leagueForm');
+                if (leagueForm) leagueForm.reset();
+                const preview = document.getElementById('leagueLogoPreview');
+                if (preview) preview.style.display = 'none';
+                const uploadText = document.querySelector('#leagueLogoUpload .upload-text');
+                if (uploadText) uploadText.textContent = 'Click to upload logo';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeLeagueModal() {
+            const modal = document.getElementById('leagueModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function saveLeague() {
+            const name = getValue('leagueName');
+            const logoFile = document.getElementById('leagueLogoInput')?.files[0];
+
+            if (!name) {
+                showToast('League name is required', 'error');
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                let logoUrl = '';
+                
+                if (logoFile) {
+                    try {
+                        logoUrl = await uploadImageToImgBB(logoFile);
+                    } catch (error) {
+                        showToast('Failed to upload league logo', 'error');
+                        return;
+                    }
+                }
+
+                const leagueData = {
+                    name,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (logoUrl) leagueData.logoUrl = logoUrl;
+                
+                if (selectedLeagueId) {
+                    await db.collection('leagues').doc(selectedLeagueId).update(leagueData);
+                    showToast('League updated successfully', 'success');
+                } else {
+                    leagueData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('leagues').add(leagueData);
+                    showToast('League created successfully', 'success');
+                }
+
+                closeLeagueModal();
+                loadLeagues();
+
+            } catch (error) {
+                console.error('Save league error:', error);
+                showToast('Failed to save league', 'error');
+            }
+        }
+
         // Team Management
         async function loadTeams() {
             try {
@@ -2140,7 +2706,11 @@
                     teams.push(team);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleTeamSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             ${team.logoUrl ? 
                                 `<img src="${team.logoUrl}" alt="${team.name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` :
@@ -2150,8 +2720,10 @@
                             }
                         </td>
                         <td>${team.name || 'Unknown'}</td>
-                        <td>${team.league || 'Unknown'}</td>
-                        <td>${team.country || 'Unknown'}</td>
+                        <td>${team.leagueName || team.league || 'Unknown'}</td>
+                        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${team.bio || 'No bio'}
+                        </td>
                         <td>
                             <span class="status-badge ${team.isActive !== false ? 'status-active' : 'status-inactive'}">
                                 ${team.isActive !== false ? 'Active' : 'Inactive'}
@@ -2186,8 +2758,8 @@
             
             if (!team1Select || !team2Select) return;
             
-            while (team1Select.options.length > 1) team1Select.remove(1);
-            while (team2Select.options.length > 1) team2Select.remove(1);
+            team1Select.innerHTML = '';
+            team2Select.innerHTML = '';
 
             teams.filter(team => team.isActive !== false).forEach(team => {
                 const option1 = document.createElement('option');
@@ -2198,7 +2770,29 @@
                 const option2 = document.createElement('option');
                 option2.value = team.id;
                 option2.textContent = team.name;
-                team2Select.appendChild(option2.cloneNode(true));
+                team2Select.appendChild(option2);
+            });
+        }
+
+        function filterTeamSelect(selectId, searchId) {
+            const search = document.getElementById(searchId).value.toLowerCase();
+            const select = document.getElementById(selectId);
+            
+            for (let option of select.options) {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(search) ? '' : 'none';
+            }
+        }
+
+        function filterTeams() {
+            const search = document.getElementById('teamsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#teamsTableBody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[2].textContent.toLowerCase();
+                const league = row.cells[3].textContent.toLowerCase();
+                const bio = row.cells[4].textContent.toLowerCase();
+                row.style.display = name.includes(search) || league.includes(search) || bio.includes(search) ? '' : 'none';
             });
         }
 
@@ -2219,7 +2813,7 @@
                     setValue('teamId', team.id);
                     setValue('teamName', team.name || '');
                     setValue('teamLeague', team.league || '');
-                    setValue('teamCountry', team.country || '');
+                    setValue('teamBio', team.bio || '');
                     
                     if (team.logoUrl) {
                         const preview = document.getElementById('teamLogoPreview');
@@ -2254,7 +2848,7 @@
         async function saveTeam() {
             const name = getValue('teamName');
             const league = getValue('teamLeague');
-            const country = getValue('teamCountry');
+            const bio = getValue('teamBio');
             const logoFile = document.getElementById('teamLogoInput')?.files[0];
 
             if (!name || !league) {
@@ -2279,10 +2873,12 @@
                     }
                 }
 
+                const leagueData = leagues.find(l => l.id === league);
                 const teamData = {
                     name,
                     league,
-                    country,
+                    leagueName: leagueData ? leagueData.name : league,
+                    bio,
                     isActive: true,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
@@ -2335,7 +2931,162 @@
             }
         }
 
+        // Team multi-select functions
+        function toggleTeamSelection(teamId, checked) {
+            if (checked) {
+                selectedTeams.add(teamId);
+            } else {
+                selectedTeams.delete(teamId);
+            }
+            updateTeamsMultiSelectActions();
+        }
+
+        function toggleSelectAllTeams() {
+            const selectAll = document.getElementById('selectAllTeams').checked;
+            const checkboxes = document.querySelectorAll('#teamsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                if (cb.closest('tr').style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const teamId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedTeams.add(teamId);
+                    } else {
+                        selectedTeams.delete(teamId);
+                    }
+                }
+            });
+            updateTeamsMultiSelectActions();
+        }
+
+        function toggleSelectAllTeamsTable() {
+            const selectAll = document.getElementById('teamsTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#teamsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                if (cb.closest('tr').style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const teamId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedTeams.add(teamId);
+                    } else {
+                        selectedTeams.delete(teamId);
+                    }
+                }
+            });
+            updateTeamsMultiSelectActions();
+        }
+
+        function updateTeamsMultiSelectActions() {
+            const count = selectedTeams.size;
+            const actions = document.getElementById('teamsMultiSelectActions');
+            const countSpan = document.getElementById('teamsSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = document.querySelectorAll('#teamsTableBody tr[style=""]').length;
+            const selectedVisibleRows = document.querySelectorAll('#teamsTableBody .row-checkbox:checked').length;
+            const selectAllCheckbox = document.getElementById('teamsTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedTeams() {
+            if (!selectedTeams.size) return;
+            
+            if (!confirm(`Delete ${selectedTeams.size} selected team(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedTeams.forEach(teamId => {
+                    batch.delete(db.collection('teams').doc(teamId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedTeams.size} team(s) deleted successfully`, 'success');
+                selectedTeams.clear();
+                loadTeams();
+
+            } catch (error) {
+                console.error('Delete teams error:', error);
+                showToast('Failed to delete teams', 'error');
+            }
+        }
+
+        async function exportSelectedTeams() {
+            if (!selectedTeams.size) return;
+
+            try {
+                const teamsToExport = [];
+                for (const teamId of selectedTeams) {
+                    const team = teams.find(t => t.id === teamId);
+                    if (team) {
+                        teamsToExport.push({
+                            id: team.id,
+                            name: team.name || '',
+                            league: team.leagueName || team.league || '',
+                            bio: team.bio || '',
+                            logoUrl: team.logoUrl || '',
+                            isActive: team.isActive !== false,
+                            createdAt: team.createdAt ? team.createdAt.toDate().toISOString() : '',
+                            updatedAt: team.updatedAt ? team.updatedAt.toDate().toISOString() : ''
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(teamsToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `teams-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Teams exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export teams error:', error);
+                showToast('Failed to export teams', 'error');
+            }
+        }
+
         // Match Management
+        function toggleMatchFilter(filter) {
+            const allBtn = document.getElementById('filterAll');
+            const completedBtn = document.getElementById('filterCompleted');
+            
+            if (filter === 'completed') {
+                showCompletedMatches = true;
+                allBtn.classList.remove('active');
+                completedBtn.classList.add('active');
+                completedBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Completed';
+            } else {
+                showCompletedMatches = false;
+                allBtn.classList.add('active');
+                completedBtn.classList.remove('active');
+                completedBtn.innerHTML = '<i class="fas fa-eye"></i> Show Completed';
+            }
+            
+            loadMatches();
+        }
+
         async function loadMatches() {
             try {
                 if (!db) {
@@ -2343,9 +3094,13 @@
                     return;
                 }
 
-                const snapshot = await db.collection('matches')
-                    .orderBy('startTime', 'desc')
-                    .get();
+                let query = db.collection('matches').orderBy('startTime', 'desc');
+                
+                if (!showCompletedMatches) {
+                    query = query.where('status', 'in', ['upcoming', 'live', 'pending']);
+                }
+
+                const snapshot = await query.get();
                 
                 matches = [];
                 const tableBody = document.getElementById('matchesTableBody');
@@ -2367,9 +3122,18 @@
 
                     const statusClass = getMatchStatusClass(match);
                     const statusText = getMatchStatusText(match);
+                    
+                    const now = new Date();
+                    const matchEndTime = match.startTime ? new Date(match.startTime.getTime() + 90 * 60 * 1000) : null;
+                    const showCompleted = matchEndTime && (now - matchEndTime) <= (10 * 60 * 1000);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
+                    row.style.display = (match.status === 'completed' && !showCompleted && !showCompletedMatches) ? 'none' : '';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleMatchSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <div style="font-weight: 600;">${match.teamAName || 'Team A'}</div>
@@ -2385,9 +3149,9 @@
                             </span>
                         </td>
                         <td>
-                            ${match.youtubeUrl ? 
-                                `<a href="${match.youtubeUrl}" target="_blank" style="color: var(--admin-primary); text-decoration: none;">
-                                    <i class="fab fa-youtube"></i> YouTube
+                            ${match.youtubeUrl || match.iptvUrl ? 
+                                `<a href="${match.youtubeUrl || match.iptvUrl}" target="_blank" style="color: var(--admin-primary); text-decoration: none;">
+                                    <i class="fab fa-youtube"></i> Stream Available
                                 </a>` : 
                                 'No stream'
                             }
@@ -2403,7 +3167,7 @@
                                 <button class="action-btn" onclick="editMatch('${doc.id}')" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn" onclick="addResult('${doc.id}')" title="Add Result">
+                                <button class="action-btn ${match.result ? 'disabled' : ''}" onclick="addResult('${doc.id}')" title="Add Result" ${match.result ? 'disabled' : ''}>
                                     <i class="fas fa-trophy"></i>
                                 </button>
                             </div>
@@ -2412,10 +3176,29 @@
                     tableBody.appendChild(row);
                 });
 
+                filterMatches();
+
             } catch (error) {
                 console.error('Matches load error:', error);
                 showToast('Failed to load matches', 'error');
             }
+        }
+
+        function filterMatches() {
+            const search = document.getElementById('matchesSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#matchesTableBody tr');
+            
+            rows.forEach(row => {
+                if (row.style.display === 'none') return;
+                
+                const teams = row.cells[1].textContent.toLowerCase();
+                const league = row.cells[2].textContent.toLowerCase();
+                const time = row.cells[3].textContent.toLowerCase();
+                const status = row.cells[4].textContent.toLowerCase();
+                row.style.display = teams.includes(search) || league.includes(search) || time.includes(search) || status.includes(search) ? '' : 'none';
+            });
+            
+            updateMatchesMultiSelectActions();
         }
 
         function getMatchStatusClass(match) {
@@ -2471,6 +3254,10 @@
                     setTimeout(() => {
                         setValue('team1Select', match.team1Id || '');
                         setValue('team2Select', match.team2Id || '');
+                        setValue('team1Search', '');
+                        setValue('team2Search', '');
+                        filterTeamSelect('team1Select', 'team1Search');
+                        filterTeamSelect('team2Select', 'team2Search');
                     }, 100);
                     
                     setValue('matchLeague', match.league || '');
@@ -2491,6 +3278,12 @@
                 const matchForm = document.getElementById('matchForm');
                 if (matchForm) matchForm.reset();
                 setValue('matchStartTime', new Date().toISOString().slice(0, 16));
+                setValue('team1Search', '');
+                setValue('team2Search', '');
+                setTimeout(() => {
+                    filterTeamSelect('team1Select', 'team1Search');
+                    filterTeamSelect('team2Select', 'team2Search');
+                }, 100);
             }
 
             modal.classList.add('active');
@@ -2535,6 +3328,7 @@
                     return;
                 }
 
+                const leagueData = leagues.find(l => l.id === league);
                 const matchData = {
                     team1Id,
                     team2Id,
@@ -2543,6 +3337,7 @@
                     teamALogo: team1.logoUrl,
                     teamBLogo: team2.logoUrl,
                     league,
+                    leagueName: leagueData ? leagueData.name : league,
                     startTime: firebase.firestore.Timestamp.fromDate(new Date(startTime)),
                     venue,
                     isTopMatch,
@@ -2586,6 +3381,151 @@
 
         function editMatch(matchId) {
             openMatchModal(matchId);
+        }
+
+        // Match multi-select functions
+        function toggleMatchSelection(matchId, checked) {
+            if (checked) {
+                selectedMatches.add(matchId);
+            } else {
+                selectedMatches.delete(matchId);
+            }
+            updateMatchesMultiSelectActions();
+        }
+
+        function toggleSelectAllMatches() {
+            const selectAll = document.getElementById('selectAllMatches').checked;
+            const checkboxes = document.querySelectorAll('#matchesTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const matchId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedMatches.add(matchId);
+                    } else {
+                        selectedMatches.delete(matchId);
+                    }
+                }
+            });
+            updateMatchesMultiSelectActions();
+        }
+
+        function toggleSelectAllMatchesTable() {
+            const selectAll = document.getElementById('matchesTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#matchesTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const matchId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedMatches.add(matchId);
+                    } else {
+                        selectedMatches.delete(matchId);
+                    }
+                }
+            });
+            updateMatchesMultiSelectActions();
+        }
+
+        function updateMatchesMultiSelectActions() {
+            const count = selectedMatches.size;
+            const actions = document.getElementById('matchesMultiSelectActions');
+            const countSpan = document.getElementById('matchesSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#matchesTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#matchesTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('matchesTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedMatches() {
+            if (!selectedMatches.size) return;
+            
+            if (!confirm(`Delete ${selectedMatches.size} selected match(es)? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedMatches.forEach(matchId => {
+                    batch.delete(db.collection('matches').doc(matchId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedMatches.size} match(es) deleted successfully`, 'success');
+                selectedMatches.clear();
+                loadMatches();
+
+            } catch (error) {
+                console.error('Delete matches error:', error);
+                showToast('Failed to delete matches', 'error');
+            }
+        }
+
+        async function exportSelectedMatches() {
+            if (!selectedMatches.size) return;
+
+            try {
+                const matchesToExport = [];
+                for (const matchId of selectedMatches) {
+                    const match = matches.find(m => m.id === matchId);
+                    if (match) {
+                        matchesToExport.push({
+                            id: match.id,
+                            team1Id: match.team1Id || '',
+                            team2Id: match.team2Id || '',
+                            teamAName: match.teamAName || '',
+                            teamBName: match.teamBName || '',
+                            league: match.league || '',
+                            startTime: match.startTime ? match.startTime.toISOString() : '',
+                            status: match.status || '',
+                            youtubeUrl: match.youtubeUrl || '',
+                            iptvUrl: match.iptvUrl || '',
+                            venue: match.venue || '',
+                            isTopMatch: match.isTopMatch || false,
+                            result: match.result || null,
+                            createdAt: match.createdAt ? match.createdAt.toDate().toISOString() : '',
+                            updatedAt: match.updatedAt ? match.updatedAt.toDate().toISOString() : ''
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(matchesToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `matches-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Matches exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export matches error:', error);
+                showToast('Failed to export matches', 'error');
+            }
         }
 
         // Results & Wins Management
@@ -2657,6 +3597,16 @@
                 console.error('Pending results load error:', error);
                 showToast('Failed to load pending results', 'error');
             }
+        }
+
+        function filterResults() {
+            const search = document.getElementById('resultsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#resultsTableBody tr');
+            
+            rows.forEach(row => {
+                const match = row.cells[0].textContent.toLowerCase();
+                row.style.display = match.includes(search) ? '' : 'none';
+            });
         }
 
         async function loadRecentWins() {
@@ -2761,6 +3711,7 @@
                 closeResultModal();
                 loadPendingResults();
                 loadRecentWins();
+                loadMatches();
 
             } catch (error) {
                 console.error('Save result error:', error);
@@ -2911,7 +3862,11 @@
                     const badge = determineBadge(stars, icons);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="togglePredictorSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 ${predictor.profilePic ? 
@@ -3032,9 +3987,10 @@
             const rows = document.querySelectorAll('#predictorsTableBody tr');
             
             rows.forEach(row => {
-                const username = row.cells[0].textContent.toLowerCase();
+                const username = row.cells[1].textContent.toLowerCase();
                 row.style.display = username.includes(searchTerm) ? '' : 'none';
             });
+            updatePredictorsMultiSelectActions();
         }
 
         function viewPredictorActions(predictorId) {
@@ -3067,6 +4023,151 @@
             document.getElementById('userActionsModal').classList.add('active');
         }
 
+        // Predictor multi-select functions
+        function togglePredictorSelection(predictorId, checked) {
+            if (checked) {
+                selectedPredictors.add(predictorId);
+            } else {
+                selectedPredictors.delete(predictorId);
+            }
+            updatePredictorsMultiSelectActions();
+        }
+
+        function toggleSelectAllPredictors() {
+            const selectAll = document.getElementById('selectAllPredictors').checked;
+            const checkboxes = document.querySelectorAll('#predictorsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const predictorId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedPredictors.add(predictorId);
+                    } else {
+                        selectedPredictors.delete(predictorId);
+                    }
+                }
+            });
+            updatePredictorsMultiSelectActions();
+        }
+
+        function toggleSelectAllPredictorsTable() {
+            const selectAll = document.getElementById('predictorsTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#predictorsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const predictorId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedPredictors.add(predictorId);
+                    } else {
+                        selectedPredictors.delete(predictorId);
+                    }
+                }
+            });
+            updatePredictorsMultiSelectActions();
+        }
+
+        function updatePredictorsMultiSelectActions() {
+            const count = selectedPredictors.size;
+            const actions = document.getElementById('predictorsMultiSelectActions');
+            const countSpan = document.getElementById('predictorsSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#predictorsTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#predictorsTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('predictorsTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedPredictors() {
+            if (!selectedPredictors.size) return;
+            
+            if (!confirm(`Delete ${selectedPredictors.size} selected predictor(s)? This will permanently remove their accounts.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedPredictors.forEach(predictorId => {
+                    batch.delete(db.collection('predictors').doc(predictorId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedPredictors.size} predictor(s) deleted successfully`, 'success');
+                selectedPredictors.clear();
+                loadPredictors();
+
+            } catch (error) {
+                console.error('Delete predictors error:', error);
+                showToast('Failed to delete predictors', 'error');
+            }
+        }
+
+        async function exportSelectedPredictors() {
+            if (!selectedPredictors.size) return;
+
+            try {
+                const predictorsToExport = [];
+                for (const predictorId of selectedPredictors) {
+                    const predictor = predictors.find(p => p.id === predictorId);
+                    if (predictor) {
+                        predictorsToExport.push({
+                            id: predictor.id,
+                            username: predictor.username || '',
+                            email: predictor.email || '',
+                            wins: predictor.wins || 0,
+                            followers: predictor.followers || 0,
+                            stars: predictor.stars || 0,
+                            icons: predictor.icons || 0,
+                            badge: predictor.badge || '',
+                            accuracy: predictor.accuracy || 0,
+                            isActive: predictor.isActive !== false,
+                            canPost: predictor.canPost !== false,
+                            canMessage: predictor.canMessage !== false,
+                            profilePic: predictor.profilePic || '',
+                            createdAt: predictor.createdAt ? predictor.createdAt.toDate().toISOString() : '',
+                            updatedAt: predictor.updatedAt ? predictor.updatedAt.toDate().toISOString() : ''
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(predictorsToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `predictors-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Predictors exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export predictors error:', error);
+                showToast('Failed to export predictors', 'error');
+            }
+        }
+
         // User Management
         async function loadUsers() {
             try {
@@ -3094,7 +4195,11 @@
                     users.push(user);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleUserSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 ${user.profilePic ? 
@@ -3137,10 +4242,11 @@
             const rows = document.querySelectorAll('#usersTableBody tr');
             
             rows.forEach(row => {
-                const username = row.cells[0].textContent.toLowerCase();
-                const email = row.cells[1].textContent.toLowerCase();
+                const username = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
                 row.style.display = username.includes(searchTerm) || email.includes(searchTerm) ? '' : 'none';
             });
+            updateUsersMultiSelectActions();
         }
 
         function viewUserActions(userId) {
@@ -3185,20 +4291,29 @@
                     return;
                 }
 
-                const user = users.find(u => u.id === selectedUserId);
-                if (!user) return;
+                let user;
+                let collection = 'users';
+                
+                user = users.find(u => u.id === selectedUserId);
+                if (!user) {
+                    user = predictors.find(p => p.id === selectedUserId);
+                    if (user) {
+                        collection = 'predictors';
+                    } else {
+                        showToast('User not found', 'error');
+                        return;
+                    }
+                }
 
-                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
-                    .doc(selectedUserId)
-                    .update({
-                        isActive: !(user.isActive !== false),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                await db.collection(collection).doc(selectedUserId).update({
+                    isActive: !(user.isActive !== false),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
                 showToast(`Account ${user.isActive !== false ? 'suspended' : 'activated'}`, 'success');
                 closeUserActionsModal();
                 
-                if (user.role === 'predictor') {
+                if (collection === 'predictors') {
                     loadPredictors();
                 } else {
                     loadUsers();
@@ -3217,15 +4332,24 @@
                     return;
                 }
 
-                const user = users.find(u => u.id === selectedUserId);
-                if (!user) return;
+                let user;
+                let collection = 'users';
+                
+                user = users.find(u => u.id === selectedUserId);
+                if (!user) {
+                    user = predictors.find(p => p.id === selectedUserId);
+                    if (user) {
+                        collection = 'predictors';
+                    } else {
+                        showToast('User not found', 'error');
+                        return;
+                    }
+                }
 
-                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
-                    .doc(selectedUserId)
-                    .update({
-                        canPost: !(user.canPost !== false),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                await db.collection(collection).doc(selectedUserId).update({
+                    canPost: !(user.canPost !== false),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
                 showToast(`Posting ${user.canPost !== false ? 'disabled' : 'enabled'}`, 'success');
                 closeUserActionsModal();
@@ -3243,15 +4367,24 @@
                     return;
                 }
 
-                const user = users.find(u => u.id === selectedUserId);
-                if (!user) return;
+                let user;
+                let collection = 'users';
+                
+                user = users.find(u => u.id === selectedUserId);
+                if (!user) {
+                    user = predictors.find(p => p.id === selectedUserId);
+                    if (user) {
+                        collection = 'predictors';
+                    } else {
+                        showToast('User not found', 'error');
+                        return;
+                    }
+                }
 
-                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
-                    .doc(selectedUserId)
-                    .update({
-                        canMessage: !(user.canMessage !== false),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                await db.collection(collection).doc(selectedUserId).update({
+                    canMessage: !(user.canMessage !== false),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
                 showToast(`Messaging ${user.canMessage !== false ? 'disabled' : 'enabled'}`, 'success');
                 closeUserActionsModal();
@@ -3273,22 +4406,31 @@
                     return;
                 }
 
-                const user = users.find(u => u.id === selectedUserId);
-                if (!user) return;
+                let user;
+                let collection = 'users';
+                
+                user = users.find(u => u.id === selectedUserId);
+                if (!user) {
+                    user = predictors.find(p => p.id === selectedUserId);
+                    if (user) {
+                        collection = 'predictors';
+                    } else {
+                        showToast('User not found', 'error');
+                        return;
+                    }
+                }
 
-                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
-                    .doc(selectedUserId)
-                    .update({
-                        isActive: false,
-                        isBanned: true,
-                        bannedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                await db.collection(collection).doc(selectedUserId).update({
+                    isActive: false,
+                    isBanned: true,
+                    bannedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
                 showToast('Account banned permanently', 'success');
                 closeUserActionsModal();
                 
-                if (user.role === 'predictor') {
+                if (collection === 'predictors') {
                     loadPredictors();
                 } else {
                     loadUsers();
@@ -3297,6 +4439,147 @@
             } catch (error) {
                 console.error('Ban user error:', error);
                 showToast('Failed to ban account', 'error');
+            }
+        }
+
+        // User multi-select functions
+        function toggleUserSelection(userId, checked) {
+            if (checked) {
+                selectedUsers.add(userId);
+            } else {
+                selectedUsers.delete(userId);
+            }
+            updateUsersMultiSelectActions();
+        }
+
+        function toggleSelectAllUsers() {
+            const selectAll = document.getElementById('selectAllUsers').checked;
+            const checkboxes = document.querySelectorAll('#usersTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const userId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedUsers.add(userId);
+                    } else {
+                        selectedUsers.delete(userId);
+                    }
+                }
+            });
+            updateUsersMultiSelectActions();
+        }
+
+        function toggleSelectAllUsersTable() {
+            const selectAll = document.getElementById('usersTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#usersTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const userId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedUsers.add(userId);
+                    } else {
+                        selectedUsers.delete(userId);
+                    }
+                }
+            });
+            updateUsersMultiSelectActions();
+        }
+
+        function updateUsersMultiSelectActions() {
+            const count = selectedUsers.size;
+            const actions = document.getElementById('usersMultiSelectActions');
+            const countSpan = document.getElementById('usersSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#usersTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#usersTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('usersTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedUsers() {
+            if (!selectedUsers.size) return;
+            
+            if (!confirm(`Delete ${selectedUsers.size} selected user(s)? This will permanently remove their accounts.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedUsers.forEach(userId => {
+                    batch.delete(db.collection('users').doc(userId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedUsers.size} user(s) deleted successfully`, 'success');
+                selectedUsers.clear();
+                loadUsers();
+
+            } catch (error) {
+                console.error('Delete users error:', error);
+                showToast('Failed to delete users', 'error');
+            }
+        }
+
+        async function exportSelectedUsers() {
+            if (!selectedUsers.size) return;
+
+            try {
+                const usersToExport = [];
+                for (const userId of selectedUsers) {
+                    const user = users.find(u => u.id === userId);
+                    if (user) {
+                        usersToExport.push({
+                            id: user.id,
+                            username: user.username || '',
+                            email: user.email || '',
+                            points: user.points || 0,
+                            predictions: user.predictions || 0,
+                            isActive: user.isActive !== false,
+                            canPost: user.canPost !== false,
+                            canMessage: user.canMessage !== false,
+                            profilePic: user.profilePic || '',
+                            createdAt: user.createdAt ? user.createdAt.toDate().toISOString() : '',
+                            updatedAt: user.updatedAt ? user.updatedAt.toDate().toISOString() : ''
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(usersToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `users-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Users exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export users error:', error);
+                showToast('Failed to export users', 'error');
             }
         }
 
@@ -3363,6 +4646,19 @@
                 console.error('Reports load error:', error);
                 showToast('Failed to load reports', 'error');
             }
+        }
+
+        function filterReports() {
+            const search = document.getElementById('reportsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#reportsTableBody tr');
+            
+            rows.forEach(row => {
+                const reporter = row.cells[1].textContent.toLowerCase();
+                const reported = row.cells[2].textContent.toLowerCase();
+                const reason = row.cells[3].textContent.toLowerCase();
+                const content = row.cells[4].textContent.toLowerCase();
+                row.style.display = reporter.includes(search) || reported.includes(search) || reason.includes(search) || content.includes(search) ? '' : 'none';
+            });
         }
 
         function viewReport(reportId) {
@@ -3750,16 +5046,25 @@
                     .limit(50)
                     .get();
                 
+                notifications = [];
                 const tableBody = document.getElementById('notificationsTableBody');
                 if (!tableBody) return;
 
                 tableBody.innerHTML = '';
 
                 snapshot.forEach(doc => {
-                    const notification = doc.data();
+                    const notification = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    notifications.push(notification);
                     
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleNotificationSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>${notification.title || 'No title'}</td>
                         <td>${notification.recipientNames || 'Unknown'}</td>
                         <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -3786,6 +5091,19 @@
                 console.error('Notifications load error:', error);
                 showToast('Failed to load notifications', 'error');
             }
+        }
+
+        function filterNotifications() {
+            const search = document.getElementById('notificationsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#notificationsTableBody tr');
+            
+            rows.forEach(row => {
+                const title = row.cells[1].textContent.toLowerCase();
+                const recipient = row.cells[2].textContent.toLowerCase();
+                const message = row.cells[3].textContent.toLowerCase();
+                row.style.display = title.includes(search) || recipient.includes(search) || message.includes(search) ? '' : 'none';
+            });
+            updateNotificationsMultiSelectActions();
         }
 
         async function resendNotification(notificationId) {
@@ -3815,6 +5133,145 @@
             }
         }
 
+        // Notification multi-select functions
+        function toggleNotificationSelection(notificationId, checked) {
+            if (checked) {
+                selectedNotifications.add(notificationId);
+            } else {
+                selectedNotifications.delete(notificationId);
+            }
+            updateNotificationsMultiSelectActions();
+        }
+
+        function toggleSelectAllNotifications() {
+            const selectAll = document.getElementById('selectAllNotifications').checked;
+            const checkboxes = document.querySelectorAll('#notificationsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const notificationId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedNotifications.add(notificationId);
+                    } else {
+                        selectedNotifications.delete(notificationId);
+                    }
+                }
+            });
+            updateNotificationsMultiSelectActions();
+        }
+
+        function toggleSelectAllNotificationsTable() {
+            const selectAll = document.getElementById('notificationsTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#notificationsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const notificationId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedNotifications.add(notificationId);
+                    } else {
+                        selectedNotifications.delete(notificationId);
+                    }
+                }
+            });
+            updateNotificationsMultiSelectActions();
+        }
+
+        function updateNotificationsMultiSelectActions() {
+            const count = selectedNotifications.size;
+            const actions = document.getElementById('notificationsMultiSelectActions');
+            const countSpan = document.getElementById('notificationsSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#notificationsTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#notificationsTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('notificationsTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedNotifications() {
+            if (!selectedNotifications.size) return;
+            
+            if (!confirm(`Delete ${selectedNotifications.size} selected notification(s)?`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedNotifications.forEach(notificationId => {
+                    batch.delete(db.collection('admin_notifications').doc(notificationId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedNotifications.size} notification(s) deleted successfully`, 'success');
+                selectedNotifications.clear();
+                loadNotifications();
+
+            } catch (error) {
+                console.error('Delete notifications error:', error);
+                showToast('Failed to delete notifications', 'error');
+            }
+        }
+
+        async function exportSelectedNotifications() {
+            if (!selectedNotifications.size) return;
+
+            try {
+                const notificationsToExport = [];
+                for (const notificationId of selectedNotifications) {
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notificationsToExport.push({
+                            id: notification.id,
+                            recipientType: notification.recipientType || '',
+                            recipientNames: notification.recipientNames || '',
+                            title: notification.title || '',
+                            message: notification.message || '',
+                            priority: notification.priority || 'normal',
+                            actionUrl: notification.actionUrl || '',
+                            sentAt: notification.sentAt ? notification.sentAt.toDate().toISOString() : '',
+                            sentBy: notification.sentBy || 'admin'
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(notificationsToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `notifications-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Notifications exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export notifications error:', error);
+                showToast('Failed to export notifications', 'error');
+            }
+        }
+
         // Ads Management
         async function loadAds() {
             try {
@@ -3827,6 +5284,7 @@
                     .orderBy('createdAt', 'desc')
                     .get();
                 
+                ads = [];
                 const tableBody = document.getElementById('adsTableBody');
                 if (!tableBody) return;
 
@@ -3837,9 +5295,14 @@
                         id: doc.id,
                         ...doc.data()
                     };
+                    ads.push(ad);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleAdSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             ${ad.imageUrl ? 
                                 `<img src="${ad.imageUrl}" alt="${ad.title}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">` :
@@ -3879,6 +5342,19 @@
                 console.error('Ads load error:', error);
                 showToast('Failed to load ads', 'error');
             }
+        }
+
+        function filterAds() {
+            const search = document.getElementById('adsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#adsTableBody tr');
+            
+            rows.forEach(row => {
+                const title = row.cells[2].textContent.toLowerCase();
+                const placement = row.cells[3].textContent.toLowerCase();
+                const url = row.cells[4].textContent.toLowerCase();
+                row.style.display = title.includes(search) || placement.includes(search) || url.includes(search) ? '' : 'none';
+            });
+            updateAdsMultiSelectActions();
         }
 
         function openAdModal(adId = null) {
@@ -4034,6 +5510,146 @@
             }
         }
 
+        // Ad multi-select functions
+        function toggleAdSelection(adId, checked) {
+            if (checked) {
+                selectedAds.add(adId);
+            } else {
+                selectedAds.delete(adId);
+            }
+            updateAdsMultiSelectActions();
+        }
+
+        function toggleSelectAllAds() {
+            const selectAll = document.getElementById('selectAllAds').checked;
+            const checkboxes = document.querySelectorAll('#adsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const adId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedAds.add(adId);
+                    } else {
+                        selectedAds.delete(adId);
+                    }
+                }
+            });
+            updateAdsMultiSelectActions();
+        }
+
+        function toggleSelectAllAdsTable() {
+            const selectAll = document.getElementById('adsTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#adsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const adId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedAds.add(adId);
+                    } else {
+                        selectedAds.delete(adId);
+                    }
+                }
+            });
+            updateAdsMultiSelectActions();
+        }
+
+        function updateAdsMultiSelectActions() {
+            const count = selectedAds.size;
+            const actions = document.getElementById('adsMultiSelectActions');
+            const countSpan = document.getElementById('adsSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#adsTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#adsTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('adsTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedAds() {
+            if (!selectedAds.size) return;
+            
+            if (!confirm(`Delete ${selectedAds.size} selected ad(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedAds.forEach(adId => {
+                    batch.delete(db.collection('ads').doc(adId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedAds.size} ad(s) deleted successfully`, 'success');
+                selectedAds.clear();
+                loadAds();
+
+            } catch (error) {
+                console.error('Delete ads error:', error);
+                showToast('Failed to delete ads', 'error');
+            }
+        }
+
+        async function exportSelectedAds() {
+            if (!selectedAds.size) return;
+
+            try {
+                const adsToExport = [];
+                for (const adId of selectedAds) {
+                    const ad = ads.find(a => a.id === adId);
+                    if (ad) {
+                        adsToExport.push({
+                            id: ad.id,
+                            title: ad.title || '',
+                            placement: ad.placement || '',
+                            targetUrl: ad.targetUrl || '',
+                            imageUrl: ad.imageUrl || '',
+                            isActive: ad.isActive || false,
+                            impressions: ad.impressions || 0,
+                            clicks: ad.clicks || 0,
+                            createdAt: ad.createdAt ? ad.createdAt.toDate().toISOString() : '',
+                            updatedAt: ad.updatedAt ? ad.updatedAt.toDate().toISOString() : ''
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(adsToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `ads-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Ads exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export ads error:', error);
+                showToast('Failed to export ads', 'error');
+            }
+        }
+
         // System Logs Management
         async function loadLogs() {
             try {
@@ -4062,7 +5678,11 @@
                     logs.push(log);
 
                     const row = document.createElement('tr');
+                    row.className = 'selectable-row';
                     row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="row-checkbox" data-id="${doc.id}" onchange="toggleLogSelection('${doc.id}', this.checked)">
+                        </td>
                         <td>
                             <span class="status-badge ${log.type === 'error' ? 'status-inactive' : log.type === 'warning' ? 'status-pending' : 'status-active'}">
                                 ${log.type || 'info'}
@@ -4100,6 +5720,20 @@
                 console.error('Logs load error:', error);
                 showToast('Failed to load system logs', 'error');
             }
+        }
+
+        function filterLogs() {
+            const search = document.getElementById('logsSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#logsTableBody tr');
+            
+            rows.forEach(row => {
+                const type = row.cells[1].textContent.toLowerCase();
+                const code = row.cells[2].textContent.toLowerCase();
+                const message = row.cells[3].textContent.toLowerCase();
+                const userId = row.cells[4].textContent.toLowerCase();
+                row.style.display = type.includes(search) || code.includes(search) || message.includes(search) || userId.includes(search) ? '' : 'none';
+            });
+            updateLogsMultiSelectActions();
         }
 
         async function markLogAsResolved(logId) {
@@ -4215,8 +5849,151 @@
             }
         }
 
+        // Logs multi-select functions
+        function toggleLogSelection(logId, checked) {
+            if (checked) {
+                selectedLogs.add(logId);
+            } else {
+                selectedLogs.delete(logId);
+            }
+            updateLogsMultiSelectActions();
+        }
+
+        function toggleSelectAllLogs() {
+            const selectAll = document.getElementById('selectAllLogs').checked;
+            const checkboxes = document.querySelectorAll('#logsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const logId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedLogs.add(logId);
+                    } else {
+                        selectedLogs.delete(logId);
+                    }
+                }
+            });
+            updateLogsMultiSelectActions();
+        }
+
+        function toggleSelectAllLogsTable() {
+            const selectAll = document.getElementById('logsTableSelectAll').checked;
+            const checkboxes = document.querySelectorAll('#logsTableBody .row-checkbox');
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row.style.display !== 'none') {
+                    cb.checked = selectAll;
+                    const logId = cb.getAttribute('data-id');
+                    if (selectAll) {
+                        selectedLogs.add(logId);
+                    } else {
+                        selectedLogs.delete(logId);
+                    }
+                }
+            });
+            updateLogsMultiSelectActions();
+        }
+
+        function updateLogsMultiSelectActions() {
+            const count = selectedLogs.size;
+            const actions = document.getElementById('logsMultiSelectActions');
+            const countSpan = document.getElementById('logsSelectedCount');
+            
+            if (count > 0) {
+                actions.classList.remove('hidden');
+                countSpan.textContent = `${count} selected`;
+            } else {
+                actions.classList.add('hidden');
+            }
+            
+            // Update table select all checkbox
+            const visibleRows = Array.from(document.querySelectorAll('#logsTableBody tr')).filter(row => row.style.display !== 'none').length;
+            const selectedVisibleRows = Array.from(document.querySelectorAll('#logsTableBody .row-checkbox:checked')).filter(cb => cb.closest('tr').style.display !== 'none').length;
+            const selectAllCheckbox = document.getElementById('logsTableSelectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = selectedVisibleRows > 0 && selectedVisibleRows < visibleRows;
+                selectAllCheckbox.checked = selectedVisibleRows === visibleRows && visibleRows > 0;
+            }
+        }
+
+        async function deleteSelectedLogs() {
+            if (!selectedLogs.size) return;
+            
+            if (!confirm(`Delete ${selectedLogs.size} selected log(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const batch = db.batch();
+                selectedLogs.forEach(logId => {
+                    batch.delete(db.collection('errors').doc(logId));
+                });
+
+                await batch.commit();
+                showToast(`${selectedLogs.size} log(s) deleted successfully`, 'success');
+                selectedLogs.clear();
+                loadLogs();
+
+            } catch (error) {
+                console.error('Delete logs error:', error);
+                showToast('Failed to delete logs', 'error');
+            }
+        }
+
+        async function exportSelectedLogs() {
+            if (!selectedLogs.size) return;
+
+            try {
+                const logsToExport = [];
+                for (const logId of selectedLogs) {
+                    const log = logs.find(l => l.id === logId);
+                    if (log) {
+                        logsToExport.push({
+                            id: log.id,
+                            type: log.type || '',
+                            code: log.code || '',
+                            message: log.message || '',
+                            userId: log.userId || '',
+                            timestamp: log.timestamp ? log.timestamp.toDate().toISOString() : null,
+                            status: log.status || '',
+                            resolvedAt: log.resolvedAt ? log.resolvedAt.toDate().toISOString() : null,
+                            createdAt: log.createdAt ? log.createdAt.toDate().toISOString() : null,
+                            updatedAt: log.updatedAt ? log.updatedAt.toDate().toISOString() : null
+                        });
+                    }
+                }
+
+                const dataStr = JSON.stringify(logsToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `logs-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Logs exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export logs error:', error);
+                showToast('Failed to export logs', 'error');
+            }
+        }
+
         // Export functions to global scope
         window.navigateToSection = navigateToSection;
+        window.openLeagueModal = openLeagueModal;
+        window.closeLeagueModal = closeLeagueModal;
+        window.saveLeague = saveLeague;
         window.openTeamModal = openTeamModal;
         window.closeTeamModal = closeTeamModal;
         window.saveTeam = saveTeam;
@@ -4258,6 +6035,50 @@
         window.resendNotification = resendNotification;
         window.markLogAsResolved = markLogAsResolved;
         window.deleteLog = deleteLog;
+        window.filterTeamSelect = filterTeamSelect;
+        window.toggleMatchFilter = toggleMatchFilter;
+        window.filterTeams = filterTeams;
+        window.filterMatches = filterMatches;
+        window.filterResults = filterResults;
+        window.filterReports = filterReports;
+        window.filterAds = filterAds;
+        window.filterNotifications = filterNotifications;
+        window.filterLogs = filterLogs;
+        window.toggleTeamSelection = toggleTeamSelection;
+        window.toggleSelectAllTeams = toggleSelectAllTeams;
+        window.toggleSelectAllTeamsTable = toggleSelectAllTeamsTable;
+        window.deleteSelectedTeams = deleteSelectedTeams;
+        window.exportSelectedTeams = exportSelectedTeams;
+        window.toggleMatchSelection = toggleMatchSelection;
+        window.toggleSelectAllMatches = toggleSelectAllMatches;
+        window.toggleSelectAllMatchesTable = toggleSelectAllMatchesTable;
+        window.deleteSelectedMatches = deleteSelectedMatches;
+        window.exportSelectedMatches = exportSelectedMatches;
+        window.togglePredictorSelection = togglePredictorSelection;
+        window.toggleSelectAllPredictors = toggleSelectAllPredictors;
+        window.toggleSelectAllPredictorsTable = toggleSelectAllPredictorsTable;
+        window.deleteSelectedPredictors = deleteSelectedPredictors;
+        window.exportSelectedPredictors = exportSelectedPredictors;
+        window.toggleUserSelection = toggleUserSelection;
+        window.toggleSelectAllUsers = toggleSelectAllUsers;
+        window.toggleSelectAllUsersTable = toggleSelectAllUsersTable;
+        window.deleteSelectedUsers = deleteSelectedUsers;
+        window.exportSelectedUsers = exportSelectedUsers;
+        window.toggleAdSelection = toggleAdSelection;
+        window.toggleSelectAllAds = toggleSelectAllAds;
+        window.toggleSelectAllAdsTable = toggleSelectAllAdsTable;
+        window.deleteSelectedAds = deleteSelectedAds;
+        window.exportSelectedAds = exportSelectedAds;
+        window.toggleNotificationSelection = toggleNotificationSelection;
+        window.toggleSelectAllNotifications = toggleSelectAllNotifications;
+        window.toggleSelectAllNotificationsTable = toggleSelectAllNotificationsTable;
+        window.deleteSelectedNotifications = deleteSelectedNotifications;
+        window.exportSelectedNotifications = exportSelectedNotifications;
+        window.toggleLogSelection = toggleLogSelection;
+        window.toggleSelectAllLogs = toggleSelectAllLogs;
+        window.toggleSelectAllLogsTable = toggleSelectAllLogsTable;
+        window.deleteSelectedLogs = deleteSelectedLogs;
+        window.exportSelectedLogs = exportSelectedLogs;
     </script>
 </body>
 </html>

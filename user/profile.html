@@ -321,9 +321,15 @@
             margin-bottom: 8px;
         }
 
-        .profile-email {
+        .profile-username {
             color: var(--or-text-muted);
             font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .profile-email {
+            color: var(--or-text-muted);
+            font-size: 14px;
             margin-bottom: 16px;
         }
 
@@ -350,12 +356,190 @@
             margin-top: 4px;
         }
 
-        .profile-form {
+        /* Profile Sections */
+        .profile-section {
             background: var(--or-white);
             border: 1px solid var(--or-border);
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 24px;
+        }
+
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 480px) {
+            .profile-info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .info-item {
+            margin-bottom: 16px;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: var(--or-text);
+            font-weight: 500;
+        }
+
+        .info-value.empty {
+            color: var(--or-text-muted);
+            font-style: italic;
+        }
+
+        .edit-button {
+            background: var(--or-blue);
+            color: var(--or-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-button:hover {
+            background: var(--or-blue-dark);
+        }
+
+        /* Followed Items */
+        .followed-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .followed-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--or-light-bg);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .followed-item-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .followed-item-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Recent Wins */
+        .recent-wins-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .win-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--or-light-bg);
+            border-radius: 8px;
+        }
+
+        .win-team-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--or-white);
+        }
+
+        .win-team-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .win-info {
+            flex: 1;
+        }
+
+        .win-teams {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .win-details {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            display: flex;
+            gap: 8px;
+        }
+
+        .win-points {
+            background: var(--success);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Edit Modal */
+        .edit-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--or-white);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .edit-modal.active {
+            display: flex;
+        }
+
+        .edit-modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .edit-modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .edit-modal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
         }
 
         .form-group {
@@ -378,6 +562,7 @@
             font-size: 16px;
             color: var(--or-text);
             transition: var(--transition);
+            font-family: 'Roboto', sans-serif;
         }
 
         .form-input:focus {
@@ -410,7 +595,7 @@
             background: var(--or-blue);
             color: var(--or-white);
             border: none;
-            padding: 16px 32px;
+            padding: 16px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 16px;
@@ -420,7 +605,7 @@
             margin-top: 16px;
         }
 
-        .save-button:hover {
+        .save-button:hover:not(:disabled) {
             background: var(--or-blue-dark);
         }
 
@@ -429,25 +614,44 @@
             cursor: not-allowed;
         }
 
-        .logout-button {
-            background: var(--error);
-            color: var(--or-white);
-            border: none;
-            padding: 16px 32px;
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-button {
+            padding: 16px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 16px;
             cursor: pointer;
             transition: var(--transition);
-            width: 100%;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
+        .logout-button {
+            background: var(--error);
+            color: var(--or-white);
+        }
+
         .logout-button:hover {
             background: #dc2626;
+        }
+
+        .become-predictor-button {
+            background: var(--or-gold);
+            color: var(--or-white);
+        }
+
+        .become-predictor-button:hover {
+            background: #b8941f;
         }
 
         /* =========================================
@@ -640,70 +844,93 @@
                 </div>
                 
                 <div class="profile-name" id="profileName">Loading...</div>
+                <div class="profile-username" id="profileUsername">@username</div>
                 <div class="profile-email" id="profileEmail">Loading...</div>
                 
                 <div class="profile-stats">
                     <div class="profile-stat">
-                        <div class="stat-value" id="statMatches">0</div>
-                        <div class="stat-label">Matches</div>
+                        <div class="stat-value" id="statPoints">0</div>
+                        <div class="stat-label">Points</div>
                     </div>
                     <div class="profile-stat">
                         <div class="stat-value" id="statPredictions">0</div>
                         <div class="stat-label">Predictions</div>
                     </div>
                     <div class="profile-stat">
-                        <div class="stat-value" id="statAccuracy">0%</div>
-                        <div class="stat-label">Accuracy</div>
+                        <div class="stat-value" id="statWins">0</div>
+                        <div class="stat-label">Wins</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Profile Form -->
-            <div class="profile-form">
-                <h2 class="section-title">Edit Profile</h2>
+            <!-- Personal Info Section -->
+            <div class="profile-section">
+                <div class="section-title">Personal Information</div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="nameInput">Full Name</label>
-                    <input type="text" 
-                           class="form-input" 
-                           id="nameInput"
-                           placeholder="Enter your full name">
+                <div class="profile-info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" id="infoName">Loading...</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Bio</div>
+                        <div class="info-value" id="infoBio">No bio added</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Location</div>
+                        <div class="info-value" id="infoLocation">Not specified</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Favorite Team</div>
+                        <div class="info-value" id="infoFavoriteTeam">Not specified</div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="bioInput">Bio</label>
-                    <textarea class="form-textarea" 
-                              id="bioInput"
-                              placeholder="Tell us about yourself..."
-                              rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="locationInput">Location</label>
-                    <input type="text" 
-                           class="form-input" 
-                           id="locationInput"
-                           placeholder="Enter your location">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="favoriteTeamInput">Favorite Team</label>
-                    <input type="text" 
-                           class="form-input" 
-                           id="favoriteTeamInput"
-                           placeholder="Enter your favorite team">
-                </div>
-                
-                <button class="save-button" id="saveButton" disabled>
-                    Save Changes
+                <button class="edit-button" id="editInfoButton">
+                    <i class="fas fa-edit"></i>
+                    Edit Information
                 </button>
             </div>
 
-            <!-- Logout Button -->
-            <button class="logout-button" id="logoutButton">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-            </button>
+            <!-- Recent Winning Votes -->
+            <div class="profile-section">
+                <div class="section-title">Recent Winning Votes</div>
+                <div class="recent-wins-list" id="recentWinsList">
+                    <!-- Dynamic recent wins will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Followed Predictors -->
+            <div class="profile-section">
+                <div class="section-title">Followed Predictors</div>
+                <div class="followed-items" id="followedPredictors">
+                    <!-- Dynamic followed predictors will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Followed Teams -->
+            <div class="profile-section">
+                <div class="section-title">Followed Teams</div>
+                <div class="followed-items" id="followedTeams">
+                    <!-- Dynamic followed teams will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-button become-predictor-button" id="becomePredictorButton">
+                    <i class="fas fa-star"></i>
+                    Become a Predictor
+                </button>
+                
+                <button class="action-button logout-button" id="logoutButton">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
         </div>
 
         <!-- Bottom Navigation -->
@@ -728,6 +955,59 @@
                 <i class="fas fa-user nav-icon"></i>
                 <span class="nav-label">Profile</span>
             </a>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-header">
+            <button class="back-button" id="backEditButton">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="edit-modal-title">Edit Profile</div>
+            <div style="width: 48px;"></div> <!-- Spacer for alignment -->
+        </div>
+        
+        <div class="edit-modal-content">
+            <div class="form-group">
+                <label class="form-label" for="editNameInput">Full Name</label>
+                <input type="text" 
+                       class="form-input" 
+                       id="editNameInput"
+                       placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="editBioInput">Bio (Max 200 words)</label>
+                <textarea class="form-textarea" 
+                          id="editBioInput"
+                          placeholder="Tell us about yourself..."
+                          rows="4"
+                          maxlength="2000"></textarea>
+                <div style="text-align: right; font-size: 12px; color: var(--or-text-muted); margin-top: 4px;">
+                    <span id="bioCharCount">0</span>/2000 characters
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="editLocationInput">Location</label>
+                <input type="text" 
+                       class="form-input" 
+                       id="editLocationInput"
+                       placeholder="Enter your location">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="editFavoriteTeamInput">Favorite Team</label>
+                <input type="text" 
+                       class="form-input" 
+                       id="editFavoriteTeamInput"
+                       placeholder="Enter your favorite team">
+            </div>
+            
+            <button class="save-button" id="saveProfileButton" disabled>
+                Save Changes
+            </button>
         </div>
     </div>
 
@@ -802,7 +1082,9 @@
             collection,
             query,
             where,
-            getDocs
+            getDocs,
+            orderBy,
+            limit
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
@@ -812,19 +1094,33 @@
         const profileAvatar = document.getElementById('profileAvatar');
         const avatarEditButton = document.getElementById('avatarEditButton');
         const profileName = document.getElementById('profileName');
+        const profileUsername = document.getElementById('profileUsername');
         const profileEmail = document.getElementById('profileEmail');
-        const statMatches = document.getElementById('statMatches');
+        const statPoints = document.getElementById('statPoints');
         const statPredictions = document.getElementById('statPredictions');
-        const statAccuracy = document.getElementById('statAccuracy');
-        const nameInput = document.getElementById('nameInput');
-        const bioInput = document.getElementById('bioInput');
-        const locationInput = document.getElementById('locationInput');
-        const favoriteTeamInput = document.getElementById('favoriteTeamInput');
-        const saveButton = document.getElementById('saveButton');
+        const statWins = document.getElementById('statWins');
+        const infoName = document.getElementById('infoName');
+        const infoBio = document.getElementById('infoBio');
+        const infoLocation = document.getElementById('infoLocation');
+        const infoFavoriteTeam = document.getElementById('infoFavoriteTeam');
+        const editInfoButton = document.getElementById('editInfoButton');
+        const recentWinsList = document.getElementById('recentWinsList');
+        const followedPredictors = document.getElementById('followedPredictors');
+        const followedTeams = document.getElementById('followedTeams');
+        const becomePredictorButton = document.getElementById('becomePredictorButton');
         const logoutButton = document.getElementById('logoutButton');
+        const editModal = document.getElementById('editModal');
+        const backEditButton = document.getElementById('backEditButton');
+        const editNameInput = document.getElementById('editNameInput');
+        const editBioInput = document.getElementById('editBioInput');
+        const editLocationInput = document.getElementById('editLocationInput');
+        const editFavoriteTeamInput = document.getElementById('editFavoriteTeamInput');
+        const bioCharCount = document.getElementById('bioCharCount');
+        const saveProfileButton = document.getElementById('saveProfileButton');
         const avatarFileInput = document.getElementById('avatarFileInput');
 
         let currentUserId = null;
+        let currentUserData = null;
         let originalProfileData = {};
         let hasUnsavedChanges = false;
 
@@ -877,8 +1173,17 @@
                 // Load user stats
                 await loadUserStats(userId);
                 
-                // Initialize form listeners
-                initializeFormListeners();
+                // Load recent wins
+                await loadRecentWins(userId);
+                
+                // Load followed predictors
+                await loadFollowedPredictors(userId);
+                
+                // Load followed teams
+                await loadFollowedTeams(userId);
+                
+                // Initialize event listeners
+                initializeEventListeners();
 
             } catch (error) {
                 console.error('Profile load error:', error);
@@ -897,21 +1202,25 @@
                     return;
                 }
 
-                const userData = userDoc.data();
-                originalProfileData = { ...userData };
+                currentUserData = userDoc.data();
+                originalProfileData = { ...currentUserData };
                 
                 // Update profile header
-                profileName.textContent = userData.name || 'User';
+                profileName.textContent = currentUserData.name || 'User';
+                profileUsername.textContent = `@${currentUserData.username || 'user'}`;
                 profileEmail.textContent = auth.currentUser?.email || 'No email';
                 
                 // Update avatar
-                updateAvatar(userData.photoURL);
+                updateAvatar(currentUserData.photoURL);
                 
-                // Update form fields
-                nameInput.value = userData.name || '';
-                bioInput.value = userData.bio || '';
-                locationInput.value = userData.location || '';
-                favoriteTeamInput.value = userData.favoriteTeam || '';
+                // Update info sections
+                infoName.textContent = currentUserData.name || 'Not specified';
+                infoBio.textContent = currentUserData.bio || 'No bio added';
+                infoBio.className = currentUserData.bio ? 'info-value' : 'info-value empty';
+                infoLocation.textContent = currentUserData.location || 'Not specified';
+                infoLocation.className = currentUserData.location ? 'info-value' : 'info-value empty';
+                infoFavoriteTeam.textContent = currentUserData.favoriteTeam || 'Not specified';
+                infoFavoriteTeam.className = currentUserData.favoriteTeam ? 'info-value' : 'info-value empty';
 
             } catch (error) {
                 console.error('Profile load error:', error);
@@ -923,53 +1232,235 @@
             try {
                 // Load user's predictions
                 const predictionsQuery = query(
-                    collection(db, 'predictions'),
+                    collection(db, 'votes'),
                     where('userId', '==', userId)
                 );
 
                 const predictionsSnapshot = await getDocs(predictionsQuery);
                 const totalPredictions = predictionsSnapshot.size;
                 
-                // Calculate correct predictions
-                let correctPredictions = 0;
-                predictionsSnapshot.forEach(doc => {
-                    const prediction = doc.data();
-                    if (prediction.isCorrect === true) {
-                        correctPredictions++;
-                    }
-                });
+                // Calculate points and wins
+                let totalPoints = 0;
+                let totalWins = 0;
                 
-                // Calculate accuracy
-                const accuracy = totalPredictions > 0 ? 
-                    Math.round((correctPredictions / totalPredictions) * 100) : 0;
+                // We need to check each vote against match results
+                // This would be more efficient with a separate userStats collection
+                // For now, we'll use the user's stored stats
                 
-                // Load user's matches (voted matches)
-                const votesQuery = query(
-                    collection(db, 'votes'),
-                    where('userId', '==', userId)
-                );
-
-                const votesSnapshot = await getDocs(votesQuery);
-                const totalMatches = new Set();
-                votesSnapshot.forEach(doc => {
-                    const vote = doc.data();
-                    if (vote.matchId) {
-                        totalMatches.add(vote.matchId);
-                    }
-                });
+                if (currentUserData) {
+                    totalPoints = currentUserData.points || 0;
+                    totalWins = currentUserData.wins || 0;
+                }
                 
                 // Update stats display
-                statMatches.textContent = totalMatches.size;
+                statPoints.textContent = totalPoints;
                 statPredictions.textContent = totalPredictions;
-                statAccuracy.textContent = `${accuracy}%`;
+                statWins.textContent = totalWins;
 
             } catch (error) {
                 console.error('Stats load error:', error);
                 // Set default values on error
-                statMatches.textContent = '0';
+                statPoints.textContent = '0';
                 statPredictions.textContent = '0';
-                statAccuracy.textContent = '0%';
+                statWins.textContent = '0';
             }
+        }
+
+        async function loadRecentWins(userId) {
+            try {
+                // Get last 5 days
+                const fiveDaysAgo = new Date();
+                fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+                
+                // Query user's correct votes from last 5 days
+                const winsQuery = query(
+                    collection(db, 'votes'),
+                    where('userId', '==', userId),
+                    where('isCorrect', '==', true),
+                    where('votedAt', '>=', fiveDaysAgo),
+                    orderBy('votedAt', 'desc'),
+                    limit(10)
+                );
+
+                const winsSnapshot = await getDocs(winsQuery);
+                
+                // Clear existing content
+                recentWinsList.innerHTML = '';
+                
+                if (winsSnapshot.empty) {
+                    recentWinsList.innerHTML = `
+                        <div class="empty-state" style="background: transparent; border: none; padding: 20px;">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Recent Wins</h3>
+                            <p class="empty-state-text">
+                                Your winning votes from the last 5 days will appear here.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Create win items
+                for (const docSnapshot of winsSnapshot.docs) {
+                    const vote = docSnapshot.data();
+                    
+                    // Get match details
+                    const matchDoc = await getDoc(doc(db, 'matches', vote.matchId));
+                    if (!matchDoc.exists()) continue;
+                    
+                    const match = matchDoc.data();
+                    
+                    const winItem = createWinItem(vote, match);
+                    recentWinsList.appendChild(winItem);
+                }
+
+            } catch (error) {
+                console.error('Recent wins load error:', error);
+                recentWinsList.innerHTML = `
+                    <div class="empty-state" style="background: transparent; border: none; padding: 20px;">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="empty-state-title">Unable to Load</h3>
+                        <p class="empty-state-text">
+                            Failed to load recent wins.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function createWinItem(vote, match) {
+            const winDiv = document.createElement('div');
+            winDiv.className = 'win-item';
+            
+            // Determine which team was voted for
+            const votedForTeam = vote.vote === 'teamA' ? match.teamAName : 
+                                vote.vote === 'teamB' ? match.teamBName : 'Draw';
+            
+            // Get team logo
+            const teamLogo = vote.vote === 'teamA' ? match.teamALogo :
+                            vote.vote === 'teamB' ? match.teamBLogo : null;
+            
+            // Format date
+            const voteDate = vote.votedAt?.toDate ? vote.votedAt.toDate() : new Date();
+            const formattedDate = voteDate.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            winDiv.innerHTML = `
+                <div class="win-team-avatar">
+                    ${teamLogo ? 
+                        `<img src="${teamLogo}" alt="${votedForTeam}">` :
+                        `<i class="fas fa-trophy" style="font-size: 24px; color: var(--or-gold); padding: 8px;"></i>`
+                    }
+                </div>
+                <div class="win-info">
+                    <div class="win-teams">${match.teamAName} vs ${match.teamBName}</div>
+                    <div class="win-details">
+                        <span>Voted: ${votedForTeam}</span>
+                        <span>•</span>
+                        <span>${formattedDate}</span>
+                    </div>
+                </div>
+                <div class="win-points">+5 pts</div>
+            `;
+            
+            return winDiv;
+        }
+
+        async function loadFollowedPredictors(userId) {
+            try {
+                // Query user's followed predictors
+                const followingsQuery = query(
+                    collection(db, 'users', userId, 'followings')
+                );
+
+                const followingsSnapshot = await getDocs(followingsQuery);
+                
+                // Clear existing content
+                followedPredictors.innerHTML = '';
+                
+                if (followingsSnapshot.empty) {
+                    followedPredictors.innerHTML = `
+                        <div style="color: var(--or-text-muted); font-style: italic;">
+                            Not following any predictors yet
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Create followed predictor items
+                for (const docSnapshot of followingsSnapshot.docs) {
+                    const predictorId = docSnapshot.id;
+                    
+                    // Get predictor data
+                    const predictorDoc = await getDoc(doc(db, 'predictors', predictorId));
+                    if (!predictorDoc.exists()) continue;
+                    
+                    const predictor = predictorDoc.data();
+                    
+                    const predictorItem = createFollowedItem(predictor, 'predictor');
+                    followedPredictors.appendChild(predictorItem);
+                }
+
+            } catch (error) {
+                console.error('Followed predictors load error:', error);
+                followedPredictors.innerHTML = `
+                    <div style="color: var(--error);">
+                        Failed to load followed predictors
+                    </div>
+                `;
+            }
+        }
+
+        async function loadFollowedTeams(userId) {
+            try {
+                // Query user's followed teams
+                // Note: This would require a 'followedTeams' subcollection
+                // For now, we'll show a message
+                
+                followedTeams.innerHTML = `
+                    <div style="color: var(--or-text-muted); font-style: italic;">
+                        Team following feature coming soon
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Followed teams load error:', error);
+                followedTeams.innerHTML = `
+                    <div style="color: var(--error);">
+                        Failed to load followed teams
+                    </div>
+                `;
+            }
+        }
+
+        function createFollowedItem(item, type) {
+            const div = document.createElement('div');
+            div.className = 'followed-item';
+            
+            if (type === 'predictor') {
+                div.innerHTML = `
+                    <div class="followed-item-avatar">
+                        ${item.photoURL ? 
+                            `<img src="${item.photoURL}" alt="${item.name}">` :
+                            `<i class="fas fa-user" style="font-size: 12px; color: var(--or-text-muted); padding: 6px;"></i>`
+                        }
+                    </div>
+                    <span>${item.name || 'Predictor'}</span>
+                `;
+                
+                div.onclick = () => {
+                    // Navigate to predictor profile
+                    showNotification('info', `Viewing ${item.name}'s profile`);
+                };
+            }
+            
+            return div;
         }
 
         function updateAvatar(photoURL) {
@@ -980,19 +1471,7 @@
             }
         }
 
-        function initializeFormListeners() {
-            // Track form changes
-            const formInputs = [nameInput, bioInput, locationInput, favoriteTeamInput];
-            
-            formInputs.forEach(input => {
-                input.addEventListener('input', () => {
-                    checkForChanges();
-                });
-            });
-            
-            // Save button click
-            saveButton.addEventListener('click', saveProfileChanges);
-            
+        function initializeEventListeners() {
             // Avatar edit button
             avatarEditButton.addEventListener('click', () => {
                 avatarFileInput.click();
@@ -1001,74 +1480,29 @@
             // Avatar file input change
             avatarFileInput.addEventListener('change', handleAvatarUpload);
             
+            // Edit info button
+            editInfoButton.addEventListener('click', openEditModal);
+            
+            // Back button in edit modal
+            backEditButton.addEventListener('click', closeEditModal);
+            
+            // Bio character count
+            editBioInput.addEventListener('input', updateBioCharCount);
+            
+            // Form input changes
+            editNameInput.addEventListener('input', checkForChanges);
+            editBioInput.addEventListener('input', checkForChanges);
+            editLocationInput.addEventListener('input', checkForChanges);
+            editFavoriteTeamInput.addEventListener('input', checkForChanges);
+            
+            // Save profile button
+            saveProfileButton.addEventListener('click', saveProfileChanges);
+            
+            // Become predictor button
+            becomePredictorButton.addEventListener('click', handleBecomePredictor);
+            
             // Logout button
             logoutButton.addEventListener('click', handleLogout);
-        }
-
-        function checkForChanges() {
-            const currentData = {
-                name: nameInput.value.trim(),
-                bio: bioInput.value.trim(),
-                location: locationInput.value.trim(),
-                favoriteTeam: favoriteTeamInput.value.trim()
-            };
-            
-            hasUnsavedChanges = (
-                currentData.name !== (originalProfileData.name || '') ||
-                currentData.bio !== (originalProfileData.bio || '') ||
-                currentData.location !== (originalProfileData.location || '') ||
-                currentData.favoriteTeam !== (originalProfileData.favoriteTeam || '')
-            );
-            
-            saveButton.disabled = !hasUnsavedChanges;
-        }
-
-        async function saveProfileChanges() {
-            if (!currentUserId || !hasUnsavedChanges) return;
-            
-            skyblueLoading.classList.add('active');
-            saveButton.disabled = true;
-            
-            try {
-                const updates = {
-                    name: nameInput.value.trim(),
-                    bio: bioInput.value.trim(),
-                    location: locationInput.value.trim(),
-                    favoriteTeam: favoriteTeamInput.value.trim(),
-                    updatedAt: new Date()
-                };
-                
-                // Remove empty fields
-                Object.keys(updates).forEach(key => {
-                    if (updates[key] === '' || updates[key] === undefined) {
-                        delete updates[key];
-                    }
-                });
-                
-                // Update in Firebase
-                await updateDoc(doc(db, 'users', currentUserId), updates);
-                
-                // Update original data
-                originalProfileData = { ...originalProfileData, ...updates };
-                
-                // Update displayed name
-                if (updates.name) {
-                    profileName.textContent = updates.name;
-                }
-                
-                // Reset change tracking
-                hasUnsavedChanges = false;
-                saveButton.disabled = true;
-                
-                showNotification('success', 'Profile updated successfully!');
-                
-            } catch (error) {
-                console.error('Save profile error:', error);
-                showNotification('error', 'Failed to save profile. Please try again.');
-                saveButton.disabled = false;
-            } finally {
-                skyblueLoading.classList.remove('active');
-            }
         }
 
         async function handleAvatarUpload(event) {
@@ -1113,6 +1547,9 @@
                     // Update avatar display
                     updateAvatar(photoURL);
                     
+                    // Update current user data
+                    currentUserData.photoURL = photoURL;
+                    
                     showNotification('success', 'Profile picture updated!');
                     
                 } else {
@@ -1126,6 +1563,129 @@
                 skyblueLoading.classList.remove('active');
                 // Reset file input
                 avatarFileInput.value = '';
+            }
+        }
+
+        function openEditModal() {
+            // Populate form fields with current data
+            editNameInput.value = currentUserData.name || '';
+            editBioInput.value = currentUserData.bio || '';
+            editLocationInput.value = currentUserData.location || '';
+            editFavoriteTeamInput.value = currentUserData.favoriteTeam || '';
+            
+            // Update character count
+            updateBioCharCount();
+            
+            // Reset change tracking
+            hasUnsavedChanges = false;
+            saveProfileButton.disabled = true;
+            
+            // Show modal
+            editModal.classList.add('active');
+        }
+
+        function closeEditModal() {
+            editModal.classList.remove('active');
+        }
+
+        function updateBioCharCount() {
+            const length = editBioInput.value.length;
+            bioCharCount.textContent = length;
+            
+            if (length > 2000) {
+                bioCharCount.style.color = 'var(--error)';
+            } else {
+                bioCharCount.style.color = 'var(--or-text-muted)';
+            }
+        }
+
+        function checkForChanges() {
+            const currentData = {
+                name: editNameInput.value.trim(),
+                bio: editBioInput.value.trim(),
+                location: editLocationInput.value.trim(),
+                favoriteTeam: editFavoriteTeamInput.value.trim()
+            };
+            
+            hasUnsavedChanges = (
+                currentData.name !== (originalProfileData.name || '') ||
+                currentData.bio !== (originalProfileData.bio || '') ||
+                currentData.location !== (originalProfileData.location || '') ||
+                currentData.favoriteTeam !== (originalProfileData.favoriteTeam || '')
+            );
+            
+            // Check bio length limit
+            const bioValid = currentData.bio.length <= 2000;
+            
+            saveProfileButton.disabled = !hasUnsavedChanges || !bioValid;
+        }
+
+        async function saveProfileChanges() {
+            if (!currentUserId || !hasUnsavedChanges) return;
+            
+            skyblueLoading.classList.add('active');
+            saveProfileButton.disabled = true;
+            
+            try {
+                const updates = {
+                    name: editNameInput.value.trim(),
+                    bio: editBioInput.value.trim(),
+                    location: editLocationInput.value.trim(),
+                    favoriteTeam: editFavoriteTeamInput.value.trim(),
+                    updatedAt: new Date()
+                };
+                
+                // Remove empty fields
+                Object.keys(updates).forEach(key => {
+                    if (updates[key] === '' || updates[key] === undefined) {
+                        delete updates[key];
+                    }
+                });
+                
+                // Update in Firebase
+                await updateDoc(doc(db, 'users', currentUserId), updates);
+                
+                // Update original data
+                originalProfileData = { ...originalProfileData, ...updates };
+                currentUserData = { ...currentUserData, ...updates };
+                
+                // Update displayed info
+                profileName.textContent = updates.name || currentUserData.name || 'User';
+                infoName.textContent = updates.name || currentUserData.name || 'Not specified';
+                infoBio.textContent = updates.bio || currentUserData.bio || 'No bio added';
+                infoBio.className = (updates.bio || currentUserData.bio) ? 'info-value' : 'info-value empty';
+                infoLocation.textContent = updates.location || currentUserData.location || 'Not specified';
+                infoLocation.className = (updates.location || currentUserData.location) ? 'info-value' : 'info-value empty';
+                infoFavoriteTeam.textContent = updates.favoriteTeam || currentUserData.favoriteTeam || 'Not specified';
+                infoFavoriteTeam.className = (updates.favoriteTeam || currentUserData.favoriteTeam) ? 'info-value' : 'info-value empty';
+                
+                // Close modal
+                closeEditModal();
+                
+                // Reset change tracking
+                hasUnsavedChanges = false;
+                
+                showNotification('success', 'Profile updated successfully!');
+                
+            } catch (error) {
+                console.error('Save profile error:', error);
+                showNotification('error', 'Failed to save profile. Please try again.');
+                saveProfileButton.disabled = false;
+            } finally {
+                skyblueLoading.classList.remove('active');
+            }
+        }
+
+        async function handleBecomePredictor() {
+            // Check if user has enough points (50+ points as per prompt)
+            const userPoints = currentUserData.points || 0;
+            
+            if (userPoints >= 50) {
+                // Navigate to predictor signup or show eligibility message
+                showNotification('info', 'You are eligible to become a predictor!');
+                // In a real app, this would redirect to predictor application page
+            } else {
+                showNotification('warning', `You need ${50 - userPoints} more points to become a predictor. Keep voting correctly to earn points!`);
             }
         }
 

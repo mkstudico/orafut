@@ -1,18 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ORAFUT | Create</title>
+    <title>ORAFUT | Create Prediction</title>
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* =========================================
-           1. CORE VARIABLES - PREDICTOR THEME
-           ========================================= */
         :root {
             --or-light-bg: #f8f9fa;
             --or-white: #ffffff;
@@ -24,276 +20,357 @@
             --or-text: #333333;
             --or-text-muted: #666666;
             --or-border: #e0e0e0;
-            --or-border-dark: #cccccc;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
             --transition: all 0.25s ease;
             --success: #10b981;
             --error: #ef4444;
-            --warning: #f59e0b;
-            --info: #00a2ff;
         }
 
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
         }
 
-        html, body {
+        body {
             font-family: 'Roboto', sans-serif;
             background: var(--or-light-bg);
             color: var(--or-text);
             line-height: 1.6;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        /* =========================================
-           2. PREMIUM NOTIFICATION COMPONENT
-           ========================================= */
-        .notification-container {
-            position: fixed;
-            top: env(safe-area-inset-top, 20px);
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 9999;
-            pointer-events: none;
-        }
-
-        .notification {
-            position: relative;
-            background: var(--or-white);
-            border-radius: 100px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            max-width: 400px;
-            width: 90%;
-            transform-origin: center;
-            opacity: 0;
-            transform: scale(0.5) translateY(-20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: all;
-        }
-
-        .notification.show {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            border-radius: 14px;
-            max-width: 90%;
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease 0.3s;
-        }
-
-        .notification.show .notification-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .notification-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .notification.success .notification-icon {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .notification.error .notification-icon {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-        }
-
-        .notification.info .notification-icon {
-            background: rgba(0, 162, 255, 0.1);
-            color: var(--info);
-        }
-
-        .notification.warning .notification-icon {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .notification-text {
-            flex: 1;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.4;
-            color: var(--or-text);
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--or-text-muted);
-            font-size: 16px;
-            cursor: pointer;
-            padding: 4px;
-            margin-left: 8px;
-            transition: color 0.2s;
-        }
-
-        .notification-close:hover {
-            color: var(--or-text);
-        }
-
-        /* =========================================
-           3. MAIN CONTAINER STRUCTURE
-           ========================================= */
-        .create-container {
             min-height: 100vh;
             padding-bottom: 70px;
-            position: relative;
         }
 
-        /* =========================================
-           4. TOP HEADER BAR
-           ========================================= */
-        .top-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* Header */
+        .header {
             background: var(--or-white);
             padding: 16px;
             border-bottom: 1px solid var(--or-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo {
-            font-family: 'Roboto Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 24px;
-            color: var(--or-text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-        .logo i { color: var(--or-blue); font-size: 20px; }
-        .logo span { color: var(--or-blue); }
-
-        .predictor-badge {
-            background: var(--or-gold);
-            color: #1a1a1a;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .notification-btn {
+        .back-btn {
             background: none;
             border: none;
-            font-size: 20px;
-            color: var(--or-text-muted);
+            font-size: 18px;
+            color: var(--or-text);
             cursor: pointer;
             padding: 8px;
-            position: relative;
         }
 
-        .notification-badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 8px;
-            height: 8px;
-            background: var(--error);
-            border-radius: 50%;
-            border: 2px solid var(--or-white);
-        }
-
-        /* =========================================
-           5. CREATE OPTIONS
-           ========================================= */
-        .create-options {
-            padding: 40px 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 140px);
-        }
-
-        .options-title {
+        .header-title {
             font-family: 'Roboto Condensed', sans-serif;
-            font-size: 32px;
+            font-size: 20px;
             font-weight: 700;
-            color: var(--or-text);
-            margin-bottom: 40px;
-            text-align: center;
         }
 
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .option-card {
-            background: var(--or-white);
-            border: 2px solid var(--or-border);
-            border-radius: 50%;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .post-btn {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+            max-width: 600px;
             margin: 0 auto;
-            text-decoration: none;
-            color: inherit;
         }
 
-        .option-card:hover {
-            border-color: var(--or-gold);
+        /* Match Selector */
+        .match-selector {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .match-selector-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .match-selector-title {
+            font-weight: 600;
+            color: var(--or-text);
+        }
+
+        .selected-match {
             background: var(--or-gold-light);
-            transform: scale(1.05);
+            border: 1px solid var(--or-gold);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
         }
 
-        .option-icon {
-            font-size: 48px;
-            color: var(--or-gold);
+        .match-teams {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .match-info {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* Prediction Type */
+        .prediction-type {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 16px;
         }
 
-        .option-title {
-            font-size: 20px;
-            font-weight: 700;
+        .type-title {
+            font-weight: 600;
+            margin-bottom: 12px;
             color: var(--or-text);
         }
 
-        /* =========================================
-           6. BOTTOM NAVIGATION
-           ========================================= */
+        .type-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .type-option {
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .type-option.active {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border-color: var(--or-gold);
+        }
+
+        /* Reasoning */
+        .reasoning-section {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--or-text);
+        }
+
+        .reason-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-top: 4px;
+        }
+
+        /* Image Upload */
+        .image-upload {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--or-border);
+            border-radius: 8px;
+            padding: 32px 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            border-color: var(--or-gold);
+            background: var(--or-gold-light);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--or-text-muted);
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            color: var(--or-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .upload-note {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        /* Hashtags */
+        .hashtags-section {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .hashtag-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .hashtag-example {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-top: 8px;
+        }
+
+        /* Privacy */
+        .privacy-section {
+            background: var(--or-white);
+            border: 1px solid var(--or-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .privacy-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .privacy-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .privacy-radio {
+            width: 20px;
+            height: 20px;
+        }
+
+        .privacy-label {
+            flex: 1;
+        }
+
+        .privacy-title {
+            font-weight: 600;
+            color: var(--or-text);
+        }
+
+        .privacy-desc {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 162, 255, 0.1);
+            border-top: 4px solid var(--or-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--or-white);
+            border-radius: 14px;
+            padding: 14px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -305,7 +382,6 @@
             justify-content: space-around;
             padding: 12px 0;
             z-index: 100;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .nav-item {
@@ -314,13 +390,8 @@
             align-items: center;
             text-decoration: none;
             color: var(--or-text-muted);
-            transition: var(--transition);
             padding: 4px 8px;
             min-width: 60px;
-        }
-
-        .nav-item.active {
-            color: var(--or-gold);
         }
 
         .nav-icon {
@@ -350,279 +421,382 @@
             margin-top: -20px;
             box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
         }
-
-        .create-btn:active {
-            background: #b8860b;
-            transform: translateY(2px);
-        }
-
-        /* =========================================
-           7. SKY-BLUE LOADING CIRCLE
-           ========================================= */
-        .skyblue-loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .skyblue-loading.active {
-            display: flex;
-        }
-
-        .skyblue-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(0, 162, 255, 0.1);
-            border-top: 4px solid var(--or-blue);
-            border-radius: 50%;
-            animation: skyblue-spin 1s linear infinite;
-        }
-
-        @keyframes skyblue-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* =========================================
-           8. UTILITY CLASSES
-           ========================================= */
-        .hidden {
-            display: none !important;
-        }
-
-        /* =========================================
-           9. MOBILE OPTIMIZATIONS
-           ========================================= */
-        @media (min-width: 769px) {
-            body::before {
-                content: "This page is optimized for mobile devices only.";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: var(--or-light-bg);
-                color: var(--or-text);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                padding: 20px;
-                font-size: 18px;
-                font-weight: 500;
-                z-index: 9999;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Premium Notification Component -->
-    <div class="notification-container" id="notificationContainer">
-        <div class="notification" id="notification">
-            <div class="notification-content">
-                <div class="notification-icon" id="notificationIcon">
-                    <i class="fas fa-check"></i>
+    <!-- Header -->
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-title">Create Prediction</div>
+        <button class="post-btn" id="postBtn" onclick="submitPrediction()">POST</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Match Selection -->
+        <div class="match-selector" onclick="selectMatch()">
+            <div class="match-selector-header">
+                <div class="match-selector-title">Select Match</div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div id="selectedMatchDisplay">
+                <div style="color: var(--or-text-muted); text-align: center; padding: 20px 0;">
+                    Tap to select a match
                 </div>
-                <div class="notification-text" id="notificationText"></div>
-                <button class="notification-close" id="notificationCloseButton">
-                    <i class="fas fa-times"></i>
-                </button>
+            </div>
+        </div>
+
+        <!-- Prediction Type -->
+        <div class="prediction-type">
+            <div class="type-title">Your Prediction</div>
+            <div class="type-options">
+                <div class="type-option" onclick="selectPrediction('team1')">
+                    Team 1 Win
+                </div>
+                <div class="type-option" onclick="selectPrediction('draw')">
+                    Draw
+                </div>
+                <div class="type-option" onclick="selectPrediction('team2')">
+                    Team 2 Win
+                </div>
+            </div>
+        </div>
+
+        <!-- Reasoning -->
+        <div class="reasoning-section">
+            <div class="section-title">Reasoning *</div>
+            <textarea class="reason-input" id="reasonInput" 
+                      placeholder="Explain your prediction analysis... (Required)"
+                      oninput="updateCharCounter()"></textarea>
+            <div class="char-counter">
+                <span id="charCount">0</span>/500 characters
+            </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="image-upload">
+            <div class="section-title">Add Image (Optional)</div>
+            <div class="upload-area" onclick="uploadImage()">
+                <div class="upload-icon">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="upload-text">Tap to upload image</div>
+                <div class="upload-note">Max 5MB • JPG, PNG, GIF</div>
+            </div>
+            <img id="imagePreview" class="preview-image" alt="Image preview">
+        </div>
+
+        <!-- Hashtags -->
+        <div class="hashtags-section">
+            <div class="section-title">Hashtags (Optional)</div>
+            <input type="text" class="hashtag-input" id="hashtagInput" 
+                   placeholder="#premierleague #football #prediction">
+            <div class="hashtag-example">Separate with spaces, e.g., #sports #analysis</div>
+        </div>
+
+        <!-- Privacy -->
+        <div class="privacy-section">
+            <div class="section-title">Privacy</div>
+            <div class="privacy-option">
+                <input type="radio" class="privacy-radio" name="privacy" id="public" checked>
+                <label class="privacy-label" for="public">
+                    <div class="privacy-title">Public</div>
+                    <div class="privacy-desc">Visible to all users and predictors</div>
+                </label>
+            </div>
+            <div class="privacy-option">
+                <input type="radio" class="privacy-radio" name="privacy" id="followers">
+                <label class="privacy-label" for="followers">
+                    <div class="privacy-title">Followers Only</div>
+                    <div class="privacy-desc">Only your followers can see this prediction</div>
+                </label>
             </div>
         </div>
     </div>
 
-    <!-- Sky Blue Loading Circle -->
-    <div class="skyblue-loading" id="skyblueLoading">
-        <div class="skyblue-spinner"></div>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
     </div>
 
-    <!-- Main Container -->
-    <div class="create-container">
-        <!-- Top Header -->
-        <div class="top-header">
-            <a href="dashboard.html" class="logo">
-                <i class="fas fa-futbol"></i>
-                ORA<span>FUT</span>
-            </a>
-            
-            <div class="predictor-badge">
-                <i class="fas fa-chart-line"></i>
-                <span>PREDICTOR</span>
-            </div>
-            
-            <button class="notification-btn" id="notificationBtn">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge"></span>
-            </button>
-        </div>
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
 
-        <!-- Create Options -->
-        <div class="create-options">
-            <h1 class="options-title">Create</h1>
-            <div class="options-grid">
-                <a href="create-story.html" class="option-card">
-                    <div class="option-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <div class="option-title">Story</div>
-                </a>
-                
-                <a href="create-post.html" class="option-card">
-                    <div class="option-icon">
-                        <i class="fas fa-newspaper"></i>
-                    </div>
-                    <div class="option-title">Post</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <a href="dashboard.html" class="nav-item">
-                <i class="fas fa-home nav-icon"></i>
-                <span class="nav-label">Home</span>
-            </a>
-            <a href="posts.html" class="nav-item">
-                <i class="fas fa-newspaper nav-icon"></i>
-                <span class="nav-label">Posts</span>
-            </a>
-            
-            <!-- CREATE Button (Center) -->
-            <button class="create-btn" onclick="location.reload()">
-                <i class="fas fa-plus"></i>
-            </button>
-            
-            <a href="messages.html" class="nav-item">
-                <i class="fas fa-comments nav-icon"></i>
-                <span class="nav-label">Messages</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <i class="fas fa-user nav-icon"></i>
-                <span class="nav-label">Profile</span>
-            </a>
-        </div>
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-home nav-icon"></i>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="posts.html" class="nav-item">
+            <i class="fas fa-newspaper nav-icon"></i>
+            <span class="nav-label">Posts</span>
+        </a>
+        
+        <!-- CREATE Button (Center) -->
+        <button class="create-btn" onclick="window.location.href='create.html'">
+            <i class="fas fa-plus"></i>
+        </button>
+        
+        <a href="messages.html" class="nav-item">
+            <i class="fas fa-comments nav-icon"></i>
+            <span class="nav-label">Messages</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user nav-icon"></i>
+            <span class="nav-label">Profile</span>
+        </a>
     </div>
-
-    <script>
-        // Global notification functions
-        function showNotification(type, message) {
-            const notification = document.getElementById('notification');
-            const notificationIcon = document.getElementById('notificationIcon');
-            const notificationText = document.getElementById('notificationText');
-            
-            // Set notification type
-            notification.className = `notification ${type}`;
-            
-            // Set icon based on type
-            let icon = '';
-            switch(type) {
-                case 'success':
-                    icon = '<i class="fas fa-check"></i>';
-                    break;
-                case 'error':
-                    icon = '<i class="fas fa-exclamation-circle"></i>';
-                    break;
-                case 'warning':
-                    icon = '<i class="fas fa-exclamation-triangle"></i>';
-                    break;
-                case 'info':
-                default:
-                    icon = '<i class="fas fa-info-circle"></i>';
-                    break;
-            }
-            
-            notificationIcon.innerHTML = icon;
-            notificationText.textContent = message;
-            
-            // Start animation
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 50);
-            
-            // Auto dismiss after 2 seconds
-            setTimeout(() => {
-                hideNotification();
-            }, 2000);
-        }
-
-        function hideNotification() {
-            const notification = document.getElementById('notification');
-            notification.classList.remove('show');
-        }
-
-        // Initialize notification close button
-        document.getElementById('notificationCloseButton').addEventListener('click', hideNotification);
-    </script>
 
     <script type="module">
-        // Import Firebase config
-        import { auth, db } from './firebase-config.js';
+        import { auth, db, IMGBB_KEY } from './firebase-config.js';
         import { 
             onAuthStateChanged, 
             signOut 
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
         import { 
-            getDoc,
-            doc
+            collection,
+            query,
+            where,
+            orderBy,
+            getDocs,
+            addDoc,
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-        // Check authentication and redirect
+        // Global variables
+        let currentPredictorId = null;
+        let selectedMatch = null;
+        let selectedPrediction = null;
+        let imageUrl = null;
+
+        // Check authentication
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                // Not logged in, redirect to choose.html
                 window.location.href = '../choose.html';
                 return;
             }
 
             try {
-                // Check if user is actually a predictor
                 const predDoc = await getDoc(doc(db, 'predictors', user.uid));
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-
-                if (!predDoc.exists() && userDoc.exists()) {
-                    // User is a normal user, redirect to user dashboard
-                    window.location.href = '../user/dashboard.html';
-                    return;
-                }
-
-                if (!predDoc.exists() && !userDoc.exists()) {
-                    // User not found in either collection, sign out
+                if (!predDoc.exists()) {
+                    // Not a predictor, redirect
                     await signOut(auth);
                     window.location.href = '../choose.html';
                     return;
                 }
 
-                // User is authenticated and is a predictor
-                // Page is ready to use
+                currentPredictorId = user.uid;
+                
+                // Load predictor data for name/photo
+                const predictor = predDoc.data();
+                window.predictorName = predictor.name || 'Predictor';
+                window.predictorPhoto = predictor.photoUrl || '';
 
             } catch (error) {
-                console.error('Auth check error:', error);
-                showNotification('error', 'Authentication error. Please login again.');
+                console.error('Auth error:', error);
+                showNotification('Authentication error', 'error');
                 setTimeout(() => {
                     window.location.href = '../choose.html';
                 }, 2000);
             }
         });
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Set active nav item
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                if (item.href === window.location.href) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
+        // UI Functions
+        function goBack() {
+            if (document.referrer && document.referrer.includes('orafut')) {
+                window.history.back();
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function selectMatch() {
+            // In a real app, this would open a match selection modal
+            // For now, simulate selection
+            const matchDisplay = document.getElementById('selectedMatchDisplay');
+            matchDisplay.innerHTML = `
+                <div class="selected-match">
+                    <div class="match-teams">Manchester United vs Liverpool</div>
+                    <div class="match-info">Premier League • Today, 15:00</div>
+                </div>
+            `;
+            selectedMatch = {
+                id: 'match123',
+                teamAName: 'Manchester United',
+                teamBName: 'Liverpool',
+                league: 'Premier League',
+                startTime: new Date()
+            };
+        }
+
+        function selectPrediction(type) {
+            // Update UI
+            document.querySelectorAll('.type-option').forEach(opt => {
+                opt.classList.remove('active');
             });
-        });
+            event.target.classList.add('active');
+            
+            selectedPrediction = type;
+        }
+
+        function updateCharCounter() {
+            const input = document.getElementById('reasonInput');
+            const counter = document.getElementById('charCount');
+            counter.textContent = input.value.length;
+            
+            if (input.value.length > 500) {
+                input.value = input.value.substring(0, 500);
+                counter.textContent = 500;
+            }
+        }
+
+        function uploadImage() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Validate file
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Image must be less than 5MB', 'error');
+                    return;
+                }
+                
+                if (!file.type.startsWith('image/')) {
+                    showNotification('Please select an image file', 'error');
+                    return;
+                }
+                
+                try {
+                    document.getElementById('loading').classList.add('active');
+                    
+                    // Upload to ImgBB
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        imageUrl = result.data.url;
+                        const preview = document.getElementById('imagePreview');
+                        preview.src = imageUrl;
+                        preview.style.display = 'block';
+                        showNotification('Image uploaded successfully', 'success');
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Image upload error:', error);
+                    showNotification('Failed to upload image', 'error');
+                } finally {
+                    document.getElementById('loading').classList.remove('active');
+                }
+            };
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
+        }
+
+        async function submitPrediction() {
+            // Validate inputs
+            if (!selectedMatch) {
+                showNotification('Please select a match', 'error');
+                return;
+            }
+            
+            if (!selectedPrediction) {
+                showNotification('Please select a prediction type', 'error');
+                return;
+            }
+            
+            const reason = document.getElementById('reasonInput').value.trim();
+            if (!reason) {
+                showNotification('Please enter your reasoning', 'error');
+                return;
+            }
+            
+            if (reason.length < 10) {
+                showNotification('Reasoning must be at least 10 characters', 'error');
+                return;
+            }
+            
+            const hashtags = document.getElementById('hashtagInput').value;
+            const privacy = document.querySelector('input[name="privacy"]:checked').id;
+            
+            try {
+                document.getElementById('loading').classList.add('active');
+                document.getElementById('postBtn').disabled = true;
+                
+                // Create prediction in Firebase
+                const predictionData = {
+                    matchId: selectedMatch.id,
+                    predictorId: currentPredictorId,
+                    predictorName: window.predictorName,
+                    predictorPhoto: window.predictorPhoto,
+                    predictionType: selectedPrediction,
+                    reasoning: reason,
+                    imageUrl: imageUrl,
+                    hashtags: hashtags.split(' ').filter(tag => tag.startsWith('#')),
+                    privacy: privacy,
+                    likes: 0,
+                    comments: 0,
+                    shares: 0,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                
+                await addDoc(collection(db, 'predictions'), predictionData);
+                
+                // Also create a vote for this predictor on the match
+                const voteData = {
+                    matchId: selectedMatch.id,
+                    predictorId: currentPredictorId,
+                    predictorName: window.predictorName,
+                    voteType: selectedPrediction,
+                    reasoning: reason,
+                    timestamp: serverTimestamp()
+                };
+                
+                await addDoc(collection(db, 'votes'), voteData);
+                
+                // Show success and redirect
+                showNotification('Prediction posted successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'posts.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Submit error:', error);
+                showNotification('Failed to post prediction', 'error');
+                document.getElementById('postBtn').disabled = false;
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
     </script>
 </body>
 </html>

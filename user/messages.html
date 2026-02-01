@@ -264,6 +264,32 @@
         /* =========================================
            6. MESSAGES STYLES
            ========================================= */
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .new-message-btn {
+            background: var(--or-blue);
+            color: var(--or-white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .new-message-btn:hover {
+            background: var(--or-blue-dark);
+        }
+
         .conversations-list {
             flex: 1;
             overflow-y: auto;
@@ -299,12 +325,24 @@
             overflow: hidden;
             background: var(--or-light-bg);
             flex-shrink: 0;
+            position: relative;
         }
 
         .conversation-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--or-white);
         }
 
         .conversation-info {
@@ -346,34 +384,14 @@
             color: var(--or-white);
             font-size: 12px;
             font-weight: 600;
-            width: 20px;
+            min-width: 20px;
             height: 20px;
-            border-radius: 50%;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-        }
-
-        .start-conversation-btn {
-            background: var(--or-blue);
-            color: var(--or-white);
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .start-conversation-btn:hover {
-            background: var(--or-blue-dark);
+            padding: 0 6px;
         }
 
         /* Chat Modal */
@@ -400,6 +418,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .back-button {
@@ -417,6 +436,7 @@
             border-radius: 50%;
             overflow: hidden;
             background: var(--or-light-bg);
+            position: relative;
         }
 
         .chat-avatar img {
@@ -453,6 +473,7 @@
             padding: 12px 16px;
             border-radius: 18px;
             position: relative;
+            animation: messageAppear 0.3s ease;
         }
 
         .message.sent {
@@ -469,6 +490,20 @@
             border-bottom-left-radius: 4px;
         }
 
+        .message-image {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+            max-width: 200px;
+            cursor: pointer;
+        }
+
+        .message-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .message-time {
             font-size: 11px;
             margin-top: 4px;
@@ -482,6 +517,7 @@
             display: flex;
             gap: 12px;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .chat-input {
@@ -492,6 +528,7 @@
             border-radius: 24px;
             font-size: 16px;
             color: var(--or-text);
+            font-family: 'Roboto', sans-serif;
         }
 
         .chat-input:focus {
@@ -511,10 +548,197 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
-        .send-button:hover {
+        .send-button:hover:not(:disabled) {
             background: var(--or-blue-dark);
+        }
+
+        .send-button:disabled {
+            background: var(--or-text-muted);
+            cursor: not-allowed;
+        }
+
+        .attach-button {
+            background: none;
+            border: none;
+            color: var(--or-text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: var(--or-text-muted);
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--or-text-muted);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        @keyframes messageAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* New Message Modal */
+        .new-message-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--or-white);
+            z-index: 2001;
+            display: none;
+            flex-direction: column;
+        }
+
+        .new-message-modal.active {
+            display: flex;
+        }
+
+        .new-message-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .new-message-title {
+            font-weight: 600;
+            font-size: 18px;
+            flex: 1;
+        }
+
+        .search-users-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 24px;
+            font-size: 16px;
+            color: var(--or-text);
+        }
+
+        .search-users-input:focus {
+            outline: none;
+            border-color: var(--or-blue);
+        }
+
+        .users-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-item:hover {
+            background: var(--or-light-bg);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--or-light-bg);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* Image Viewer */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-viewer.active {
+            display: flex;
+        }
+
+        .image-viewer img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+
+        .close-viewer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* =========================================
@@ -695,18 +919,17 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <h2 class="section-title">Messages</h2>
+            <div class="messages-header">
+                <h2 class="section-title">Messages</h2>
+                <button class="new-message-btn" id="newMessageBtn">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
             
             <!-- Conversations List -->
             <div class="conversations-list" id="conversationsList">
                 <!-- Dynamic conversations will be inserted here -->
             </div>
-            
-            <!-- Start New Conversation Button -->
-            <button class="start-conversation-btn" id="startConversationBtn">
-                <i class="fas fa-plus"></i>
-                Start New Conversation
-            </button>
         </div>
 
         <!-- Bottom Navigation -->
@@ -754,15 +977,51 @@
         </div>
         
         <div class="chat-input-container">
+            <button class="attach-button" id="attachButton" style="display: none;">
+                <i class="fas fa-paperclip"></i>
+            </button>
             <input type="text" 
                    class="chat-input" 
                    id="chatInput"
                    placeholder="Type a message...">
-            <button class="send-button" id="sendButton">
+            <button class="send-button" id="sendButton" disabled>
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
+
+    <!-- New Message Modal -->
+    <div class="new-message-modal" id="newMessageModal">
+        <div class="new-message-header">
+            <button class="back-button" id="backNewMessageButton">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="new-message-title">New Message</div>
+        </div>
+        
+        <input type="text" 
+               class="search-users-input" 
+               id="searchUsersInput"
+               placeholder="Search users...">
+        
+        <div class="users-list" id="usersList">
+            <!-- Dynamic users list will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Image Viewer -->
+    <div class="image-viewer" id="imageViewer">
+        <button class="close-viewer" id="closeViewer">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="viewerImage" src="" alt="Message image">
+    </div>
+
+    <!-- Hidden file input for image upload -->
+    <input type="file" 
+           id="imageFileInput" 
+           accept="image/*" 
+           style="display: none;">
 
     <script>
         // Global notification functions (SAME AS dashboard.html)
@@ -817,7 +1076,7 @@
 
     <script type="module">
         // Import Firebase config
-        import { auth, db } from './firebase-config.js';
+        import { auth, db, IMGBB_KEY } from './firebase-config.js';
         import { 
             onAuthStateChanged, 
             signOut 
@@ -833,16 +1092,18 @@
             limit,
             addDoc,
             serverTimestamp,
+            updateDoc,
+            arrayUnion,
             onSnapshot,
-            updateDoc
+            Timestamp
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // UI Elements
         const skyblueLoading = document.getElementById('skyblueLoading');
         const notificationBtn = document.getElementById('notificationBtn');
         const notificationBadge = document.getElementById('notificationBadge');
+        const newMessageBtn = document.getElementById('newMessageBtn');
         const conversationsList = document.getElementById('conversationsList');
-        const startConversationBtn = document.getElementById('startConversationBtn');
         const chatModal = document.getElementById('chatModal');
         const backButton = document.getElementById('backButton');
         const chatAvatar = document.getElementById('chatAvatar');
@@ -851,12 +1112,24 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');
+        const attachButton = document.getElementById('attachButton');
+        const newMessageModal = document.getElementById('newMessageModal');
+        const backNewMessageButton = document.getElementById('backNewMessageButton');
+        const searchUsersInput = document.getElementById('searchUsersInput');
+        const usersList = document.getElementById('usersList');
+        const imageViewer = document.getElementById('imageViewer');
+        const closeViewer = document.getElementById('closeViewer');
+        const viewerImage = document.getElementById('viewerImage');
+        const imageFileInput = document.getElementById('imageFileInput');
 
         let currentUserId = null;
-        let currentUser = null;
+        let currentUserData = null;
         let currentChatId = null;
         let currentChatUser = null;
         let messageListener = null;
+        let conversationListener = null;
+        let userImagesSentToday = 0;
+        const maxImagesPerDay = 5;
 
         // Check authentication and redirect
         onAuthStateChanged(auth, async (user) => {
@@ -886,7 +1159,7 @@
 
                 // User is authenticated and is a user
                 currentUserId = user.uid;
-                currentUser = userDoc.data();
+                currentUserData = userDoc.data();
                 loadMessagesData(user.uid);
 
             } catch (error) {
@@ -902,14 +1175,41 @@
             skyblueLoading.classList.add('active');
 
             try {
+                // Load user's image count for today
+                await loadUserImageCount();
+                
                 // Load conversations
                 await loadConversations(userId);
+                
+                // Set up real-time listeners
+                setupRealtimeListeners();
 
             } catch (error) {
                 console.error('Messages load error:', error);
                 showNotification('error', 'Failed to load messages. Please try again.');
             } finally {
                 skyblueLoading.classList.remove('active');
+            }
+        }
+
+        async function loadUserImageCount() {
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const imageCountQuery = query(
+                    collection(db, 'messages'),
+                    where('senderId', '==', currentUserId),
+                    where('type', '==', 'image'),
+                    where('timestamp', '>=', today)
+                );
+
+                const snapshot = await getDocs(imageCountQuery);
+                userImagesSentToday = snapshot.size;
+
+            } catch (error) {
+                console.error('Load image count error:', error);
+                userImagesSentToday = 0;
             }
         }
 
@@ -964,11 +1264,6 @@
                     conversationsList.appendChild(conversationItem);
                 }
 
-                // Set up real-time listener for new conversations
-                onSnapshot(conversationsQuery, (snapshot) => {
-                    // Handle real-time updates here
-                });
-
             } catch (error) {
                 console.error('Conversations load error:', error);
                 conversationsList.innerHTML = `
@@ -985,6 +1280,62 @@
             }
         }
 
+        function setupRealtimeListeners() {
+            if (conversationListener) {
+                conversationListener(); // Remove previous listener
+            }
+            
+            // Listen for new conversations
+            const conversationsQuery = query(
+                collection(db, 'conversations'),
+                where('participants', 'array-contains', currentUserId),
+                orderBy('lastMessageAt', 'desc')
+            );
+
+            conversationListener = onSnapshot(conversationsQuery, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added' || change.type === 'modified') {
+                        updateConversationItem(change.doc);
+                    }
+                });
+            });
+        }
+
+        async function updateConversationItem(conversationDoc) {
+            const conversation = {
+                id: conversationDoc.id,
+                ...conversationDoc.data()
+            };
+            
+            // Get other participant
+            const otherParticipantId = conversation.participants.find(id => id !== currentUserId);
+            if (!otherParticipantId) return;
+            
+            // Get user data
+            const userDoc = await getDoc(doc(db, 'users', otherParticipantId));
+            if (!userDoc.exists()) return;
+            
+            const userData = userDoc.data();
+            
+            // Check if conversation item already exists
+            const existingItem = document.querySelector(`[data-conversation-id="${conversation.id}"]`);
+            
+            if (existingItem) {
+                // Update existing item
+                updateConversationItemUI(existingItem, conversation, userData);
+            } else {
+                // Create new item and insert at the top
+                const newItem = createConversationItem(conversation, userData, currentUserId);
+                conversationsList.insertBefore(newItem, conversationsList.firstChild);
+                
+                // Limit to 40 conversations
+                const items = conversationsList.querySelectorAll('.conversation-item');
+                if (items.length > 40) {
+                    items[items.length - 1].remove();
+                }
+            }
+        }
+
         function createConversationItem(conversation, userData, currentUserId) {
             const item = document.createElement('div');
             item.className = `conversation-item ${conversation.unreadFor?.includes(currentUserId) ? 'unread' : ''}`;
@@ -995,12 +1346,16 @@
             const lastMessageTime = conversation.lastMessageAt ? 
                 formatMessageTime(conversation.lastMessageAt.toDate()) : 'Just now';
             
+            const unreadCount = conversation.unreadFor?.includes(currentUserId) ? 
+                (conversation.unreadCount || 1) : 0;
+            
             item.innerHTML = `
                 <div class="conversation-avatar">
                     ${userData.photoURL ? 
                         `<img src="${userData.photoURL}" alt="${userData.name || 'User'}">` :
                         `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 12px;"></i>`
                     }
+                    ${userData.isOnline ? '<div class="online-indicator"></div>' : ''}
                 </div>
                 
                 <div class="conversation-info">
@@ -1010,12 +1365,12 @@
                     </div>
                     
                     <div class="conversation-preview">
-                        ${conversation.lastMessage || 'Start a conversation'}
+                        ${getMessagePreview(conversation.lastMessage)}
                     </div>
                 </div>
                 
-                ${conversation.unreadFor?.includes(currentUserId) ? 
-                    `<div class="unread-badge">${conversation.unreadCount || 1}</div>` : 
+                ${unreadCount > 0 ? 
+                    `<div class="unread-badge">${unreadCount}</div>` : 
                     ''
                 }
             `;
@@ -1025,6 +1380,69 @@
             };
             
             return item;
+        }
+
+        function updateConversationItemUI(item, conversation, userData) {
+            // Update time
+            const lastMessageTime = conversation.lastMessageAt ? 
+                formatMessageTime(conversation.lastMessageAt.toDate()) : 'Just now';
+            
+            const timeElement = item.querySelector('.conversation-time');
+            if (timeElement) {
+                timeElement.textContent = lastMessageTime;
+            }
+            
+            // Update preview
+            const previewElement = item.querySelector('.conversation-preview');
+            if (previewElement) {
+                previewElement.textContent = getMessagePreview(conversation.lastMessage);
+            }
+            
+            // Update unread status
+            const unreadCount = conversation.unreadFor?.includes(currentUserId) ? 
+                (conversation.unreadCount || 1) : 0;
+            
+            const badgeElement = item.querySelector('.unread-badge');
+            
+            if (unreadCount > 0) {
+                item.classList.add('unread');
+                
+                if (badgeElement) {
+                    badgeElement.textContent = unreadCount;
+                } else {
+                    const newBadge = document.createElement('div');
+                    newBadge.className = 'unread-badge';
+                    newBadge.textContent = unreadCount;
+                    item.appendChild(newBadge);
+                }
+            } else {
+                item.classList.remove('unread');
+                if (badgeElement) {
+                    badgeElement.remove();
+                }
+            }
+            
+            // Update online status
+            const onlineIndicator = item.querySelector('.online-indicator');
+            if (userData.isOnline) {
+                if (!onlineIndicator) {
+                    const newIndicator = document.createElement('div');
+                    newIndicator.className = 'online-indicator';
+                    item.querySelector('.conversation-avatar').appendChild(newIndicator);
+                }
+            } else if (onlineIndicator) {
+                onlineIndicator.remove();
+            }
+        }
+
+        function getMessagePreview(message) {
+            if (!message) return 'Start a conversation';
+            
+            if (message.type === 'image') {
+                return '📷 Sent an image';
+            }
+            
+            return message.text || 'Sent a message';
         }
 
         function formatMessageTime(date) {
@@ -1048,12 +1466,16 @@
             
             // Update chat header
             chatUserName.textContent = userData.name || 'User';
-            chatUserStatus.textContent = 'Online'; // This should come from Firebase presence
+            chatUserStatus.textContent = userData.isOnline ? 'Online' : 'Last seen recently';
             
             // Set avatar
             chatAvatar.innerHTML = userData.photoURL ? 
                 `<img src="${userData.photoURL}" alt="${userData.name || 'User'}">` :
                 `<i class="fas fa-user" style="font-size: 32px; color: var(--or-text-muted); padding: 4px;"></i>`;
+            
+            if (userData.isOnline) {
+                chatAvatar.innerHTML += '<div class="online-indicator"></div>';
+            }
             
             // Load messages
             await loadChatMessages(conversationId);
@@ -1070,11 +1492,11 @@
                 // Clear existing messages
                 chatMessages.innerHTML = '';
                 
-                // Query messages for this conversation
+                // Query messages for this conversation (last 40 messages)
                 const messagesQuery = query(
                     collection(db, 'conversations', conversationId, 'messages'),
                     orderBy('timestamp', 'desc'),
-                    limit(40) // Load last 40 messages as per prompt
+                    limit(40)
                 );
 
                 const messagesSnapshot = await getDocs(messagesQuery);
@@ -1091,28 +1513,27 @@
                             </p>
                         </div>
                     `;
-                    return;
-                }
-
-                // Sort messages by timestamp (oldest first for display)
-                const messages = [];
-                messagesSnapshot.forEach((docSnapshot) => {
-                    messages.push({
-                        id: docSnapshot.id,
-                        ...docSnapshot.data()
+                } else {
+                    // Sort messages by timestamp (oldest first for display)
+                    const messages = [];
+                    messagesSnapshot.forEach((docSnapshot) => {
+                        messages.push({
+                            id: docSnapshot.id,
+                            ...docSnapshot.data()
+                        });
                     });
-                });
-                
-                messages.sort((a, b) => a.timestamp - b.timestamp);
-                
-                // Display messages
-                messages.forEach(message => {
-                    const messageElement = createMessageElement(message);
-                    chatMessages.appendChild(messageElement);
-                });
-                
-                // Scroll to bottom
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    messages.sort((a, b) => a.timestamp - b.timestamp);
+                    
+                    // Display messages
+                    messages.forEach(message => {
+                        const messageElement = createMessageElement(message);
+                        chatMessages.appendChild(messageElement);
+                    });
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
                 
                 // Set up real-time listener for new messages
                 if (messageListener) {
@@ -1134,6 +1555,11 @@
                                 
                                 // Scroll to bottom
                                 chatMessages.scrollTop = chatMessages.scrollHeight;
+                                
+                                // Mark as read if it's from the other user
+                                if (message.senderId !== currentUserId) {
+                                    markMessageAsRead(conversationId, message.id);
+                                }
                             }
                         }
                     });
@@ -1161,19 +1587,37 @@
             messageDiv.className = `message ${message.senderId === currentUserId ? 'sent' : 'received'}`;
             
             // Format time
-            const messageTime = message.timestamp ? 
+            const messageTime = message.timestamp && typeof message.timestamp.toDate === 'function' ?
                 message.timestamp.toDate().toLocaleTimeString('en-US', { 
                     hour: '2-digit', 
                     minute: '2-digit' 
                 }) : 'Just now';
             
+            let contentHTML = '';
+            
+            if (message.type === 'image') {
+                contentHTML = `
+                    <div class="message-text">${message.text || ''}</div>
+                    <div class="message-image" onclick="viewMessageImage('${message.imageUrl}')">
+                        <img src="${message.imageUrl}" alt="Shared image">
+                    </div>
+                `;
+            } else {
+                contentHTML = `<div class="message-text">${message.text}</div>`;
+            }
+            
             messageDiv.innerHTML = `
-                <div class="message-text">${message.text}</div>
+                ${contentHTML}
                 <div class="message-time">${messageTime}</div>
             `;
             
             return messageDiv;
         }
+
+        window.viewMessageImage = function(imageUrl) {
+            viewerImage.src = imageUrl;
+            imageViewer.classList.add('active');
+        };
 
         async function sendMessage() {
             const text = chatInput.value.trim();
@@ -1184,13 +1628,14 @@
                 await addDoc(collection(db, 'conversations', currentChatId, 'messages'), {
                     text: text,
                     senderId: currentUserId,
+                    type: 'text',
                     timestamp: serverTimestamp(),
                     read: false
                 });
                 
                 // Update conversation last message
                 await updateDoc(doc(db, 'conversations', currentChatId), {
-                    lastMessage: text,
+                    lastMessage: { text: text, type: 'text' },
                     lastMessageAt: serverTimestamp(),
                     unreadFor: [currentChatUser.id], // Mark as unread for recipient
                     unreadCount: (await getUnreadCount(currentChatId)) + 1
@@ -1198,10 +1643,48 @@
                 
                 // Clear input
                 chatInput.value = '';
+                sendButton.disabled = true;
                 
             } catch (error) {
                 console.error('Send message error:', error);
                 showNotification('error', 'Failed to send message. Please try again.');
+            }
+        }
+
+        async function sendImageMessage(imageUrl) {
+            if (!currentChatId || !currentUserId) return;
+            
+            try {
+                // Add message to subcollection
+                await addDoc(collection(db, 'conversations', currentChatId, 'messages'), {
+                    text: 'Shared an image',
+                    senderId: currentUserId,
+                    type: 'image',
+                    imageUrl: imageUrl,
+                    timestamp: serverTimestamp(),
+                    read: false
+                });
+                
+                // Update conversation last message
+                await updateDoc(doc(db, 'conversations', currentChatId), {
+                    lastMessage: { text: 'Shared an image', type: 'image' },
+                    lastMessageAt: serverTimestamp(),
+                    unreadFor: [currentChatUser.id], // Mark as unread for recipient
+                    unreadCount: (await getUnreadCount(currentChatId)) + 1
+                });
+                
+                // Update image count
+                userImagesSentToday++;
+                
+                // Hide attach button if limit reached
+                if (userImagesSentToday >= maxImagesPerDay) {
+                    attachButton.style.display = 'none';
+                    showNotification('warning', 'Daily image limit reached (5 images per day)');
+                }
+                
+            } catch (error) {
+                console.error('Send image error:', error);
+                showNotification('error', 'Failed to send image. Please try again.');
             }
         }
 
@@ -1249,14 +1732,216 @@
             }
         }
 
+        async function markMessageAsRead(conversationId, messageId) {
+            try {
+                await updateDoc(doc(db, 'conversations', conversationId, 'messages', messageId), {
+                    read: true
+                });
+            } catch (error) {
+                console.error('Mark message as read error:', error);
+            }
+        }
+
+        async function createNewConversation(userId) {
+            try {
+                // Check if conversation already exists
+                const existingConversationsQuery = query(
+                    collection(db, 'conversations'),
+                    where('participants', 'array-contains', currentUserId)
+                );
+
+                const existingConversations = await getDocs(existingConversationsQuery);
+                
+                let existingConversation = null;
+                existingConversations.forEach(doc => {
+                    const conversation = doc.data();
+                    if (conversation.participants.includes(userId)) {
+                        existingConversation = { id: doc.id, ...conversation };
+                    }
+                });
+                
+                if (existingConversation) {
+                    // Open existing conversation
+                    const userDoc = await getDoc(doc(db, 'users', userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        openChat(existingConversation.id, userData);
+                    }
+                    return;
+                }
+                
+                // Create new conversation
+                const newConversationRef = await addDoc(collection(db, 'conversations'), {
+                    participants: [currentUserId, userId],
+                    createdAt: serverTimestamp(),
+                    lastMessageAt: serverTimestamp(),
+                    unreadFor: [],
+                    unreadCount: 0
+                });
+                
+                // Get user data and open chat
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    openChat(newConversationRef.id, userData);
+                }
+                
+            } catch (error) {
+                console.error('Create conversation error:', error);
+                showNotification('error', 'Failed to create conversation. Please try again.');
+            }
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showNotification('error', 'Please select an image file');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('error', 'Image size should be less than 5MB');
+                return;
+            }
+            
+            // Check daily limit
+            if (userImagesSentToday >= maxImagesPerDay) {
+                showNotification('warning', 'Daily image limit reached (5 images per day)');
+                return;
+            }
+            
+            skyblueLoading.classList.add('active');
+            
+            try {
+                // Upload to ImgBB
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const imageUrl = result.data.url;
+                    await sendImageMessage(imageUrl);
+                    showNotification('success', 'Image sent!');
+                } else {
+                    throw new Error(result.error?.message || 'Upload failed');
+                }
+                
+            } catch (error) {
+                console.error('Image upload error:', error);
+                showNotification('error', 'Failed to upload image. Please try again.');
+            } finally {
+                skyblueLoading.classList.remove('active');
+                // Reset file input
+                imageFileInput.value = '';
+            }
+        }
+
+        async function searchUsers(searchTerm) {
+            try {
+                // Query users (excluding current user and predictors)
+                const usersQuery = query(
+                    collection(db, 'users'),
+                    where('name', '>=', searchTerm),
+                    where('name', '<=', searchTerm + '\uf8ff'),
+                    limit(20)
+                );
+
+                const usersSnapshot = await getDocs(usersQuery);
+                
+                usersList.innerHTML = '';
+                
+                if (usersSnapshot.empty) {
+                    usersList.innerHTML = `
+                        <div class="empty-state" style="background: transparent; border: none;">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Users Found</h3>
+                            <p class="empty-state-text">
+                                No users match your search.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                usersSnapshot.forEach((docSnapshot) => {
+                    const user = {
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+                    
+                    // Skip current user
+                    if (user.id === currentUserId) return;
+                    
+                    const userElement = createUserElement(user);
+                    usersList.appendChild(userElement);
+                });
+
+            } catch (error) {
+                console.error('Search users error:', error);
+                usersList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--error);">
+                        Failed to search users
+                    </div>
+                `;
+            }
+        }
+
+        function createUserElement(user) {
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-item';
+            userDiv.dataset.userId = user.id;
+            
+            userDiv.innerHTML = `
+                <div class="user-avatar">
+                    ${user.photoURL ? 
+                        `<img src="${user.photoURL}" alt="${user.name || 'User'}">` :
+                        `<i class="fas fa-user" style="font-size: 24px; color: var(--or-text-muted); padding: 12px;"></i>`
+                    }
+                </div>
+                <div class="user-info">
+                    <div class="user-name">${user.name || 'User'}</div>
+                    <div class="user-status">${user.isOnline ? 'Online' : 'Offline'}</div>
+                </div>
+            `;
+            
+            userDiv.onclick = () => {
+                createNewConversation(user.id);
+                newMessageModal.classList.remove('active');
+            };
+            
+            return userDiv;
+        }
+
         // Event Listeners
         sendButton.addEventListener('click', sendMessage);
         
+        chatInput.addEventListener('input', (e) => {
+            sendButton.disabled = e.target.value.trim().length === 0;
+        });
+        
         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !sendButton.disabled) {
                 sendMessage();
             }
         });
+        
+        attachButton.addEventListener('click', () => {
+            imageFileInput.click();
+        });
+        
+        imageFileInput.addEventListener('change', handleImageUpload);
         
         backButton.addEventListener('click', () => {
             chatModal.classList.remove('active');
@@ -1266,10 +1951,41 @@
             }
         });
         
-        startConversationBtn.addEventListener('click', () => {
-            // In a real app, this would open a user selection modal
-            showNotification('info', 'User selection for new conversations coming soon!');
+        newMessageBtn.addEventListener('click', () => {
+            newMessageModal.classList.add('active');
         });
+        
+        backNewMessageButton.addEventListener('click', () => {
+            newMessageModal.classList.remove('active');
+        });
+        
+        searchUsersInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm.length > 0) {
+                searchUsers(searchTerm);
+            } else {
+                usersList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--or-text-muted);">
+                        Search for users by name
+                    </div>
+                `;
+            }
+        });
+        
+        closeViewer.addEventListener('click', () => {
+            imageViewer.classList.remove('active');
+        });
+        
+        imageViewer.addEventListener('click', (e) => {
+            if (e.target === imageViewer) {
+                imageViewer.classList.remove('active');
+            }
+        });
+
+        // Show attach button if user can still send images
+        if (userImagesSentToday < maxImagesPerDay) {
+            attachButton.style.display = 'block';
+        }
 
         // Notification bell click handler
         notificationBtn.addEventListener('click', () => {

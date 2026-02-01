@@ -1488,8 +1488,217 @@
         </div>
     </div>
 
-    <!-- Other modals (Result, Ad, User Actions, Report Actions) -->
-    <!-- Add other modals here as needed -->
+    <!-- Result Modal -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Match Result</h3>
+                <button class="modal-close" onclick="closeResultModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="resultForm">
+                    <input type="hidden" id="resultMatchId">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <h3 id="resultMatchTeams" style="margin-bottom: 16px;"></h3>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                            <div style="text-align: center;">
+                                <div id="resultTeam1Name" style="font-weight: 600; margin-bottom: 8px;"></div>
+                                <input type="number" 
+                                       class="form-input" 
+                                       id="team1Goals" 
+                                       min="0" 
+                                       max="50" 
+                                       style="width: 80px; text-align: center; font-size: 24px; font-weight: bold;"
+                                       required>
+                            </div>
+                            <div style="font-size: 24px; font-weight: bold;">:</div>
+                            <div style="text-align: center;">
+                                <div id="resultTeam2Name" style="font-weight: 600; margin-bottom: 8px;"></div>
+                                <input type="number" 
+                                       class="form-input" 
+                                       id="team2Goals" 
+                                       min="0" 
+                                       max="50" 
+                                       style="width: 80px; text-align: center; font-size: 24px; font-weight: bold;"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-textarea" id="resultNotes" placeholder="Any additional information about the match..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeResultModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveResult()">
+                    <i class="fas fa-trophy"></i>
+                    Save Result & Award Wins
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ad Modal -->
+    <div class="modal-overlay" id="adModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="adModalTitle">Create Advertisement</h3>
+                <button class="modal-close" onclick="closeAdModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="adForm">
+                    <input type="hidden" id="adId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label required">Title</label>
+                            <input type="text" class="form-input" id="adTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Placement</label>
+                            <select class="form-select" id="adPlacement" required>
+                                <option value="">Select placement</option>
+                                <option value="dashboard_top">Dashboard Top</option>
+                                <option value="predictor_dashboard">Predictor Dashboard</option>
+                                <option value="match_view">Match View</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Target URL</label>
+                            <input type="url" class="form-input" id="adTargetUrl" required placeholder="https://example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Ad Image</label>
+                            <div class="upload-area" onclick="document.getElementById('adImageInput').click()" id="adImageUpload">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">Click to upload ad image</div>
+                                <div class="upload-hint">PNG, JPG up to 5MB</div>
+                                <div class="image-preview" id="adImagePreview" style="display: none;"></div>
+                            </div>
+                            <input type="file" id="adImageInput" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="adIsActive" checked>
+                            <label for="adIsActive">Activate immediately</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAdModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveAd()">
+                    <span id="adSaveText">Create Ad</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Actions Modal -->
+    <div class="modal-overlay" id="userActionsModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">User Account Actions</h3>
+                <button class="modal-close" onclick="closeUserActionsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;" id="userActionUsername"></div>
+                    <div style="color: var(--admin-text-muted); font-size: 14px;" id="userActionEmail"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="toggleUserStatus()" id="toggleStatusBtn">
+                        <i class="fas fa-user-slash"></i>
+                        <span>Suspend Account</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="togglePostingPermission()" id="togglePostingBtn">
+                        <i class="fas fa-edit"></i>
+                        <span>Disable Posting</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="toggleMessagingPermission()" id="toggleMessagingBtn">
+                        <i class="fas fa-comments"></i>
+                        <span>Disable Messaging</span>
+                    </button>
+                    <div style="height: 1px; background: var(--admin-border); margin: 16px 0;"></div>
+                    <button class="btn btn-danger" onclick="banUser()">
+                        <i class="fas fa-ban"></i>
+                        Ban Account Permanently
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUserActionsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Actions Modal -->
+    <div class="modal-overlay" id="reportActionsModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Report Actions</h3>
+                <button class="modal-close" onclick="closeReportActionsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div class="status-badge" id="reportTypeBadge"></div>
+                        <div style="font-weight: 600;" id="reportTitle"></div>
+                    </div>
+                    <div style="background: var(--admin-bg); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <div style="font-size: 14px; color: var(--admin-text-muted); margin-bottom: 8px;">Reported Content:</div>
+                        <div id="reportContent"></div>
+                    </div>
+                    <div style="font-size: 14px;">
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: var(--admin-text-muted);">Reported by:</span>
+                            <span style="font-weight: 500;" id="reportReporter"></span>
+                        </div>
+                        <div>
+                            <span style="color: var(--admin-text-muted);">Reported account:</span>
+                            <span style="font-weight: 500;" id="reportReported"></span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="warnReportedUser()">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Send Warning
+                    </button>
+                    <button class="btn btn-secondary" onclick="muteReportedUser()">
+                        <i class="fas fa-volume-mute"></i>
+                        Mute for 7 days
+                    </button>
+                    <button class="btn btn-secondary" onclick="lockReportedAccount()">
+                        <i class="fas fa-lock"></i>
+                        Lock Account
+                    </button>
+                    <div style="height: 1px; background: var(--admin-border); margin: 16px 0;"></div>
+                    <button class="btn btn-danger" onclick="banReportedAccount()">
+                        <i class="fas fa-ban"></i>
+                        Ban Account
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="markReportAsResolved()">
+                    <i class="fas fa-check"></i>
+                    Mark as Resolved
+                </button>
+                <button class="btn btn-primary" onclick="closeReportActionsModal()">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Firebase configuration
@@ -1524,11 +1733,8 @@
 
         // DOM Ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Firebase
             try {
-                // Check if Firebase is already loaded
                 if (typeof firebase === 'undefined') {
-                    // Load Firebase from CDN
                     loadFirebase();
                 } else {
                     initializeFirebase();
@@ -1570,6 +1776,108 @@
             }
         }
 
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container';
+                toastContainer.id = 'toastContainer';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                'success': 'check-circle',
+                'error': 'exclamation-circle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${icons[type]}"></i>
+                </div>
+                <div class="toast-content">${message}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Setup file upload
+        function setupFileUpload(inputId, previewId, uploadAreaId) {
+            const input = document.getElementById(inputId);
+            const uploadArea = document.getElementById(uploadAreaId);
+
+            if (!input || !uploadArea) return;
+
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please select an image file', 'error');
+                    return;
+                }
+
+                const maxSize = inputId === 'adImageInput' ? 5 * 1024 * 1024 : 2 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showToast(`Image must be less than ${maxSize / 1024 / 1024}MB`, 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    if (!preview) return;
+                    
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.style.display = 'block';
+                    
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    const uploadIcon = uploadArea.querySelector('.upload-icon');
+                    if (uploadText) uploadText.textContent = 'Image selected';
+                    if (uploadIcon) uploadIcon.innerHTML = '<i class="fas fa-check"></i>';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Upload image to ImgBB
+        async function uploadImageToImgBB(file) {
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url;
+                } else {
+                    throw new Error('Image upload failed');
+                }
+            } catch (error) {
+                console.error('ImgBB upload error:', error);
+                showToast('Failed to upload image', 'error');
+                throw error;
+            }
+        }
+
         // Initialize admin panel
         function initAdminPanel() {
             // Setup menu navigation
@@ -1585,7 +1893,7 @@
             setupFileUpload('teamLogoInput', 'teamLogoPreview', 'teamLogoUpload');
             setupFileUpload('adImageInput', 'adImagePreview', 'adImageUpload');
 
-            // Setup notification form when notifications section is active
+            // Setup notification form
             const notificationForm = document.getElementById('notificationForm');
             if (notificationForm) {
                 notificationForm.addEventListener('submit', function(e) {
@@ -1631,116 +1939,8 @@
             }
         }
 
-        // Toast notifications
-        function showToast(message, type = 'info') {
-            let toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container';
-                toastContainer.id = 'toastContainer';
-                document.body.appendChild(toastContainer);
-            }
-
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            const icons = {
-                'success': 'check-circle',
-                'error': 'exclamation-circle',
-                'warning': 'exclamation-triangle',
-                'info': 'info-circle'
-            };
-
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${icons[type]}"></i>
-                </div>
-                <div class="toast-content">${message}</div>
-                <button class="toast-close" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            toastContainer.appendChild(toast);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.remove();
-                }
-            }, 5000);
-        }
-
-        // Setup file upload
-        function setupFileUpload(inputId, previewId, uploadAreaId) {
-            const input = document.getElementById(inputId);
-            const uploadArea = document.getElementById(uploadAreaId);
-
-            if (!input || !uploadArea) return;
-
-            input.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    showToast('Please select an image file', 'error');
-                    return;
-                }
-
-                // Validate file size
-                const maxSize = inputId === 'adImageInput' ? 5 * 1024 * 1024 : 2 * 1024 * 1024;
-                if (file.size > maxSize) {
-                    showToast(`Image must be less than ${maxSize / 1024 / 1024}MB`, 'error');
-                    return;
-                }
-
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById(previewId);
-                    if (!preview) return;
-                    
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                    preview.style.display = 'block';
-                    
-                    // Update upload area text
-                    const uploadText = uploadArea.querySelector('.upload-text');
-                    const uploadIcon = uploadArea.querySelector('.upload-icon');
-                    if (uploadText) uploadText.textContent = 'Image selected';
-                    if (uploadIcon) uploadIcon.innerHTML = '<i class="fas fa-check"></i>';
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // Upload image to ImgBB
-        async function uploadImageToImgBB(file) {
-            try {
-                const formData = new FormData();
-                formData.append('image', file);
-                
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    return data.data.url;
-                } else {
-                    throw new Error('Image upload failed');
-                }
-            } catch (error) {
-                console.error('ImgBB upload error:', error);
-                showToast('Failed to upload image', 'error');
-                throw error;
-            }
-        }
-
         // Navigation
         function navigateToSection(section) {
-            // Update active menu item
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('data-section') === section) {
@@ -1748,7 +1948,6 @@
                 }
             });
 
-            // Update page title
             const titles = {
                 'dashboard': 'Dashboard',
                 'teams': 'Team Management',
@@ -1767,7 +1966,6 @@
                 pageTitle.textContent = titles[section] || 'Dashboard';
             }
 
-            // Show correct section
             document.querySelectorAll('.dashboard-section').forEach(sec => {
                 sec.classList.remove('active');
             });
@@ -1779,7 +1977,6 @@
 
             currentSection = section;
 
-            // Load section data if needed
             if (!db) {
                 showToast('Database not initialized', 'error');
                 return;
@@ -1817,6 +2014,27 @@
             }
         }
 
+        // Helper functions
+        function updateElementText(id, value) {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        }
+
+        function updateBadge(id, value) {
+            const badge = document.getElementById(id);
+            if (badge) badge.setAttribute('data-badge', value);
+        }
+
+        function setValue(id, value) {
+            const element = document.getElementById(id);
+            if (element) element.value = value;
+        }
+
+        function getValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value.trim() : '';
+        }
+
         // Dashboard functions
         async function loadDashboardData() {
             try {
@@ -1825,7 +2043,6 @@
                     return;
                 }
 
-                // Load counts from Firebase
                 const usersSnapshot = await db.collection('users').get();
                 const predictorsSnapshot = await db.collection('predictors').get();
                 const matchesSnapshot = await db.collection('matches')
@@ -1838,18 +2055,15 @@
                     .where('status', '==', 'unresolved')
                     .get();
 
-                // Update dashboard stats
                 updateElementText('totalUsers', usersSnapshot.size);
                 updateElementText('totalPredictors', predictorsSnapshot.size);
                 updateElementText('activeMatches', matchesSnapshot.size);
                 updateElementText('pendingReports', reportsSnapshot.size);
 
-                // Update badges
                 updateBadge('predictorsBadge', predictorsSnapshot.size);
                 updateBadge('reportsBadge', reportsSnapshot.size);
                 updateBadge('logsBadge', errorsSnapshot.size);
 
-                // Load recent activity
                 loadRecentActivity();
 
             } catch (error) {
@@ -1858,21 +2072,10 @@
             }
         }
 
-        function updateElementText(id, value) {
-            const element = document.getElementById(id);
-            if (element) element.textContent = value;
-        }
-
-        function updateBadge(id, value) {
-            const badge = document.getElementById(id);
-            if (badge) badge.setAttribute('data-badge', value);
-        }
-
         async function loadRecentActivity() {
             try {
                 if (!db) return;
 
-                // Get recent matches
                 const recentMatches = await db.collection('matches')
                     .orderBy('startTime', 'desc')
                     .limit(5)
@@ -1969,7 +2172,6 @@
                     tableBody.appendChild(row);
                 });
 
-                // Update team selects in match modal
                 updateTeamSelects();
 
             } catch (error) {
@@ -1984,11 +2186,9 @@
             
             if (!team1Select || !team2Select) return;
             
-            // Clear existing options except first
             while (team1Select.options.length > 1) team1Select.remove(1);
             while (team2Select.options.length > 1) team2Select.remove(1);
 
-            // Add active teams
             teams.filter(team => team.isActive !== false).forEach(team => {
                 const option1 = document.createElement('option');
                 option1.value = team.id;
@@ -2010,7 +2210,6 @@
             if (!modal || !title || !saveBtn) return;
 
             if (teamId) {
-                // Edit mode
                 title.textContent = 'Edit Team';
                 saveBtn.textContent = 'Update Team';
                 selectedTeamId = teamId;
@@ -2033,7 +2232,6 @@
                     }
                 }
             } else {
-                // Add mode
                 title.textContent = 'Add New Team';
                 saveBtn.textContent = 'Save Team';
                 selectedTeamId = null;
@@ -2046,11 +2244,6 @@
             }
 
             modal.classList.add('active');
-        }
-
-        function setValue(id, value) {
-            const element = document.getElementById(id);
-            if (element) element.value = value;
         }
 
         function closeTeamModal() {
@@ -2077,7 +2270,6 @@
 
                 let logoUrl = '';
                 
-                // Upload logo to imgbb if new file selected
                 if (logoFile) {
                     try {
                         logoUrl = await uploadImageToImgBB(logoFile);
@@ -2098,11 +2290,9 @@
                 if (logoUrl) teamData.logoUrl = logoUrl;
                 
                 if (selectedTeamId) {
-                    // Update existing team
                     await db.collection('teams').doc(selectedTeamId).update(teamData);
                     showToast('Team updated successfully', 'success');
                 } else {
-                    // Create new team
                     teamData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection('teams').add(teamData);
                     showToast('Team created successfully', 'success');
@@ -2115,11 +2305,6 @@
                 console.error('Save team error:', error);
                 showToast('Failed to save team', 'error');
             }
-        }
-
-        function getValue(id) {
-            const element = document.getElementById(id);
-            return element ? element.value.trim() : '';
         }
 
         function editTeam(teamId) {
@@ -2150,65 +2335,165 @@
             }
         }
 
-        // Placeholder functions for other sections
+        // Match Management
         async function loadMatches() {
-            showToast('Matches section - Not implemented yet', 'info');
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('matches')
+                    .orderBy('startTime', 'desc')
+                    .get();
+                
+                matches = [];
+                const tableBody = document.getElementById('matchesTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const match = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    if (match.startTime && typeof match.startTime.toDate === 'function') {
+                        match.startTime = match.startTime.toDate();
+                    }
+                    
+                    matches.push(match);
+
+                    const statusClass = getMatchStatusClass(match);
+                    const statusText = getMatchStatusText(match);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="font-weight: 600;">${match.teamAName || 'Team A'}</div>
+                                <div style="color: var(--admin-text-muted);">vs</div>
+                                <div style="font-weight: 600;">${match.teamBName || 'Team B'}</div>
+                            </div>
+                        </td>
+                        <td>${match.league || 'Unknown'}</td>
+                        <td>${match.startTime ? match.startTime.toLocaleString() : 'Unknown'}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                        <td>
+                            ${match.youtubeUrl ? 
+                                `<a href="${match.youtubeUrl}" target="_blank" style="color: var(--admin-primary); text-decoration: none;">
+                                    <i class="fab fa-youtube"></i> YouTube
+                                </a>` : 
+                                'No stream'
+                            }
+                        </td>
+                        <td>
+                            ${match.isTopMatch ? 
+                                '<span class="status-badge status-active"><i class="fas fa-star"></i> Top</span>' : 
+                                '-'
+                            }
+                        </td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="editMatch('${doc.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" onclick="addResult('${doc.id}')" title="Add Result">
+                                    <i class="fas fa-trophy"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Matches load error:', error);
+                showToast('Failed to load matches', 'error');
+            }
         }
 
-        async function loadPendingResults() {
-            showToast('Pending results - Not implemented yet', 'info');
+        function getMatchStatusClass(match) {
+            const now = new Date();
+            const startTime = match.startTime ? new Date(match.startTime) : null;
+            const endTime = startTime ? new Date(startTime.getTime() + 90 * 60 * 1000) : null;
+
+            if (match.result) return 'status-active';
+            if (!startTime) return 'status-pending';
+            
+            if (now < startTime) return 'status-pending';
+            if (now >= startTime && now <= endTime) return 'status-active';
+            
+            const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+            if (startTime < twelveHoursAgo) return 'status-inactive';
+            
+            return 'status-pending';
         }
 
-        async function loadRecentWins() {
-            showToast('Recent wins - Not implemented yet', 'info');
+        function getMatchStatusText(match) {
+            const now = new Date();
+            const startTime = match.startTime ? new Date(match.startTime) : null;
+            const endTime = startTime ? new Date(startTime.getTime() + 90 * 60 * 1000) : null;
+
+            if (match.result) return 'Completed';
+            if (!startTime) return 'Scheduled';
+            
+            if (now < startTime) return 'Upcoming';
+            if (now >= startTime && now <= endTime) return 'Live';
+            
+            const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+            if (startTime < twelveHoursAgo) return 'Hidden';
+            
+            return 'Pending Result';
         }
 
-        async function loadPredictors() {
-            showToast('Predictors section - Not implemented yet', 'info');
-        }
+        function openMatchModal(matchId = null) {
+            const modal = document.getElementById('matchModal');
+            const title = document.getElementById('matchModalTitle');
+            const saveBtn = document.getElementById('matchSaveText');
 
-        function filterPredictors() {
-            showToast('Filter predictors - Not implemented yet', 'info');
-        }
+            if (!modal || !title || !saveBtn) return;
 
-        async function loadUsers() {
-            showToast('Users section - Not implemented yet', 'info');
-        }
+            if (matchId) {
+                title.textContent = 'Edit Match';
+                saveBtn.textContent = 'Update Match';
+                selectedMatchId = matchId;
+                
+                const match = matches.find(m => m.id === matchId);
+                if (match) {
+                    setValue('matchId', match.id);
+                    
+                    setTimeout(() => {
+                        setValue('team1Select', match.team1Id || '');
+                        setValue('team2Select', match.team2Id || '');
+                    }, 100);
+                    
+                    setValue('matchLeague', match.league || '');
+                    
+                    const startTime = match.startTime ? new Date(match.startTime) : new Date();
+                    const formattedDate = startTime.toISOString().slice(0, 16);
+                    setValue('matchStartTime', formattedDate);
+                    
+                    setValue('youtubeUrl', match.youtubeUrl || '');
+                    setValue('iptvUrl', match.iptvUrl || '');
+                    setValue('matchVenue', match.venue || '');
+                    document.getElementById('isTopMatch').checked = match.isTopMatch || false;
+                }
+            } else {
+                title.textContent = 'Create Match';
+                saveBtn.textContent = 'Create Match';
+                selectedMatchId = null;
+                const matchForm = document.getElementById('matchForm');
+                if (matchForm) matchForm.reset();
+                setValue('matchStartTime', new Date().toISOString().slice(0, 16));
+            }
 
-        function filterUsers() {
-            showToast('Filter users - Not implemented yet', 'info');
-        }
-
-        async function loadReports() {
-            showToast('Reports section - Not implemented yet', 'info');
-        }
-
-        async function sendNotification() {
-            showToast('Send notification - Not implemented yet', 'info');
-        }
-
-        async function loadNotifications() {
-            showToast('Load notifications - Not implemented yet', 'info');
-        }
-
-        async function loadAds() {
-            showToast('Ads section - Not implemented yet', 'info');
-        }
-
-        async function loadLogs() {
-            showToast('Logs section - Not implemented yet', 'info');
-        }
-
-        function recalculateAllWins() {
-            showToast('Recalculate wins - Not implemented yet', 'info');
-        }
-
-        function markAllReportsReviewed() {
-            showToast('Mark all reports reviewed - Not implemented yet', 'info');
-        }
-
-        function openMatchModal() {
-            showToast('Open match modal - Not implemented yet', 'info');
+            modal.classList.add('active');
         }
 
         function closeMatchModal() {
@@ -2216,24 +2501,1718 @@
             if (modal) modal.classList.remove('active');
         }
 
-        function saveMatch() {
-            showToast('Save match - Not implemented yet', 'info');
+        async function saveMatch() {
+            const team1Id = getValue('team1Select');
+            const team2Id = getValue('team2Select');
+            const league = getValue('matchLeague');
+            const startTime = getValue('matchStartTime');
+            const youtubeUrl = getValue('youtubeUrl');
+            const iptvUrl = getValue('iptvUrl');
+            const venue = getValue('matchVenue');
+            const isTopMatch = document.getElementById('isTopMatch').checked;
+
+            if (!team1Id || !team2Id || !league || !startTime) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            if (team1Id === team2Id) {
+                showToast('Team 1 and Team 2 cannot be the same', 'error');
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const team1 = teams.find(t => t.id === team1Id);
+                const team2 = teams.find(t => t.id === team2Id);
+
+                if (!team1 || !team2) {
+                    showToast('Selected teams not found', 'error');
+                    return;
+                }
+
+                const matchData = {
+                    team1Id,
+                    team2Id,
+                    teamAName: team1.name,
+                    teamBName: team2.name,
+                    teamALogo: team1.logoUrl,
+                    teamBLogo: team2.logoUrl,
+                    league,
+                    startTime: firebase.firestore.Timestamp.fromDate(new Date(startTime)),
+                    venue,
+                    isTopMatch,
+                    status: 'upcoming',
+                    teamAVotes: 0,
+                    teamBVotes: 0,
+                    drawVotes: 0,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (youtubeUrl) matchData.youtubeUrl = youtubeUrl;
+                if (iptvUrl) matchData.iptvUrl = iptvUrl;
+
+                if (selectedMatchId) {
+                    const votesSnapshot = await db.collection('votes')
+                        .where('matchId', '==', selectedMatchId)
+                        .limit(1)
+                        .get();
+
+                    if (!votesSnapshot.empty) {
+                        showToast('Cannot edit match after votes have been cast', 'error');
+                        return;
+                    }
+
+                    await db.collection('matches').doc(selectedMatchId).update(matchData);
+                    showToast('Match updated successfully', 'success');
+                } else {
+                    matchData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('matches').add(matchData);
+                    showToast('Match created successfully', 'success');
+                }
+
+                closeMatchModal();
+                loadMatches();
+
+            } catch (error) {
+                console.error('Save match error:', error);
+                showToast('Failed to save match', 'error');
+            }
         }
 
-        function openAdModal() {
-            showToast('Open ad modal - Not implemented yet', 'info');
+        function editMatch(matchId) {
+            openMatchModal(matchId);
         }
 
-        function clearResolvedLogs() {
-            showToast('Clear resolved logs - Not implemented yet', 'info');
+        // Results & Wins Management
+        async function loadPendingResults() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const now = new Date();
+                const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+                
+                const snapshot = await db.collection('matches')
+                    .where('startTime', '<=', firebase.firestore.Timestamp.fromDate(twelveHoursAgo))
+                    .where('result', '==', null)
+                    .orderBy('startTime', 'desc')
+                    .get();
+                
+                const tableBody = document.getElementById('resultsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const match = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    if (match.startTime && typeof match.startTime.toDate === 'function') {
+                        match.startTime = match.startTime.toDate();
+                    }
+                    
+                    const endTime = match.startTime ? new Date(match.startTime.getTime() + 90 * 60 * 1000) : null;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="font-weight: 600;">${match.teamAName || 'Team A'} vs ${match.teamBName || 'Team B'}</div>
+                            <div style="font-size: 12px; color: var(--admin-text-muted);">${match.league || ''}</div>
+                        </td>
+                        <td>${match.startTime ? match.startTime.toLocaleString() : 'Unknown'}</td>
+                        <td>${endTime ? endTime.toLocaleString() : 'Unknown'}</td>
+                        <td>
+                            <span class="status-badge status-pending">
+                                Pending Result
+                            </span>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <div>Team A: ${match.teamAVotes || 0}</div>
+                                <div>Draw: ${match.drawVotes || 0}</div>
+                                <div>Team B: ${match.teamBVotes || 0}</div>
+                            </div>
+                        </td>
+                        <td>Not set</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="addResult('${doc.id}')" style="padding: 6px 12px; font-size: 12px;">
+                                <i class="fas fa-trophy"></i>
+                                Add Result
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Pending results load error:', error);
+                showToast('Failed to load pending results', 'error');
+            }
         }
 
-        function exportLogs() {
-            showToast('Export logs - Not implemented yet', 'info');
+        async function loadRecentWins() {
+            try {
+                if (!db) return;
+
+                const snapshot = await db.collection('wins')
+                    .orderBy('awardedAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                const container = document.getElementById('recentWins');
+                if (!container) return;
+
+                container.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const win = doc.data();
+                    
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    
+                    const awardedTime = win.awardedAt ? 
+                        win.awardedAt.toDate().toLocaleString() : 'Recently';
+                    
+                    activityItem.innerHTML = `
+                        <div class="activity-icon" style="background: var(--admin-warning);">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">
+                                ${win.predictorName || 'Predictor'} earned a win for ${win.matchName || 'match'}
+                            </div>
+                            <div class="activity-time">${awardedTime}</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(activityItem);
+                });
+
+            } catch (error) {
+                console.error('Recent wins load error:', error);
+            }
         }
 
-        function refreshPredictorRatings() {
-            showToast('Refresh predictor ratings - Not implemented yet', 'info');
+        function addResult(matchId) {
+            const match = matches.find(m => m.id === matchId);
+            if (!match) {
+                showToast('Match not found', 'error');
+                return;
+            }
+
+            selectedMatchId = matchId;
+            setValue('resultMatchId', matchId);
+            document.getElementById('resultMatchTeams').textContent = 
+                `${match.teamAName || 'Team A'} vs ${match.teamBName || 'Team B'}`;
+            document.getElementById('resultTeam1Name').textContent = match.teamAName || 'Team A';
+            document.getElementById('resultTeam2Name').textContent = match.teamBName || 'Team B';
+            setValue('team1Goals', '');
+            setValue('team2Goals', '');
+            setValue('resultNotes', '');
+
+            document.getElementById('resultModal').classList.add('active');
+        }
+
+        function closeResultModal() {
+            const modal = document.getElementById('resultModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function saveResult() {
+            const matchId = getValue('resultMatchId');
+            const team1Goals = parseInt(getValue('team1Goals'));
+            const team2Goals = parseInt(getValue('team2Goals'));
+            const notes = getValue('resultNotes');
+
+            if (isNaN(team1Goals) || isNaN(team2Goals)) {
+                showToast('Please enter valid goal numbers', 'error');
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                await db.collection('matches').doc(matchId).update({
+                    result: {
+                        team1Goals,
+                        team2Goals,
+                        notes,
+                        recordedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    status: 'completed',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await awardWins(matchId, team1Goals, team2Goals);
+
+                showToast('Result saved and wins awarded', 'success');
+                closeResultModal();
+                loadPendingResults();
+                loadRecentWins();
+
+            } catch (error) {
+                console.error('Save result error:', error);
+                showToast('Failed to save result', 'error');
+            }
+        }
+
+        async function awardWins(matchId, team1Goals, team2Goals) {
+            try {
+                if (!db) return;
+
+                const votesSnapshot = await db.collection('votes')
+                    .where('matchId', '==', matchId)
+                    .get();
+
+                let winner = 'draw';
+                if (team1Goals > team2Goals) winner = 'team1';
+                if (team2Goals > team1Goals) winner = 'team2';
+
+                const matchDoc = await db.collection('matches').doc(matchId).get();
+                const match = matchDoc.data();
+
+                const batch = db.batch();
+                const winPromises = [];
+
+                votesSnapshot.forEach(voteDoc => {
+                    const vote = voteDoc.data();
+                    
+                    const isCorrect = 
+                        (winner === 'draw' && vote.voteType === 'draw') ||
+                        (winner === 'team1' && vote.voteType === 'team1') ||
+                        (winner === 'team2' && vote.voteType === 'team2');
+
+                    if (isCorrect) {
+                        const winRef = db.collection('wins').doc();
+                        const winData = {
+                            matchId,
+                            matchName: `${match.teamAName || 'Team A'} vs ${match.teamBName || 'Team B'}`,
+                            predictorId: vote.predictorId,
+                            predictorName: vote.predictorName,
+                            predicted: vote.voteType,
+                            result: winner,
+                            awardedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        batch.set(winRef, winData);
+
+                        const predictorRef = db.collection('predictors').doc(vote.predictorId);
+                        winPromises.push(
+                            predictorRef.update({
+                                wins: firebase.firestore.FieldValue.increment(1),
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            })
+                        );
+                    }
+                });
+
+                await batch.commit();
+                await Promise.all(winPromises);
+                await refreshPredictorRatings();
+
+            } catch (error) {
+                console.error('Award wins error:', error);
+                throw error;
+            }
+        }
+
+        async function recalculateAllWins() {
+            try {
+                showToast('Recalculating wins...', 'info');
+                
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const matchesSnapshot = await db.collection('matches')
+                    .where('result', '!=', null)
+                    .get();
+
+                const winsSnapshot = await db.collection('wins').get();
+                const deleteBatch = db.batch();
+                winsSnapshot.forEach(doc => {
+                    deleteBatch.delete(doc.ref);
+                });
+                await deleteBatch.commit();
+
+                const predictorsSnapshot = await db.collection('predictors').get();
+                const resetBatch = db.batch();
+                predictorsSnapshot.forEach(doc => {
+                    resetBatch.update(doc.ref, {
+                        wins: 0,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                await resetBatch.commit();
+
+                const awardPromises = [];
+                matchesSnapshot.forEach(doc => {
+                    const match = doc.data();
+                    if (match.result) {
+                        awardPromises.push(
+                            awardWins(doc.id, match.result.team1Goals, match.result.team2Goals)
+                        );
+                    }
+                });
+
+                await Promise.all(awardPromises);
+                showToast('All wins recalculated successfully', 'success');
+
+            } catch (error) {
+                console.error('Recalculate wins error:', error);
+                showToast('Failed to recalculate wins', 'error');
+            }
+        }
+
+        // Predictor Management
+        async function loadPredictors() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('predictors')
+                    .orderBy('username')
+                    .get();
+                
+                predictors = [];
+                const tableBody = document.getElementById('predictorsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const predictor = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    predictors.push(predictor);
+
+                    const wins = predictor.wins || 0;
+                    const stars = calculateStars(wins);
+                    
+                    const followers = predictor.followers || 0;
+                    const icons = calculateIcons(followers);
+                    
+                    const badge = determineBadge(stars, icons);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                ${predictor.profilePic ? 
+                                    `<img src="${predictor.profilePic}" alt="${predictor.username}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">` :
+                                    `<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--admin-bg); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user" style="color: var(--admin-text-muted);"></i>
+                                    </div>`
+                                }
+                                <div style="font-weight: 600;">${predictor.username || 'Unknown'}</div>
+                            </div>
+                        </td>
+                        <td>${wins}</td>
+                        <td>
+                            ${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}
+                            <div style="font-size: 12px; color: var(--admin-text-muted);">(${stars} stars)</div>
+                        </td>
+                        <td>${followers.toLocaleString()}</td>
+                        <td>
+                            ${'👥'.repeat(icons)}${'○'.repeat(5 - icons)}
+                            <div style="font-size: 12px; color: var(--admin-text-muted);">(${icons} icons)</div>
+                        </td>
+                        <td>
+                            ${badge ? 
+                                `<span class="status-badge ${badge === 'gold' ? 'status-active' : 'status-pending'}">
+                                    ${badge === 'gold' ? '🏆 Gold' : '🔘 Gray'}
+                                </span>` : 
+                                '-'
+                            }
+                        </td>
+                        <td>${predictor.accuracy || 0}%</td>
+                        <td>
+                            <span class="status-badge ${predictor.isActive !== false ? 'status-active' : 'status-inactive'}">
+                                ${predictor.isActive !== false ? 'Active' : 'Suspended'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="viewPredictorActions('${doc.id}')" title="Actions">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Predictors load error:', error);
+                showToast('Failed to load predictors', 'error');
+            }
+        }
+
+        function calculateStars(wins) {
+            if (wins >= 200) return 5;
+            if (wins >= 100) return 4;
+            if (wins >= 60) return 3;
+            if (wins >= 30) return 2;
+            if (wins >= 20) return 1;
+            return 0;
+        }
+
+        function calculateIcons(followers) {
+            if (followers >= 10000) return 5;
+            if (followers >= 250) return 4;
+            if (followers >= 170) return 3;
+            if (followers >= 100) return 2;
+            if (followers >= 50) return 1;
+            return 0;
+        }
+
+        function determineBadge(stars, icons) {
+            if (stars >= 4 && icons >= 4) return 'gold';
+            if (stars >= 3 && icons >= 3) return 'gray';
+            return null;
+        }
+
+        async function refreshPredictorRatings() {
+            try {
+                showToast('Refreshing predictor ratings...', 'info');
+                
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('predictors').get();
+                const batch = db.batch();
+
+                snapshot.forEach(doc => {
+                    const predictor = doc.data();
+                    const wins = predictor.wins || 0;
+                    const followers = predictor.followers || 0;
+                    
+                    const stars = calculateStars(wins);
+                    const icons = calculateIcons(followers);
+                    const badge = determineBadge(stars, icons);
+
+                    batch.update(doc.ref, {
+                        stars,
+                        icons,
+                        badge: badge || null,
+                        ratingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                await batch.commit();
+                showToast('Predictor ratings refreshed', 'success');
+                loadPredictors();
+
+            } catch (error) {
+                console.error('Refresh ratings error:', error);
+                showToast('Failed to refresh ratings', 'error');
+            }
+        }
+
+        function filterPredictors() {
+            const searchTerm = document.getElementById('predictorSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#predictorsTableBody tr');
+            
+            rows.forEach(row => {
+                const username = row.cells[0].textContent.toLowerCase();
+                row.style.display = username.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function viewPredictorActions(predictorId) {
+            const predictor = predictors.find(p => p.id === predictorId);
+            if (!predictor) return;
+
+            selectedUserId = predictorId;
+            document.getElementById('userActionUsername').textContent = predictor.username || 'Unknown';
+            document.getElementById('userActionEmail').textContent = predictor.email || 'No email';
+            
+            const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+            const togglePostingBtn = document.getElementById('togglePostingBtn');
+            const toggleMessagingBtn = document.getElementById('toggleMessagingBtn');
+            
+            toggleStatusBtn.innerHTML = `
+                <i class="fas fa-user-slash"></i>
+                <span>${predictor.isActive !== false ? 'Suspend' : 'Activate'} Account</span>
+            `;
+            
+            togglePostingBtn.innerHTML = `
+                <i class="fas fa-edit"></i>
+                <span>${predictor.canPost !== false ? 'Disable' : 'Enable'} Posting</span>
+            `;
+            
+            toggleMessagingBtn.innerHTML = `
+                <i class="fas fa-comments"></i>
+                <span>${predictor.canMessage !== false ? 'Disable' : 'Enable'} Messaging</span>
+            `;
+
+            document.getElementById('userActionsModal').classList.add('active');
+        }
+
+        // User Management
+        async function loadUsers() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('users')
+                    .orderBy('username')
+                    .get();
+                
+                users = [];
+                const tableBody = document.getElementById('usersTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const user = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    users.push(user);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                ${user.profilePic ? 
+                                    `<img src="${user.profilePic}" alt="${user.username}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">` :
+                                    `<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--admin-bg); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user" style="color: var(--admin-text-muted);"></i>
+                                    </div>`
+                                }
+                                <div style="font-weight: 600;">${user.username || 'Unknown'}</div>
+                            </div>
+                        </td>
+                        <td>${user.email || 'No email'}</td>
+                        <td>${user.points || 0}</td>
+                        <td>${user.predictions || 0}</td>
+                        <td>${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'Unknown'}</td>
+                        <td>
+                            <span class="status-badge ${user.isActive !== false ? 'status-active' : 'status-inactive'}">
+                                ${user.isActive !== false ? 'Active' : 'Suspended'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="viewUserActions('${doc.id}')" title="Actions">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Users load error:', error);
+                showToast('Failed to load users', 'error');
+            }
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            
+            rows.forEach(row => {
+                const username = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                row.style.display = username.includes(searchTerm) || email.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function viewUserActions(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            selectedUserId = userId;
+            document.getElementById('userActionUsername').textContent = user.username || 'Unknown';
+            document.getElementById('userActionEmail').textContent = user.email || 'No email';
+            
+            const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+            const togglePostingBtn = document.getElementById('togglePostingBtn');
+            const toggleMessagingBtn = document.getElementById('toggleMessagingBtn');
+            
+            toggleStatusBtn.innerHTML = `
+                <i class="fas fa-user-slash"></i>
+                <span>${user.isActive !== false ? 'Suspend' : 'Activate'} Account</span>
+            `;
+            
+            togglePostingBtn.innerHTML = `
+                <i class="fas fa-edit"></i>
+                <span>${user.canPost !== false ? 'Disable' : 'Enable'} Posting</span>
+            `;
+            
+            toggleMessagingBtn.innerHTML = `
+                <i class="fas fa-comments"></i>
+                <span>${user.canMessage !== false ? 'Disable' : 'Enable'} Messaging</span>
+            `;
+
+            document.getElementById('userActionsModal').classList.add('active');
+        }
+
+        function closeUserActionsModal() {
+            const modal = document.getElementById('userActionsModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function toggleUserStatus() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const user = users.find(u => u.id === selectedUserId);
+                if (!user) return;
+
+                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
+                    .doc(selectedUserId)
+                    .update({
+                        isActive: !(user.isActive !== false),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                showToast(`Account ${user.isActive !== false ? 'suspended' : 'activated'}`, 'success');
+                closeUserActionsModal();
+                
+                if (user.role === 'predictor') {
+                    loadPredictors();
+                } else {
+                    loadUsers();
+                }
+
+            } catch (error) {
+                console.error('Toggle user status error:', error);
+                showToast('Failed to update account status', 'error');
+            }
+        }
+
+        async function togglePostingPermission() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const user = users.find(u => u.id === selectedUserId);
+                if (!user) return;
+
+                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
+                    .doc(selectedUserId)
+                    .update({
+                        canPost: !(user.canPost !== false),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                showToast(`Posting ${user.canPost !== false ? 'disabled' : 'enabled'}`, 'success');
+                closeUserActionsModal();
+
+            } catch (error) {
+                console.error('Toggle posting error:', error);
+                showToast('Failed to update posting permission', 'error');
+            }
+        }
+
+        async function toggleMessagingPermission() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const user = users.find(u => u.id === selectedUserId);
+                if (!user) return;
+
+                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
+                    .doc(selectedUserId)
+                    .update({
+                        canMessage: !(user.canMessage !== false),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                showToast(`Messaging ${user.canMessage !== false ? 'disabled' : 'enabled'}`, 'success');
+                closeUserActionsModal();
+
+            } catch (error) {
+                console.error('Toggle messaging error:', error);
+                showToast('Failed to update messaging permission', 'error');
+            }
+        }
+
+        async function banUser() {
+            if (!confirm('Are you sure you want to permanently ban this account? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const user = users.find(u => u.id === selectedUserId);
+                if (!user) return;
+
+                await db.collection(user.role === 'predictor' ? 'predictors' : 'users')
+                    .doc(selectedUserId)
+                    .update({
+                        isActive: false,
+                        isBanned: true,
+                        bannedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                showToast('Account banned permanently', 'success');
+                closeUserActionsModal();
+                
+                if (user.role === 'predictor') {
+                    loadPredictors();
+                } else {
+                    loadUsers();
+                }
+
+            } catch (error) {
+                console.error('Ban user error:', error);
+                showToast('Failed to ban account', 'error');
+            }
+        }
+
+        // Reports Management
+        async function loadReports() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('reports')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                reports = [];
+                const tableBody = document.getElementById('reportsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const report = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    reports.push(report);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <span class="status-badge ${report.type === 'post' ? 'status-active' : report.type === 'message' ? 'status-pending' : 'status-inactive'}">
+                                ${report.type || 'Unknown'}
+                            </span>
+                        </td>
+                        <td>${report.reporterName || 'Unknown'}</td>
+                        <td>${report.reportedName || 'Unknown'}</td>
+                        <td>${report.reason || 'No reason provided'}</td>
+                        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${report.content || 'No content'}
+                        </td>
+                        <td>
+                            <span class="status-badge ${report.status === 'pending' ? 'status-pending' : report.status === 'resolved' ? 'status-active' : 'status-inactive'}">
+                                ${report.status || 'Pending'}
+                            </span>
+                        </td>
+                        <td>${report.createdAt ? report.createdAt.toDate().toLocaleString() : 'Unknown'}</td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="viewReport('${doc.id}')" title="View & Actions">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                const pendingCount = reports.filter(r => r.status === 'pending').length;
+                updateBadge('reportsBadge', pendingCount);
+
+            } catch (error) {
+                console.error('Reports load error:', error);
+                showToast('Failed to load reports', 'error');
+            }
+        }
+
+        function viewReport(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            selectedReportId = reportId;
+            
+            document.getElementById('reportTypeBadge').className = `status-badge ${report.type === 'post' ? 'status-active' : report.type === 'message' ? 'status-pending' : 'status-inactive'}`;
+            document.getElementById('reportTypeBadge').textContent = report.type || 'Unknown';
+            document.getElementById('reportTitle').textContent = `Report: ${report.type || 'Unknown'}`;
+            document.getElementById('reportContent').textContent = report.content || 'No content available';
+            document.getElementById('reportReporter').textContent = report.reporterName || 'Unknown';
+            document.getElementById('reportReported').textContent = report.reportedName || 'Unknown';
+
+            document.getElementById('reportActionsModal').classList.add('active');
+        }
+
+        function closeReportActionsModal() {
+            const modal = document.getElementById('reportActionsModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function markReportAsResolved() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                await db.collection('reports').doc(selectedReportId).update({
+                    status: 'resolved',
+                    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('Report marked as resolved', 'success');
+                closeReportActionsModal();
+                loadReports();
+
+            } catch (error) {
+                console.error('Mark report resolved error:', error);
+                showToast('Failed to update report', 'error');
+            }
+        }
+
+        async function warnReportedUser() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const report = reports.find(r => r.id === selectedReportId);
+                if (!report) return;
+
+                await db.collection('notifications').add({
+                    type: 'warning',
+                    userId: report.reportedId,
+                    title: 'Warning from ORAFUT Admin',
+                    message: 'Your recent activity has been reported. Please review our community guidelines.',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isRead: false
+                });
+
+                showToast('Warning sent to user', 'success');
+                markReportAsResolved();
+
+            } catch (error) {
+                console.error('Warn user error:', error);
+                showToast('Failed to send warning', 'error');
+            }
+        }
+
+        async function muteReportedUser() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const report = reports.find(r => r.id === selectedReportId);
+                if (!report) return;
+
+                let userRef;
+                let userDoc;
+                
+                const predDoc = await db.collection('predictors').doc(report.reportedId).get();
+                if (predDoc.exists) {
+                    userRef = db.collection('predictors').doc(report.reportedId);
+                    userDoc = predDoc;
+                } else {
+                    const userDocSnap = await db.collection('users').doc(report.reportedId).get();
+                    if (userDocSnap.exists) {
+                        userRef = db.collection('users').doc(report.reportedId);
+                        userDoc = userDocSnap;
+                    }
+                }
+
+                if (userRef) {
+                    const muteUntil = new Date();
+                    muteUntil.setDate(muteUntil.getDate() + 7);
+
+                    await userRef.update({
+                        isMuted: true,
+                        mutedUntil: firebase.firestore.Timestamp.fromDate(muteUntil),
+                        muteReason: 'Reported content violation',
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    showToast('User muted for 7 days', 'success');
+                    markReportAsResolved();
+                } else {
+                    showToast('User not found', 'error');
+                }
+
+            } catch (error) {
+                console.error('Mute user error:', error);
+                showToast('Failed to mute user', 'error');
+            }
+        }
+
+        async function lockReportedAccount() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const report = reports.find(r => r.id === selectedReportId);
+                if (!report) return;
+
+                let userRef;
+                
+                const predDoc = await db.collection('predictors').doc(report.reportedId).get();
+                if (predDoc.exists) {
+                    userRef = db.collection('predictors').doc(report.reportedId);
+                } else {
+                    const userDoc = await db.collection('users').doc(report.reportedId).get();
+                    if (userDoc.exists) {
+                        userRef = db.collection('users').doc(report.reportedId);
+                    }
+                }
+
+                if (userRef) {
+                    await userRef.update({
+                        isActive: false,
+                        lockReason: 'Reported content violation',
+                        lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    showToast('Account locked', 'success');
+                    markReportAsResolved();
+                } else {
+                    showToast('User not found', 'error');
+                }
+
+            } catch (error) {
+                console.error('Lock account error:', error);
+                showToast('Failed to lock account', 'error');
+            }
+        }
+
+        async function banReportedAccount() {
+            if (!confirm('Are you sure you want to ban this account?')) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const report = reports.find(r => r.id === selectedReportId);
+                if (!report) return;
+
+                let userRef;
+                
+                const predDoc = await db.collection('predictors').doc(report.reportedId).get();
+                if (predDoc.exists) {
+                    userRef = db.collection('predictors').doc(report.reportedId);
+                } else {
+                    const userDoc = await db.collection('users').doc(report.reportedId).get();
+                    if (userDoc.exists) {
+                        userRef = db.collection('users').doc(report.reportedId);
+                    }
+                }
+
+                if (userRef) {
+                    await userRef.update({
+                        isActive: false,
+                        isBanned: true,
+                        banReason: 'Reported content violation',
+                        bannedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    showToast('Account banned', 'success');
+                    markReportAsResolved();
+                } else {
+                    showToast('User not found', 'error');
+                }
+
+            } catch (error) {
+                console.error('Ban account error:', error);
+                showToast('Failed to ban account', 'error');
+            }
+        }
+
+        async function markAllReportsReviewed() {
+            if (!confirm('Mark all pending reports as reviewed?')) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('reports')
+                    .where('status', '==', 'pending')
+                    .get();
+
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.update(doc.ref, {
+                        status: 'reviewed',
+                        reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                await batch.commit();
+                showToast('All reports marked as reviewed', 'success');
+                loadReports();
+
+            } catch (error) {
+                console.error('Mark all reviewed error:', error);
+                showToast('Failed to update reports', 'error');
+            }
+        }
+
+        // Notifications Management
+        async function sendNotification() {
+            const recipientType = getValue('recipientType');
+            const specificRecipient = getValue('specificRecipient');
+            const title = getValue('notificationTitle');
+            const message = getValue('notificationMessage');
+            const actionUrl = getValue('notificationAction');
+            const priority = getValue('notificationPriority');
+            const sendAsMessage = document.getElementById('sendAsMessage').checked;
+
+            if (!recipientType || !title || !message) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            if (recipientType === 'specific' && !specificRecipient) {
+                showToast('Please enter a username', 'error');
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                let recipientIds = [];
+                let recipientNames = [];
+
+                if (recipientType === 'specific') {
+                    const [userSnap, predictorSnap] = await Promise.all([
+                        db.collection('users')
+                            .where('username', '==', specificRecipient)
+                            .limit(1)
+                            .get(),
+                        db.collection('predictors')
+                            .where('username', '==', specificRecipient)
+                            .limit(1)
+                            .get()
+                    ]);
+
+                    if (userSnap.empty && predictorSnap.empty) {
+                        showToast('User not found', 'error');
+                        return;
+                    }
+
+                    const doc = userSnap.empty ? predictorSnap.docs[0] : userSnap.docs[0];
+                    recipientIds.push(doc.id);
+                    recipientNames.push(doc.data().username || 'User');
+                } else if (recipientType === 'users') {
+                    const snapshot = await db.collection('users').get();
+                    snapshot.forEach(doc => {
+                        recipientIds.push(doc.id);
+                    });
+                    recipientNames.push('All Users');
+                } else if (recipientType === 'predictors') {
+                    const snapshot = await db.collection('predictors').get();
+                    snapshot.forEach(doc => {
+                        recipientIds.push(doc.id);
+                    });
+                    recipientNames.push('All Predictors');
+                } else if (recipientType === 'all') {
+                    const [usersSnap, predictorsSnap] = await Promise.all([
+                        db.collection('users').get(),
+                        db.collection('predictors').get()
+                    ]);
+                    
+                    usersSnap.forEach(doc => recipientIds.push(doc.id));
+                    predictorsSnap.forEach(doc => recipientIds.push(doc.id));
+                    recipientNames.push('Everyone');
+                }
+
+                const batch = db.batch();
+                const notificationPromises = [];
+
+                recipientIds.forEach(userId => {
+                    const notificationRef = db.collection('notifications').doc();
+                    const notificationData = {
+                        userId,
+                        title,
+                        message,
+                        priority,
+                        isRead: false,
+                        sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        type: 'admin_notification'
+                    };
+
+                    if (actionUrl) notificationData.actionUrl = actionUrl;
+
+                    batch.set(notificationRef, notificationData);
+
+                    if (sendAsMessage) {
+                        const messageRef = db.collection('messages').doc();
+                        const messageData = {
+                            senderId: 'admin',
+                            senderName: 'ORAFUT Admin',
+                            receiverId: userId,
+                            content: `[Admin Notification] ${title}: ${message}`,
+                            isRead: false,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            type: 'admin_message'
+                        };
+                        batch.set(messageRef, messageData);
+                    }
+                });
+
+                const adminNotificationRef = db.collection('admin_notifications').doc();
+                const adminNotificationData = {
+                    recipientType,
+                    recipientNames: recipientNames.join(', '),
+                    title,
+                    message,
+                    priority,
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    sentBy: 'admin'
+                };
+                batch.set(adminNotificationRef, adminNotificationData);
+
+                await batch.commit();
+
+                showToast(`Notification sent to ${recipientNames[0]}`, 'success');
+                document.getElementById('notificationForm').reset();
+                loadNotifications();
+
+            } catch (error) {
+                console.error('Send notification error:', error);
+                showToast('Failed to send notification', 'error');
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('admin_notifications')
+                    .orderBy('sentAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                const tableBody = document.getElementById('notificationsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const notification = doc.data();
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${notification.title || 'No title'}</td>
+                        <td>${notification.recipientNames || 'Unknown'}</td>
+                        <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${notification.message || 'No message'}
+                        </td>
+                        <td>${notification.sentAt ? notification.sentAt.toDate().toLocaleString() : 'Unknown'}</td>
+                        <td>
+                            <span class="status-badge ${notification.priority === 'urgent' ? 'status-inactive' : notification.priority === 'high' ? 'status-pending' : 'status-active'}">
+                                ${notification.priority || 'normal'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="resendNotification('${doc.id}')" title="Resend">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Notifications load error:', error);
+                showToast('Failed to load notifications', 'error');
+            }
+        }
+
+        async function resendNotification(notificationId) {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const doc = await db.collection('admin_notifications').doc(notificationId).get();
+                if (!doc.exists) return;
+
+                const notification = doc.data();
+                
+                setValue('recipientType', notification.recipientType || 'all');
+                setValue('notificationTitle', notification.title || '');
+                setValue('notificationMessage', notification.message || '');
+                setValue('notificationPriority', notification.priority || 'normal');
+                
+                document.getElementById('recipientType').dispatchEvent(new Event('change'));
+                
+                showToast('Notification loaded into form', 'info');
+
+            } catch (error) {
+                console.error('Resend notification error:', error);
+                showToast('Failed to load notification', 'error');
+            }
+        }
+
+        // Ads Management
+        async function loadAds() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('ads')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const tableBody = document.getElementById('adsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const ad = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            ${ad.imageUrl ? 
+                                `<img src="${ad.imageUrl}" alt="${ad.title}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">` :
+                                'No image'
+                            }
+                        </td>
+                        <td>${ad.title || 'No title'}</td>
+                        <td>${ad.placement || 'Unknown'}</td>
+                        <td>
+                            <a href="${ad.targetUrl}" target="_blank" style="color: var(--admin-primary); text-decoration: none;">
+                                ${ad.targetUrl || 'No URL'}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="status-badge ${ad.isActive ? 'status-active' : 'status-inactive'}">
+                                ${ad.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>${ad.impressions || 0}</td>
+                        <td>${ad.clicks || 0}</td>
+                        <td>${ad.createdAt ? ad.createdAt.toDate().toLocaleDateString() : 'Unknown'}</td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="editAd('${doc.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="toggleAdStatus('${doc.id}')" title="${ad.isActive ? 'Deactivate' : 'Activate'}">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Ads load error:', error);
+                showToast('Failed to load ads', 'error');
+            }
+        }
+
+        function openAdModal(adId = null) {
+            const modal = document.getElementById('adModal');
+            const title = document.getElementById('adModalTitle');
+            const saveBtn = document.getElementById('adSaveText');
+
+            if (!modal || !title || !saveBtn) return;
+
+            if (adId) {
+                title.textContent = 'Edit Advertisement';
+                saveBtn.textContent = 'Update Ad';
+                selectedAdId = adId;
+                
+                loadAdData(adId);
+            } else {
+                title.textContent = 'Create Advertisement';
+                saveBtn.textContent = 'Create Ad';
+                selectedAdId = null;
+                const adForm = document.getElementById('adForm');
+                if (adForm) adForm.reset();
+                const preview = document.getElementById('adImagePreview');
+                if (preview) preview.style.display = 'none';
+                const uploadText = document.querySelector('#adImageUpload .upload-text');
+                if (uploadText) uploadText.textContent = 'Click to upload ad image';
+            }
+
+            modal.classList.add('active');
+        }
+
+        async function loadAdData(adId) {
+            try {
+                if (!db) return;
+
+                const doc = await db.collection('ads').doc(adId).get();
+                if (!doc.exists) return;
+
+                const ad = doc.data();
+                
+                setValue('adId', adId);
+                setValue('adTitle', ad.title || '');
+                setValue('adPlacement', ad.placement || '');
+                setValue('adTargetUrl', ad.targetUrl || '');
+                document.getElementById('adIsActive').checked = ad.isActive || false;
+                
+                if (ad.imageUrl) {
+                    const preview = document.getElementById('adImagePreview');
+                    if (preview) {
+                        preview.innerHTML = `<img src="${ad.imageUrl}" alt="Preview">`;
+                        preview.style.display = 'block';
+                    }
+                    const uploadText = document.querySelector('#adImageUpload .upload-text');
+                    if (uploadText) uploadText.textContent = 'Change image';
+                }
+
+            } catch (error) {
+                console.error('Load ad data error:', error);
+                showToast('Failed to load ad data', 'error');
+            }
+        }
+
+        function closeAdModal() {
+            const modal = document.getElementById('adModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function saveAd() {
+            const title = getValue('adTitle');
+            const placement = getValue('adPlacement');
+            const targetUrl = getValue('adTargetUrl');
+            const isActive = document.getElementById('adIsActive').checked;
+            const imageFile = document.getElementById('adImageInput')?.files[0];
+
+            if (!title || !placement || !targetUrl) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                let imageUrl = '';
+                
+                if (imageFile) {
+                    try {
+                        imageUrl = await uploadImageToImgBB(imageFile);
+                    } catch (error) {
+                        showToast('Failed to upload ad image', 'error');
+                        return;
+                    }
+                }
+
+                const adData = {
+                    title,
+                    placement,
+                    targetUrl,
+                    isActive,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (imageUrl) adData.imageUrl = imageUrl;
+                
+                if (selectedAdId) {
+                    await db.collection('ads').doc(selectedAdId).update(adData);
+                    showToast('Ad updated successfully', 'success');
+                } else {
+                    adData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    adData.impressions = 0;
+                    adData.clicks = 0;
+                    await db.collection('ads').add(adData);
+                    showToast('Ad created successfully', 'success');
+                }
+
+                closeAdModal();
+                loadAds();
+
+            } catch (error) {
+                console.error('Save ad error:', error);
+                showToast('Failed to save ad', 'error');
+            }
+        }
+
+        function editAd(adId) {
+            openAdModal(adId);
+        }
+
+        async function toggleAdStatus(adId) {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const doc = await db.collection('ads').doc(adId).get();
+                if (!doc.exists) return;
+
+                const ad = doc.data();
+                
+                await db.collection('ads').doc(adId).update({
+                    isActive: !ad.isActive,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(`Ad ${ad.isActive ? 'deactivated' : 'activated'}`, 'success');
+                loadAds();
+
+            } catch (error) {
+                console.error('Toggle ad status error:', error);
+                showToast('Failed to update ad status', 'error');
+            }
+        }
+
+        // System Logs Management
+        async function loadLogs() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('errors')
+                    .orderBy('timestamp', 'desc')
+                    .limit(100)
+                    .get();
+                
+                logs = [];
+                const tableBody = document.getElementById('logsTableBody');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const log = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    logs.push(log);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <span class="status-badge ${log.type === 'error' ? 'status-inactive' : log.type === 'warning' ? 'status-pending' : 'status-active'}">
+                                ${log.type || 'info'}
+                            </span>
+                        </td>
+                        <td>${log.code || 'N/A'}</td>
+                        <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${log.message || 'No message'}
+                        </td>
+                        <td>${log.userId || 'System'}</td>
+                        <td>${log.timestamp ? log.timestamp.toDate().toLocaleString() : 'Unknown'}</td>
+                        <td>
+                            <span class="status-badge ${log.status === 'resolved' ? 'status-active' : 'status-pending'}">
+                                ${log.status || 'unresolved'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions-cell">
+                                <button class="action-btn" onclick="markLogAsResolved('${doc.id}')" title="Mark Resolved">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteLog('${doc.id}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                const unresolvedCount = logs.filter(l => l.status !== 'resolved').length;
+                updateBadge('logsBadge', unresolvedCount);
+
+            } catch (error) {
+                console.error('Logs load error:', error);
+                showToast('Failed to load system logs', 'error');
+            }
+        }
+
+        async function markLogAsResolved(logId) {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                await db.collection('errors').doc(logId).update({
+                    status: 'resolved',
+                    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('Log marked as resolved', 'success');
+                loadLogs();
+
+            } catch (error) {
+                console.error('Mark log resolved error:', error);
+                showToast('Failed to update log', 'error');
+            }
+        }
+
+        async function deleteLog(logId) {
+            if (!confirm('Delete this log entry?')) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                await db.collection('errors').doc(logId).delete();
+                showToast('Log deleted', 'success');
+                loadLogs();
+
+            } catch (error) {
+                console.error('Delete log error:', error);
+                showToast('Failed to delete log', 'error');
+            }
+        }
+
+        async function clearResolvedLogs() {
+            if (!confirm('Delete all resolved logs?')) {
+                return;
+            }
+
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('errors')
+                    .where('status', '==', 'resolved')
+                    .get();
+
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+                showToast('Resolved logs cleared', 'success');
+                loadLogs();
+
+            } catch (error) {
+                console.error('Clear logs error:', error);
+                showToast('Failed to clear logs', 'error');
+            }
+        }
+
+        async function exportLogs() {
+            try {
+                if (!db) {
+                    showToast('Database not available', 'error');
+                    return;
+                }
+
+                const snapshot = await db.collection('errors')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                const logsData = [];
+                snapshot.forEach(doc => {
+                    const log = doc.data();
+                    logsData.push({
+                        id: doc.id,
+                        ...log,
+                        timestamp: log.timestamp ? log.timestamp.toDate().toISOString() : null,
+                        resolvedAt: log.resolvedAt ? log.resolvedAt.toDate().toISOString() : null
+                    });
+                });
+
+                const dataStr = JSON.stringify(logsData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `orafut-logs-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+
+                showToast('Logs exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export logs error:', error);
+                showToast('Failed to export logs', 'error');
+            }
         }
 
         // Export functions to global scope
@@ -2248,10 +4227,37 @@
         window.openMatchModal = openMatchModal;
         window.closeMatchModal = closeMatchModal;
         window.saveMatch = saveMatch;
+        window.editMatch = editMatch;
+        window.addResult = addResult;
+        window.closeResultModal = closeResultModal;
+        window.saveResult = saveResult;
         window.openAdModal = openAdModal;
+        window.closeAdModal = closeAdModal;
+        window.saveAd = saveAd;
+        window.editAd = editAd;
+        window.toggleAdStatus = toggleAdStatus;
         window.clearResolvedLogs = clearResolvedLogs;
         window.exportLogs = exportLogs;
         window.refreshPredictorRatings = refreshPredictorRatings;
+        window.filterPredictors = filterPredictors;
+        window.filterUsers = filterUsers;
+        window.viewPredictorActions = viewPredictorActions;
+        window.viewUserActions = viewUserActions;
+        window.closeUserActionsModal = closeUserActionsModal;
+        window.toggleUserStatus = toggleUserStatus;
+        window.togglePostingPermission = togglePostingPermission;
+        window.toggleMessagingPermission = toggleMessagingPermission;
+        window.banUser = banUser;
+        window.viewReport = viewReport;
+        window.closeReportActionsModal = closeReportActionsModal;
+        window.markReportAsResolved = markReportAsResolved;
+        window.warnReportedUser = warnReportedUser;
+        window.muteReportedUser = muteReportedUser;
+        window.lockReportedAccount = lockReportedAccount;
+        window.banReportedAccount = banReportedAccount;
+        window.resendNotification = resendNotification;
+        window.markLogAsResolved = markLogAsResolved;
+        window.deleteLog = deleteLog;
     </script>
 </body>
 </html>

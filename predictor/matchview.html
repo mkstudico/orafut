@@ -564,7 +564,7 @@
 <body>
     <!-- Header -->
     <div class="match-header">
-        <div class="back-nav" onclick="goBack()">
+        <div class="back-nav" id="backButton">
             <i class="fas fa-arrow-left"></i>
             <span>Dashboard</span>
         </div>
@@ -580,7 +580,7 @@
             </div>
         </div>
         <div class="video-controls">
-            <button class="video-btn" onclick="toggleMute()">
+            <button class="video-btn" id="muteButton">
                 <i class="fas fa-volume-up"></i>
             </button>
         </div>
@@ -606,7 +606,7 @@
     <div class="votes-section">
         <div class="section-header">
             <div class="section-title">Predictor Votes</div>
-            <button class="view-all-btn" onclick="viewAllVotes()">
+            <button class="view-all-btn" id="viewAllVotesBtn">
                 View All <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -619,9 +619,9 @@
     <div class="your-vote-section" id="yourVoteSection" style="display: none;">
         <div class="your-vote-title">Your Prediction</div>
         <div class="vote-buttons" id="voteButtons">
-            <button class="vote-btn" onclick="selectVote('team1')">Team 1</button>
-            <button class="vote-btn" onclick="selectVote('draw')">Draw</button>
-            <button class="vote-btn" onclick="selectVote('team2')">Team 2</button>
+            <button class="vote-btn" data-vote="team1">Team 1</button>
+            <button class="vote-btn" data-vote="draw">Draw</button>
+            <button class="vote-btn" data-vote="team2">Team 2</button>
         </div>
     </div>
 
@@ -631,8 +631,8 @@
         <textarea class="reasoning-input" id="reasoningInput" 
                   placeholder="Explain your analysis..."></textarea>
         <div class="reasoning-actions">
-            <button class="action-btn cancel-btn" onclick="cancelVote()">Cancel</button>
-            <button class="action-btn submit-btn" onclick="submitVote()">Submit Vote</button>
+            <button class="action-btn cancel-btn" id="cancelVoteBtn">Cancel</button>
+            <button class="action-btn submit-btn" id="submitVoteBtn">Submit Vote</button>
         </div>
     </div>
 
@@ -640,7 +640,7 @@
     <div class="chat-section">
         <div class="chat-header">
             <div class="chat-title">Live Chat</div>
-            <button class="chat-toggle" onclick="toggleChat()">
+            <button class="chat-toggle" id="chatToggleBtn">
                 <i class="fas fa-comments"></i> Hide
             </button>
         </div>
@@ -650,7 +650,7 @@
         <div class="chat-input-container">
             <input type="text" class="chat-input" id="chatInput" 
                    placeholder="Type a message...">
-            <button class="send-btn" onclick="sendMessage()">
+            <button class="send-btn" id="sendMessageBtn">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
@@ -671,7 +671,8 @@
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
         import { 
             doc, getDoc, collection, query, where, 
-            getDocs, addDoc, serverTimestamp, onSnapshot
+            getDocs, addDoc, serverTimestamp, onSnapshot,
+            orderBy, limit
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         // Global variables
@@ -680,6 +681,7 @@
         let currentVote = null;
         let chatVisible = true;
         let countdownInterval = null;
+        let isMuted = false;
 
         // Get match ID from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -688,6 +690,38 @@
         if (!matchId) {
             window.location.href = 'dashboard.html';
         }
+
+        // DOM Elements
+        const backButton = document.getElementById('backButton');
+        const muteButton = document.getElementById('muteButton');
+        const viewAllVotesBtn = document.getElementById('viewAllVotesBtn');
+        const voteButtons = document.querySelectorAll('.vote-btn');
+        const cancelVoteBtn = document.getElementById('cancelVoteBtn');
+        const submitVoteBtn = document.getElementById('submitVoteBtn');
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const chatInput = document.getElementById('chatInput');
+
+        // Event Listeners
+        backButton.addEventListener('click', goBack);
+        muteButton.addEventListener('click', toggleMute);
+        viewAllVotesBtn.addEventListener('click', viewAllVotes);
+        cancelVoteBtn.addEventListener('click', cancelVote);
+        submitVoteBtn.addEventListener('click', submitVote);
+        chatToggleBtn.addEventListener('click', toggleChat);
+        sendMessageBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Vote button listeners
+        voteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                selectVote(this.dataset.vote);
+            });
+        });
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -750,7 +784,7 @@
                 setupCountdown();
                 
                 // Load chat messages
-                loadChatMessages();
+                await loadChatMessages();
                 
                 // Set up real-time listeners
                 setupRealTimeListeners();
@@ -951,11 +985,11 @@
                     voteButtons.forEach(btn => btn.classList.remove('active'));
                     
                     if (currentVote.voteType === 'team1') {
-                        document.querySelector('.vote-btn:nth-child(1)').classList.add('active');
+                        document.querySelector('.vote-btn[data-vote="team1"]').classList.add('active');
                     } else if (currentVote.voteType === 'draw') {
-                        document.querySelector('.vote-btn:nth-child(2)').classList.add('active');
+                        document.querySelector('.vote-btn[data-vote="draw"]').classList.add('active');
                     } else if (currentVote.voteType === 'team2') {
-                        document.querySelector('.vote-btn:nth-child(3)').classList.add('active');
+                        document.querySelector('.vote-btn[data-vote="team2"]').classList.add('active');
                     }
                     
                     // Hide vote section if match has started
@@ -1019,8 +1053,16 @@
                 const chatMessages = document.getElementById('chatMessages');
                 chatMessages.innerHTML = '';
                 
+                // Reverse to show oldest first
+                const messages = [];
                 chatSnapshot.forEach(doc => {
-                    const message = doc.data();
+                    messages.unshift({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                messages.forEach(message => {
                     addMessageToChat(message);
                 });
                 
@@ -1044,6 +1086,7 @@
                 snapshot.docChanges().forEach(change => {
                     if (change.type === 'added') {
                         const message = change.doc.data();
+                        message.id = change.doc.id;
                         addMessageToChat(message);
                         scrollChatToBottom();
                     }
@@ -1065,6 +1108,7 @@
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.userId === currentPredictorId ? 'user' : ''}`;
+            messageDiv.dataset.messageId = message.id;
             
             const messageTime = message.timestamp?.toDate ? 
                 message.timestamp.toDate().toLocaleTimeString('en-US', { 
@@ -1072,14 +1116,27 @@
                     minute: '2-digit' 
                 }) : 'Just now';
             
-            messageDiv.innerHTML = `
-                <div class="message-header">
-                    <span>${message.userName || 'User'}</span>
-                    <span>${messageTime}</span>
-                </div>
-                <div class="message-text">${message.text}</div>
-            `;
+            let contentHTML = '';
             
+            if (message.type === 'image' && message.imageUrl) {
+                contentHTML = `
+                    <div class="message-header">
+                        <span>${message.userName || 'User'}</span>
+                        <span>${messageTime}</span>
+                    </div>
+                    <img src="${message.imageUrl}" class="message-image" onclick="window.open('${message.imageUrl}', '_blank')">
+                `;
+            } else {
+                contentHTML = `
+                    <div class="message-header">
+                        <span>${message.userName || 'User'}</span>
+                        <span>${messageTime}</span>
+                    </div>
+                    <div class="message-text">${message.text}</div>
+                `;
+            }
+            
+            messageDiv.innerHTML = contentHTML;
             chatMessages.appendChild(messageDiv);
         }
 
@@ -1255,14 +1312,15 @@
         }
 
         function toggleMute() {
-            const muteBtn = document.querySelector('.video-btn i');
-            if (muteBtn.classList.contains('fa-volume-up')) {
-                muteBtn.className = 'fas fa-volume-mute';
-                showNotification('Video muted', 'info');
-            } else {
-                muteBtn.className = 'fas fa-volume-up';
+            const muteIcon = muteButton.querySelector('i');
+            if (isMuted) {
+                muteIcon.className = 'fas fa-volume-up';
                 showNotification('Video unmuted', 'info');
+            } else {
+                muteIcon.className = 'fas fa-volume-mute';
+                showNotification('Video muted', 'info');
             }
+            isMuted = !isMuted;
         }
 
         function showNotification(message, type = 'info') {

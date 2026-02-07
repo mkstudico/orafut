@@ -1,5 +1,1220 @@
 <!DOCTYPE html>
+<html lang="en"><!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ORAFUT | Match Analysis</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --or-light-bg: #f8f9fa;
+            --or-white: #ffffff;
+            --or-blue: #00a2ff;
+            --or-blue-dark: #007acc;
+            --or-blue-light: #e6f6ff;
+            --or-gold: #d4af37;
+            --or-gold-light: #fff8e1;
+            --or-text: #333333;
+            --or-text-muted: #666666;
+            --or-border: #e0e0e0;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --transition: all 0.25s ease;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--or-light-bg);
+            color: var(--or-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .match-header {
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .back-nav i {
+            color: var(--or-blue);
+            font-size: 18px;
+        }
+
+        .back-nav span {
+            font-weight: 500;
+            color: var(--or-blue);
+        }
+
+        .match-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Match Info */
+        .match-info-section {
+            background: var(--or-white);
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--or-border);
+        }
+
+        .teams-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--or-light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .vs-divider {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--or-text-muted);
+            padding: 0 16px;
+        }
+
+        .match-details {
+            text-align: center;
+            color: var(--or-text-muted);
+            font-size: 14px;
+        }
+
+        .match-status {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--or-gold-light);
+            color: var(--or-gold);
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .match-status.live {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        /* Predictor Analysis Form */
+        .analysis-form {
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: none; /* Hidden when match has started */
+        }
+
+        .analysis-form.show {
+            display: block;
+        }
+
+        .form-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--or-text);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prediction-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .prediction-option {
+            padding: 12px;
+            border: 2px solid var(--or-border);
+            border-radius: 8px;
+            background: var(--or-white);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .prediction-option:hover {
+            background: var(--or-light-bg);
+        }
+
+        .prediction-option.active {
+            background: var(--or-gold);
+            color: #1a1a1a;
+            border-color: var(--or-gold);
+        }
+
+        .reasoning-section {
+            margin-bottom: 16px;
+        }
+
+        .reasoning-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--or-text);
+            font-size: 14px;
+        }
+
+        .reasoning-label.required::after {
+            content: ' *';
+            color: var(--error);
+        }
+
+        .reasoning-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .reasoning-textarea:focus {
+            outline: none;
+            border-color: var(--or-blue);
+            box-shadow: 0 0 0 2px var(--or-blue-light);
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--or-text-muted);
+            margin-top: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background: var(--or-gold);
+            color: #1a1a1a;
+        }
+
+        .submit-btn:hover {
+            background: #b8860b;
+        }
+
+        .cancel-btn {
+            background: var(--or-light-bg);
+            color: var(--or-text);
+        }
+
+        .cancel-btn:hover {
+            background: var(--or-border);
+        }
+
+        /* Current Prediction */
+        .current-prediction {
+            background: var(--or-gold-light);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+            display: none;
+        }
+
+        .current-prediction.show {
+            display: block;
+        }
+
+        .prediction-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--or-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prediction-content {
+            background: var(--or-white);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .prediction-type {
+            font-weight: 700;
+            color: var(--or-gold);
+            margin-bottom: 8px;
+        }
+
+        .prediction-reasoning {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--or-text);
+        }
+
+        .prediction-time {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .edit-prediction-btn {
+            background: var(--or-blue-light);
+            color: var(--or-blue);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Guru Consensus */
+        .consensus-section {
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: var(--or-blue);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .consensus-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .consensus-bar {
+            background: var(--or-light-bg);
+            border: 1px solid var(--or-border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .bar-team {
+            font-weight: 600;
+            color: var(--or-text);
+        }
+
+        .bar-percentage {
+            font-weight: 700;
+            color: var(--or-text);
+        }
+
+        .progress-container {
+            height: 6px;
+            background: var(--or-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--or-gold);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.high {
+            background: var(--success);
+        }
+
+        .progress-fill.low {
+            background: var(--error);
+        }
+
+        .bar-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--or-text-muted);
+        }
+
+        /* Match Stats */
+        .match-stats {
+            background: var(--or-white);
+            padding: 16px;
+            border-bottom: 1px solid var(--or-border);
+        }
+
+        .stats-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--or-text);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: var(--or-light-bg);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--or-text);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--or-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 162, 255, 0.1);
+            border-top: 4px solid var(--or-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--or-white);
+            border-radius: 14px;
+            padding: 14px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification.info {
+            border-left: 4px solid var(--info);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="match-header">
+        <div class="back-nav" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="match-title" id="matchTitle">Match Analysis</div>
+    </div>
+
+    <!-- Match Info -->
+    <div class="match-info-section">
+        <div class="teams-display" id="teamsDisplay">
+            <!-- Dynamic content -->
+        </div>
+        <div class="match-details" id="matchDetails">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Predictor Analysis Form -->
+    <div class="analysis-form" id="analysisForm">
+        <div class="form-title">
+            <i class="fas fa-chart-line"></i>
+            Submit Your Analysis
+        </div>
+        
+        <div class="prediction-options">
+            <div class="prediction-option" data-prediction="team1">
+                Team 1 Win
+            </div>
+            <div class="prediction-option" data-prediction="draw">
+                Draw
+            </div>
+            <div class="prediction-option" data-prediction="team2">
+                Team 2 Win
+            </div>
+        </div>
+        
+        <div class="reasoning-section">
+            <label class="reasoning-label required">Reasoning (Required)</label>
+            <textarea class="reasoning-textarea" id="reasoningInput" 
+                      placeholder="Explain your analysis, key factors, and insights..."></textarea>
+            <div class="char-counter">
+                <span id="charCount">0</span>/500 characters
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button class="form-btn cancel-btn" id="cancelBtn">Cancel</button>
+            <button class="form-btn submit-btn" id="submitBtn">Submit Analysis</button>
+        </div>
+    </div>
+
+    <!-- Current Prediction -->
+    <div class="current-prediction" id="currentPrediction">
+        <div class="prediction-title">
+            <i class="fas fa-vote-yea"></i>
+            Your Prediction
+        </div>
+        <div class="prediction-content">
+            <div class="prediction-type" id="predictionType">Loading...</div>
+            <div class="prediction-reasoning" id="predictionReasoning"></div>
+            <div class="prediction-time" id="predictionTime"></div>
+        </div>
+        <button class="edit-prediction-btn" id="editPredictionBtn">
+            <i class="fas fa-edit"></i> Edit Prediction
+        </button>
+    </div>
+
+    <!-- Guru Consensus -->
+    <div class="consensus-section">
+        <div class="section-header">
+            <div class="section-title">Guru Consensus</div>
+            <button class="view-all-btn" id="viewAllVotesBtn">
+                View Details <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="consensus-bars" id="consensusBars">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Match Stats -->
+    <div class="match-stats">
+        <div class="stats-title">Match Statistics</div>
+        <div class="stats-grid" id="matchStats">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { 
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { 
+            doc, getDoc, collection, query, where, 
+            getDocs, addDoc, updateDoc, deleteDoc,
+            serverTimestamp, orderBy, limit
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        // Global variables
+        let currentPredictorId = null;
+        let currentMatch = null;
+        let currentPrediction = null;
+        let matchHasStarted = false;
+
+        // Get match ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('matchId');
+
+        if (!matchId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        // DOM Elements
+        const backButton = document.getElementById('backButton');
+        const analysisForm = document.getElementById('analysisForm');
+        const currentPredictionDiv = document.getElementById('currentPrediction');
+        const predictionOptions = document.querySelectorAll('.prediction-option');
+        const reasoningInput = document.getElementById('reasoningInput');
+        const charCount = document.getElementById('charCount');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const editPredictionBtn = document.getElementById('editPredictionBtn');
+        const viewAllVotesBtn = document.getElementById('viewAllVotesBtn');
+        const consensusBars = document.getElementById('consensusBars');
+        const matchStats = document.getElementById('matchStats');
+
+        // Event Listeners
+        backButton.addEventListener('click', goBack);
+        submitBtn.addEventListener('click', submitAnalysis);
+        cancelBtn.addEventListener('click', cancelAnalysis);
+        editPredictionBtn.addEventListener('click', editPrediction);
+        viewAllVotesBtn.addEventListener('click', viewAllVotes);
+        
+        predictionOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                selectPrediction(this.dataset.prediction);
+            });
+        });
+
+        reasoningInput.addEventListener('input', updateCharCounter);
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../choose.html';
+                return;
+            }
+
+            try {
+                const predDoc = await getDoc(doc(db, 'predictors', user.uid));
+                if (!predDoc.exists()) {
+                    // Not a predictor, redirect to user view
+                    window.location.href = `../user/view.html?matchId=${matchId}`;
+                    return;
+                }
+
+                currentPredictorId = user.uid;
+                loadMatchData();
+
+            } catch (error) {
+                console.error('Auth error:', error);
+                showNotification('Authentication error', 'error');
+            }
+        });
+
+        async function loadMatchData() {
+            try {
+                document.getElementById('loading').classList.add('active');
+
+                // Load match data
+                const matchDoc = await getDoc(doc(db, 'matches', matchId));
+                if (!matchDoc.exists()) {
+                    showNotification('Match not found', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                    return;
+                }
+
+                currentMatch = {
+                    id: matchDoc.id,
+                    ...matchDoc.data()
+                };
+
+                // Convert timestamp
+                if (currentMatch.startTime && typeof currentMatch.startTime.toDate === 'function') {
+                    currentMatch.startTime = currentMatch.startTime.toDate();
+                }
+
+                // Update UI
+                updateMatchDisplay();
+                
+                // Check if match has started
+                checkMatchStatus();
+                
+                // Load current prediction
+                await loadCurrentPrediction();
+                
+                // Load guru consensus
+                await loadGuruConsensus();
+                
+                // Load match stats
+                loadMatchStats();
+
+            } catch (error) {
+                console.error('Load match error:', error);
+                showNotification('Failed to load match data', 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function updateMatchDisplay() {
+            // Update title
+            document.getElementById('matchTitle').textContent = 
+                currentMatch.matchName || `${currentMatch.teamAName} vs ${currentMatch.teamBName}`;
+            
+            // Update teams display
+            const teamsDisplay = document.getElementById('teamsDisplay');
+            teamsDisplay.innerHTML = `
+                <div class="team">
+                    <div class="team-logo">
+                        ${currentMatch.teamALogo ? 
+                            `<img src="${currentMatch.teamALogo}" alt="${currentMatch.teamAName}">` :
+                            `<i class="fas fa-shield-alt" style="font-size: 32px; color: var(--or-text-muted);"></i>`
+                        }
+                    </div>
+                    <div class="team-name">${currentMatch.teamAName || 'Team A'}</div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="team">
+                    <div class="team-logo">
+                        ${currentMatch.teamBLogo ? 
+                            `<img src="${currentMatch.teamBLogo}" alt="${currentMatch.teamBName}">` :
+                            `<i class="fas fa-shield-alt" style="font-size: 32px; color: var(--or-text-muted);"></i>`
+                        }
+                    </div>
+                    <div class="team-name">${currentMatch.teamBName || 'Team B'}</div>
+                </div>
+            `;
+            
+            // Update match details
+            const matchDetails = document.getElementById('matchDetails');
+            const now = new Date();
+            const startTime = currentMatch.startTime ? new Date(currentMatch.startTime) : null;
+            
+            let statusText = '';
+            let statusClass = '';
+            
+            if (currentMatch.result) {
+                statusText = 'Completed';
+                statusClass = '';
+            } else if (startTime && now >= startTime) {
+                statusText = 'Live';
+                statusClass = 'live';
+            } else {
+                statusText = 'Upcoming';
+                statusClass = '';
+            }
+            
+            const matchDate = startTime ? 
+                startTime.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                }) : 'Date TBD';
+            
+            const matchTime = startTime ? 
+                startTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : 'Time TBD';
+            
+            matchDetails.innerHTML = `
+                <div>${currentMatch.league || 'Football Match'}</div>
+                <div>${matchDate} • ${matchTime}</div>
+                <div class="match-status ${statusClass}">${statusText}</div>
+            `;
+        }
+
+        function checkMatchStatus() {
+            const now = new Date();
+            const startTime = currentMatch.startTime ? new Date(currentMatch.startTime) : null;
+            
+            if (startTime && now >= startTime) {
+                matchHasStarted = true;
+                // Hide analysis form (LOCKED after match starts)
+                analysisForm.classList.remove('show');
+                if (editPredictionBtn) {
+                    editPredictionBtn.style.display = 'none';
+                }
+                showNotification('Match has started. Predictions are locked.', 'warning');
+            } else {
+                matchHasStarted = false;
+            }
+        }
+
+        async function loadCurrentPrediction() {
+            try {
+                // Check if predictor has already predicted
+                const predictionQuery = query(
+                    collection(db, 'predictions'),
+                    where('matchId', '==', matchId),
+                    where('predictorId', '==', currentPredictorId),
+                    limit(1)
+                );
+                
+                const predictionSnapshot = await getDocs(predictionQuery);
+                
+                if (!predictionSnapshot.empty) {
+                    const predictionDoc = predictionSnapshot.docs[0];
+                    currentPrediction = {
+                        id: predictionDoc.id,
+                        ...predictionDoc.data()
+                    };
+                    
+                    // Show current prediction
+                    showCurrentPrediction();
+                    
+                    // Hide analysis form if prediction exists
+                    analysisForm.classList.remove('show');
+                } else {
+                    // No prediction yet, show analysis form if match hasn't started
+                    if (!matchHasStarted) {
+                        analysisForm.classList.add('show');
+                    }
+                    currentPredictionDiv.classList.remove('show');
+                }
+                
+            } catch (error) {
+                console.error('Load prediction error:', error);
+            }
+        }
+
+        function showCurrentPrediction() {
+            const predictionType = document.getElementById('predictionType');
+            const predictionReasoning = document.getElementById('predictionReasoning');
+            const predictionTime = document.getElementById('predictionTime');
+            
+            let typeText = '';
+            if (currentPrediction.voteType === 'team1') {
+                typeText = `${currentMatch.teamAName || 'Team A'} to win`;
+            } else if (currentPrediction.voteType === 'draw') {
+                typeText = 'Draw';
+            } else if (currentPrediction.voteType === 'team2') {
+                typeText = `${currentMatch.teamBName || 'Team B'} to win`;
+            }
+            
+            predictionType.textContent = typeText;
+            predictionReasoning.textContent = currentPrediction.reasoning || 'No reasoning provided';
+            
+            const predictionTimeDate = currentPrediction.timestamp?.toDate ? 
+                currentPrediction.timestamp.toDate() : new Date();
+            predictionTime.textContent = predictionTimeDate.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            currentPredictionDiv.classList.add('show');
+            
+            // Only show edit button if match hasn't started
+            if (!matchHasStarted) {
+                editPredictionBtn.style.display = 'block';
+            } else {
+                editPredictionBtn.style.display = 'none';
+            }
+        }
+
+        async function loadGuruConsensus() {
+            try {
+                // Get all predictions for this match
+                const predictionsQuery = query(
+                    collection(db, 'predictions'),
+                    where('matchId', '==', matchId)
+                );
+                
+                const predictionsSnapshot = await getDocs(predictionsQuery);
+                
+                let team1Predictions = 0;
+                let drawPredictions = 0;
+                let team2Predictions = 0;
+                let totalPredictions = 0;
+                
+                predictionsSnapshot.forEach(doc => {
+                    const prediction = doc.data();
+                    if (prediction.voteType === 'team1') team1Predictions++;
+                    else if (prediction.voteType === 'draw') drawPredictions++;
+                    else if (prediction.voteType === 'team2') team2Predictions++;
+                    totalPredictions++;
+                });
+                
+                // Calculate percentages
+                const team1Percent = totalPredictions > 0 ? Math.round((team1Predictions / totalPredictions) * 100) : 0;
+                const drawPercent = totalPredictions > 0 ? Math.round((drawPredictions / totalPredictions) * 100) : 0;
+                const team2Percent = totalPredictions > 0 ? Math.round((team2Predictions / totalPredictions) * 100) : 0;
+                
+                // Update UI
+                consensusBars.innerHTML = `
+                    <div class="consensus-bar">
+                        <div class="bar-header">
+                            <div class="bar-team">${currentMatch.teamAName || 'Team A'} Win</div>
+                            <div class="bar-percentage">${team1Percent}%</div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill ${team1Percent >= 50 ? 'high' : 'low'}" 
+                                 style="width: ${team1Percent}%"></div>
+                        </div>
+                        <div class="bar-stats">
+                            <span>${team1Predictions} gurus</span>
+                            <span>${getTopGurusText('team1')}</span>
+                        </div>
+                    </div>
+                    <div class="consensus-bar">
+                        <div class="bar-header">
+                            <div class="bar-team">Draw</div>
+                            <div class="bar-percentage">${drawPercent}%</div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill ${drawPercent >= 50 ? 'high' : 'low'}" 
+                                 style="width: ${drawPercent}%"></div>
+                        </div>
+                        <div class="bar-stats">
+                            <span>${drawPredictions} gurus</span>
+                            <span>${getTopGurusText('draw')}</span>
+                        </div>
+                    </div>
+                    <div class="consensus-bar">
+                        <div class="bar-header">
+                            <div class="bar-team">${currentMatch.teamBName || 'Team B'} Win</div>
+                            <div class="bar-percentage">${team2Percent}%</div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill ${team2Percent >= 50 ? 'high' : 'low'}" 
+                                 style="width: ${team2Percent}%"></div>
+                        </div>
+                        <div class="bar-stats">
+                            <span>${team2Predictions} gurus</span>
+                            <span>${getTopGurusText('team2')}</span>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Load consensus error:', error);
+            }
+        }
+
+        function getTopGurusText(voteType) {
+            // In a real app, this would fetch top gurus
+            return 'Top gurus predicted';
+        }
+
+        function loadMatchStats() {
+            // Get stats from match data or calculate
+            const stats = {
+                totalVotes: currentMatch.totalVotes || 0,
+                correctPredictions: currentMatch.correctPredictions || 0,
+                avgAccuracy: currentMatch.avgAccuracy || 0,
+                predictionValue: currentMatch.predictionValue || 0
+            };
+            
+            matchStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${stats.totalVotes}</div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.correctPredictions}</div>
+                    <div class="stat-label">Correct Predictions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.avgAccuracy}%</div>
+                    <div class="stat-label">Avg Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.predictionValue}</div>
+                    <div class="stat-label">Prediction Value</div>
+                </div>
+            `;
+        }
+
+        function selectPrediction(predictionType) {
+            // Update UI
+            predictionOptions.forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function updateCharCounter() {
+            const count = reasoningInput.value.length;
+            charCount.textContent = count;
+            
+            if (count > 500) {
+                reasoningInput.value = reasoningInput.value.substring(0, 500);
+                charCount.textContent = 500;
+            }
+        }
+
+        async function submitAnalysis() {
+            // Validate form
+            const selectedOption = document.querySelector('.prediction-option.active');
+            if (!selectedOption) {
+                showNotification('Please select a prediction', 'error');
+                return;
+            }
+            
+            const reasoning = reasoningInput.value.trim();
+            if (!reasoning) {
+                showNotification('Please enter your reasoning', 'error');
+                return;
+            }
+            
+            if (reasoning.length < 10) {
+                showNotification('Reasoning must be at least 10 characters', 'error');
+                return;
+            }
+            
+            const predictionType = selectedOption.dataset.prediction;
+            
+            try {
+                document.getElementById('loading').classList.add('active');
+                
+                // Get predictor info
+                const predDoc = await getDoc(doc(db, 'predictors', currentPredictorId));
+                const predictor = predDoc.data();
+                
+                // Create prediction data
+                const predictionData = {
+                    matchId: matchId,
+                    predictorId: currentPredictorId,
+                    predictorName: predictor.name || 'Predictor',
+                    predictorPhoto: predictor.photoUrl || '',
+                    voteType: predictionType,
+                    reasoning: reasoning,
+                    timestamp: serverTimestamp(),
+                    isPublic: true,
+                    likes: 0,
+                    comments: 0,
+                    shares: 0
+                };
+                
+                // If editing existing prediction
+                if (currentPrediction) {
+                    await updateDoc(doc(db, 'predictions', currentPrediction.id), predictionData);
+                    currentPrediction = { ...currentPrediction, ...predictionData };
+                    showNotification('Prediction updated successfully!', 'success');
+                } else {
+                    // Create new prediction
+                    const docRef = await addDoc(collection(db, 'predictions'), predictionData);
+                    currentPrediction = {
+                        id: docRef.id,
+                        ...predictionData
+                    };
+                    showNotification('Prediction submitted successfully!', 'success');
+                }
+                
+                // Also create/update vote record
+                const voteData = {
+                    matchId: matchId,
+                    predictorId: currentPredictorId,
+                    predictorName: predictor.name || 'Predictor',
+                    voteType: predictionType,
+                    reasoning: reasoning,
+                    timestamp: serverTimestamp()
+                };
+                
+                // Check if vote exists
+                const voteQuery = query(
+                    collection(db, 'votes'),
+                    where('matchId', '==', matchId),
+                    where('predictorId', '==', currentPredictorId),
+                    limit(1)
+                );
+                
+                const voteSnapshot = await getDocs(voteQuery);
+                if (voteSnapshot.empty) {
+                    await addDoc(collection(db, 'votes'), voteData);
+                } else {
+                    const voteDoc = voteSnapshot.docs[0];
+                    await updateDoc(doc(db, 'votes', voteDoc.id), voteData);
+                }
+                
+                // Update UI
+                analysisForm.classList.remove('show');
+                showCurrentPrediction();
+                
+                // Reload consensus
+                await loadGuruConsensus();
+                
+                // Clear form
+                reasoningInput.value = '';
+                charCount.textContent = '0';
+                predictionOptions.forEach(option => {
+                    option.classList.remove('active');
+                });
+                
+            } catch (error) {
+                console.error('Submit analysis error:', error);
+                showNotification('Failed to submit analysis', 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function cancelAnalysis() {
+            analysisForm.classList.remove('show');
+            reasoningInput.value = '';
+            charCount.textContent = '0';
+            predictionOptions.forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            if (currentPrediction) {
+                currentPredictionDiv.classList.add('show');
+            }
+        }
+
+        function editPrediction() {
+            if (matchHasStarted) {
+                showNotification('Cannot edit prediction after match has started', 'error');
+                return;
+            }
+            
+            // Populate form with current prediction
+            predictionOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.prediction === currentPrediction.voteType) {
+                    option.classList.add('active');
+                }
+            });
+            
+            reasoningInput.value = currentPrediction.reasoning || '';
+            charCount.textContent = currentPrediction.reasoning?.length || 0;
+            
+            // Show form, hide current prediction
+            analysisForm.classList.add('show');
+            currentPredictionDiv.classList.remove('show');
+        }
+
+        function viewAllVotes() {
+            window.location.href = `viewvotes.html?matchId=${matchId}`;
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votes Breakdown</title>
+    <style>
+        body { background: #121212; color: #eee; font-family: sans-serif; padding: 20px; }
+        .tab-nav { display: flex; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: #888; }
+        .tab.active { color: #007bff; border-bottom: 2px solid #007bff; }
+        
+        .predictor-row { display: flex; align-items: center; gap: 10px; background: #1e1e1e; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+        .p-badge { background: gold; color: black; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; }
+        .choice-badge { margin-left: auto; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2 onclick="history.back()" style="cursor:pointer;">&larr; Analysis</h2>
+    
+    <div class="tab-nav">
+        <div class="tab active" onclick="switchTab('predictors')">Top Predictors</div>
+        <div class="tab" onclick="switchTab('stats')">Statistics</div>
+    </div>
+
+    <div id="tab-predictors">
+        <div class="predictor-row">
+            <div style="width:30px; height:30px; background:#444; border-radius:50%;"></div>
+            <div>
+                <div>@MasterGuru <span class="p-badge">TOP 1%</span></div>
+                <div style="font-size:0.8rem; color:#aaa;">"Home team has better defense"</div>
+            </div>
+            <div class="choice-badge" style="color: #007bff;">HOME</div>
+        </div>
+        <div class="predictor-row">
+            <div style="width:30px; height:30px; background:#444; border-radius:50%;"></div>
+            <div>
+                <div>@SoccerWiz</div>
+                <div style="font-size:0.8rem; color:#aaa;">"Draw likely due to rain"</div>
+            </div>
+            <div class="choice-badge" style="color: #888;">DRAW</div>
+        </div>
+    </div>
+
+    <div id="tab-stats" style="display:none;">
+        <p>Detailed statistical analysis here.</p>
+    </div>
+
+    <script>
+        function switchTab(t) {
+            document.getElementById('tab-predictors').style.display = t === 'predictors' ? 'block' : 'none';
+            document.getElementById('tab-stats').style.display = t === 'stats' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -246,7 +246,7 @@
       align-items: center;
       gap: 5px;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.3s;
     }
     .nav-btn .iconify {
       font-size: 14px;
@@ -422,6 +422,28 @@
       background: #A8F010;
     }
 
+    .announcement-banner {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      border: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      color: white;
+      box-shadow: 0 6px 0 #CC5500;
+    }
+    .announcement-banner h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .announcement-banner p {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
     .promo-banner {
       background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%);
       border: 3px solid var(--vibrant-green);
@@ -499,32 +521,6 @@
       color: var(--vibrant-green);
       font-style: italic;
       margin: 0 4px;
-    }
-    .clickable-context {
-      display: flex;
-      gap: 8px;
-    }
-    .context-toggle {
-      background: #F0F0F0;
-      border: 2px solid #D0D0D0;
-      color: #555;
-      padding: 6px 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 11px;
-      cursor: pointer;
-      transition: 0.15s;
-      text-transform: uppercase;
-    }
-    .context-toggle:hover {
-      border-color: var(--vibrant-green);
-    }
-    .context-toggle.active-context {
-      background: var(--vibrant-green);
-      border-color: var(--vibrant-green);
-      color: #000;
-      font-weight: 800;
-      box-shadow: 0 4px 0 #6B9E00;
     }
 
     .filter-bar {
@@ -611,6 +607,7 @@
       border: 2px solid #E0E0E0;
       transition: 0.15s;
       flex-shrink: 0;
+      cursor: pointer;
     }
     .match-card:hover {
       border-color: var(--vibrant-green);
@@ -672,49 +669,63 @@
       color: #999;
       padding: 0 10px;
     }
-    .percentage-bar {
+
+    .debate-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #E0E0E0;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .debate-card:hover {
+      border-color: var(--vibrant-green);
+      box-shadow: 0 4px 0 #D0D0D0;
+    }
+    .debate-header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 8px;
+      margin-bottom: 12px;
     }
-    .percentage-option {
-      flex: 1;
-      text-align: center;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: background 0.15s;
-    }
-    .percentage-option:hover {
-      background: #F0F0F0;
-    }
-    .percentage-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #555;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-    .percentage-value {
-      font-size: 16px;
+    .debate-title {
+      font-size: 18px;
       font-weight: 800;
       color: #1A1A1A;
-      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .percentage-fill {
-      height: 6px;
-      background: #E0E0E0;
-      border-radius: 10px;
-      overflow: hidden;
+    .debate-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
     }
-    .percentage-fill-bar {
-      height: 100%;
-      background: var(--vibrant-green);
-      border-radius: 10px;
+    .debate-messages {
+      background: #F8F8F8;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
     }
-    .draw-bar {
-      background: #FFB800;
+    .message-preview {
+      font-size: 12px;
+      color: #555;
+      padding: 4px 0;
+      border-bottom: 1px solid #E0E0E0;
+    }
+    .message-preview:last-child {
+      border-bottom: none;
+    }
+
+    .ad-native-container {
+      margin: 16px 0;
+      padding: 12px;
+      background: #F8F8F8;
+      border-radius: 8px;
+      border: 2px dashed #D0D0D0;
     }
 
     .hint-text {
@@ -757,12 +768,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    @media (max-width: 959px) {
-      .app-container {
-        width: 100%;
-      }
     }
   </style>
 </head>
@@ -836,29 +841,14 @@
     </div>
 
     <div class="main-content">
-      <div class="promo-banner" id="promoBanner">
-        <h2>🏆 Join Africa's #1 Prediction Brand</h2>
-        <div class="promo-features">
-          <div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div>
-          <div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
-          <div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div>
-          <div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
-        </div>
-        <div class="promo-highlight">
-          <div class="promo-badge">FREE</div>
-          <div class="promo-text">Free callbacks whenever you need us.</div>
-        </div>
-      </div>
+      <div id="announcementContainer"></div>
+      <div id="promoContainer"></div>
 
       <div class="context-header">
-        <div class="context-text" id="contextDisplay">SPORTS <span>&</span> LIVE</div>
-        <div class="clickable-context">
-          <button class="context-toggle active-context" id="contextSportsBtn">SPORTS</button>
-          <button class="context-toggle" id="contextLiveBtn">LIVE</button>
-        </div>
+        <div class="context-text" id="contextDisplay">HOME · SPORTS & LIVE</div>
       </div>
 
-      <div class="filter-bar">
+      <div class="filter-bar" id="filterBar">
         <div class="filter-group">
           <label><span class="iconify" data-icon="mdi:soccer"></span> Sport</label>
           <select id="filterSport">
@@ -881,7 +871,7 @@
       </div>
 
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ CLICK ON PERCENTAGES TO VOTE ⚡</div>
+      <div class="hint-text" id="cardHint">⚡ CLICK ON A MATCH TO VOTE ⚡</div>
     </div>
 
     <div class="ad-space">
@@ -904,12 +894,20 @@
   </div>
 </div>
 
+<script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+<script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
   (function(){
     "use strict";
+
+    if (window.innerWidth < 768) {
+      window.location.href = 'indexp.html';
+      return;
+    }
 
     const firebaseConfig = {
       apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
@@ -929,8 +927,6 @@
     const sportBtns = document.querySelectorAll('.sport-btn');
     const leagueContainer = document.getElementById('leagueTeamsContainer');
     const contextDisplay = document.getElementById('contextDisplay');
-    const contextSportsBtn = document.getElementById('contextSportsBtn');
-    const contextLiveBtn = document.getElementById('contextLiveBtn');
     const dynamicList = document.getElementById('dynamicList');
     const filterSport = document.getElementById('filterSport');
     const filterLeague = document.getElementById('filterLeague');
@@ -939,17 +935,19 @@
     const cardHint = document.getElementById('cardHint');
     const breadcrumbSport = document.getElementById('breadcrumbSport');
     const breadcrumbMatch = document.getElementById('breadcrumbMatch');
-    const promoBanner = document.getElementById('promoBanner');
     const searchInput = document.getElementById('searchInput');
+    const filterBar = document.getElementById('filterBar');
+    const announcementContainer = document.getElementById('announcementContainer');
+    const promoContainer = document.getElementById('promoContainer');
 
     let currentNav = 'home';
     let currentSport = 'football';
-    let currentContext = 'sports';
     let leftTabVisible = false;
     let teams = [];
     let leagues = [];
     let matches = [];
     let anonymousId = localStorage.getItem('anonymousId');
+    let adInserted = false;
 
     if (!anonymousId) {
       anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -974,9 +972,16 @@
       }
     });
 
-    function updateBreadcrumb(sport, context) {
+    function updateBreadcrumb(sport, nav) {
       breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
-      breadcrumbMatch.textContent = context === 'sports' ? 'Upcoming' : 'Live Now';
+      const navNames = {
+        home: 'Home',
+        sports: 'Sports',
+        debates: 'Debates',
+        live: 'Live',
+        popular: 'Popular'
+      };
+      breadcrumbMatch.textContent = navNames[nav] || 'Matches';
     }
 
     async function loadLeaguesAndTeams() {
@@ -1049,7 +1054,9 @@
       document.querySelectorAll('[data-league]').forEach(el => {
         el.addEventListener('click', () => {
           filterLeague.value = el.dataset.league;
-          renderList();
+          if (currentNav === 'sports' || currentNav === 'home') {
+            renderMatches();
+          }
         });
       });
     }
@@ -1063,14 +1070,7 @@
 
     async function loadMatches() {
       try {
-        let query = db.collection('matches');
-        
-        if (currentContext === 'live') {
-          query = query.where('status', '==', 'live');
-        } else {
-          query = query.where('status', 'in', ['upcoming', 'live']);
-        }
-
+        let query = db.collection('matches').where('status', 'in', ['upcoming', 'live']);
         query = query.orderBy('startTime', 'asc');
 
         const matchesSnap = await query.get();
@@ -1081,127 +1081,98 @@
           
           const votesSnap = await db.collection('votes').where('matchId', '==', doc.id).get();
           const totalVotes = votesSnap.size;
-          const teamAVotes = votesSnap.docs.filter(v => v.data().voteType === 'team1').length;
-          const drawVotes = votesSnap.docs.filter(v => v.data().voteType === 'draw').length;
-          const teamBVotes = votesSnap.docs.filter(v => v.data().voteType === 'team2').length;
 
-          match.voteCounts = {
-            team1: teamAVotes,
-            draw: drawVotes,
-            team2: teamBVotes,
-            total: totalVotes
-          };
-
-          match.percentages = {
-            team1: totalVotes > 0 ? Math.round((teamAVotes / totalVotes) * 100) : 33,
-            draw: totalVotes > 0 ? Math.round((drawVotes / totalVotes) * 100) : 34,
-            team2: totalVotes > 0 ? Math.round((teamBVotes / totalVotes) * 100) : 33
-          };
-
+          match.totalVotes = totalVotes;
           matches.push(match);
         }
 
-        renderList();
+        if (currentNav === 'home' || currentNav === 'sports' || currentNav === 'popular') {
+          renderMatches();
+        }
       } catch (error) {
         console.error('Error loading matches:', error);
       }
     }
 
-    sportBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        sportBtns.forEach(b => b.classList.remove('active-sport'));
-        btn.classList.add('active-sport');
-        const sport = btn.dataset.sport;
-        currentSport = sport;
-        updateLeaguesTeams(sport);
-        updateBreadcrumb(sport, currentContext);
-        filterSport.value = sport;
-        loadMatches();
-      });
-    });
-
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        navButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const nav = btn.dataset.nav;
-        currentNav = nav;
-        let displayText = '';
-        if (nav === 'home') {
-          displayText = 'HOME · SPORTS & LIVE';
-          promoBanner.style.display = 'block';
-          currentContext = 'sports';
-          contextSportsBtn.classList.add('active-context');
-          contextLiveBtn.classList.remove('active-context');
-        } else {
-          displayText = nav === 'sports' ? 'SPORTS <span>&</span> LIVE' : 
-                       nav === 'live' ? 'LIVE <span>&</span> SPORTS' : 
-                       nav === 'popular' ? 'POPULAR <span>&</span> SPORTS' :
-                       'DEBATES <span>&</span> SPORTS';
-          promoBanner.style.display = 'none';
-        }
-        contextDisplay.innerHTML = displayText;
-        loadMatches();
-      });
-    });
-
-    contextSportsBtn.addEventListener('click', () => {
-      contextSportsBtn.classList.add('active-context');
-      contextLiveBtn.classList.remove('active-context');
-      currentContext = 'sports';
-      updateBreadcrumb(currentSport, 'sports');
-      loadMatches();
-      cardHint.innerText = '⚽ UPCOMING & POPULAR MATCHES - CLICK TO VOTE ⚽';
-    });
-    
-    contextLiveBtn.addEventListener('click', () => {
-      contextLiveBtn.classList.add('active-context');
-      contextSportsBtn.classList.remove('active-context');
-      currentContext = 'live';
-      updateBreadcrumb(currentSport, 'live');
-      loadMatches();
-      cardHint.innerText = '🔴 LIVE MATCHES IN PROGRESS - VOTE NOW 🔴';
-    });
-
-    applyFilterBtn.addEventListener('click', renderList);
-    
-    searchInput.addEventListener('input', renderList);
-
-    async function submitVote(matchId, voteType) {
+    async function loadDebates() {
       try {
-        const existingVote = await db.collection('votes')
-          .where('matchId', '==', matchId)
-          .where('anonymousId', '==', anonymousId)
-          .get();
+        const matchesSnap = await db.collection('matches').get();
+        const debates = [];
 
-        if (!existingVote.empty) {
-          alert('You have already voted on this match!');
-          return;
+        for (const doc of matchesSnap.docs) {
+          const match = { id: doc.id, ...doc.data() };
+          
+          const messagesSnap = await db.collection('messages')
+            .where('matchId', '==', doc.id)
+            .orderBy('createdAt', 'desc')
+            .limit(4)
+            .get();
+
+          if (messagesSnap.size > 0) {
+            const messages = [];
+            messagesSnap.forEach(msg => {
+              messages.push(msg.data());
+            });
+
+            debates.push({
+              match: match,
+              messageCount: messagesSnap.size,
+              recentMessages: messages.reverse()
+            });
+          }
         }
 
-        const match = matches.find(m => m.id === matchId);
-        
-        await db.collection('votes').add({
-          matchId: matchId,
-          anonymousId: anonymousId,
-          voteType: voteType,
-          matchName: `${match.teamAName} vs ${match.teamBName}`,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        await loadMatches();
-        cardHint.innerText = '✅ VOTE RECORDED! THANKS FOR PARTICIPATING ✅';
-        setTimeout(() => {
-          cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡';
-        }, 3000);
+        debates.sort((a, b) => b.messageCount - a.messageCount);
+        renderDebates(debates.slice(0, 3));
       } catch (error) {
-        console.error('Error submitting vote:', error);
-        alert('Error submitting vote. Please try again.');
+        console.error('Error loading debates:', error);
+        dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No debates yet</div>';
       }
     }
 
-    function renderList() {
-      const isLive = (currentContext === 'live');
+    function renderDebates(debates) {
+      let html = '';
+      
+      if (debates.length === 0) {
+        html = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet. Be the first to start one!</div>';
+      } else {
+        const emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
+        
+        debates.forEach((debate, index) => {
+          const match = debate.match;
+          const emoji = emojis[index % emojis.length];
+          
+          html += `
+            <div class="debate-card" onclick="openVotePage('${match.id}')">
+              <div class="debate-header">
+                <span class="iconify" data-icon="mdi:message-text-outline" style="color: #9CE800; font-size: 24px;"></span>
+                <div class="debate-title">
+                  ${emoji} FUT/${match.teamAName} vs ${match.teamBName} ${emoji}
+                </div>
+              </div>
+              <div class="debate-stats">
+                <span><span class="iconify" data-icon="mdi:message-outline"></span> ${debate.messageCount} messages</span>
+                <span><span class="iconify" data-icon="mdi:account-group"></span> ${match.leagueName}</span>
+              </div>
+              <div class="debate-messages">
+          `;
+          
+          debate.recentMessages.forEach(msg => {
+            const preview = msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : msg.content;
+            html += `<div class="message-preview"><strong>${msg.anonymousId ? 'User' : 'Anonymous'}:</strong> ${preview}</div>`;
+          });
+          
+          html += `
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      dynamicList.innerHTML = html;
+    }
+
+    function renderMatches() {
       const sportFilter = filterSport.value;
       const leagueFilter = filterLeague.value;
       const searchTerm = searchInput.value.toLowerCase();
@@ -1231,11 +1202,18 @@
         return true;
       });
 
-      filteredMatches.sort((a, b) => {
-        if (a.isTopMatch && !b.isTopMatch) return -1;
-        if (!a.isTopMatch && b.isTopMatch) return 1;
-        return a.startTime.toDate() - b.startTime.toDate();
-      });
+      if (currentNav === 'popular') {
+        filteredMatches = filteredMatches
+          .filter(m => m.status !== 'completed')
+          .sort((a, b) => b.totalVotes - a.totalVotes)
+          .slice(0, 5);
+      } else {
+        filteredMatches.sort((a, b) => {
+          if (a.isTopMatch && !b.isTopMatch) return -1;
+          if (!a.isTopMatch && b.isTopMatch) return 1;
+          return a.startTime.toDate() - b.startTime.toDate();
+        });
+      }
 
       let listHtml = '';
       
@@ -1248,19 +1226,18 @@
           </div>
         `;
       } else {
-        filteredMatches.forEach(match => {
+        filteredMatches.forEach((match, index) => {
           const startTime = match.startTime ? match.startTime.toDate() : new Date();
-          const timeString = isLive ? 'LIVE' : 
-            startTime.toLocaleString('en-US', { 
-              weekday: 'short', 
-              month: 'short', 
-              day: 'numeric',
-              hour: '2-digit', 
-              minute: '2-digit'
-            });
+          const timeString = startTime.toLocaleString('en-US', { 
+            weekday: 'short', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit'
+          });
 
           listHtml += `
-            <div class="match-card">
+            <div class="match-card" onclick="openVotePage('${match.id}')">
               <div class="match-teams">
                 <div class="team">
                   <div class="team-logo">
@@ -1286,44 +1263,128 @@
                   </div>
                 </div>
               </div>
-              <div class="percentage-bar">
-                <div class="percentage-option" onclick="submitVote('${match.id}', 'team1')">
-                  <div class="percentage-label">1</div>
-                  <div class="percentage-value">${match.percentages.team1}%</div>
-                  <div class="percentage-fill">
-                    <div class="percentage-fill-bar" style="width: ${match.percentages.team1}%;"></div>
-                  </div>
-                </div>
-                <div class="percentage-option" onclick="submitVote('${match.id}', 'draw')">
-                  <div class="percentage-label">X</div>
-                  <div class="percentage-value">${match.percentages.draw}%</div>
-                  <div class="percentage-fill">
-                    <div class="percentage-fill-bar draw-bar" style="width: ${match.percentages.draw}%;"></div>
-                  </div>
-                </div>
-                <div class="percentage-option" onclick="submitVote('${match.id}', 'team2')">
-                  <div class="percentage-label">2</div>
-                  <div class="percentage-value">${match.percentages.team2}%</div>
-                  <div class="percentage-fill">
-                    <div class="percentage-fill-bar" style="width: ${match.percentages.team2}%;"></div>
-                  </div>
-                </div>
-              </div>
+              ${currentNav === 'popular' ? 
+                `<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;">
+                  <span class="iconify" data-icon="mdi:fire"></span> ${match.totalVotes} VOTES <span class="iconify" data-icon="mdi:fire"></span>
+                </div>` : ''}
             </div>
           `;
+
+          if ((index + 1) % 2 === 0 && !adInserted) {
+            listHtml += `
+              <div class="ad-native-container">
+                <script async="async" data-cfasync="false" src="https://pl29147022.profitablecpmratenetwork.com/8f595312a6731f1113cd9abe0661bb7d/invoke.js"></script>
+                <div id="container-8f595312a6731f1113cd9abe0661bb7d"></div>
+              </div>
+            `;
+            adInserted = true;
+          }
         });
       }
 
       dynamicList.innerHTML = listHtml;
     }
 
-    window.submitVote = submitVote;
+    window.openVotePage = function(matchId) {
+      window.location.href = `vote.html?id=${matchId}`;
+    };
+
+    sportBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sportBtns.forEach(b => b.classList.remove('active-sport'));
+        btn.classList.add('active-sport');
+        const sport = btn.dataset.sport;
+        currentSport = sport;
+        updateLeaguesTeams(sport);
+        updateBreadcrumb(sport, currentNav);
+        filterSport.value = sport;
+        loadMatches();
+      });
+    });
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const nav = btn.dataset.nav;
+        currentNav = nav;
+        
+        updateBreadcrumb(currentSport, nav);
+        
+        if (nav === 'home') {
+          contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
+          announcementContainer.innerHTML = `
+            <div class="announcement-banner">
+              <h3><span class="iconify" data-icon="mdi:bullhorn"></span> ANNOUNCEMENT</h3>
+              <p>Welcome to ORAFUT! Start predicting and win big. New matches added daily!</p>
+            </div>
+          `;
+          promoContainer.innerHTML = `
+            <div class="promo-banner">
+              <h2>🏆 Join Africa's #1 Prediction Brand</h2>
+              <div class="promo-features">
+                <div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div>
+                <div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
+                <div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div>
+                <div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
+              </div>
+              <div class="promo-highlight">
+                <div class="promo-badge">FREE</div>
+                <div class="promo-text">Free callbacks whenever you need us.</div>
+              </div>
+            </div>
+          `;
+          filterBar.style.display = 'flex';
+          cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
+          loadMatches();
+        } else if (nav === 'sports') {
+          contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE';
+          announcementContainer.innerHTML = '';
+          promoContainer.innerHTML = '';
+          filterBar.style.display = 'flex';
+          cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
+          loadMatches();
+        } else if (nav === 'debates') {
+          contextDisplay.innerHTML = 'TOP <span>DEBATES</span>';
+          announcementContainer.innerHTML = '';
+          promoContainer.innerHTML = '';
+          filterBar.style.display = 'none';
+          cardHint.innerText = '💬 HOTTEST CONVERSATIONS RIGHT NOW 💬';
+          loadDebates();
+        } else if (nav === 'live') {
+          window.location.href = 'live.html';
+        } else if (nav === 'popular') {
+          contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING';
+          announcementContainer.innerHTML = '';
+          promoContainer.innerHTML = '';
+          filterBar.style.display = 'flex';
+          cardHint.innerText = '🔥 MOST VOTED MATCHES 🔥';
+          loadMatches();
+        }
+      });
+    });
+
+    applyFilterBtn.addEventListener('click', renderMatches);
+    searchInput.addEventListener('input', renderMatches);
 
     loadLeaguesAndTeams().then(() => {
       loadMatches();
     });
 
-    updateBreadcrumb('football', 'sports');
+    updateBreadcrumb('football', 'home');
+  })();
+</script>
+
+<script type="text/javascript">
+  (function() {
+    var smartlinkUrl = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5';
+    setTimeout(function() {
+      var a = document.createElement('a');
+      a.href = smartlinkUrl;
+      a.target = '_blank';
+      a.rel = 'nofollow';
+      a.click();
+    }, 5000);
   })();
 </script>
 </body>

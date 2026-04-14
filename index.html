@@ -112,7 +112,6 @@
     .debate-messages { background: #F8F8F8; padding: 12px; border-radius: 8px; margin-top: 12px; }
     .message-preview { font-size: 12px; color: #555; padding: 4px 0; border-bottom: 1px solid #E0E0E0; }
     .message-preview:last-child { border-bottom: none; }
-    .ad-native-container { margin: 16px 0; padding: 12px; background: #F8F8F8; border-radius: 8px; border: 2px dashed #D0D0D0; }
     .hint-text { margin-top: 14px; color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
     .ad-space { width: 160px; background: var(--white); border-left: 3px solid #E0E0E0; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; }
     .ad-container { padding: 12px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
@@ -179,7 +178,7 @@
         <button class="filter-btn" id="applyFilterBtn"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
       </div>
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ CLICK ON A MATCH TO OPEN VOTING ⚡</div>
+      <div class="hint-text" id="cardHint">CLICK ON A MATCH TO OPEN VOTING</div>
     </div>
 
     <div class="ad-space">
@@ -217,100 +216,111 @@
   };
 
   let state = { currentNav: 'home', currentSport: 'football', leftTabVisible: false, teams: [], leagues: [], matches: [] };
-  let anonymousId = localStorage.getItem('anonymousId') || (() => { const id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('anonymousId', id); return id; })();
+  let anonymousId = localStorage.getItem('anonymousId') || (function() { var id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('anonymousId', id); return id; })();
 
   db.collection('anonymous_users').doc(anonymousId).set({ lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
   elements.filterDate.value = new Date().toISOString().split('T')[0];
 
-  elements.menuToggleBtn.addEventListener('click', () => { state.leftTabVisible = !state.leftTabVisible; elements.leftTab.classList.toggle('visible', state.leftTabVisible); });
+  elements.menuToggleBtn.addEventListener('click', function() { state.leftTabVisible = !state.leftTabVisible; elements.leftTab.classList.toggle('visible', state.leftTabVisible); });
 
   function updateBreadcrumb(sport, nav) {
     elements.breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
-    elements.breadcrumbMatch.textContent = { home: 'Home', sports: 'Sports', debates: 'Debates', live: 'Live', popular: 'Popular' }[nav] || 'Matches';
+    var navNames = { home: 'Home', sports: 'Sports', debates: 'Debates', live: 'Live', popular: 'Popular' };
+    elements.breadcrumbMatch.textContent = navNames[nav] || 'Matches';
   }
 
   async function loadLeaguesAndTeams() {
-    const [leaguesSnap, teamsSnap] = await Promise.all([db.collection('leagues').get(), db.collection('teams').where('isActive', '==', true).get()]);
-    state.leagues = leaguesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    state.teams = teamsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    var leaguesSnap = await db.collection('leagues').get();
+    var teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
+    state.leagues = []; leaguesSnap.forEach(function(d) { state.leagues.push({ id: d.id, name: d.data().name, sport: d.data().sport }); });
+    state.teams = []; teamsSnap.forEach(function(d) { state.teams.push({ id: d.id, name: d.data().name, sport: d.data().sport, league: d.data().league, leagueName: d.data().leagueName }); });
     updateLeaguesTeams(); populateLeagueFilter();
   }
 
   function updateLeaguesTeams() {
-    const filteredLeagues = state.leagues.filter(l => l.sport === state.currentSport);
-    const filteredTeams = state.teams.filter(t => t.sport === state.currentSport);
-    let html = '<div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div><div class="sub-section"><div class="item-list">';
-    filteredLeagues.slice(0, 7).forEach(l => html += `<div class="item-chip" data-league="${l.id}"><span class="iconify" data-icon="mdi:chevron-right"></span>${l.name}</div>`);
+    var filteredLeagues = state.leagues.filter(function(l) { return l.sport === state.currentSport; });
+    var filteredTeams = state.teams.filter(function(t) { return t.sport === state.currentSport; });
+    var html = '<div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div><div class="sub-section"><div class="item-list">';
+    filteredLeagues.slice(0, 7).forEach(function(l) { html += '<div class="item-chip" data-league="' + l.id + '"><span class="iconify" data-icon="mdi:chevron-right"></span>' + l.name + '</div>'; });
     html += '</div></div><div class="section-label" style="margin-top:20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div><div class="sub-section"><div class="item-list">';
-    filteredTeams.slice(0, 8).forEach(t => html += `<div class="item-chip" data-team="${t.id}"><span class="iconify" data-icon="mdi:shield-half-full"></span>${t.name}</div>`);
+    filteredTeams.slice(0, 8).forEach(function(t) { html += '<div class="item-chip" data-team="' + t.id + '"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + t.name + '</div>'; });
     html += '</div></div>';
     elements.leagueContainer.innerHTML = html;
-    document.querySelectorAll('[data-league]').forEach(el => el.addEventListener('click', () => { elements.filterLeague.value = el.dataset.league; renderMatches(); }));
+    document.querySelectorAll('[data-league]').forEach(function(el) { el.addEventListener('click', function() { elements.filterLeague.value = el.dataset.league; renderMatches(); }); });
   }
 
   function populateLeagueFilter() {
     elements.filterLeague.innerHTML = '<option value="all">All Leagues</option>';
-    state.leagues.forEach(l => { elements.filterLeague.innerHTML += `<option value="${l.id}">${l.name}</option>`; });
+    state.leagues.forEach(function(l) { elements.filterLeague.innerHTML += '<option value="' + l.id + '">' + l.name + '</option>'; });
   }
 
   async function loadMatches() {
-    let query = db.collection('matches').where('status', 'in', ['upcoming', 'live']);
+    var query = db.collection('matches').where('status', 'in', ['upcoming', 'live']);
     if (state.currentSport !== 'all') query = query.where('sport', '==', state.currentSport);
     query = query.orderBy('startTime', 'asc');
-    const snap = await query.get();
-    state.matches = await Promise.all(snap.docs.map(async d => {
-      const m = { id: d.id, ...d.data() };
-      const votes = await db.collection('votes').where('matchId', '==', d.id).get();
+    var snap = await query.get();
+    state.matches = [];
+    for (var i = 0; i < snap.docs.length; i++) {
+      var d = snap.docs[i];
+      var m = { id: d.id, teamAName: d.data().teamAName, teamBName: d.data().teamBName, teamALogo: d.data().teamALogo, teamBLogo: d.data().teamBLogo, league: d.data().league, leagueName: d.data().leagueName, startTime: d.data().startTime, status: d.data().status, sport: d.data().sport };
+      var votes = await db.collection('votes').where('matchId', '==', d.id).get();
       m.totalVotes = votes.size;
-      return m;
-    }));
+      state.matches.push(m);
+    }
     renderMatches();
   }
 
   async function loadDebates() {
-    const snap = await db.collection('matches').get();
-    const debates = (await Promise.all(snap.docs.map(async d => {
-      const m = { id: d.id, ...d.data() };
-      const msgs = await db.collection('messages').where('matchId', '==', d.id).orderBy('createdAt', 'desc').limit(4).get();
-      return msgs.size > 0 ? { match: m, messageCount: msgs.size, recentMessages: msgs.docs.map(msg => msg.data()).reverse() } : null;
-    }))).filter(d => d).sort((a, b) => b.messageCount - a.messageCount).slice(0, 3);
-    renderDebates(debates);
+    var snap = await db.collection('matches').get();
+    var debates = [];
+    for (var i = 0; i < snap.docs.length; i++) {
+      var d = snap.docs[i];
+      var m = { id: d.id, teamAName: d.data().teamAName, teamBName: d.data().teamBName, leagueName: d.data().leagueName };
+      var msgs = await db.collection('messages').where('matchId', '==', d.id).orderBy('createdAt', 'desc').limit(4).get();
+      if (msgs.size > 0) {
+        var recent = []; msgs.forEach(function(msg) { recent.push(msg.data()); });
+        debates.push({ match: m, messageCount: msgs.size, recentMessages: recent.reverse() });
+      }
+    }
+    debates.sort(function(a, b) { return b.messageCount - a.messageCount; });
+    renderDebates(debates.slice(0, 3));
   }
 
   function renderDebates(debates) {
     if (!debates.length) { elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet.</div>'; return; }
-    const emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
-    elements.dynamicList.innerHTML = debates.map((d, i) => {
-      const m = d.match, e = emojis[i % emojis.length];
-      let html = `<div class="debate-card" onclick="window.location.href='vote.html?id=${m.id}'"><div class="debate-header"><span class="iconify" data-icon="mdi:message-text-outline" style="color:#9CE800;font-size:24px;"></span><div class="debate-title">${e} FUT/${m.teamAName} vs ${m.teamBName} ${e}</div></div><div class="debate-stats"><span><span class="iconify" data-icon="mdi:message-outline"></span> ${d.messageCount} messages</span><span><span class="iconify" data-icon="mdi:account-group"></span> ${m.leagueName}</span></div><div class="debate-messages">`;
-      d.recentMessages.forEach(msg => { const p = msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : msg.content; html += `<div class="message-preview"><strong>User:</strong> ${p}</div>`; });
-      return html + '</div></div>';
-    }).join('');
+    var emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
+    var html = '';
+    debates.forEach(function(d, i) {
+      var m = d.match, e = emojis[i % emojis.length];
+      html += '<div class="debate-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div class="debate-header"><span class="iconify" data-icon="mdi:message-text-outline" style="color:#9CE800;font-size:24px;"></span><div class="debate-title">' + e + ' FUT/' + m.teamAName + ' vs ' + m.teamBName + ' ' + e + '</div></div><div class="debate-stats"><span><span class="iconify" data-icon="mdi:message-outline"></span> ' + d.messageCount + ' messages</span><span><span class="iconify" data-icon="mdi:account-group"></span> ' + m.leagueName + '</span></div><div class="debate-messages">';
+      d.recentMessages.forEach(function(msg) { var p = msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : msg.content; html += '<div class="message-preview"><strong>User:</strong> ' + p + '</div>'; });
+      html += '</div></div>';
+    });
+    elements.dynamicList.innerHTML = html;
   }
 
   function renderMatches() {
-    let filtered = state.matches.filter(m => {
+    var filtered = state.matches.filter(function(m) {
       if (elements.filterSport.value !== 'all' && m.sport !== elements.filterSport.value) return false;
       if (elements.filterLeague.value !== 'all' && m.league !== elements.filterLeague.value) return false;
-      if (elements.searchInput.value && `${m.teamAName} ${m.teamBName} ${m.leagueName||''}`.toLowerCase().indexOf(elements.searchInput.value.toLowerCase()) === -1) return false;
+      if (elements.searchInput.value && (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName||'')).toLowerCase().indexOf(elements.searchInput.value.toLowerCase()) === -1) return false;
       if (elements.filterDate.value && m.startTime) { if (m.startTime.toDate().toISOString().split('T')[0] !== elements.filterDate.value) return false; }
       return true;
     });
 
-    if (state.currentNav === 'popular') filtered = filtered.filter(m => m.status !== 'completed').sort((a, b) => b.totalVotes - a.totalVotes).slice(0, 5);
-    else filtered.sort((a, b) => a.startTime.toDate() - b.startTime.toDate());
+    if (state.currentNav === 'popular') filtered = filtered.filter(function(m) { return m.status !== 'completed'; }).sort(function(a, b) { return b.totalVotes - a.totalVotes; }).slice(0, 5);
+    else filtered.sort(function(a, b) { return a.startTime.toDate() - b.startTime.toDate(); });
 
     if (!filtered.length) { elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; return; }
 
-    let html = '', adCount = 0;
-    filtered.forEach((m, idx) => {
-      const time = m.startTime ? m.startTime.toDate() : new Date();
-      const timeStr = m.status === 'live' ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-      const league = m.leagueName || (state.leagues.find(l => l.id === m.league)?.name || 'Unknown');
-      html += `<div class="match-card" onclick="window.location.href='vote.html?id=${m.id}'"><div class="match-teams"><div class="team"><div class="team-logo">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div><div class="team-info"><span class="team-name">${m.teamAName}</span><span class="team-odds">${league}</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">${m.teamBName}</span><span class="team-odds">${timeStr}</span></div><div class="team-logo">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div></div></div>`;
-      if (state.currentNav === 'popular') html += `<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ${m.totalVotes} VOTES <span class="iconify" data-icon="mdi:fire"></span></div>`;
+    var html = '';
+    filtered.forEach(function(m) {
+      var time = m.startTime ? m.startTime.toDate() : new Date();
+      var timeStr = m.status === 'live' ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      var league = m.leagueName || (state.leagues.find(function(l) { return l.id === m.league; }) || {}).name || 'Unknown';
+      html += '<div class="match-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + m.teamAName + '</span><span class="team-odds">' + league + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + m.teamBName + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
+      if (state.currentNav === 'popular') html += '<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ' + m.totalVotes + ' VOTES <span class="iconify" data-icon="mdi:fire"></span></div>';
       html += '</div>';
-      if ((idx + 1) % 3 === 0 && adCount < 2) { html += '<div class="ad-native-container"><script async src="https://pl29147022.profitablecpmratenetwork.com/8f595312a6731f1113cd9abe0661bb7d/invoke.js"></script><div id="container-8f595312a6731f1113cd9abe0661bb7d"></div></div>'; adCount++; }
     });
     elements.dynamicList.innerHTML = html;
   }
@@ -318,9 +328,9 @@
   function setHomeView() {
     elements.contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
     elements.announcementContainer.innerHTML = '<div class="announcement-banner"><h3><span class="iconify" data-icon="mdi:bullhorn"></span> ANNOUNCEMENT</h3><p>Welcome to ORAFUT! Start predicting and win big. New matches added daily!</p></div>';
-    elements.promoContainer.innerHTML = '<div class="promo-banner"><h2>🏆 Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span>1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span>24/7 Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>';
+    elements.promoContainer.innerHTML = '<div class="promo-banner"><h2>Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span>1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span>24/7 Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>';
     elements.filterBar.style.display = 'flex';
-    elements.cardHint.innerText = '⚡ CLICK ON A MATCH TO OPEN VOTING ⚡';
+    elements.cardHint.innerText = 'CLICK ON A MATCH TO OPEN VOTING';
     loadMatches();
   }
 
@@ -328,38 +338,38 @@
     elements.contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE';
     elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = '';
     elements.filterBar.style.display = 'flex';
-    elements.cardHint.innerText = '⚡ CLICK ON A MATCH TO OPEN VOTING ⚡';
+    elements.cardHint.innerText = 'CLICK ON A MATCH TO OPEN VOTING';
     loadMatches();
   }
 
-  elements.sportBtns.forEach(b => b.addEventListener('click', () => {
-    elements.sportBtns.forEach(s => s.classList.remove('active-sport'));
+  elements.sportBtns.forEach(function(b) { b.addEventListener('click', function() {
+    elements.sportBtns.forEach(function(s) { s.classList.remove('active-sport'); });
     b.classList.add('active-sport');
     state.currentSport = b.dataset.sport;
     updateLeaguesTeams();
     updateBreadcrumb(state.currentSport, state.currentNav);
     elements.filterSport.value = state.currentSport;
     if (state.currentNav === 'debates') loadDebates(); else loadMatches();
-  }));
+  });});
 
-  elements.navButtons.forEach(b => b.addEventListener('click', () => {
-    elements.navButtons.forEach(n => n.classList.remove('active'));
+  elements.navButtons.forEach(function(b) { b.addEventListener('click', function() {
+    elements.navButtons.forEach(function(n) { n.classList.remove('active'); });
     b.classList.add('active');
     state.currentNav = b.dataset.nav;
     updateBreadcrumb(state.currentSport, state.currentNav);
     if (state.currentNav === 'home') setHomeView();
     else if (state.currentNav === 'sports') setSportsView();
-    else if (state.currentNav === 'debates') { elements.contextDisplay.innerHTML = 'TOP <span>DEBATES</span>'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'none'; elements.cardHint.innerText = '💬 HOTTEST CONVERSATIONS RIGHT NOW 💬'; loadDebates(); }
+    else if (state.currentNav === 'debates') { elements.contextDisplay.innerHTML = 'TOP <span>DEBATES</span>'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'none'; elements.cardHint.innerText = 'HOTTEST CONVERSATIONS RIGHT NOW'; loadDebates(); }
     else if (state.currentNav === 'live') window.location.href = 'live.html';
-    else if (state.currentNav === 'popular') { elements.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = '🔥 MOST VOTED MATCHES 🔥'; loadMatches(); }
-  }));
+    else if (state.currentNav === 'popular') { elements.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = 'MOST VOTED MATCHES'; loadMatches(); }
+  });});
 
   elements.applyFilterBtn.addEventListener('click', renderMatches);
   elements.searchInput.addEventListener('input', renderMatches);
 
-  loadLeaguesAndTeams().then(() => { updateBreadcrumb('football', 'home'); setHomeView(); });
+  loadLeaguesAndTeams().then(function() { updateBreadcrumb('football', 'home'); setHomeView(); });
 
-  setTimeout(() => { const a = document.createElement('a'); a.href = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5'; a.target = '_blank'; a.rel = 'nofollow'; a.click(); }, 5000);
+  setTimeout(function() { var a = document.createElement('a'); a.href = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5'; a.target = '_blank'; a.rel = 'nofollow'; a.click(); }, 5000);
 })();
 </script>
 </body>

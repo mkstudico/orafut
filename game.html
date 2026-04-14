@@ -1,1 +1,110 @@
-Coming soon...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ORAFUT · Games</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #293136; min-height: 100vh; font-family: 'Poppins', sans-serif; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    :root { --vibrant-green: #9CE800; --dark-bg: #252A2D; }
+    .header { background: var(--dark-bg); padding: 20px 24px; border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .back-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; display: inline-block; }
+    .back-btn:hover { background: var(--vibrant-green); color: #000; }
+    .header h1 { color: white; font-size: 24px; }
+    .header h1 span { color: var(--vibrant-green); }
+    .header-right { margin-left: auto; }
+    .add-btn { background: var(--vibrant-green); border: none; color: #000; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 0 #6B9E00; }
+    .add-btn:hover { background: #A8F010; transform: translateY(-2px); box-shadow: 0 6px 0 #6B9E00; }
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 30px; background: white; border-radius: 0 0 16px 16px; }
+    .game-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: 2px solid #E0E0E0; }
+    .game-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-color: var(--vibrant-green); }
+    .game-image { width: 100%; height: 150px; background: linear-gradient(135deg, #2D3337, #1A1A1A); display: flex; align-items: center; justify-content: center; }
+    .game-image img { width: 100%; height: 100%; object-fit: cover; }
+    .game-image .iconify { font-size: 60px; color: var(--vibrant-green); }
+    .game-info { padding: 16px; }
+    .game-name { font-weight: 700; font-size: 16px; color: #1A1A1A; margin-bottom: 4px; text-transform: uppercase; }
+    .game-category { font-size: 12px; color: #999; }
+    .loading { text-align: center; padding: 60px; color: #999; font-size: 16px; background: white; border-radius: 0 0 16px 16px; }
+    .error-message { background: #fee; color: #c00; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; }
+    .empty-state { text-align: center; padding: 60px; color: #999; background: white; border-radius: 0 0 16px 16px; }
+    .empty-state .iconify { font-size: 64px; color: #D0D0D0; margin-bottom: 16px; }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .header { padding: 16px; }
+      .header h1 { font-size: 20px; }
+      .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px 16px; }
+      .game-image { height: 120px; }
+      .game-name { font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .games-grid { grid-template-columns: 1fr; }
+      .header-right { margin-left: 0; width: 100%; margin-top: 10px; }
+      .add-btn { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <a href="index.html" class="back-btn">← BACK</a>
+    <h1>ORA<span>FUT</span> · GAMES</h1>
+    <div class="header-right">
+      <a href="addgame.html" class="add-btn">+ ADD GAME</a>
+    </div>
+  </div>
+  <div id="gamesContainer">
+    <div class="loading">Loading games...</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  
+  firebase.initializeApp({ apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" });
+  const db = firebase.firestore();
+  
+  const container = document.getElementById('gamesContainer');
+  
+  async function loadGames() {
+    try {
+      var snap = await db.collection('games').orderBy('createdAt', 'desc').get();
+      var games = [];
+      snap.forEach(function(doc) { games.push({ id: doc.id, ...doc.data() }); });
+      
+      if (games.length === 0) {
+        container.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span><h3>No games yet</h3><p style="margin-top:8px;">Click "ADD GAME" to add your first game!</p></div>';
+        return;
+      }
+      
+      var html = '<div class="games-grid">';
+      games.forEach(function(game) {
+        html += '<div class="game-card" onclick="openGame(\'' + game.location + '\')"><div class="game-image">' + 
+          (game.imageUrl ? '<img src="' + game.imageUrl + '" alt="' + game.name + '">' : '<span class="iconify" data-icon="mdi:gamepad-variant"></span>') + 
+          '</div><div class="game-info"><div class="game-name">' + game.name + '</div><div class="game-category">Click to Play</div></div></div>';
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<div class="error-message">Failed to load games. Please refresh.</div>';
+    }
+  }
+  
+  window.openGame = function(location) {
+    if (location) {
+      window.location.href = location + '.html';
+    }
+  };
+  
+  loadGames();
+})();
+</script>
+</body>
+</html>

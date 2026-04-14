@@ -1,1 +1,855 @@
-Coming...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ORAFUT · Logo Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #f0f2f5;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      min-height: 100vh; 
+      font-family: 'Poppins', sans-serif; 
+      padding: 10px;
+    }
+    
+    /* PC Ad Containers */
+    .ad-left, .ad-right {
+      display: none;
+      width: 160px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 1024px) {
+      .ad-left, .ad-right {
+        display: block;
+      }
+      body {
+        gap: 10px;
+      }
+    }
+    .ad-container {
+      width: 160px;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    
+    .game-container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    /* Header */
+    .game-header {
+      background: #1a1a1a;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s;
+    }
+    .back-btn:hover {
+      opacity: 0.7;
+    }
+    .back-btn .iconify {
+      font-size: 24px;
+    }
+    .game-brand {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+    }
+    .game-brand .ora { color: white; }
+    .game-brand .fut { color: #9CE800; }
+    
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 15px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-icon {
+      color: #9CE800;
+      font-size: 18px;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #6c757d;
+    }
+    
+    /* Timer */
+    .timer-section {
+      background: #9CE800;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    .timer-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .timer-display {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1a1a1a;
+      font-family: monospace;
+      line-height: 1;
+    }
+    .timer-display.warning { color: #dc3545; }
+    
+    /* Question Area */
+    .question-area {
+      padding: 25px 20px 15px;
+      text-align: center;
+    }
+    .question-text {
+      color: #495057;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    /* Logo Display */
+    .logo-display {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .logo-card {
+      text-align: center;
+    }
+    .logo-image {
+      width: 160px;
+      height: 160px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .logo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 15px;
+    }
+    .logo-image .iconify {
+      font-size: 80px;
+      color: #9CE800;
+    }
+    
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 10px 15px 15px;
+    }
+    .option-btn {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 14px 12px;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: #e9ecef;
+      border-color: #9CE800;
+    }
+    .option-btn.correct {
+      background: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+    .option-btn.wrong {
+      background: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+      opacity: 0.8;
+    }
+    .option-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .option-prefix {
+      width: 28px;
+      height: 28px;
+      background: #e9ecef;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: #6c757d;
+    }
+    .option-btn.correct .option-prefix { background: #28a745; color: white; }
+    .option-btn.wrong .option-prefix { background: #dc3545; color: white; }
+    
+    /* Progress Bar */
+    .progress-section {
+      padding: 10px 20px 15px;
+    }
+    .progress-bar {
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #9CE800;
+      border-radius: 10px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #6c757d;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    
+    /* Result Screen */
+    .result-screen {
+      padding: 25px 20px;
+      text-align: center;
+      display: none;
+    }
+    .result-screen.show { display: block; }
+    .result-trophy {
+      font-size: 50px;
+      color: #ffc107;
+      margin-bottom: 10px;
+    }
+    .result-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    .result-score {
+      font-size: 42px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+    }
+    .result-score span { color: #9CE800; }
+    .result-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    .result-stat { text-align: center; }
+    .result-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #9CE800;
+    }
+    .result-stat-label {
+      font-size: 11px;
+      color: #6c757d;
+      text-transform: uppercase;
+    }
+    
+    /* Ad Container */
+    .ad-banner {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+    }
+    .social-bar {
+      padding: 8px 0;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .play-again-btn {
+      background: #9CE800;
+      border: none;
+      color: #1a1a1a;
+      padding: 14px 40px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .play-again-btn:hover {
+      background: #8bc900;
+      transform: scale(1.02);
+    }
+    .home-link {
+      color: #6c757d;
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* Game Area */
+    .game-area { display: block; }
+    .game-area.hide { display: none; }
+    
+    /* Loading */
+    .loading-screen {
+      padding: 50px;
+      text-align: center;
+      color: #6c757d;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e9ecef;
+      border-top-color: #9CE800;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Feedback */
+    .feedback-message {
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      min-height: 35px;
+    }
+    .feedback-message.correct { color: #28a745; }
+    .feedback-message.wrong { color: #dc3545; }
+    
+    /* Mobile */
+    @media (max-width: 480px) {
+      .game-container { border-radius: 0; }
+      .logo-image { width: 140px; height: 140px; }
+      .option-btn { padding: 12px 8px; font-size: 13px; }
+      .stats-bar { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+<!-- Left Side Ad (PC Only) -->
+<div class="ad-left">
+  <div class="ad-container">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '513405c41397d2263bdcca6adf74206c',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
+  </div>
+</div>
+
+<div class="game-container">
+  <div class="game-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">
+        <span class="iconify" data-icon="mdi:arrow-left"></span>
+      </button>
+      <div class="game-brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    </div>
+  </div>
+  
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-spinner"></div>
+    <div>Loading teams...</div>
+  </div>
+  
+  <div class="game-area" id="gameArea" style="display:none;">
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:trophy"></span></span>
+        <span class="stat-value" id="scoreDisplay">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:poll"></span></span>
+        <span class="stat-value" id="roundDisplay">1/10</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:lightning-bolt"></span></span>
+        <span class="stat-value" id="streakDisplay">0</span>
+      </div>
+    </div>
+    
+    <div class="timer-section">
+      <div class="timer-label"><span class="iconify" data-icon="mdi:clock-outline"></span> TIME</div>
+      <div class="timer-display" id="timerDisplay">5</div>
+    </div>
+    
+    <div class="question-area">
+      <div class="question-text">WHICH TEAM IS THIS?</div>
+      <div class="logo-display">
+        <div class="logo-card">
+          <div class="logo-image" id="targetLogo">
+            <span class="iconify" data-icon="mdi:shield-half-full"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="options-grid" id="optionsContainer"></div>
+    
+    <div class="feedback-message" id="feedbackMessage"></div>
+    
+    <div class="progress-section">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text">
+        <span id="progressText">0/10</span>
+        <span id="bestStreakText">Best: 0</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="result-screen" id="resultScreen">
+    <div class="result-trophy"><span class="iconify" data-icon="mdi:trophy-award"></span></div>
+    <div class="result-title">GAME OVER!</div>
+    <div class="result-score"><span id="finalScore">0</span></div>
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalCorrect">0</div>
+        <div class="result-stat-label">Correct</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalAccuracy">0%</div>
+        <div class="result-stat-label">Accuracy</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalStreak">0</div>
+        <div class="result-stat-label">Best Streak</div>
+      </div>
+    </div>
+    
+    <!-- Banner Ad -->
+    <div class="ad-banner" id="gameOverAd">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '0d65716928aa9a56b35f6dfe72db565a',
+          'format' : 'iframe',
+          'height' : 60,
+          'width' : 468,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/0d65716928aa9a56b35f6dfe72db565a/invoke.js"></script>
+    </div>
+    
+    <button class="play-again-btn" onclick="startNewGame()">
+      <span class="iconify" data-icon="mdi:refresh"></span> PLAY AGAIN
+    </button>
+    <br>
+    <a href="index.html" class="home-link">
+      <span class="iconify" data-icon="mdi:home"></span> Home
+    </a>
+  </div>
+  
+  <!-- Social Bar Ad - Always visible -->
+  <div class="social-bar">
+    <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+  </div>
+</div>
+
+<!-- Right Side Ad (PC Only) -->
+<div class="ad-right">
+  <div class="ad-container">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '513405c41397d2263bdcca6adf74206c',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  
+  firebase.initializeApp({
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+    authDomain: "orafut-58b5f.firebaseapp.com",
+    projectId: "orafut-58b5f",
+    storageBucket: "orafut-58b5f.firebasestorage.app",
+    messagingSenderId: "500581059835",
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+  });
+  const db = firebase.firestore();
+  
+  let teams = [];
+  let usedTeamIds = new Set();
+  let currentRound = 0;
+  let score = 0;
+  let streak = 0;
+  let bestStreak = 0;
+  let correctAnswers = 0;
+  let totalRounds = 10;
+  let timer = null;
+  let timeLeft = 5;
+  let currentQuestion = null;
+  let canAnswer = true;
+  let gameActive = false;
+  
+  const loadingScreen = document.getElementById('loadingScreen');
+  const gameArea = document.getElementById('gameArea');
+  const resultScreen = document.getElementById('resultScreen');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const roundDisplay = document.getElementById('roundDisplay');
+  const streakDisplay = document.getElementById('streakDisplay');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const targetLogo = document.getElementById('targetLogo');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const bestStreakText = document.getElementById('bestStreakText');
+  const feedbackMessage = document.getElementById('feedbackMessage');
+  const finalScore = document.getElementById('finalScore');
+  const finalCorrect = document.getElementById('finalCorrect');
+  const finalAccuracy = document.getElementById('finalAccuracy');
+  const finalStreak = document.getElementById('finalStreak');
+  
+  // Back button function
+  window.goBack = function() {
+    window.history.back();
+  };
+  
+  async function loadTeams() {
+    try {
+      const snap = await db.collection('teams').where('isActive', '==', true).get();
+      teams = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.logoUrl) {
+          teams.push({
+            id: doc.id,
+            name: data.name,
+            logoUrl: data.logoUrl
+          });
+        }
+      });
+      
+      if (teams.length < 4) {
+        teams = [
+          { id: '1', name: 'Manchester United', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg' },
+          { id: '2', name: 'Real Madrid', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg' },
+          { id: '3', name: 'Barcelona', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg' },
+          { id: '4', name: 'Bayern Munich', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg' },
+          { id: '5', name: 'Juventus', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Juventus_FC_2017_icon.svg' },
+          { id: '6', name: 'PSG', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg' },
+          { id: '7', name: 'Liverpool', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg' },
+          { id: '8', name: 'Manchester City', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg' },
+          { id: '9', name: 'Arsenal', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg' },
+          { id: '10', name: 'Chelsea', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg' },
+          { id: '11', name: 'AC Milan', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg' },
+          { id: '12', name: 'Inter Milan', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg' }
+        ];
+      }
+      
+      loadingScreen.style.display = 'none';
+      gameArea.style.display = 'block';
+      startNewGame();
+    } catch (error) {
+      console.error('Error loading teams:', error);
+      teams = [
+        { id: '1', name: 'Manchester United', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg' },
+        { id: '2', name: 'Real Madrid', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg' },
+        { id: '3', name: 'Barcelona', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg' },
+        { id: '4', name: 'Bayern Munich', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg' }
+      ];
+      loadingScreen.style.display = 'none';
+      gameArea.style.display = 'block';
+      startNewGame();
+    }
+  }
+  
+  function updateUI() {
+    scoreDisplay.textContent = score;
+    roundDisplay.textContent = `${currentRound}/${totalRounds}`;
+    streakDisplay.textContent = streak;
+    
+    const progress = (currentRound / totalRounds) * 100;
+    progressFill.style.width = progress + '%';
+    progressText.textContent = `${currentRound}/${totalRounds}`;
+    bestStreakText.textContent = `Best: ${bestStreak}`;
+  }
+  
+  function getAvailableTeams() {
+    return teams.filter(t => !usedTeamIds.has(t.id));
+  }
+  
+  function generateQuestion() {
+    if (!gameActive) return;
+    
+    const availableTeams = getAvailableTeams();
+    
+    if (availableTeams.length < 4) {
+      endGame();
+      return;
+    }
+    
+    const shuffled = [...availableTeams].sort(() => Math.random() - 0.5);
+    const correctTeam = shuffled[0];
+    usedTeamIds.add(correctTeam.id);
+    
+    const otherTeams = shuffled.slice(1, 4);
+    let options = [correctTeam, ...otherTeams];
+    options = options.sort(() => Math.random() - 0.5);
+    
+    currentQuestion = {
+      correct: correctTeam,
+      options: options
+    };
+    
+    targetLogo.innerHTML = `<img src="${correctTeam.logoUrl}" alt="Team Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:shield-half-full\\'></span>'">`;
+    
+    const prefixes = ['A', 'B', 'C', 'D'];
+    optionsContainer.innerHTML = '';
+    options.forEach((team, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `
+        <span class="option-prefix">${prefixes[index]}</span>
+        <span>${team.name}</span>
+      `;
+      btn.onclick = () => handleAnswer(team.id === correctTeam.id, btn, correctTeam.name);
+      optionsContainer.appendChild(btn);
+    });
+    
+    feedbackMessage.textContent = '';
+    feedbackMessage.className = 'feedback-message';
+    
+    resetTimer();
+    canAnswer = true;
+  }
+  
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    timeLeft = 5;
+    timerDisplay.textContent = timeLeft;
+    timerDisplay.classList.remove('warning');
+    
+    timer = setInterval(() => {
+      if (!gameActive) {
+        clearInterval(timer);
+        return;
+      }
+      
+      timeLeft--;
+      timerDisplay.textContent = timeLeft;
+      
+      if (timeLeft <= 2) {
+        timerDisplay.classList.add('warning');
+      }
+      
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        timerDisplay.textContent = '0';
+        handleSkip();
+      }
+    }, 1000);
+  }
+  
+  function handleSkip() {
+    if (!canAnswer || !gameActive) return;
+    canAnswer = false;
+    
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      const teamName = btn.querySelector('span:last-child').textContent;
+      if (teamName === currentQuestion.correct.name) {
+        btn.classList.add('correct');
+      }
+    });
+    
+    streak = 0;
+    feedbackMessage.textContent = `⏰ Skipped! It was ${currentQuestion.correct.name}`;
+    feedbackMessage.className = 'feedback-message wrong';
+    
+    updateUI();
+    
+    setTimeout(() => {
+      nextRound();
+    }, 1500);
+  }
+  
+  function handleAnswer(isCorrect, btn, correctName) {
+    if (!canAnswer || !gameActive) return;
+    canAnswer = false;
+    clearInterval(timer);
+    
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.disabled = true);
+    
+    if (isCorrect) {
+      btn.classList.add('correct');
+      const points = 10 + (timeLeft * 2);
+      score += points;
+      streak++;
+      correctAnswers++;
+      if (streak > bestStreak) bestStreak = streak;
+      feedbackMessage.textContent = `✅ Correct! +${points} points!`;
+      feedbackMessage.className = 'feedback-message correct';
+    } else {
+      btn.classList.add('wrong');
+      buttons.forEach(b => {
+        if (b.querySelector('span:last-child').textContent === correctName) {
+          b.classList.add('correct');
+        }
+      });
+      streak = 0;
+      feedbackMessage.textContent = `❌ Wrong! It was ${correctName}`;
+      feedbackMessage.className = 'feedback-message wrong';
+    }
+    
+    updateUI();
+    
+    setTimeout(() => {
+      nextRound();
+    }, 1500);
+  }
+  
+  function nextRound() {
+    if (!gameActive) return;
+    
+    if (currentRound >= totalRounds || getAvailableTeams().length < 4) {
+      endGame();
+      return;
+    }
+    
+    currentRound++;
+    updateUI();
+    generateQuestion();
+  }
+  
+  function endGame() {
+    gameActive = false;
+    if (timer) clearInterval(timer);
+    
+    gameArea.style.display = 'none';
+    resultScreen.classList.add('show');
+    
+    finalScore.textContent = score;
+    finalCorrect.textContent = correctAnswers;
+    finalAccuracy.textContent = currentRound > 0 ? Math.round((correctAnswers / currentRound) * 100) + '%' : '0%';
+    finalStreak.textContent = bestStreak;
+    
+    saveScore();
+  }
+  
+  async function saveScore() {
+    try {
+      const anonymousId = localStorage.getItem('anonymousId') || 'anon_' + Date.now();
+      await db.collection('game_scores').add({
+        anonymousId: anonymousId,
+        gameType: 'logo_challenge',
+        score: score,
+        correctAnswers: correctAnswers,
+        bestStreak: bestStreak,
+        totalRounds: currentRound,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  }
+  
+  function startNewGame() {
+    currentRound = 0;
+    score = 0;
+    streak = 0;
+    bestStreak = 0;
+    correctAnswers = 0;
+    usedTeamIds.clear();
+    gameActive = true;
+    
+    resultScreen.classList.remove('show');
+    gameArea.style.display = 'block';
+    
+    updateUI();
+    nextRound();
+  }
+  
+  loadTeams();
+  window.startNewGame = startNewGame;
+})();
+</script>
+</body>
+</html>

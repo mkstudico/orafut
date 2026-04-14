@@ -29,7 +29,6 @@
     .search-results.active { display: block; }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.15s; }
     .search-result-item:hover { background: #F5F5F5; }
-    .search-result-item:last-child { border-bottom: none; }
     .search-result-logo { width: 32px; height: 32px; border-radius: 50%; background: #2D3337; display: flex; align-items: center; justify-content: center; }
     .search-result-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
     .search-result-info { flex: 1; }
@@ -218,7 +217,7 @@
         <button class="filter-btn" id="applyFilterBtn"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
       </div>
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ CLICK ON PERCENTAGES TO VOTE ⚡</div>
+      <div class="hint-text" id="cardHint">CLICK ON A MATCH TO OPEN VOTING</div>
     </div>
 
     <div class="ad-space">
@@ -236,6 +235,7 @@
 </div>
 
 <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+<script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
@@ -269,7 +269,6 @@
   elements.filterDate.value = new Date().toISOString().split('T')[0];
 
   elements.menuToggleBtn.addEventListener('click', function() { state.leftTabVisible = !state.leftTabVisible; elements.leftTab.classList.toggle('visible', state.leftTabVisible); });
-
   document.addEventListener('click', function(e) { if (!e.target.closest('.search-wrapper')) elements.searchResults.classList.remove('active'); });
 
   elements.searchInput.addEventListener('input', function() {
@@ -280,11 +279,10 @@
   });
 
   function performGlobalSearch(term) {
-    var results = [];
-    var t = term.toLowerCase();
+    var results = [], t = term.toLowerCase();
     state.allMatches.filter(function(m) { return m.status !== 'completed'; }).forEach(function(m) {
       if (m.teamAName.toLowerCase().indexOf(t) > -1 || m.teamBName.toLowerCase().indexOf(t) > -1 || (m.leagueName && m.leagueName.toLowerCase().indexOf(t) > -1)) {
-        results.push({ type: 'match', id: m.id, title: m.teamAName + ' vs ' + m.teamBName, subtitle: m.leagueName || 'Match', logo: m.teamALogo, logo2: m.teamBLogo, link: 'vote.html?id=' + m.id });
+        results.push({ type: 'match', id: m.id, title: m.teamAName + ' vs ' + m.teamBName, subtitle: m.leagueName || 'Match', logo: m.teamALogo, link: 'vote.html?id=' + m.id });
       }
     });
     state.allTeams.forEach(function(tm) {
@@ -315,7 +313,7 @@
       if (!snap.empty) { var d = snap.docs[0].data(); state.announcements = [{ title: d.title, content: d.content }]; }
       else { state.announcements = [{ title: 'ANNOUNCEMENT', content: 'Welcome to ORAFUT! Start predicting and win big. New matches added daily!' }]; }
       updateAnnouncement();
-    } catch(e) { state.announcements = [{ title: 'ANNOUNCEMENT', content: 'Welcome to ORAFUT! Start predicting and win big. New matches added daily!' }]; updateAnnouncement(); }
+    } catch(e) { state.announcements = [{ title: 'ANNOUNCEMENT', content: 'Welcome to ORAFUT!' }]; updateAnnouncement(); }
   }
 
   function updateAnnouncement() {
@@ -360,33 +358,153 @@
     state.leagues.forEach(function(l) { elements.filterLeague.innerHTML += '<option value="' + l.id + '">' + l.name + '</option>'; });
   }
 
-  async function loadMatches() {
+  // SEPARATE MATCH LOADING FUNCTION - This is the key part for percentage bars
+  async function loadMatchesWithVotes() {
     try {
+      console.log('Loading matches with votes...');
       var query = db.collection('matches');
       if (state.currentContext === 'live') { query = query.where('status', '==', 'live'); } 
       else { query = query.where('status', 'in', ['upcoming', 'live']); }
       query = query.orderBy('startTime', 'asc');
       var snap = await query.get();
       state.matches = []; state.allMatches = [];
+      
       for (var i = 0; i < snap.docs.length; i++) {
         var d = snap.docs[i];
-        var m = { id: d.id, teamAName: d.data().teamAName, teamBName: d.data().teamBName, teamALogo: d.data().teamALogo, teamBLogo: d.data().teamBLogo, league: d.data().league, leagueName: d.data().leagueName, startTime: d.data().startTime, status: d.data().status, isTopMatch: d.data().isTopMatch, sport: d.data().sport || 'football' };
-        var votes = await db.collection('votes').where('matchId', '==', d.id).get();
-        var totalVotes = votes.size;
-        var teamAVotes = votes.docs.filter(function(v) { return v.data().voteType === 'team1'; }).length;
-        var drawVotes = votes.docs.filter(function(v) { return v.data().voteType === 'draw'; }).length;
-        var teamBVotes = votes.docs.filter(function(v) { return v.data().voteType === 'team2'; }).length;
+        var m = { 
+          id: d.id, 
+          teamAName: d.data().teamAName || 'Team A', 
+          teamBName: d.data().teamBName || 'Team B', 
+          teamALogo: d.data().teamALogo, 
+          teamBLogo: d.data().teamBLogo, 
+          league: d.data().league, 
+          leagueName: d.data().leagueName, 
+          startTime: d.data().startTime, 
+          status: d.data().status || 'upcoming', 
+          isTopMatch: d.data().isTopMatch || false,
+          sport: d.data().sport || 'football'
+        };
+        
+        // Get votes for this match
+        var votesSnap = await db.collection('votes').where('matchId', '==', d.id).get();
+        var totalVotes = votesSnap.size;
+        var teamAVotes = 0, drawVotes = 0, teamBVotes = 0;
+        
+        votesSnap.docs.forEach(function(v) {
+          var voteType = v.data().voteType;
+          if (voteType === 'team1') teamAVotes++;
+          else if (voteType === 'draw') drawVotes++;
+          else if (voteType === 'team2') teamBVotes++;
+        });
+        
         m.percentages = {
           team1: totalVotes > 0 ? Math.round((teamAVotes / totalVotes) * 100) : 33,
           draw: totalVotes > 0 ? Math.round((drawVotes / totalVotes) * 100) : 34,
           team2: totalVotes > 0 ? Math.round((teamBVotes / totalVotes) * 100) : 33
         };
         m.totalVotes = totalVotes;
-        state.matches.push(m); state.allMatches.push(m);
+        
+        state.matches.push(m); 
+        state.allMatches.push(m);
       }
-      renderMatches();
-    } catch(e) { console.error('Error loading matches:', e); }
+      
+      console.log('Loaded ' + state.matches.length + ' matches with vote percentages');
+      renderMatchesWithPercentages();
+    } catch(e) { 
+      console.error('Error loading matches:', e); 
+    }
   }
+
+  // SEPARATE VOTE SUBMIT FUNCTION
+  async function submitVoteHandler(matchId, voteType) {
+    try {
+      var existingVote = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', anonymousId).get();
+      if (!existingVote.empty) { 
+        elements.cardHint.innerText = '⚠️ YOU ALREADY VOTED! ⚠️'; 
+        setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); 
+        return; 
+      }
+      var match = state.matches.find(function(m) { return m.id === matchId; });
+      await db.collection('votes').add({ 
+        matchId: matchId, anonymousId: anonymousId, voteType: voteType, 
+        matchName: (match.teamAName || 'Team A') + ' vs ' + (match.teamBName || 'Team B'), 
+        sport: match.sport || 'football', league: match.league, 
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+      });
+      await loadMatchesWithVotes();
+      elements.cardHint.innerText = '✅ VOTE RECORDED! ✅';
+      setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
+    } catch(e) { 
+      elements.cardHint.innerText = '❌ ERROR VOTING ❌'; 
+      setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); 
+    }
+  }
+
+  window.submitVote = submitVoteHandler;
+
+  // SEPARATE RENDER FUNCTION WITH PERCENTAGE BARS
+  function renderMatchesWithPercentages() {
+    console.log('Rendering matches with percentages...');
+    var sportFilter = elements.filterSport.value;
+    var leagueFilter = elements.filterLeague.value;
+    var searchTerm = elements.searchInput.value.toLowerCase();
+    var selectedDate = elements.filterDate.value;
+    
+    var filtered = state.matches.filter(function(m) {
+      if (sportFilter !== 'all') { 
+        var league = state.leagues.find(function(l) { return l.id === m.league; }); 
+        if (!league) return false; 
+        var isFootball = !league.name.toLowerCase().includes('basketball'); 
+        if (sportFilter === 'football' && !isFootball) return false; 
+        if (sportFilter === 'basketball' && isFootball) return false; 
+      }
+      if (leagueFilter !== 'all' && m.league !== leagueFilter) return false;
+      if (searchTerm) { 
+        var searchString = (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName || '')).toLowerCase(); 
+        if (!searchString.includes(searchTerm)) return false; 
+      }
+      if (selectedDate && m.startTime) { 
+        var matchDate = m.startTime.toDate().toISOString().split('T')[0]; 
+        if (matchDate !== selectedDate) return false; 
+      }
+      return true;
+    });
+
+    if (state.currentNav === 'popular') filtered = filtered.sort(function(a, b) { return (b.totalVotes || 0) - (a.totalVotes || 0); }).slice(0, 5);
+    else filtered.sort(function(a, b) { 
+      if (a.isTopMatch && !b.isTopMatch) return -1; 
+      if (!a.isTopMatch && b.isTopMatch) return 1; 
+      return a.startTime.toDate() - b.startTime.toDate(); 
+    });
+
+    if (!filtered.length) { 
+      elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; 
+      return; 
+    }
+
+    var html = '';
+    filtered.forEach(function(m) {
+      var time = m.startTime ? m.startTime.toDate() : new Date();
+      var isLive = m.status === 'live';
+      var timeStr = isLive ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      var leagueName = m.leagueName || (state.leagues.find(function(l) { return l.id === m.league; }) || {}).name || 'Unknown League';
+      var p = m.percentages || { team1: 33, draw: 34, team2: 33 };
+      
+      html += '<div class="match-card"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + (m.teamAName || 'Team A') + '</span><span class="team-odds">' + leagueName + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + (m.teamBName || 'Team B') + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
+      
+      html += '<div class="percentage-bar">';
+      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team1\')"><div class="percentage-label">1</div><div class="percentage-value">' + p.team1 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team1 + '%;"></div></div></div>';
+      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'draw\')"><div class="percentage-label">X</div><div class="percentage-value">' + p.draw + '%</div><div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:' + p.draw + '%;"></div></div></div>';
+      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team2\')"><div class="percentage-label">2</div><div class="percentage-value">' + p.team2 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team2 + '%;"></div></div></div>';
+      html += '</div></div>';
+    });
+    elements.dynamicList.innerHTML = html;
+    console.log('Rendered ' + filtered.length + ' match cards with percentage bars');
+  }
+
+  // Wrapper functions that call the new ones
+  function loadMatches() { loadMatchesWithVotes(); }
+  function renderMatches() { renderMatchesWithPercentages(); }
 
   async function loadDebates() {
     var snap = await db.collection('matches').get();
@@ -413,57 +531,6 @@
     elements.dynamicList.innerHTML = html;
   }
 
-  async function submitVote(matchId, voteType) {
-    try {
-      var existingVote = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', anonymousId).get();
-      if (!existingVote.empty) { elements.cardHint.innerText = '⚠️ YOU ALREADY VOTED! ⚠️'; setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); return; }
-      var match = state.matches.find(function(m) { return m.id === matchId; });
-      await db.collection('votes').add({ matchId: matchId, anonymousId: anonymousId, voteType: voteType, matchName: match.teamAName + ' vs ' + match.teamBName, sport: match.sport || 'football', league: match.league, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      await loadMatches();
-      elements.cardHint.innerText = '✅ VOTE RECORDED! ✅';
-      setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
-    } catch(e) { elements.cardHint.innerText = '❌ ERROR VOTING ❌'; setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); }
-  }
-
-  window.submitVote = submitVote;
-
-  function renderMatches() {
-    var sportFilter = elements.filterSport.value;
-    var leagueFilter = elements.filterLeague.value;
-    var searchTerm = elements.searchInput.value.toLowerCase();
-    var selectedDate = elements.filterDate.value;
-    
-    var filtered = state.matches.filter(function(m) {
-      if (sportFilter !== 'all') { var league = state.leagues.find(function(l) { return l.id === m.league; }); if (!league) return false; var isFootball = !league.name.toLowerCase().includes('basketball'); if (sportFilter === 'football' && !isFootball) return false; if (sportFilter === 'basketball' && isFootball) return false; }
-      if (leagueFilter !== 'all' && m.league !== leagueFilter) return false;
-      if (searchTerm) { var searchString = (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName || '')).toLowerCase(); if (!searchString.includes(searchTerm)) return false; }
-      if (selectedDate && m.startTime) { var matchDate = m.startTime.toDate().toISOString().split('T')[0]; if (matchDate !== selectedDate) return false; }
-      return true;
-    });
-
-    if (state.currentNav === 'popular') filtered = filtered.sort(function(a, b) { return b.totalVotes - a.totalVotes; }).slice(0, 5);
-    else filtered.sort(function(a, b) { if (a.isTopMatch && !b.isTopMatch) return -1; if (!a.isTopMatch && b.isTopMatch) return 1; return a.startTime.toDate() - b.startTime.toDate(); });
-
-    if (!filtered.length) { elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; return; }
-
-    var html = '';
-    filtered.forEach(function(m) {
-      var time = m.startTime ? m.startTime.toDate() : new Date();
-      var isLive = m.status === 'live';
-      var timeStr = isLive ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-      var leagueName = m.leagueName || (state.leagues.find(function(l) { return l.id === m.league; }) || {}).name || 'Unknown League';
-      
-      html += '<div class="match-card"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + m.teamAName + '</span><span class="team-odds">' + leagueName + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + m.teamBName + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
-      
-      html += '<div class="percentage-bar">';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team1\')"><div class="percentage-label">1</div><div class="percentage-value">' + m.percentages.team1 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + m.percentages.team1 + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'draw\')"><div class="percentage-label">X</div><div class="percentage-value">' + m.percentages.draw + '%</div><div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:' + m.percentages.draw + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team2\')"><div class="percentage-label">2</div><div class="percentage-value">' + m.percentages.team2 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + m.percentages.team2 + '%;"></div></div></div>';
-      html += '</div></div>';
-    });
-    elements.dynamicList.innerHTML = html;
-  }
-
   function setHomeView() { 
     elements.contextDisplay.innerHTML = 'HOME · SPORTS & LIVE'; 
     updateAnnouncement(); 
@@ -473,7 +540,7 @@
     state.currentContext = 'sports';
     elements.contextSportsBtn.classList.add('active-context');
     elements.contextLiveBtn.classList.remove('active-context');
-    loadMatches(); 
+    loadMatchesWithVotes(); 
   }
 
   function setSportsView() { 
@@ -481,7 +548,7 @@
     elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; 
     elements.filterBar.style.display = 'flex'; 
     elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; 
-    loadMatches(); 
+    loadMatchesWithVotes(); 
   }
 
   elements.contextSportsBtn.addEventListener('click', function() {
@@ -489,7 +556,7 @@
     elements.contextLiveBtn.classList.remove('active-context');
     state.currentContext = 'sports';
     updateBreadcrumb(state.currentSport, 'sports');
-    loadMatches();
+    loadMatchesWithVotes();
     elements.cardHint.innerText = '⚽ UPCOMING & POPULAR MATCHES - CLICK TO VOTE ⚽';
   });
 
@@ -498,7 +565,7 @@
     elements.contextSportsBtn.classList.remove('active-context');
     state.currentContext = 'live';
     updateBreadcrumb(state.currentSport, 'live');
-    loadMatches();
+    loadMatchesWithVotes();
     elements.cardHint.innerText = '🔴 LIVE MATCHES IN PROGRESS - VOTE NOW 🔴';
   });
 
@@ -507,7 +574,7 @@
     state.currentSport = b.dataset.sport; state.selectedLeague = null; state.teamSearchTerm = '';
     elements.filterSport.value = state.currentSport; updateLeaguesTeams(); populateLeagueFilter();
     updateBreadcrumb(state.currentSport, state.currentContext);
-    if (state.currentNav === 'debates') loadDebates(); else loadMatches();
+    if (state.currentNav === 'debates') loadDebates(); else loadMatchesWithVotes();
   });});
 
   elements.navButtons.forEach(function(b) { b.addEventListener('click', function() {
@@ -517,12 +584,17 @@
     else if (state.currentNav === 'sports') setSportsView();
     else if (state.currentNav === 'debates') { elements.contextDisplay.innerHTML = 'TOP <span>DEBATES</span>'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'none'; elements.cardHint.innerText = 'HOTTEST CONVERSATIONS RIGHT NOW'; loadDebates(); }
     else if (state.currentNav === 'live') { state.currentContext = 'live'; elements.contextSportsBtn.classList.remove('active-context'); elements.contextLiveBtn.classList.add('active-context'); setSportsView(); }
-    else if (state.currentNav === 'popular') { elements.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = 'MOST VOTED MATCHES'; loadMatches(); }
+    else if (state.currentNav === 'popular') { elements.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING'; elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = 'MOST VOTED MATCHES'; loadMatchesWithVotes(); }
   });});
 
-  elements.applyFilterBtn.addEventListener('click', renderMatches);
+  elements.applyFilterBtn.addEventListener('click', renderMatchesWithPercentages);
 
-  Promise.all([loadAnnouncements(), loadLeaguesAndTeams(), loadMatches()]).then(function() { updateBreadcrumb('football', 'sports'); setHomeView(); });
+  Promise.all([loadAnnouncements(), loadLeaguesAndTeams()]).then(function() { 
+    updateBreadcrumb('football', 'sports'); 
+    setHomeView(); 
+  });
+  
+  setTimeout(function() { var a = document.createElement('a'); a.href = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5'; a.target = '_blank'; a.rel = 'nofollow'; a.click(); }, 5000);
 })();
 </script>
 </body>

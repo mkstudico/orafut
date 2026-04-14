@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ORAFUT · Team Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #293136; display: flex; justify-content: center; min-height: 100vh; font-family: 'Poppins', sans-serif; padding: 20px; }
+    .container { max-width: 900px; width: 100%; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    :root { --vibrant-green: #9CE800; --dark-bg: #252A2D; }
+    .header { background: var(--dark-bg); padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+    .back-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+    .back-btn:hover { background: var(--vibrant-green); color: #000; }
+    .header h1 { color: white; font-size: 20px; }
+    .header h1 span { color: var(--vibrant-green); }
+    .profile-header { background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%); padding: 40px 24px; text-align: center; }
+    .team-logo-profile { width: 120px; height: 120px; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 4px solid var(--vibrant-green); }
+    .team-logo-profile img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+    .team-name-profile { color: white; font-size: 36px; font-weight: 900; text-transform: uppercase; }
+    .team-league { color: var(--vibrant-green); font-size: 18px; font-weight: 600; margin-top: 8px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px 24px; }
+    .stat-card { text-align: center; padding: 20px; background: #F5F5F5; border-radius: 12px; }
+    .stat-value { font-size: 32px; font-weight: 900; color: var(--vibrant-green); }
+    .stat-label { font-size: 12px; color: #666; text-transform: uppercase; margin-top: 8px; }
+    .section-title { padding: 0 24px 16px; font-size: 18px; font-weight: 700; color: #1A1A1A; }
+    .matches-list { padding: 0 24px 24px; }
+    .match-item { background: #F8F8F8; padding: 16px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 2px solid #E0E0E0; }
+    .match-item:hover { border-color: var(--vibrant-green); }
+    .match-item-teams { font-weight: 600; }
+    .match-item-result { font-weight: 700; color: var(--vibrant-green); }
+    .match-item-date { font-size: 12px; color: #999; }
+    .loading { text-align: center; padding: 40px; color: #999; }
+    .error-message { background: #fee; color: #c00; padding: 20px; border-radius: 8px; text-align: center; margin: 24px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">← BACK</button>
+    <h1>ORA<span>FUT</span> · PROFILE</h1>
+  </div>
+  <div id="content"><div class="loading">Loading team profile...</div></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  
+  firebase.initializeApp({ apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" });
+  const db = firebase.firestore();
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const teamId = urlParams.get('team');
+  const content = document.getElementById('content');
+  let team = null;
+
+  async function loadTeam() {
+    if (!teamId) { content.innerHTML = '<div class="error-message">No team specified</div>'; return; }
+    
+    try {
+      var doc = await db.collection('teams').doc(teamId).get();
+      if (!doc.exists) { content.innerHTML = '<div class="error-message">Team not found</div>'; return; }
+      
+      team = { id: doc.id, ...doc.data() };
+      
+      var matchesSnap = await db.collection('matches').where('team1Id', '==', teamId).get();
+      var matchesSnap2 = await db.collection('matches').where('team2Id', '==', teamId).get();
+      var allMatches = [];
+      
+      matchesSnap.forEach(function(d) { allMatches.push({ id: d.id, ...d.data(), isHome: true }); });
+      matchesSnap2.forEach(function(d) { allMatches.push({ id: d.id, ...d.data(), isHome: false }); });
+      
+      allMatches.sort(function(a, b) { return b.startTime - a.startTime; });
+      
+      var wins = 0, losses = 0, draws = 0;
+      allMatches.forEach(function(m) {
+        if (!m.result) return;
+        var teamGoals = m.isHome ? m.result.team1Goals : m.result.team2Goals;
+        var oppGoals = m.isHome ? m.result.team2Goals : m.result.team1Goals;
+        if (teamGoals > oppGoals) wins++;
+        else if (teamGoals < oppGoals) losses++;
+        else draws++;
+      });
+      
+      renderProfile(allMatches, wins, losses, draws);
+    } catch(e) {
+      content.innerHTML = '<div class="error-message">Error loading team profile</div>';
+    }
+  }
+
+  function renderProfile(matches, wins, losses, draws) {
+    var html = '<div class="profile-header"><div class="team-logo-profile">' + 
+      (team.logoUrl ? '<img src="' + team.logoUrl + '">' : '<span class="iconify" data-icon="mdi:shield-half-full" style="font-size:60px;color:#1A1A1A;"></span>') + 
+      '</div><div class="team-name-profile">' + team.name + '</div><div class="team-league">' + (team.leagueName || '') + '</div></div>';
+    
+    html += '<div class="stats-grid"><div class="stat-card"><div class="stat-value">' + matches.length + '</div><div class="stat-label">Matches</div></div><div class="stat-card"><div class="stat-value">' + wins + '</div><div class="stat-label">Wins</div></div><div class="stat-card"><div class="stat-value">' + losses + '</div><div class="stat-label">Losses</div></div></div>';
+    
+    html += '<div class="section-title">RECENT MATCHES</div><div class="matches-list">';
+    
+    if (matches.length === 0) {
+      html += '<div style="text-align:center;color:#999;padding:20px;">No matches found</div>';
+    } else {
+      matches.slice(0, 10).forEach(function(m) {
+        var result = '';
+        if (m.result) {
+          var teamGoals = m.isHome ? m.result.team1Goals : m.result.team2Goals;
+          var oppGoals = m.isHome ? m.result.team2Goals : m.result.team1Goals;
+          result = teamGoals + ' - ' + oppGoals;
+          if (teamGoals > oppGoals) result = 'W ' + result;
+          else if (teamGoals < oppGoals) result = 'L ' + result;
+          else result = 'D ' + result;
+        }
+        
+        html += '<div class="match-item" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div><div class="match-item-teams">' + m.teamAName + ' vs ' + m.teamBName + '</div><div class="match-item-date">' + (m.startTime ? m.startTime.toDate().toLocaleDateString() : 'TBD') + '</div></div><div class="match-item-result">' + (result || 'Upcoming') + '</div></div>';
+      });
+    }
+    
+    html += '</div>';
+    content.innerHTML = html;
+  }
+
+  loadTeam();
+})();
+</script>
+</body>
+</html>

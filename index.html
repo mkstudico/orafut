@@ -877,18 +877,7 @@
     <div class="ad-space">
       <div class="ad-container">
         <div class="ad-label">ADVERTISEMENT</div>
-        <div id="adsterra-banner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '513405c41397d2263bdcca6adf74206c',
-              'format' : 'iframe',
-              'height' : 600,
-              'width' : 160,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
-        </div>
+        <div id="adsterra-banner"></div>
       </div>
     </div>
   </div>
@@ -896,496 +885,366 @@
 
 <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
 <script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-  (function(){
-    "use strict";
+(function(){
+  "use strict";
 
-    if (window.innerWidth < 768) {
-      window.location.href = 'indexp.html';
-      return;
+  if (window.innerWidth < 768) {
+    window.location.href = 'indexp.html';
+    return;
+  }
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+    authDomain: "orafut-58b5f.firebaseapp.com",
+    projectId: "orafut-58b5f",
+    storageBucket: "orafut-58b5f.firebasestorage.app",
+    messagingSenderId: "500581059835",
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const leftTab = document.getElementById('leftTab');
+  const menuToggleBtn = document.getElementById('menuToggleBtn');
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const sportBtns = document.querySelectorAll('.sport-btn');
+  const leagueContainer = document.getElementById('leagueTeamsContainer');
+  const contextDisplay = document.getElementById('contextDisplay');
+  const dynamicList = document.getElementById('dynamicList');
+  const filterSport = document.getElementById('filterSport');
+  const filterLeague = document.getElementById('filterLeague');
+  const filterDate = document.getElementById('filterDate');
+  const applyFilterBtn = document.getElementById('applyFilterBtn');
+  const cardHint = document.getElementById('cardHint');
+  const breadcrumbSport = document.getElementById('breadcrumbSport');
+  const breadcrumbMatch = document.getElementById('breadcrumbMatch');
+  const searchInput = document.getElementById('searchInput');
+  const filterBar = document.getElementById('filterBar');
+  const announcementContainer = document.getElementById('announcementContainer');
+  const promoContainer = document.getElementById('promoContainer');
+
+  let currentNav = 'home';
+  let currentSport = 'football';
+  let leftTabVisible = false;
+  let teams = [];
+  let leagues = [];
+  let matches = [];
+  let anonymousId = localStorage.getItem('anonymousId');
+
+  if (!anonymousId) {
+    anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('anonymousId', anonymousId);
+  }
+
+  db.collection('anonymous_users').doc(anonymousId).set({
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  const today = new Date().toISOString().split('T')[0];
+  filterDate.value = today;
+
+  menuToggleBtn.addEventListener('click', function() {
+    if (leftTabVisible) {
+      leftTab.classList.remove('visible');
+      leftTabVisible = false;
+    } else {
+      leftTab.classList.add('visible');
+      leftTabVisible = true;
+    }
+  });
+
+  function updateBreadcrumb(sport, nav) {
+    breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
+    var navNames = { home: 'Home', sports: 'Sports', debates: 'Debates', live: 'Live', popular: 'Popular' };
+    breadcrumbMatch.textContent = navNames[nav] || 'Matches';
+  }
+
+  async function loadLeaguesAndTeams() {
+    try {
+      var leaguesSnap = await db.collection('leagues').get();
+      leagues = [];
+      leaguesSnap.forEach(function(doc) {
+        leagues.push({ id: doc.id, name: doc.data().name });
+      });
+
+      var teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
+      teams = [];
+      teamsSnap.forEach(function(doc) {
+        teams.push({ id: doc.id, name: doc.data().name, league: doc.data().league, leagueName: doc.data().leagueName });
+      });
+
+      updateLeaguesTeams(currentSport);
+      populateLeagueFilter();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  function updateLeaguesTeams(sport) {
+    var filteredLeagues = sport === 'football' 
+      ? leagues.filter(function(l) { return l.name && l.name.toLowerCase().indexOf('basketball') === -1; })
+      : leagues.filter(function(l) { return l.name && l.name.toLowerCase().indexOf('basketball') > -1; });
+    
+    var filteredTeams = sport === 'football'
+      ? teams.filter(function(t) { return t.leagueName && t.leagueName.toLowerCase().indexOf('basketball') === -1; })
+      : teams.filter(function(t) { return t.leagueName && t.leagueName.toLowerCase().indexOf('basketball') > -1; });
+
+    var html = '<div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div><div class="sub-section"><div class="item-list">';
+
+    if (filteredLeagues.length > 0) {
+      filteredLeagues.slice(0, 7).forEach(function(league) {
+        html += '<div class="item-chip" data-league="' + league.id + '"><span class="iconify" data-icon="mdi:chevron-right"></span>' + league.name + '</div>';
+      });
     }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
-      authDomain: "orafut-58b5f.firebaseapp.com",
-      projectId: "orafut-58b5f",
-      storageBucket: "orafut-58b5f.firebasestorage.app",
-      messagingSenderId: "500581059835",
-      appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
-    };
+    html += '</div></div><div class="section-label" style="margin-top: 20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div><div class="sub-section"><div class="item-list">';
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const leftTab = document.getElementById('leftTab');
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const sportBtns = document.querySelectorAll('.sport-btn');
-    const leagueContainer = document.getElementById('leagueTeamsContainer');
-    const contextDisplay = document.getElementById('contextDisplay');
-    const dynamicList = document.getElementById('dynamicList');
-    const filterSport = document.getElementById('filterSport');
-    const filterLeague = document.getElementById('filterLeague');
-    const filterDate = document.getElementById('filterDate');
-    const applyFilterBtn = document.getElementById('applyFilterBtn');
-    const cardHint = document.getElementById('cardHint');
-    const breadcrumbSport = document.getElementById('breadcrumbSport');
-    const breadcrumbMatch = document.getElementById('breadcrumbMatch');
-    const searchInput = document.getElementById('searchInput');
-    const filterBar = document.getElementById('filterBar');
-    const announcementContainer = document.getElementById('announcementContainer');
-    const promoContainer = document.getElementById('promoContainer');
-
-    let currentNav = 'home';
-    let currentSport = 'football';
-    let leftTabVisible = false;
-    let teams = [];
-    let leagues = [];
-    let matches = [];
-    let anonymousId = localStorage.getItem('anonymousId');
-    let adInserted = false;
-
-    if (!anonymousId) {
-      anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('anonymousId', anonymousId);
+    if (filteredTeams.length > 0) {
+      filteredTeams.slice(0, 8).forEach(function(team) {
+        html += '<div class="item-chip" data-team="' + team.id + '"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + team.name + '</div>';
+      });
     }
 
-    db.collection('anonymous_users').doc(anonymousId).set({
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      lastActive: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    html += '</div></div>';
+    leagueContainer.innerHTML = html;
 
-    const today = new Date().toISOString().split('T')[0];
-    filterDate.value = today;
-
-    menuToggleBtn.addEventListener('click', () => {
-      if (leftTabVisible) {
-        leftTab.classList.remove('visible');
-        leftTabVisible = false;
-      } else {
-        leftTab.classList.add('visible');
-        leftTabVisible = true;
-      }
+    document.querySelectorAll('[data-league]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        filterLeague.value = el.dataset.league;
+        renderMatches();
+      });
     });
+  }
 
-    function updateBreadcrumb(sport, nav) {
-      breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
-      const navNames = {
-        home: 'Home',
-        sports: 'Sports',
-        debates: 'Debates',
-        live: 'Live',
-        popular: 'Popular'
-      };
-      breadcrumbMatch.textContent = navNames[nav] || 'Matches';
-    }
+  function populateLeagueFilter() {
+    filterLeague.innerHTML = '<option value="all">All Leagues</option>';
+    leagues.forEach(function(league) {
+      filterLeague.innerHTML += '<option value="' + league.id + '">' + league.name + '</option>';
+    });
+  }
 
-    async function loadLeaguesAndTeams() {
-      try {
-        const leaguesSnap = await db.collection('leagues').get();
-        leagues = [];
-        leaguesSnap.forEach(doc => {
-          leagues.push({ id: doc.id, ...doc.data() });
-        });
-
-        const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
-        teams = [];
-        teamsSnap.forEach(doc => {
-          teams.push({ id: doc.id, ...doc.data() });
-        });
-
-        updateLeaguesTeams(currentSport);
-        populateLeagueFilter();
-      } catch (error) {
-        console.error('Error loading leagues/teams:', error);
-      }
-    }
-
-    function updateLeaguesTeams(sport) {
-      const filteredLeagues = sport === 'football' 
-        ? leagues.filter(l => l.name && !l.name.toLowerCase().includes('basketball'))
-        : leagues.filter(l => l.name && l.name.toLowerCase().includes('basketball'));
+  async function loadMatches() {
+    try {
+      var query = db.collection('matches').where('status', 'in', ['upcoming', 'live']).orderBy('startTime', 'asc');
+      var matchesSnap = await query.get();
+      matches = [];
       
-      const filteredTeams = sport === 'football'
-        ? teams.filter(t => t.leagueName && !t.leagueName.toLowerCase().includes('basketball'))
-        : teams.filter(t => t.leagueName && t.leagueName.toLowerCase().includes('basketball'));
-
-      let html = `
-        <div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div>
-        <div class="sub-section">
-          <div class="item-list">
-      `;
-
-      if (filteredLeagues.length > 0) {
-        filteredLeagues.slice(0, 7).forEach(league => {
-          html += `<div class="item-chip" data-league="${league.id}"><span class="iconify" data-icon="mdi:chevron-right"></span>${league.name}</div>`;
-        });
-      } else {
-        html += `<div class="item-chip"><span class="iconify" data-icon="mdi:chevron-right"></span>Loading leagues...</div>`;
-      }
-
-      html += `
-          </div>
-        </div>
-        <div class="section-label" style="margin-top: 20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div>
-        <div class="sub-section">
-          <div class="item-list">
-      `;
-
-      if (filteredTeams.length > 0) {
-        filteredTeams.slice(0, 8).forEach(team => {
-          html += `<div class="item-chip" data-team="${team.id}"><span class="iconify" data-icon="mdi:shield-half-full"></span>${team.name}</div>`;
-        });
-      } else {
-        html += `<div class="item-chip"><span class="iconify" data-icon="mdi:shield-half-full"></span>Loading teams...</div>`;
-      }
-
-      html += `
-          </div>
-        </div>
-      `;
-
-      leagueContainer.innerHTML = html;
-
-      document.querySelectorAll('[data-league]').forEach(el => {
-        el.addEventListener('click', () => {
-          filterLeague.value = el.dataset.league;
-          if (currentNav === 'sports' || currentNav === 'home') {
-            renderMatches();
-          }
-        });
-      });
-    }
-
-    function populateLeagueFilter() {
-      filterLeague.innerHTML = '<option value="all">All Leagues</option>';
-      leagues.forEach(league => {
-        filterLeague.innerHTML += `<option value="${league.id}">${league.name}</option>`;
-      });
-    }
-
-    async function loadMatches() {
-      try {
-        let query = db.collection('matches').where('status', 'in', ['upcoming', 'live']);
-        query = query.orderBy('startTime', 'asc');
-
-        const matchesSnap = await query.get();
-        matches = [];
+      for (var i = 0; i < matchesSnap.docs.length; i++) {
+        var doc = matchesSnap.docs[i];
+        var match = { id: doc.id, teamAName: doc.data().teamAName, teamBName: doc.data().teamBName, 
+                     teamALogo: doc.data().teamALogo, teamBLogo: doc.data().teamBLogo,
+                     league: doc.data().league, leagueName: doc.data().leagueName, 
+                     startTime: doc.data().startTime, status: doc.data().status };
         
-        for (const doc of matchesSnap.docs) {
-          const match = { id: doc.id, ...doc.data() };
-          
-          const votesSnap = await db.collection('votes').where('matchId', '==', doc.id).get();
-          const totalVotes = votesSnap.size;
-
-          match.totalVotes = totalVotes;
-          matches.push(match);
-        }
-
-        if (currentNav === 'home' || currentNav === 'sports' || currentNav === 'popular') {
-          renderMatches();
-        }
-      } catch (error) {
-        console.error('Error loading matches:', error);
+        var votesSnap = await db.collection('votes').where('matchId', '==', doc.id).get();
+        match.totalVotes = votesSnap.size;
+        matches.push(match);
       }
+
+      renderMatches();
+    } catch (error) {
+      console.error('Error:', error);
     }
+  }
 
-    async function loadDebates() {
-      try {
-        const matchesSnap = await db.collection('matches').get();
-        const debates = [];
+  async function loadDebates() {
+    try {
+      var matchesSnap = await db.collection('matches').get();
+      var debates = [];
 
-        for (const doc of matchesSnap.docs) {
-          const match = { id: doc.id, ...doc.data() };
-          
-          const messagesSnap = await db.collection('messages')
-            .where('matchId', '==', doc.id)
-            .orderBy('createdAt', 'desc')
-            .limit(4)
-            .get();
-
-          if (messagesSnap.size > 0) {
-            const messages = [];
-            messagesSnap.forEach(msg => {
-              messages.push(msg.data());
-            });
-
-            debates.push({
-              match: match,
-              messageCount: messagesSnap.size,
-              recentMessages: messages.reverse()
-            });
-          }
-        }
-
-        debates.sort((a, b) => b.messageCount - a.messageCount);
-        renderDebates(debates.slice(0, 3));
-      } catch (error) {
-        console.error('Error loading debates:', error);
-        dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No debates yet</div>';
-      }
-    }
-
-    function renderDebates(debates) {
-      let html = '';
-      
-      if (debates.length === 0) {
-        html = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet. Be the first to start one!</div>';
-      } else {
-        const emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
+      for (var i = 0; i < matchesSnap.docs.length; i++) {
+        var doc = matchesSnap.docs[i];
+        var match = { id: doc.id, teamAName: doc.data().teamAName, teamBName: doc.data().teamBName, leagueName: doc.data().leagueName };
         
-        debates.forEach((debate, index) => {
-          const match = debate.match;
-          const emoji = emojis[index % emojis.length];
-          
-          html += `
-            <div class="debate-card" onclick="openVotePage('${match.id}')">
-              <div class="debate-header">
-                <span class="iconify" data-icon="mdi:message-text-outline" style="color: #9CE800; font-size: 24px;"></span>
-                <div class="debate-title">
-                  ${emoji} FUT/${match.teamAName} vs ${match.teamBName} ${emoji}
-                </div>
-              </div>
-              <div class="debate-stats">
-                <span><span class="iconify" data-icon="mdi:message-outline"></span> ${debate.messageCount} messages</span>
-                <span><span class="iconify" data-icon="mdi:account-group"></span> ${match.leagueName}</span>
-              </div>
-              <div class="debate-messages">
-          `;
-          
-          debate.recentMessages.forEach(msg => {
-            const preview = msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : msg.content;
-            html += `<div class="message-preview"><strong>${msg.anonymousId ? 'User' : 'Anonymous'}:</strong> ${preview}</div>`;
-          });
-          
-          html += `
-              </div>
-            </div>
-          `;
-        });
-      }
-      
-      dynamicList.innerHTML = html;
-    }
+        var messagesSnap = await db.collection('messages').where('matchId', '==', doc.id).orderBy('createdAt', 'desc').limit(4).get();
 
-    function renderMatches() {
-      const sportFilter = filterSport.value;
-      const leagueFilter = filterLeague.value;
-      const searchTerm = searchInput.value.toLowerCase();
-      const selectedDate = filterDate.value;
-
-      let filteredMatches = matches.filter(match => {
-        if (sportFilter !== 'all') {
-          const league = leagues.find(l => l.id === match.league);
-          if (!league) return false;
-          const isFootball = !league.name.toLowerCase().includes('basketball');
-          if (sportFilter === 'football' && !isFootball) return false;
-          if (sportFilter === 'basketball' && isFootball) return false;
-        }
-
-        if (leagueFilter !== 'all' && match.league !== leagueFilter) return false;
-
-        if (searchTerm) {
-          const searchString = `${match.teamAName} ${match.teamBName} ${match.leagueName}`.toLowerCase();
-          if (!searchString.includes(searchTerm)) return false;
-        }
-
-        if (selectedDate && match.startTime) {
-          const matchDate = match.startTime.toDate().toISOString().split('T')[0];
-          if (matchDate !== selectedDate) return false;
-        }
-
-        return true;
-      });
-
-      if (currentNav === 'popular') {
-        filteredMatches = filteredMatches
-          .filter(m => m.status !== 'completed')
-          .sort((a, b) => b.totalVotes - a.totalVotes)
-          .slice(0, 5);
-      } else {
-        filteredMatches.sort((a, b) => {
-          if (a.isTopMatch && !b.isTopMatch) return -1;
-          if (!a.isTopMatch && b.isTopMatch) return 1;
-          return a.startTime.toDate() - b.startTime.toDate();
-        });
-      }
-
-      let listHtml = '';
-      
-      if (filteredMatches.length === 0) {
-        listHtml = `
-          <div class="match-card" style="text-align: center; padding: 40px;">
-            <span class="iconify" data-icon="mdi:calendar-blank" style="font-size: 48px; color: #999;"></span>
-            <p style="margin-top: 16px; color: #666; font-weight: 500;">No matches found</p>
-            <p style="color: #999; font-size: 12px;">Try adjusting your filters</p>
-          </div>
-        `;
-      } else {
-        filteredMatches.forEach((match, index) => {
-          const startTime = match.startTime ? match.startTime.toDate() : new Date();
-          const timeString = startTime.toLocaleString('en-US', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit'
+        if (messagesSnap.size > 0) {
+          var messages = [];
+          messagesSnap.forEach(function(msg) {
+            messages.push(msg.data());
           });
 
-          listHtml += `
-            <div class="match-card" onclick="openVotePage('${match.id}')">
-              <div class="match-teams">
-                <div class="team">
-                  <div class="team-logo">
-                    ${match.teamALogo ? 
-                      `<img src="${match.teamALogo}" alt="${match.teamAName}">` : 
-                      '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-                  </div>
-                  <div class="team-info">
-                    <span class="team-name">${match.teamAName}</span>
-                    <span class="team-odds">${match.leagueName}</span>
-                  </div>
-                </div>
-                <div class="match-vs">VS</div>
-                <div class="team">
-                  <div class="team-info" style="text-align: right;">
-                    <span class="team-name">${match.teamBName}</span>
-                    <span class="team-odds">${timeString}</span>
-                  </div>
-                  <div class="team-logo">
-                    ${match.teamBLogo ? 
-                      `<img src="${match.teamBLogo}" alt="${match.teamBName}">` : 
-                      '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-                  </div>
-                </div>
-              </div>
-              ${currentNav === 'popular' ? 
-                `<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;">
-                  <span class="iconify" data-icon="mdi:fire"></span> ${match.totalVotes} VOTES <span class="iconify" data-icon="mdi:fire"></span>
-                </div>` : ''}
-            </div>
-          `;
-
-          if ((index + 1) % 2 === 0 && !adInserted) {
-            listHtml += `
-              <div class="ad-native-container">
-                <script async="async" data-cfasync="false" src="https://pl29147022.profitablecpmratenetwork.com/8f595312a6731f1113cd9abe0661bb7d/invoke.js"></script>
-                <div id="container-8f595312a6731f1113cd9abe0661bb7d"></div>
-              </div>
-            `;
-            adInserted = true;
-          }
-        });
+          debates.push({ match: match, messageCount: messagesSnap.size, recentMessages: messages.reverse() });
+        }
       }
 
-      dynamicList.innerHTML = listHtml;
+      debates.sort(function(a, b) { return b.messageCount - a.messageCount; });
+      renderDebates(debates.slice(0, 3));
+    } catch (error) {
+      console.error('Error:', error);
+      dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No debates yet</div>';
+    }
+  }
+
+  function renderDebates(debates) {
+    var html = '';
+    
+    if (debates.length === 0) {
+      html = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet. Be the first to start one!</div>';
+    } else {
+      var emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
+      
+      debates.forEach(function(debate, index) {
+        var match = debate.match;
+        var emoji = emojis[index % emojis.length];
+        
+        html += '<div class="debate-card" onclick="openVotePage(\'' + match.id + '\')"><div class="debate-header"><span class="iconify" data-icon="mdi:message-text-outline" style="color: #9CE800; font-size: 24px;"></span><div class="debate-title">' + emoji + ' FUT/' + match.teamAName + ' vs ' + match.teamBName + ' ' + emoji + '</div></div><div class="debate-stats"><span><span class="iconify" data-icon="mdi:message-outline"></span> ' + debate.messageCount + ' messages</span><span><span class="iconify" data-icon="mdi:account-group"></span> ' + match.leagueName + '</span></div><div class="debate-messages">';
+        
+        debate.recentMessages.forEach(function(msg) {
+          var preview = msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : msg.content;
+          html += '<div class="message-preview"><strong>User:</strong> ' + preview + '</div>';
+        });
+        
+        html += '</div></div>';
+      });
+    }
+    
+    dynamicList.innerHTML = html;
+  }
+
+  function renderMatches() {
+    var sportFilter = filterSport.value;
+    var leagueFilter = filterLeague.value;
+    var searchTerm = searchInput.value.toLowerCase();
+    var selectedDate = filterDate.value;
+
+    var filteredMatches = matches.filter(function(match) {
+      if (sportFilter !== 'all') {
+        var league = leagues.find(function(l) { return l.id === match.league; });
+        if (!league) return false;
+        var isFootball = league.name.toLowerCase().indexOf('basketball') === -1;
+        if (sportFilter === 'football' && !isFootball) return false;
+        if (sportFilter === 'basketball' && isFootball) return false;
+      }
+
+      if (leagueFilter !== 'all' && match.league !== leagueFilter) return false;
+
+      if (searchTerm) {
+        var searchString = (match.teamAName + ' ' + match.teamBName + ' ' + match.leagueName).toLowerCase();
+        if (searchString.indexOf(searchTerm) === -1) return false;
+      }
+
+      if (selectedDate && match.startTime) {
+        var matchDate = match.startTime.toDate().toISOString().split('T')[0];
+        if (matchDate !== selectedDate) return false;
+      }
+
+      return true;
+    });
+
+    if (currentNav === 'popular') {
+      filteredMatches = filteredMatches.filter(function(m) { return m.status !== 'completed'; })
+                                     .sort(function(a, b) { return b.totalVotes - a.totalVotes; })
+                                     .slice(0, 5);
+    } else {
+      filteredMatches.sort(function(a, b) { return a.startTime.toDate() - b.startTime.toDate(); });
     }
 
-    window.openVotePage = function(matchId) {
-      window.location.href = `vote.html?id=${matchId}`;
-    };
+    var listHtml = '';
+    
+    if (filteredMatches.length === 0) {
+      listHtml = '<div class="match-card" style="text-align: center; padding: 40px;"><span class="iconify" data-icon="mdi:calendar-blank" style="font-size: 48px; color: #999;"></span><p style="margin-top: 16px; color: #666; font-weight: 500;">No matches found</p></div>';
+    } else {
+      filteredMatches.forEach(function(match, index) {
+        var startTime = match.startTime ? match.startTime.toDate() : new Date();
+        var timeString = startTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    sportBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        sportBtns.forEach(b => b.classList.remove('active-sport'));
-        btn.classList.add('active-sport');
-        const sport = btn.dataset.sport;
-        currentSport = sport;
-        updateLeaguesTeams(sport);
-        updateBreadcrumb(sport, currentNav);
-        filterSport.value = sport;
-        loadMatches();
-      });
-    });
+        listHtml += '<div class="match-card" onclick="openVotePage(\'' + match.id + '\')"><div class="match-teams"><div class="team"><div class="team-logo">' + 
+          (match.teamALogo ? '<img src="' + match.teamALogo + '" alt="' + match.teamAName + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + 
+          '</div><div class="team-info"><span class="team-name">' + match.teamAName + '</span><span class="team-odds">' + match.leagueName + '</span></div></div>' +
+          '<div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align: right;"><span class="team-name">' + match.teamBName + 
+          '</span><span class="team-odds">' + timeString + '</span></div><div class="team-logo">' + 
+          (match.teamBLogo ? '<img src="' + match.teamBLogo + '" alt="' + match.teamBName + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + 
+          '</div></div></div>';
 
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        navButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const nav = btn.dataset.nav;
-        currentNav = nav;
-        
-        updateBreadcrumb(currentSport, nav);
-        
-        if (nav === 'home') {
-          contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
-          announcementContainer.innerHTML = `
-            <div class="announcement-banner">
-              <h3><span class="iconify" data-icon="mdi:bullhorn"></span> ANNOUNCEMENT</h3>
-              <p>Welcome to ORAFUT! Start predicting and win big. New matches added daily!</p>
-            </div>
-          `;
-          promoContainer.innerHTML = `
-            <div class="promo-banner">
-              <h2>🏆 Join Africa's #1 Prediction Brand</h2>
-              <div class="promo-features">
-                <div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div>
-                <div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
-                <div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div>
-                <div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
-              </div>
-              <div class="promo-highlight">
-                <div class="promo-badge">FREE</div>
-                <div class="promo-text">Free callbacks whenever you need us.</div>
-              </div>
-            </div>
-          `;
-          filterBar.style.display = 'flex';
-          cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
-          loadMatches();
-        } else if (nav === 'sports') {
-          contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE';
-          announcementContainer.innerHTML = '';
-          promoContainer.innerHTML = '';
-          filterBar.style.display = 'flex';
-          cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
-          loadMatches();
-        } else if (nav === 'debates') {
-          contextDisplay.innerHTML = 'TOP <span>DEBATES</span>';
-          announcementContainer.innerHTML = '';
-          promoContainer.innerHTML = '';
-          filterBar.style.display = 'none';
-          cardHint.innerText = '💬 HOTTEST CONVERSATIONS RIGHT NOW 💬';
-          loadDebates();
-        } else if (nav === 'live') {
-          window.location.href = 'live.html';
-        } else if (nav === 'popular') {
-          contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING';
-          announcementContainer.innerHTML = '';
-          promoContainer.innerHTML = '';
-          filterBar.style.display = 'flex';
-          cardHint.innerText = '🔥 MOST VOTED MATCHES 🔥';
-          loadMatches();
+        if (currentNav === 'popular') {
+          listHtml += '<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ' + match.totalVotes + ' VOTES <span class="iconify" data-icon="mdi:fire"></span></div>';
+        }
+
+        listHtml += '</div>';
+
+        if ((index + 1) % 3 === 0) {
+          listHtml += '<div class="ad-native-container"><script async="async" data-cfasync="false" src="https://pl29147022.profitablecpmratenetwork.com/8f595312a6731f1113cd9abe0661bb7d/invoke.js"></script><div id="container-8f595312a6731f1113cd9abe0661bb7d"></div></div>';
         }
       });
-    });
+    }
 
-    applyFilterBtn.addEventListener('click', renderMatches);
-    searchInput.addEventListener('input', renderMatches);
+    dynamicList.innerHTML = listHtml;
+  }
 
-    loadLeaguesAndTeams().then(() => {
+  window.openVotePage = function(matchId) {
+    window.location.href = 'vote.html?id=' + matchId;
+  };
+
+  sportBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      sportBtns.forEach(function(b) { b.classList.remove('active-sport'); });
+      btn.classList.add('active-sport');
+      currentSport = btn.dataset.sport;
+      updateLeaguesTeams(currentSport);
+      updateBreadcrumb(currentSport, currentNav);
+      filterSport.value = currentSport;
       loadMatches();
     });
+  });
 
-    updateBreadcrumb('football', 'home');
-  })();
-</script>
+  navButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      navButtons.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentNav = btn.dataset.nav;
+      
+      updateBreadcrumb(currentSport, currentNav);
+      
+      if (currentNav === 'home') {
+        contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
+        announcementContainer.innerHTML = '<div class="announcement-banner"><h3><span class="iconify" data-icon="mdi:bullhorn"></span> ANNOUNCEMENT</h3><p>Welcome to ORAFUT! Start predicting and win big. New matches added daily!</p></div>';
+        promoContainer.innerHTML = '<div class="promo-banner"><h2>🏆 Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>';
+        filterBar.style.display = 'flex';
+        cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
+        loadMatches();
+      } else if (currentNav === 'sports') {
+        contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE';
+        announcementContainer.innerHTML = '';
+        promoContainer.innerHTML = '';
+        filterBar.style.display = 'flex';
+        cardHint.innerText = '⚡ CLICK ON A MATCH TO VOTE ⚡';
+        loadMatches();
+      } else if (currentNav === 'debates') {
+        contextDisplay.innerHTML = 'TOP <span>DEBATES</span>';
+        announcementContainer.innerHTML = '';
+        promoContainer.innerHTML = '';
+        filterBar.style.display = 'none';
+        cardHint.innerText = '💬 HOTTEST CONVERSATIONS RIGHT NOW 💬';
+        loadDebates();
+      } else if (currentNav === 'live') {
+        window.location.href = 'live.html';
+      } else if (currentNav === 'popular') {
+        contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING';
+        announcementContainer.innerHTML = '';
+        promoContainer.innerHTML = '';
+        filterBar.style.display = 'flex';
+        cardHint.innerText = '🔥 MOST VOTED MATCHES 🔥';
+        loadMatches();
+      }
+    });
+  });
 
-<script type="text/javascript">
-  (function() {
-    var smartlinkUrl = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5';
-    setTimeout(function() {
-      var a = document.createElement('a');
-      a.href = smartlinkUrl;
-      a.target = '_blank';
-      a.rel = 'nofollow';
-      a.click();
-    }, 5000);
-  })();
+  applyFilterBtn.addEventListener('click', renderMatches);
+  searchInput.addEventListener('input', renderMatches);
+
+  loadLeaguesAndTeams().then(function() {
+    loadMatches();
+  });
+
+  updateBreadcrumb('football', 'home');
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ORAFUT · Memory Match</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #f0f2f5;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      min-height: 100vh; 
+      font-family: 'Poppins', sans-serif; 
+      padding: 10px;
+    }
+    
+    .ad-left, .ad-right {
+      display: none;
+      width: 160px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 1024px) {
+      .ad-left, .ad-right { display: block; }
+      body { gap: 10px; }
+    }
+    .ad-container {
+      width: 160px;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    
+    .game-container {
+      width: 100%;
+      max-width: 650px;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .game-header {
+      background: #1a1a1a;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s;
+    }
+    .back-btn:hover { opacity: 0.7; }
+    .back-btn .iconify { font-size: 24px; }
+    .game-brand {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+    }
+    .game-brand .ora { color: white; }
+    .game-brand .fut { color: #9CE800; }
+    
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 15px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-icon {
+      color: #9CE800;
+      font-size: 18px;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    
+    .timer-section {
+      background: #9CE800;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    .timer-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .timer-display {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1a1a1a;
+      font-family: monospace;
+      line-height: 1;
+    }
+    
+    .difficulty-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8f9fa;
+    }
+    .difficulty-btn {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .difficulty-btn.active {
+      background: #9CE800;
+      border-color: #9CE800;
+      color: #1a1a1a;
+    }
+    
+    .game-board {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 600px) {
+      .game-board { gap: 10px; padding: 20px; }
+    }
+    
+    .card {
+      aspect-ratio: 1;
+      background: #f8f9fa;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e9ecef;
+      position: relative;
+    }
+    .card:hover:not(.matched):not(.flipped) {
+      border-color: #9CE800;
+      transform: scale(0.98);
+    }
+    .card.flipped {
+      background: white;
+      border-color: #9CE800;
+    }
+    .card.matched {
+      background: #d4edda;
+      border-color: #28a745;
+      cursor: default;
+      opacity: 0.7;
+    }
+    .card.matched .card-content {
+      opacity: 0.5;
+    }
+    .card-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+    .card-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .card-back {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9CE800;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .result-screen {
+      padding: 25px 20px;
+      text-align: center;
+      display: none;
+    }
+    .result-screen.show { display: block; }
+    .result-trophy {
+      font-size: 50px;
+      color: #ffc107;
+      margin-bottom: 10px;
+    }
+    .result-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    .result-score {
+      font-size: 42px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+    }
+    .result-score span { color: #9CE800; }
+    .result-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    .result-stat { text-align: center; }
+    .result-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #9CE800;
+    }
+    .result-stat-label {
+      font-size: 11px;
+      color: #6c757d;
+      text-transform: uppercase;
+    }
+    
+    .ad-banner {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+    }
+    .social-bar {
+      padding: 8px 0;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .play-again-btn {
+      background: #9CE800;
+      border: none;
+      color: #1a1a1a;
+      padding: 14px 40px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .play-again-btn:hover {
+      background: #8bc900;
+      transform: scale(1.02);
+    }
+    .home-link {
+      color: #6c757d;
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .game-area { display: block; }
+    .game-area.hide { display: none; }
+    
+    .loading-screen {
+      padding: 50px;
+      text-align: center;
+      color: #6c757d;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e9ecef;
+      border-top-color: #9CE800;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .feedback-message {
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      min-height: 35px;
+    }
+    .feedback-message.correct { color: #28a745; }
+    
+    @media (max-width: 480px) {
+      .game-container { border-radius: 0; }
+      .card-back { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="ad-left">
+  <div class="ad-container">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '513405c41397d2263bdcca6adf74206c',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
+  </div>
+</div>
+
+<div class="game-container">
+  <div class="game-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">
+        <span class="iconify" data-icon="mdi:arrow-left"></span>
+      </button>
+      <div class="game-brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    </div>
+  </div>
+  
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-spinner"></div>
+    <div>Loading teams...</div>
+  </div>
+  
+  <div class="game-area" id="gameArea" style="display:none;">
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:trophy"></span></span>
+        <span class="stat-value" id="pairsMatched">0/6</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:gesture-tap"></span></span>
+        <span class="stat-value" id="movesDisplay">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon"><span class="iconify" data-icon="mdi:star"></span></span>
+        <span class="stat-value" id="starsDisplay">3</span>
+      </div>
+    </div>
+    
+    <div class="timer-section">
+      <div class="timer-label"><span class="iconify" data-icon="mdi:clock-outline"></span> TIME</div>
+      <div class="timer-display" id="timerDisplay">00:00</div>
+    </div>
+    
+    <div class="difficulty-bar">
+      <button class="difficulty-btn active" data-pairs="6">EASY (6 PAIRS)</button>
+      <button class="difficulty-btn" data-pairs="8">MEDIUM (8 PAIRS)</button>
+      <button class="difficulty-btn" data-pairs="10">HARD (10 PAIRS)</button>
+    </div>
+    
+    <div class="game-board" id="gameBoard"></div>
+    
+    <div class="feedback-message" id="feedbackMessage"></div>
+  </div>
+  
+  <div class="result-screen" id="resultScreen">
+    <div class="result-trophy"><span class="iconify" data-icon="mdi:trophy-award"></span></div>
+    <div class="result-title">MEMORY MASTER!</div>
+    <div class="result-score"><span id="finalTime">00:00</span></div>
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalMoves">0</div>
+        <div class="result-stat-label">Moves</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalStars">3</div>
+        <div class="result-stat-label">Stars</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" id="finalScore">0</div>
+        <div class="result-stat-label">Score</div>
+      </div>
+    </div>
+    
+    <div class="ad-banner">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '0d65716928aa9a56b35f6dfe72db565a',
+          'format' : 'iframe',
+          'height' : 60,
+          'width' : 468,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/0d65716928aa9a56b35f6dfe72db565a/invoke.js"></script>
+    </div>
+    
+    <button class="play-again-btn" onclick="startNewGame()">
+      <span class="iconify" data-icon="mdi:refresh"></span> PLAY AGAIN
+    </button>
+    <br>
+    <a href="index.html" class="home-link">
+      <span class="iconify" data-icon="mdi:home"></span> Home
+    </a>
+  </div>
+  
+  <div class="social-bar">
+    <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+  </div>
+</div>
+
+<div class="ad-right">
+  <div class="ad-container">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '513405c41397d2263bdcca6adf74206c',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  
+  firebase.initializeApp({
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+    authDomain: "orafut-58b5f.firebaseapp.com",
+    projectId: "orafut-58b5f",
+    storageBucket: "orafut-58b5f.firebasestorage.app",
+    messagingSenderId: "500581059835",
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+  });
+  const db = firebase.firestore();
+  
+  let teams = [];
+  let cards = [];
+  let flippedCards = [];
+  let matchedPairs = 0;
+  let moves = 0;
+  let stars = 3;
+  let gameActive = false;
+  let timer = null;
+  let seconds = 0;
+  let lockBoard = false;
+  let currentPairs = 6;
+  
+  const loadingScreen = document.getElementById('loadingScreen');
+  const gameArea = document.getElementById('gameArea');
+  const resultScreen = document.getElementById('resultScreen');
+  const gameBoard = document.getElementById('gameBoard');
+  const pairsMatched = document.getElementById('pairsMatched');
+  const movesDisplay = document.getElementById('movesDisplay');
+  const starsDisplay = document.getElementById('starsDisplay');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const feedbackMessage = document.getElementById('feedbackMessage');
+  const finalTime = document.getElementById('finalTime');
+  const finalMoves = document.getElementById('finalMoves');
+  const finalStars = document.getElementById('finalStars');
+  const finalScore = document.getElementById('finalScore');
+  
+  window.goBack = function() { window.history.back(); };
+  
+  async function loadTeams() {
+    try {
+      const snap = await db.collection('teams').where('isActive', '==', true).get();
+      teams = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.logoUrl) {
+          teams.push({
+            id: doc.id,
+            name: data.name,
+            logoUrl: data.logoUrl
+          });
+        }
+      });
+      
+      if (teams.length < 10) {
+        teams = [
+          { id: '1', name: 'Manchester United', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg' },
+          { id: '2', name: 'Real Madrid', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg' },
+          { id: '3', name: 'Barcelona', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg' },
+          { id: '4', name: 'Bayern Munich', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg' },
+          { id: '5', name: 'Juventus', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Juventus_FC_2017_icon.svg' },
+          { id: '6', name: 'PSG', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg' },
+          { id: '7', name: 'Liverpool', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg' },
+          { id: '8', name: 'Manchester City', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg' },
+          { id: '9', name: 'Arsenal', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg' },
+          { id: '10', name: 'Chelsea', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg' },
+          { id: '11', name: 'AC Milan', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg' },
+          { id: '12', name: 'Inter Milan', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg' }
+        ];
+      }
+      
+      loadingScreen.style.display = 'none';
+      gameArea.style.display = 'block';
+      initDifficultyButtons();
+      startNewGame();
+    } catch (error) {
+      console.error('Error loading teams:', error);
+      teams = [
+        { id: '1', name: 'Manchester United', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg' },
+        { id: '2', name: 'Real Madrid', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg' },
+        { id: '3', name: 'Barcelona', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg' },
+        { id: '4', name: 'Bayern Munich', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg' }
+      ];
+      loadingScreen.style.display = 'none';
+      gameArea.style.display = 'block';
+      initDifficultyButtons();
+      startNewGame();
+    }
+  }
+  
+  function initDifficultyButtons() {
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPairs = parseInt(btn.dataset.pairs);
+        startNewGame();
+      });
+    });
+  }
+  
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  
+  function createBoard() {
+    const shuffledTeams = shuffleArray([...teams]);
+    const selectedTeams = shuffledTeams.slice(0, currentPairs);
+    
+    cards = [];
+    selectedTeams.forEach((team, index) => {
+      cards.push({ id: index * 2, teamId: team.id, logoUrl: team.logoUrl, name: team.name, matched: false, flipped: false });
+      cards.push({ id: index * 2 + 1, teamId: team.id, logoUrl: team.logoUrl, name: team.name, matched: false, flipped: false });
+    });
+    
+    cards = shuffleArray(cards);
+    
+    let gridCols = 4;
+    if (currentPairs === 6) gridCols = 4;
+    else if (currentPairs === 8) gridCols = 4;
+    else if (currentPairs === 10) gridCols = 5;
+    
+    gameBoard.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
+    
+    renderBoard();
+  }
+  
+  function renderBoard() {
+    gameBoard.innerHTML = '';
+    cards.forEach((card, index) => {
+      const cardEl = document.createElement('div');
+      cardEl.className = `card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`;
+      cardEl.dataset.index = index;
+      
+      if (card.flipped || card.matched) {
+        cardEl.innerHTML = `
+          <div class="card-content">
+            <img src="${card.logoUrl}" alt="${card.name}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:shield-half-full\\' style=\\'font-size:30px;color:#9CE800;\\'></span>'">
+          </div>
+        `;
+      } else {
+        cardEl.innerHTML = `
+          <div class="card-back">
+            <span class="iconify" data-icon="mdi:help-circle-outline"></span>
+          </div>
+        `;
+      }
+      
+      cardEl.addEventListener('click', () => handleCardClick(index));
+      gameBoard.appendChild(cardEl);
+    });
+  }
+  
+  function handleCardClick(index) {
+    if (!gameActive || lockBoard) return;
+    
+    const card = cards[index];
+    if (card.matched || card.flipped) return;
+    
+    if (flippedCards.length === 2) return;
+    
+    card.flipped = true;
+    flippedCards.push({ index, card });
+    
+    renderBoard();
+    
+    if (flippedCards.length === 2) {
+      moves++;
+      updateStars();
+      movesDisplay.textContent = moves;
+      checkMatch();
+    }
+  }
+  
+  function checkMatch() {
+    lockBoard = true;
+    const [first, second] = flippedCards;
+    
+    if (first.card.teamId === second.card.teamId) {
+      cards[first.index].matched = true;
+      cards[second.index].matched = true;
+      matchedPairs++;
+      
+      pairsMatched.textContent = `${matchedPairs}/${currentPairs}`;
+      feedbackMessage.textContent = '✅ Match found!';
+      feedbackMessage.className = 'feedback-message correct';
+      
+      flippedCards = [];
+      lockBoard = false;
+      renderBoard();
+      
+      if (matchedPairs === currentPairs) {
+        setTimeout(() => endGame(), 500);
+      }
+    } else {
+      setTimeout(() => {
+        cards[first.index].flipped = false;
+        cards[second.index].flipped = false;
+        flippedCards = [];
+        lockBoard = false;
+        renderBoard();
+        feedbackMessage.textContent = '';
+        feedbackMessage.className = 'feedback-message';
+      }, 800);
+    }
+  }
+  
+  function updateStars() {
+    if (currentPairs === 6) {
+      if (moves <= 12) stars = 3;
+      else if (moves <= 18) stars = 2;
+      else stars = 1;
+    } else if (currentPairs === 8) {
+      if (moves <= 16) stars = 3;
+      else if (moves <= 24) stars = 2;
+      else stars = 1;
+    } else {
+      if (moves <= 20) stars = 3;
+      else if (moves <= 30) stars = 2;
+      else stars = 1;
+    }
+    
+    let starsStr = '';
+    for (let i = 0; i < 3; i++) {
+      starsStr += i < stars ? '⭐' : '☆';
+    }
+    starsDisplay.textContent = starsStr;
+  }
+  
+  function startTimer() {
+    if (timer) clearInterval(timer);
+    seconds = 0;
+    timerDisplay.textContent = '00:00';
+    
+    timer = setInterval(() => {
+      if (!gameActive) return;
+      seconds++;
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+  }
+  
+  function calculateScore() {
+    const baseScore = matchedPairs * 100;
+    const timeBonus = Math.max(0, 300 - seconds) * 2;
+    const movesPenalty = moves * 5;
+    const starsBonus = stars * 50;
+    return Math.max(0, baseScore + timeBonus - movesPenalty + starsBonus);
+  }
+  
+  function endGame() {
+    gameActive = false;
+    clearInterval(timer);
+    
+    const score = calculateScore();
+    
+    gameArea.style.display = 'none';
+    resultScreen.classList.add('show');
+    
+    finalTime.textContent = timerDisplay.textContent;
+    finalMoves.textContent = moves;
+    finalStars.textContent = stars;
+    finalScore.textContent = score;
+    
+    saveScore(score);
+  }
+  
+  async function saveScore(score) {
+    try {
+      const anonymousId = localStorage.getItem('anonymousId') || 'anon_' + Date.now();
+      await db.collection('memory_scores').add({
+        anonymousId: anonymousId,
+        gameType: 'memory_match',
+        pairs: currentPairs,
+        time: seconds,
+        moves: moves,
+        stars: stars,
+        score: score,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  }
+  
+  function startNewGame() {
+    matchedPairs = 0;
+    moves = 0;
+    stars = 3;
+    flippedCards = [];
+    lockBoard = false;
+    gameActive = true;
+    
+    resultScreen.classList.remove('show');
+    gameArea.style.display = 'block';
+    
+    pairsMatched.textContent = `0/${currentPairs}`;
+    movesDisplay.textContent = '0';
+    starsDisplay.textContent = '⭐⭐⭐';
+    feedbackMessage.textContent = '';
+    feedbackMessage.className = 'feedback-message';
+    
+    createBoard();
+    startTimer();
+  }
+  
+  loadTeams();
+  window.startNewGame = startNewGame;
+})();
+</script>
+</body>
+</html>

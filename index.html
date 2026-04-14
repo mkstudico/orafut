@@ -56,10 +56,14 @@
     .section-label { color: var(--vibrant-green); font-weight: 800; font-size: 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
     .section-label .iconify { color: var(--vibrant-green); font-size: 18px; }
     .sub-section { margin-bottom: 24px; }
-    .item-list { display: flex; flex-direction: column; gap: 4px; }
+    .item-list { display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
     .item-chip { background: var(--left-tab-border); padding: 10px 14px; border-radius: 6px; color: #E0E0E0; font-size: 12px; font-weight: 600; border-left: 4px solid var(--vibrant-green); transition: 0.1s; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .item-chip .iconify { font-size: 14px; color: var(--vibrant-green); }
     .item-chip:hover { background: #3A4146; border-left-width: 6px; }
+    .team-search-box { margin-bottom: 12px; }
+    .team-search-box input { width: 100%; padding: 8px 12px; background: var(--left-tab-border); border: 2px solid #3A4146; border-radius: 6px; color: white; font-size: 11px; outline: none; }
+    .team-search-box input:focus { border-color: var(--vibrant-green); }
+    .team-search-box input::placeholder { color: rgba(255,255,255,0.4); }
     .tab-footer { padding: 18px 14px 20px; border-top: 3px solid var(--vibrant-green); background: var(--left-tab-border); margin-top: auto; color: #BBBBBB; font-size: 11px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
     .tab-footer .professional-note { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #DDDDDD; text-transform: uppercase; letter-spacing: 0.5px; }
     .tab-footer .iconify { color: var(--vibrant-green); font-size: 14px; }
@@ -201,6 +205,8 @@
   </div>
 </div>
 
+<script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+<script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
@@ -224,7 +230,8 @@
     announcementContainer: document.getElementById('announcementContainer'), promoContainer: document.getElementById('promoContainer')
   };
 
-  let state = { currentNav: 'home', currentSport: 'football', leftTabVisible: false, teams: [], leagues: [], matches: [], selectedLeague: null };
+  let state = { currentNav: 'home', currentSport: 'football', leftTabVisible: false, teams: [], leagues: [], matches: [], selectedLeague: null, teamSearchTerm: '', announcements: [] };
+  let searchTimeout = null;
   let anonymousId = localStorage.getItem('anonymousId') || (function() { var id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('anonymousId', id); return id; })();
 
   db.collection('anonymous_users').doc(anonymousId).set({ lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
@@ -238,22 +245,43 @@
     elements.breadcrumbMatch.textContent = navNames[nav] || 'Matches';
   }
 
+  async function loadAnnouncements() {
+    try {
+      var snap = await db.collection('announcements').where('active', '==', true).orderBy('createdAt', 'desc').limit(1).get();
+      if (!snap.empty) {
+        var data = snap.docs[0].data();
+        state.announcements = [{ title: data.title, content: data.content }];
+      } else {
+        state.announcements = [{ title: 'ANNOUNCEMENT', content: 'Welcome to ORAFUT! Start predicting and win big. New matches added daily!' }];
+      }
+      updateAnnouncement();
+    } catch(e) {
+      state.announcements = [{ title: 'ANNOUNCEMENT', content: 'Welcome to ORAFUT! Start predicting and win big. New matches added daily!' }];
+      updateAnnouncement();
+    }
+  }
+
+  function updateAnnouncement() {
+    if (state.currentNav === 'home' && state.announcements.length > 0) {
+      var a = state.announcements[0];
+      elements.announcementContainer.innerHTML = '<div class="announcement-banner"><h3><span class="iconify" data-icon="mdi:bullhorn"></span> ' + a.title + '</h3><p>' + a.content + '</p></div>';
+    }
+  }
+
   async function loadLeaguesAndTeams() {
     var leaguesSnap = await db.collection('leagues').get();
     state.leagues = []; 
     leaguesSnap.forEach(function(d) { 
-      state.leagues.push({ id: d.id, name: d.data().name, logoUrl: d.data().logoUrl }); 
+      state.leagues.push({ id: d.id, name: d.data().name, logoUrl: d.data().logoUrl, sport: d.data().sport || 'football' }); 
     });
 
     var teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
     state.teams = []; 
     teamsSnap.forEach(function(d) { 
       state.teams.push({ 
-        id: d.id, 
-        name: d.data().name, 
-        league: d.data().league, 
-        leagueName: d.data().leagueName,
-        logoUrl: d.data().logoUrl
+        id: d.id, name: d.data().name, league: d.data().league, 
+        leagueName: d.data().leagueName, logoUrl: d.data().logoUrl,
+        sport: d.data().sport || 'football'
       }); 
     });
     
@@ -262,34 +290,53 @@
   }
 
   function updateLeaguesTeams() {
+    var filteredLeagues = state.leagues.filter(function(l) { return l.sport === state.currentSport; });
+    
     var html = '<div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div><div class="sub-section"><div class="item-list">';
     
-    if (state.leagues.length > 0) {
-      state.leagues.slice(0, 7).forEach(function(l) { 
+    if (filteredLeagues.length > 0) {
+      filteredLeagues.slice(0, 7).forEach(function(l) { 
         html += '<div class="item-chip" data-league="' + l.id + '"><span class="iconify" data-icon="mdi:chevron-right"></span>' + l.name + '</div>'; 
       });
     } else {
       html += '<div class="item-chip"><span class="iconify" data-icon="mdi:chevron-right"></span>No leagues found</div>';
     }
     
-    html += '</div></div><div class="section-label" style="margin-top:20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div><div class="sub-section"><div class="item-list" id="teamsListContainer">';
+    html += '</div></div><div class="section-label" style="margin-top:20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div><div class="sub-section"><div class="team-search-box"><input type="text" id="teamSearchInput" placeholder="Search teams..." value="' + state.teamSearchTerm + '"></div><div class="item-list" id="teamsListContainer">';
     
-    var teamsToShow = state.selectedLeague ? state.teams.filter(function(t) { return t.league === state.selectedLeague; }) : state.teams;
+    var teamsToShow = state.teams.filter(function(t) { 
+      if (t.sport !== state.currentSport) return false;
+      if (state.selectedLeague && t.league !== state.selectedLeague) return false;
+      if (state.teamSearchTerm && t.name.toLowerCase().indexOf(state.teamSearchTerm.toLowerCase()) === -1) return false;
+      return true;
+    });
     
     if (teamsToShow.length > 0) {
-      teamsToShow.slice(0, 10).forEach(function(t) { 
+      teamsToShow.slice(0, 15).forEach(function(t) { 
         html += '<div class="item-chip" data-team="' + t.id + '"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + t.name + '</div>'; 
       });
     } else {
-      html += '<div class="item-chip"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + (state.selectedLeague ? 'No teams in this league' : 'No teams found') + '</div>';
+      html += '<div class="item-chip"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + (state.teamSearchTerm ? 'No teams match search' : (state.selectedLeague ? 'No teams in this league' : 'No teams found')) + '</div>';
     }
     
     html += '</div></div>';
     elements.leagueContainer.innerHTML = html;
     
+    var teamSearchInput = document.getElementById('teamSearchInput');
+    if (teamSearchInput) {
+      teamSearchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+          state.teamSearchTerm = teamSearchInput.value;
+          updateLeaguesTeams();
+        }, 300);
+      });
+    }
+    
     document.querySelectorAll('[data-league]').forEach(function(el) { 
       el.addEventListener('click', function() { 
         state.selectedLeague = el.dataset.league;
+        state.teamSearchTerm = '';
         updateLeaguesTeams();
         elements.filterLeague.value = state.selectedLeague;
         renderMatches();
@@ -305,7 +352,7 @@
 
   function populateLeagueFilter() {
     elements.filterLeague.innerHTML = '<option value="all">All Leagues</option>';
-    state.leagues.forEach(function(l) { 
+    state.leagues.filter(function(l) { return l.sport === state.currentSport; }).forEach(function(l) { 
       elements.filterLeague.innerHTML += '<option value="' + l.id + '">' + l.name + '</option>'; 
     });
   }
@@ -318,67 +365,47 @@
     for (var i = 0; i < snap.docs.length; i++) {
       var d = snap.docs[i];
       var m = { 
-        id: d.id, 
-        teamAName: d.data().teamAName, 
-        teamBName: d.data().teamBName, 
-        teamALogo: d.data().teamALogo, 
-        teamBLogo: d.data().teamBLogo, 
-        league: d.data().league, 
-        leagueName: d.data().leagueName, 
-        startTime: d.data().startTime, 
-        status: d.data().status,
-        isTopMatch: d.data().isTopMatch
+        id: d.id, teamAName: d.data().teamAName, teamBName: d.data().teamBName, 
+        teamALogo: d.data().teamALogo, teamBLogo: d.data().teamBLogo, 
+        league: d.data().league, leagueName: d.data().leagueName, 
+        startTime: d.data().startTime, status: d.data().status, isTopMatch: d.data().isTopMatch
       };
-      
       var votes = await db.collection('votes').where('matchId', '==', d.id).get();
       m.totalVotes = votes.size;
       state.matches.push(m);
     }
-    
     renderMatches();
   }
 
   async function loadDebates() {
     var snap = await db.collection('matches').get();
     var debates = [];
-    
     for (var i = 0; i < snap.docs.length; i++) {
       var d = snap.docs[i];
       var m = { id: d.id, teamAName: d.data().teamAName, teamBName: d.data().teamBName, leagueName: d.data().leagueName };
       var msgs = await db.collection('messages').where('matchId', '==', d.id).orderBy('createdAt', 'desc').limit(4).get();
-      
       if (msgs.size > 0) {
-        var recent = []; 
-        msgs.forEach(function(msg) { recent.push(msg.data()); });
+        var recent = []; msgs.forEach(function(msg) { recent.push(msg.data()); });
         debates.push({ match: m, messageCount: msgs.size, recentMessages: recent.reverse() });
       }
     }
-    
     debates.sort(function(a, b) { return b.messageCount - a.messageCount; });
     renderDebates(debates.slice(0, 3));
   }
 
   function renderDebates(debates) {
-    if (!debates.length) { 
-      elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet.</div>'; 
-      return; 
-    }
-    
+    if (!debates.length) { elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No active debates yet.</div>'; return; }
     var emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
     var html = '';
-    
     debates.forEach(function(d, i) {
       var m = d.match, e = emojis[i % emojis.length];
       html += '<div class="debate-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div class="debate-header"><span class="iconify" data-icon="mdi:message-text-outline" style="color:#9CE800;font-size:24px;"></span><div class="debate-title">' + e + ' FUT/' + m.teamAName + ' vs ' + m.teamBName + ' ' + e + '</div></div><div class="debate-stats"><span><span class="iconify" data-icon="mdi:message-outline"></span> ' + d.messageCount + ' messages</span><span><span class="iconify" data-icon="mdi:account-group"></span> ' + (m.leagueName || 'Unknown League') + '</span></div><div class="debate-messages">';
-      
       d.recentMessages.forEach(function(msg) { 
         var p = msg.content && msg.content.length > 40 ? msg.content.substring(0, 40) + '...' : (msg.content || 'No content'); 
         html += '<div class="message-preview"><strong>User:</strong> ' + p + '</div>'; 
       });
-      
       html += '</div></div>';
     });
-    
     elements.dynamicList.innerHTML = html;
   }
 
@@ -386,16 +413,12 @@
     var filtered = state.matches.filter(function(m) {
       if (elements.filterLeague.value !== 'all' && m.league !== elements.filterLeague.value) return false;
       if (elements.searchInput.value && (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName||'')).toLowerCase().indexOf(elements.searchInput.value.toLowerCase()) === -1) return false;
-      if (elements.filterDate.value && m.startTime) { 
-        if (m.startTime.toDate().toISOString().split('T')[0] !== elements.filterDate.value) return false; 
-      }
+      if (elements.filterDate.value && m.startTime && m.startTime.toDate().toISOString().split('T')[0] !== elements.filterDate.value) return false;
       return true;
     });
 
     if (state.currentNav === 'popular') {
-      filtered = filtered.filter(function(m) { return m.status !== 'completed'; })
-                       .sort(function(a, b) { return b.totalVotes - a.totalVotes; })
-                       .slice(0, 5);
+      filtered = filtered.filter(function(m) { return m.status !== 'completed'; }).sort(function(a, b) { return b.totalVotes - a.totalVotes; }).slice(0, 5);
     } else {
       filtered.sort(function(a, b) { 
         if (a.isTopMatch && !b.isTopMatch) return -1;
@@ -404,28 +427,22 @@
       });
     }
 
-    if (!filtered.length) { 
-      elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; 
-      return; 
-    }
+    if (!filtered.length) { elements.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; return; }
 
     var html = '';
     filtered.forEach(function(m) {
       var time = m.startTime ? m.startTime.toDate() : new Date();
       var timeStr = m.status === 'live' ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       html += '<div class="match-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + m.teamAName + '</span><span class="team-odds">' + (m.leagueName || 'Unknown League') + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + m.teamBName + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
-      if (state.currentNav === 'popular') {
-        html += '<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ' + m.totalVotes + ' VOTES <span class="iconify" data-icon="mdi:fire"></span></div>';
-      }
+      if (state.currentNav === 'popular') html += '<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ' + m.totalVotes + ' VOTES <span class="iconify" data-icon="mdi:fire"></span></div>';
       html += '</div>';
     });
-    
     elements.dynamicList.innerHTML = html;
   }
 
   function setHomeView() {
     elements.contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
-    elements.announcementContainer.innerHTML = '<div class="announcement-banner"><h3><span class="iconify" data-icon="mdi:bullhorn"></span> ANNOUNCEMENT</h3><p>Welcome to ORAFUT! Start predicting and win big. New matches added daily!</p></div>';
+    updateAnnouncement();
     elements.promoContainer.innerHTML = '<div class="promo-banner"><h2>Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span>Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span>1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span>No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span>24/7 Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>';
     elements.filterBar.style.display = 'flex';
     elements.cardHint.innerText = 'CLICK ON A MATCH TO OPEN VOTING';
@@ -445,6 +462,10 @@
     b.classList.add('active-sport');
     state.currentSport = b.dataset.sport;
     state.selectedLeague = null;
+    state.teamSearchTerm = '';
+    elements.filterSport.value = state.currentSport;
+    updateLeaguesTeams();
+    populateLeagueFilter();
     updateBreadcrumb(state.currentSport, state.currentNav);
     if (state.currentNav === 'debates') loadDebates(); else loadMatches();
   });});
@@ -454,7 +475,6 @@
     b.classList.add('active');
     state.currentNav = b.dataset.nav;
     updateBreadcrumb(state.currentSport, state.currentNav);
-    
     if (state.currentNav === 'home') setHomeView();
     else if (state.currentNav === 'sports') setSportsView();
     else if (state.currentNav === 'debates') { 
@@ -477,10 +497,16 @@
   elements.applyFilterBtn.addEventListener('click', renderMatches);
   elements.searchInput.addEventListener('input', renderMatches);
 
-  loadLeaguesAndTeams().then(function() { 
+  Promise.all([loadAnnouncements(), loadLeaguesAndTeams()]).then(function() { 
     updateBreadcrumb('football', 'home'); 
     setHomeView(); 
   });
+
+  setTimeout(function() { 
+    var a = document.createElement('a'); 
+    a.href = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5'; 
+    a.target = '_blank'; a.rel = 'nofollow'; a.click(); 
+  }, 5000);
 })();
 </script>
 </body>

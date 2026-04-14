@@ -123,14 +123,6 @@
     .team-name { font-weight: 700; font-size: 15px; color: #1A1A1A; text-transform: uppercase; }
     .team-odds { font-size: 11px; color: #777; font-weight: 500; }
     .match-vs { font-weight: 800; font-size: 14px; color: #999; padding: 0 10px; }
-    .percentage-bar { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-    .percentage-option { flex: 1; text-align: center; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.15s; }
-    .percentage-option:hover { background: #F0F0F0; }
-    .percentage-label { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
-    .percentage-value { font-size: 16px; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
-    .percentage-fill { height: 6px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
-    .percentage-fill-bar { height: 100%; background: var(--vibrant-green); border-radius: 10px; }
-    .draw-bar { background: #FFB800; }
     .debate-card { background: white; padding: 20px; border-radius: 10px; border: 2px solid #E0E0E0; margin-bottom: 12px; cursor: pointer; transition: 0.15s; }
     .debate-card:hover { border-color: var(--vibrant-green); box-shadow: 0 4px 0 #D0D0D0; }
     .debate-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -218,7 +210,7 @@
         <button class="filter-btn" id="applyFilterBtn"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
       </div>
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ CLICK ON PERCENTAGES TO VOTE ⚡</div>
+      <div class="hint-text" id="cardHint">CLICK ON A MATCH TO OPEN VOTING</div>
     </div>
 
     <div class="ad-space">
@@ -376,30 +368,12 @@
           isTopMatch: d.data().isTopMatch || false, sport: d.data().sport || 'football' 
         };
         var votesSnap = await db.collection('votes').where('matchId', '==', d.id).get();
-        var totalVotes = votesSnap.size;
-        var teamAVotes = 0, drawVotes = 0, teamBVotes = 0;
-        votesSnap.docs.forEach(function(v) { var vt = v.data().voteType; if (vt === 'team1') teamAVotes++; else if (vt === 'draw') drawVotes++; else if (vt === 'team2') teamBVotes++; });
-        m.percentages = { team1: totalVotes > 0 ? Math.round((teamAVotes / totalVotes) * 100) : 33, draw: totalVotes > 0 ? Math.round((drawVotes / totalVotes) * 100) : 34, team2: totalVotes > 0 ? Math.round((teamBVotes / totalVotes) * 100) : 33 };
-        m.totalVotes = totalVotes;
+        m.totalVotes = votesSnap.size;
         state.matches.push(m); state.allMatches.push(m);
       }
       renderMatches();
     } catch(e) {}
   }
-
-  async function submitVoteHandler(matchId, voteType) {
-    try {
-      var existingVote = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', anonymousId).get();
-      if (!existingVote.empty) { elements.cardHint.innerText = '⚠️ YOU ALREADY VOTED! ⚠️'; setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); return; }
-      var match = state.matches.find(function(m) { return m.id === matchId; });
-      await db.collection('votes').add({ matchId: matchId, anonymousId: anonymousId, voteType: voteType, matchName: (match.teamAName || 'Team A') + ' vs ' + (match.teamBName || 'Team B'), sport: match.sport || 'football', league: match.league, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      await loadMatches();
-      elements.cardHint.innerText = '✅ VOTE RECORDED! ✅';
-      setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
-    } catch(e) { elements.cardHint.innerText = '❌ ERROR VOTING ❌'; setTimeout(function() { elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); }
-  }
-
-  window.submitVote = submitVoteHandler;
 
   async function loadDebates() {
     var snap = await db.collection('matches').get();
@@ -447,13 +421,9 @@
       var isLive = m.status === 'live';
       var timeStr = isLive ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       var leagueName = m.leagueName || (state.leagues.find(function(l) { return l.id === m.league; }) || {}).name || 'Unknown League';
-      var p = m.percentages || { team1: 33, draw: 34, team2: 33 };
-      html += '<div class="match-card"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + (m.teamAName || 'Team A') + '</span><span class="team-odds">' + leagueName + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + (m.teamBName || 'Team B') + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
-      html += '<div class="percentage-bar">';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team1\')"><div class="percentage-label">1</div><div class="percentage-value">' + p.team1 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team1 + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'draw\')"><div class="percentage-label">X</div><div class="percentage-value">' + p.draw + '%</div><div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:' + p.draw + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team2\')"><div class="percentage-label">2</div><div class="percentage-value">' + p.team2 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team2 + '%;"></div></div></div>';
-      html += '</div></div>';
+      html += '<div class="match-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + (m.teamAName || 'Team A') + '</span><span class="team-odds">' + leagueName + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + (m.teamBName || 'Team B') + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
+      if (state.currentNav === 'popular') html += '<div style="text-align:center;margin-top:12px;color:#9CE800;font-weight:700;"><span class="iconify" data-icon="mdi:fire"></span> ' + m.totalVotes + ' VOTES <span class="iconify" data-icon="mdi:fire"></span></div>';
+      html += '</div>';
     });
     elements.dynamicList.innerHTML = html;
   }
@@ -461,7 +431,7 @@
   function setHomeView() { 
     elements.contextDisplay.innerHTML = 'HOME · SPORTS & LIVE'; updateAnnouncement(); 
     elements.promoContainer.innerHTML = '<div class="promo-banner"><h2>🏆 Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>'; 
-    elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; 
+    elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = 'CLICK ON A MATCH TO OPEN VOTING'; 
     state.currentContext = 'sports'; elements.contextSportsBtn.classList.add('active-context'); elements.contextLiveBtn.classList.remove('active-context');
     loadMatches(); 
   }
@@ -469,7 +439,7 @@
   function setSportsView() { 
     elements.contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE'; 
     elements.announcementContainer.innerHTML = elements.promoContainer.innerHTML = ''; 
-    elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; 
+    elements.filterBar.style.display = 'flex'; elements.cardHint.innerText = 'CLICK ON A MATCH TO OPEN VOTING'; 
     loadMatches(); 
   }
 

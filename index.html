@@ -113,10 +113,10 @@
     .message-preview { font-size: 12px; color: #555; padding: 4px 0; border-bottom: 1px solid #E0E0E0; }
     .message-preview:last-child { border-bottom: none; }
     .hint-text { margin-top: 14px; color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
-    .ad-space { width: 160px; background: var(--white); border-left: 3px solid #E0E0E0; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; }
-    .ad-container { padding: 12px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .ad-space { width: 170px; background: var(--white); border-left: 3px solid #E0E0E0; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .ad-container { padding: 8px 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
     .ad-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; text-align: center; }
-    #adsterra-banner { width: 160px; height: 600px; display: flex; align-items: center; justify-content: center; }
+    #adsterra-banner { width: 160px; height: 600px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -184,14 +184,23 @@
     <div class="ad-space">
       <div class="ad-container">
         <div class="ad-label">ADVERTISEMENT</div>
-        <div id="adsterra-banner"></div>
+        <div id="adsterra-banner">
+          <script type="text/javascript">
+            atOptions = {
+              'key' : '513405c41397d2263bdcca6adf74206c',
+              'format' : 'iframe',
+              'height' : 600,
+              'width' : 160,
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
-<script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
@@ -368,8 +377,6 @@
   elements.searchInput.addEventListener('input', renderMatches);
 
   loadLeaguesAndTeams().then(function() { updateBreadcrumb('football', 'home'); setHomeView(); });
-
-  setTimeout(function() { var a = document.createElement('a'); a.href = 'https://www.profitablecpmratenetwork.com/wt683mdi6s?key=b0015ef626a7ec3699f233ddcf799cc5'; a.target = '_blank'; a.rel = 'nofollow'; a.click(); }, 5000);
 })();
 </script>
 </body>

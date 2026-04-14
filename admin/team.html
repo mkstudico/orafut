@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORAFUT Admin · Multi‑Team & League</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --admin-bg: #f5f7fa;
+            --admin-sidebar: #1a2332;
+            --admin-sidebar-hover: #243147;
+            --admin-primary: #00a2ff;
+            --admin-primary-dark: #007acc;
+            --admin-danger: #ef4444;
+            --admin-warning: #f59e0b;
+            --admin-success: #10b981;
+            --admin-text: #333333;
+            --admin-text-muted: #666666;
+            --admin-border: #e2e8f0;
+            --admin-card-bg: #ffffff;
+            --admin-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.25s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { font-family: 'Roboto', sans-serif; background: var(--admin-bg); color: var(--admin-text); line-height: 1.6; height: 100%; overflow: hidden; }
+        .admin-container { display: flex; height: 100vh; width: 100vw; }
+        .admin-sidebar { width: 260px; background: var(--admin-sidebar); color: white; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .admin-logo { font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        .admin-logo i { color: var(--admin-primary); font-size: 22px; }
+        .admin-logo span { color: var(--admin-primary); }
+        .sidebar-menu { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .menu-section { margin-bottom: 30px; }
+        .menu-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.5); padding: 0 20px 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: var(--transition); cursor: pointer; font-size: 15px; }
+        .menu-item:hover { background: var(--admin-sidebar-hover); color: white; }
+        .menu-item.active { background: var(--admin-primary); color: white; border-right: 3px solid white; }
+        .menu-item i { width: 20px; text-align: center; font-size: 16px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 12px; color: rgba(255, 255, 255, 0.5); text-align: center; }
+        .admin-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .admin-header { background: var(--admin-card-bg); padding: 20px 30px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--admin-shadow); z-index: 10; }
+        .page-title { font-family: 'Roboto Condensed', sans-serif; font-size: 24px; font-weight: 700; color: var(--admin-text); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .system-status { display: flex; align-items: center; gap: 8px; padding: 8px 15px; background: var(--admin-success); color: white; border-radius: 20px; font-size: 14px; font-weight: 500; }
+        .system-status i { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .dashboard-section { display: none; }
+        .dashboard-section.active { display: block; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 30px; }
+        .stat-card { background: var(--admin-card-bg); border-radius: 12px; padding: 24px; box-shadow: var(--admin-shadow); transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12); }
+        .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .stat-icon.anonymous { background: rgba(0, 162, 255, 0.1); color: var(--admin-primary); }
+        .stat-icon.matches { background: rgba(16, 185, 129, 0.1); color: var(--admin-success); }
+        .stat-icon.votes { background: rgba(245, 158, 11, 0.1); color: var(--admin-warning); }
+        .stat-icon.reports { background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); }
+        .stat-value { font-size: 32px; font-weight: 700; margin-bottom: 8px; color: var(--admin-text); }
+        .stat-label { font-size: 14px; color: var(--admin-text-muted); }
+        .recent-activity { background: var(--admin-card-bg); border-radius: 12px; padding: 24px; box-shadow: var(--admin-shadow); }
+        .section-title { font-family: 'Roboto Condensed', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--admin-text); }
+        .activity-list { display: flex; flex-direction: column; gap: 16px; }
+        .activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: var(--admin-bg); border-radius: 8px; border-left: 4px solid var(--admin-primary); }
+        .activity-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .activity-content { flex: 1; }
+        .activity-title { font-weight: 600; margin-bottom: 4px; color: var(--admin-text); }
+        .activity-time { font-size: 12px; color: var(--admin-text-muted); }
+        .data-table-container { background: var(--admin-card-bg); border-radius: 12px; overflow: hidden; box-shadow: var(--admin-shadow); }
+        .table-header { padding: 24px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .table-title { font-family: 'Roboto Condensed', sans-serif; font-size: 18px; font-weight: 700; color: var(--admin-text); }
+        .table-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--admin-primary); color: white; }
+        .btn-primary:hover { background: var(--admin-primary-dark); }
+        .btn-secondary { background: var(--admin-bg); color: var(--admin-text); border: 1px solid var(--admin-border); }
+        .btn-secondary:hover { background: var(--admin-border); }
+        .btn-success { background: var(--admin-success); color: white; }
+        .btn-outline-blue { background: transparent; border: 1px solid var(--admin-primary); color: var(--admin-primary); }
+        .btn-outline-blue:hover { background: var(--admin-primary); color: white; }
+        .table-container { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .data-table th { background: var(--admin-bg); padding: 16px; text-align: left; font-weight: 600; color: var(--admin-text); border-bottom: 1px solid var(--admin-border); font-size: 14px; }
+        .data-table td { padding: 16px; border-bottom: 1px solid var(--admin-border); color: var(--admin-text); font-size: 14px; }
+        .data-table tr:hover { background: var(--admin-bg); }
+        .table-actions-cell { display: flex; gap: 8px; }
+        .action-btn { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); background: var(--admin-bg); color: var(--admin-text); border: 1px solid var(--admin-border); }
+        .action-btn:hover { background: var(--admin-primary); color: white; border-color: var(--admin-primary); }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .status-active { background: rgba(16, 185, 129, 0.1); color: var(--admin-success); }
+        .status-inactive { background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--admin-card-bg); border-radius: 12px; width: 90%; max-width: 700px; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-family: 'Roboto Condensed', sans-serif; font-size: 20px; font-weight: 700; }
+        .modal-close { background: none; border: none; font-size: 20px; color: var(--admin-text-muted); cursor: pointer; }
+        .modal-close:hover { color: var(--admin-danger); }
+        .modal-content { padding: 24px; max-height: calc(90vh - 140px); overflow-y: auto; }
+        .modal-footer { padding: 24px; border-top: 1px solid var(--admin-border); display: flex; justify-content: flex-end; gap: 12px; background: var(--admin-bg); }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-label { font-size: 14px; font-weight: 500; }
+        .form-input, .form-select, .form-textarea { padding: 12px 16px; border: 1px solid var(--admin-border); border-radius: 8px; font-size: 14px; background: var(--admin-card-bg); }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--admin-primary); box-shadow: 0 0 0 3px rgba(0, 162, 255, 0.1); }
+        .team-batch-list { border: 1px solid var(--admin-border); border-radius: 12px; padding: 16px; background: var(--admin-bg); max-height: 280px; overflow-y: auto; }
+        .batch-team-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .batch-team-info { display: flex; align-items: center; gap: 12px; }
+        .batch-preview-logo { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--admin-border); background: #f0f2f5; }
+        .batch-remove { color: var(--admin-danger); cursor: pointer; padding: 6px; }
+        .upload-area { border: 2px dashed var(--admin-border); border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; background: var(--admin-bg); margin: 16px 0; }
+        .upload-area:hover { border-color: var(--admin-primary); background: rgba(0,162,255,0.03); }
+        .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1001; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--admin-card-bg); border-radius: 8px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.3s; border-left: 4px solid var(--admin-primary); }
+        .toast.success { border-left-color: var(--admin-success); }
+        .toast.error { border-left-color: var(--admin-danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .search-container { position: relative; }
+        .search-input { padding: 10px 16px 10px 40px; border: 1px solid var(--admin-border); border-radius: 8px; width: 250px; }
+        .search-icon { position: absolute; left: 12px; top: 12px; color: var(--admin-text-muted); }
+        .mt-4 { margin-top: 24px; }
+        .text-muted { color: var(--admin-text-muted); font-size: 13px; }
+    </style>
+</head>
+<body>
+<div class="toast-container" id="toastContainer"></div>
+<div class="admin-container">
+    <div class="admin-sidebar">
+        <div class="sidebar-header"><div class="admin-logo"><i class="fas fa-crown"></i>ORA<span>FUT</span> Admin</div></div>
+        <div class="sidebar-menu">
+            <div class="menu-section"><div class="menu-title">Main</div>
+                <a class="menu-item" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a class="menu-item active" data-section="teams"><i class="fas fa-users"></i> Teams</a>
+                <a class="menu-item" data-section="matches"><i class="fas fa-futbol"></i> Matches</a>
+                <a class="menu-item" data-section="results"><i class="fas fa-trophy"></i> Results & Wins</a>
+            </div>
+        </div>
+        <div class="sidebar-footer"><div>ORAFUT Admin Panel</div><div style="font-size:11px">Multi-team ready</div></div>
+    </div>
+    <div class="admin-main">
+        <div class="admin-header"><div><h1 class="page-title" id="pageTitle">Teams</h1><div style="font-size:14px; color:var(--admin-text-muted);">Add multiple teams at once</div></div><div class="header-actions"><div class="system-status"><i class="fas fa-circle"></i><span>Operational</span></div><div id="currentTime">00:00:00</div></div></div>
+        <div class="admin-content">
+            <!-- Dashboard (placeholder) -->
+            <div class="dashboard-section" id="dashboardSection"><div class="stats-grid">…</div></div>
+            <!-- Teams Section — redesigned for batch addition -->
+            <div class="dashboard-section active" id="teamsSection">
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h2 class="table-title"><i class="fas fa-shield-alt" style="margin-right:8px;"></i> Team Management</h2>
+                        <div class="table-actions">
+                            <div class="search-container"><i class="fas fa-search search-icon"></i><input type="text" class="search-input" placeholder="Search teams..." id="teamsSearch" oninput="filterTeams()"></div>
+                            <button class="btn btn-secondary" onclick="openLeagueModal()"><i class="fas fa-plus"></i> Add League</button>
+                            <!-- MAIN BUTTON: open batch team modal -->
+                            <button class="btn btn-primary" onclick="openBatchTeamModal()"><i class="fas fa-layer-group"></i> Add Multiple Teams</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead><tr><th>Logo</th><th>Team Name</th><th>League</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="teamsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Quick hint for batch -->
+                <div style="margin-top:16px; background:var(--admin-card-bg); border-radius:12px; padding:16px 24px; display:flex; align-items:center; gap:16px; box-shadow:var(--admin-shadow);">
+                    <i class="fas fa-info-circle" style="color:var(--admin-primary); font-size:24px;"></i>
+                    <div><strong>Multiple teams?</strong> Use "Add Multiple Teams" — pick a league, add team names + optional logos, and save all at once.</div>
+                </div>
+            </div>
+            <!-- Other sections kept minimal (placeholders) -->
+            <div class="dashboard-section" id="matchesSection">matches section</div>
+            <div class="dashboard-section" id="resultsSection">results</div>
+            <div class="dashboard-section" id="analyticsSection">analytics</div>
+            <div class="dashboard-section" id="reportsSection">reports</div>
+            <div class="dashboard-section" id="adsSection">ads</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<!-- League modal (unchanged) -->
+<div class="modal-overlay" id="leagueModal"><div class="modal"><div class="modal-header"><h3 class="modal-title">Add League</h3><button class="modal-close" onclick="closeLeagueModal()"><i class="fas fa-times"></i></button></div><div class="modal-content"><div class="form-group"><label>League Name</label><input type="text" class="form-input" id="leagueName" placeholder="e.g. Premier League"></div><div class="upload-area" onclick="document.getElementById('leagueLogoInput').click()"><i class="fas fa-cloud-upload-alt"></i> Upload Logo</div><input type="file" id="leagueLogoInput" accept="image/*" style="display:none"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeLeagueModal()">Cancel</button><button class="btn btn-primary" onclick="saveLeague()">Save League</button></div></div></div>
+
+<!-- BATCH TEAM MODAL — core for multiple teams -->
+<div class="modal-overlay" id="batchTeamModal">
+    <div class="modal" style="max-width:800px;">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-layer-group" style="margin-right:8px;"></i> Add Multiple Teams at Once</h3>
+            <button class="modal-close" onclick="closeBatchTeamModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-content">
+            <div class="form-group">
+                <label class="form-label required">Select League *</label>
+                <select class="form-select" id="batchLeagueSelect">
+                    <option value="">-- Choose League --</option>
+                </select>
+                <div class="text-muted">All teams in this batch will be added to the selected league.</div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:flex-end;">
+                <div class="form-group" style="flex:2;">
+                    <label>Team Name *</label>
+                    <input type="text" class="form-input" id="newTeamNameInput" placeholder="e.g. Arsenal">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Logo (optional)</label>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button type="button" class="btn btn-outline-blue" style="padding:8px 12px;" onclick="document.getElementById('batchLogoInput').click()"><i class="fas fa-image"></i> Choose</button>
+                        <span id="batchLogoName" class="text-muted">No file</span>
+                    </div>
+                    <input type="file" id="batchLogoInput" accept="image/*" style="display:none" onchange="updateBatchLogoName()">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <button class="btn btn-primary" onclick="addTeamToBatchList()"><i class="fas fa-plus"></i> Add to list</button>
+                </div>
+            </div>
+            <!-- Preview list of teams to be added -->
+            <label class="form-label">Teams ready to add ({{batchList.length}})</label>
+            <div class="team-batch-list" id="batchTeamListContainer">
+                <div style="text-align:center; padding:20px; color:var(--admin-text-muted);" id="emptyBatchMsg">No teams added yet. Add some above.</div>
+            </div>
+            <div style="margin-top:16px; display:flex; gap:12px;">
+                <button class="btn btn-secondary" onclick="clearBatchList()"><i class="fas fa-trash-alt"></i> Clear list</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeBatchTeamModal()">Cancel</button>
+            <button class="btn btn-success" id="saveBatchBtn" onclick="saveAllBatchTeams()"><i class="fas fa-save"></i> Save All Teams</button>
+        </div>
+    </div>
+</div>
+
+<!-- Other modals (match, result, ad) – present for completeness, but we focus on teams -->
+<div class="modal-overlay" id="matchModal">…</div>
+<div class="modal-overlay" id="resultModal">…</div>
+<div class="modal-overlay" id="adModal">…</div>
+
+<script>
+    // Firebase config (same)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+        authDomain: "orafut-58b5f.firebaseapp.com",
+        projectId: "orafut-58b5f",
+        storageBucket: "orafut-58b5f.firebasestorage.app",
+        messagingSenderId: "500581059835",
+        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
+    const IMGBB_KEY = "99c6aa298645e8a4742979117fc73be6";
+    let db = null;
+    let teams = [], leagues = [];
+    
+    // Batch state
+    let batchTeams = []; // each: { name, logoFile, logoUrl?, preview? }
+    let currentLogoFile = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFirebase();
+        setInterval(() => document.getElementById('currentTime').textContent = new Date().toLocaleTimeString(), 1000);
+    });
+
+    function loadFirebase() {
+        const script = document.createElement('script');
+        script.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js';
+        script.onload = () => {
+            const fsScript = document.createElement('script');
+            fsScript.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js';
+            fsScript.onload = () => {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                initAdmin();
+            };
+            document.head.appendChild(fsScript);
+        };
+        document.head.appendChild(script);
+    }
+
+    function showToast(msg, type='info') {
+        const c = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;">✕</button>`;
+        c.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    function initAdmin() {
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                item.classList.add('active');
+                const section = item.dataset.section;
+                document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section + 'Section').classList.add('active');
+                document.getElementById('pageTitle').textContent = item.querySelector('i').nextSibling.textContent.trim();
+                if (section === 'teams') { loadTeams(); loadLeagues(); }
+                if (section === 'dashboard') loadDashboardPlaceholder();
+            });
+        });
+        // initial load
+        loadTeams(); loadLeagues();
+    }
+
+    async function loadTeams() {
+        if (!db) return;
+        const snap = await db.collection('teams').orderBy('name').get();
+        teams = [];
+        const tbody = document.getElementById('teamsTableBody');
+        tbody.innerHTML = '';
+        snap.forEach(doc => {
+            const t = { id: doc.id, ...doc.data() };
+            teams.push(t);
+            tbody.innerHTML += `<tr>
+                <td>${t.logoUrl ? `<img src="${t.logoUrl}" style="width:40px;height:40px;border-radius:50%;object-fit:cover">` : '⚽'}</td>
+                <td>${t.name}</td><td>${t.leagueName || t.league}</td>
+                <td><span class="status-badge ${t.isActive !== false ? 'status-active' : 'status-inactive'}">${t.isActive !== false ? 'Active' : 'Inactive'}</span></td>
+                <td><div class="table-actions-cell"><button class="action-btn" onclick="toggleTeamStatus('${doc.id}')"><i class="fas fa-power-off"></i></button></div></td>
+            </tr>`;
+        });
+    }
+
+    async function loadLeagues() {
+        if (!db) return;
+        const snap = await db.collection('leagues').get();
+        leagues = [];
+        snap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+        const select = document.getElementById('batchLeagueSelect');
+        if (select) {
+            select.innerHTML = '<option value="">-- Choose League --</option>';
+            leagues.forEach(l => select.innerHTML += `<option value="${l.id}">${l.name}</option>`);
+        }
+        // also populate other selects if needed
+    }
+
+    function filterTeams() {
+        const search = document.getElementById('teamsSearch').value.toLowerCase();
+        document.querySelectorAll('#teamsTableBody tr').forEach(row => {
+            row.style.display = row.cells[1]?.textContent.toLowerCase().includes(search) ? '' : 'none';
+        });
+    }
+
+    // ---------- BATCH TEAM LOGIC ----------
+    function openBatchTeamModal() {
+        loadLeagues(); 
+        document.getElementById('batchTeamModal').classList.add('active');
+        renderBatchList();
+    }
+    function closeBatchTeamModal() {
+        document.getElementById('batchTeamModal').classList.remove('active');
+        batchTeams = [];
+        currentLogoFile = null;
+        document.getElementById('newTeamNameInput').value = '';
+        document.getElementById('batchLogoName').textContent = 'No file';
+        document.getElementById('batchLogoInput').value = '';
+        renderBatchList();
+    }
+
+    function updateBatchLogoName() {
+        const file = document.getElementById('batchLogoInput').files[0];
+        currentLogoFile = file || null;
+        document.getElementById('batchLogoName').textContent = file ? file.name : 'No file';
+    }
+
+    function addTeamToBatchList() {
+        const nameInput = document.getElementById('newTeamNameInput');
+        const name = nameInput.value.trim();
+        if (!name) { showToast('Team name required', 'error'); return; }
+        
+        const logoFile = currentLogoFile;
+        let previewUrl = null;
+        if (logoFile) previewUrl = URL.createObjectURL(logoFile);
+        
+        batchTeams.push({
+            name: name,
+            logoFile: logoFile,
+            previewUrl: previewUrl,
+            id: Date.now() + Math.random()
+        });
+        
+        nameInput.value = '';
+        currentLogoFile = null;
+        document.getElementById('batchLogoInput').value = '';
+        document.getElementById('batchLogoName').textContent = 'No file';
+        renderBatchList();
+        showToast(`"${name}" added to batch`, 'success');
+    }
+
+    function renderBatchList() {
+        const container = document.getElementById('batchTeamListContainer');
+        const emptyMsg = document.getElementById('emptyBatchMsg');
+        if (batchTeams.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--admin-text-muted);">No teams added yet.</div>';
+            return;
+        }
+        let html = '';
+        batchTeams.forEach((team, idx) => {
+            const logoDisplay = team.previewUrl 
+                ? `<img src="${team.previewUrl}" class="batch-preview-logo">` 
+                : `<div class="batch-preview-logo" style="display:flex; align-items:center; justify-content:center; background:#e9ecef;">⚽</div>`;
+            html += `<div class="batch-team-item">
+                <div class="batch-team-info">${logoDisplay}<span style="font-weight:500;">${team.name}</span></div>
+                <div class="batch-remove" onclick="removeBatchItem(${idx})"><i class="fas fa-times-circle"></i></div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    window.removeBatchItem = function(index) {
+        const removed = batchTeams.splice(index, 1);
+        if (removed[0]?.previewUrl) URL.revokeObjectURL(removed[0].previewUrl);
+        renderBatchList();
+    }
+
+    function clearBatchList() {
+        batchTeams.forEach(t => { if (t.previewUrl) URL.revokeObjectURL(t.previewUrl); });
+        batchTeams = [];
+        renderBatchList();
+    }
+
+    async function saveAllBatchTeams() {
+        const leagueSelect = document.getElementById('batchLeagueSelect');
+        const leagueId = leagueSelect.value;
+        if (!leagueId) { showToast('Please select a league', 'error'); return; }
+        if (batchTeams.length === 0) { showToast('Add at least one team', 'error'); return; }
+
+        const leagueData = leagues.find(l => l.id === leagueId);
+        const leagueName = leagueData?.name || 'Unknown League';
+        const saveBtn = document.getElementById('saveBatchBtn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        
+        try {
+            let uploadedCount = 0;
+            for (const team of batchTeams) {
+                let logoUrl = '';
+                if (team.logoFile) {
+                    const fd = new FormData();
+                    fd.append('image', team.logoFile);
+                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST', body:fd});
+                    const data = await res.json();
+                    if (data.success) logoUrl = data.data.url;
+                }
+                await db.collection('teams').add({
+                    name: team.name,
+                    league: leagueId,
+                    leagueName: leagueName,
+                    logoUrl: logoUrl || '',
+                    isActive: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                uploadedCount++;
+            }
+            showToast(`${uploadedCount} team(s) added to ${leagueName}`, 'success');
+            closeBatchTeamModal();
+            loadTeams();
+        } catch (err) {
+            showToast('Error: ' + err.message, 'error');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Save All Teams';
+        }
+    }
+
+    // League modal functions
+    function openLeagueModal() { document.getElementById('leagueModal').classList.add('active'); }
+    function closeLeagueModal() { document.getElementById('leagueModal').classList.remove('active'); }
+    async function saveLeague() {
+        const name = document.getElementById('leagueName').value.trim();
+        if (!name) return showToast('Enter league name', 'error');
+        const file = document.getElementById('leagueLogoInput').files[0];
+        let logoUrl = '';
+        if (file) {
+            const fd = new FormData(); fd.append('image', file);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST', body:fd});
+            const data = await res.json();
+            if (data.success) logoUrl = data.data.url;
+        }
+        await db.collection('leagues').add({ name, logoUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        showToast('League added', 'success');
+        closeLeagueModal();
+        loadLeagues();
+    }
+
+    async function toggleTeamStatus(id) {
+        const team = teams.find(t => t.id === id);
+        if (team) {
+            await db.collection('teams').doc(id).update({ isActive: !(team.isActive !== false) });
+            loadTeams();
+        }
+    }
+
+    function loadDashboardPlaceholder() {
+        document.getElementById('dashboardSection').innerHTML = '<div class="stats-grid">Dashboard preview</div>';
+    }
+
+    // Expose globally
+    window.filterTeams = filterTeams;
+    window.openLeagueModal = openLeagueModal;
+    window.closeLeagueModal = closeLeagueModal;
+    window.saveLeague = saveLeague;
+    window.toggleTeamStatus = toggleTeamStatus;
+    window.openBatchTeamModal = openBatchTeamModal;
+    window.closeBatchTeamModal = closeBatchTeamModal;
+    window.addTeamToBatchList = addTeamToBatchList;
+    window.clearBatchList = clearBatchList;
+    window.saveAllBatchTeams = saveAllBatchTeams;
+    window.updateBatchLogoName = updateBatchLogoName;
+</script>
+</body>
+</html>

@@ -256,8 +256,10 @@
 (function(){
   "use strict";
   
+  // Mobile redirect
   if (window.innerWidth < 768) { window.location.href = 'index.html'; return; }
 
+  // Firebase init
   firebase.initializeApp({ 
     apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", 
     authDomain: "orafut-58b5f.firebaseapp.com", 
@@ -324,7 +326,7 @@
 
   let searchTimeout = null;
 
-  // Helper Functions
+  // ========== UTILITY FUNCTIONS ==========
   const updateBreadcrumb = (sport, context) => {
     el.breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
     el.breadcrumbMatch.textContent = context === 'sports' ? 'Upcoming' : 'Live Now';
@@ -365,72 +367,40 @@
     el.searchResults.classList.remove('active');
   };
 
-  // Event Listeners
-  el.menuToggleBtn.addEventListener('click', () => { 
-    state.leftTabVisible = !state.leftTabVisible; 
-    el.leftTab.classList.toggle('visible', state.leftTabVisible); 
-  });
-
-  document.addEventListener('click', (e) => { 
-    if (!e.target.closest('.search-wrapper')) el.searchResults.classList.remove('active'); 
-  });
-
-  el.searchInput.addEventListener('input', function() {
-    clearTimeout(searchTimeout);
-    const val = this.value.trim();
-    if (!val) { 
-      el.searchResults.classList.remove('active'); 
-      state.filtersActive = false;
-      updateFilterUI();
-      renderMatches();
-      return;
-    }
-    searchTimeout = setTimeout(() => {
-      const t = val.toLowerCase();
-      const results = [];
-      
-      state.allMatches.filter(m => m.status !== 'completed').forEach(m => {
-        if (m.teamAName.toLowerCase().includes(t) || m.teamBName.toLowerCase().includes(t) || (m.leagueName && m.leagueName.toLowerCase().includes(t))) {
-          results.push({ type: 'match', id: m.id, title: m.teamAName + ' vs ' + m.teamBName, subtitle: m.leagueName || 'Match', logo: m.teamALogo, link: 'vote.html?id=' + m.id });
-        }
-      });
-      
-      state.allTeams.forEach(tm => {
-        if (tm.name.toLowerCase().includes(t) || (tm.leagueName && tm.leagueName.toLowerCase().includes(t))) {
-          results.push({ type: 'team', id: tm.id, title: tm.name, subtitle: tm.leagueName || 'Team', logo: tm.logoUrl, link: 'profile.html?team=' + tm.id });
-        }
-      });
-      
-      el.searchResults.innerHTML = results.length === 0 ? 
-        '<div class="search-result-item"><div class="search-result-info"><div class="search-result-title">No results</div></div></div>' :
-        results.slice(0, 8).map(r => `
-          <div class="search-result-item" onclick="window.location.href='${r.link}'">
-            <div class="search-result-logo">${r.logo ? `<img src="${r.logo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
-            <div class="search-result-info">
-              <div class="search-result-title">${r.title}</div>
-              <div class="search-result-subtitle">${r.subtitle}</div>
-            </div>
-            <div class="search-result-type">${r.type}</div>
+  // ========== SEARCH FUNCTION ==========
+  const performGlobalSearch = (term) => {
+    const t = term.toLowerCase();
+    const results = [];
+    
+    state.allMatches.filter(m => m.status !== 'completed').forEach(m => {
+      if (m.teamAName.toLowerCase().includes(t) || m.teamBName.toLowerCase().includes(t) || (m.leagueName && m.leagueName.toLowerCase().includes(t))) {
+        results.push({ type: 'match', id: m.id, title: m.teamAName + ' vs ' + m.teamBName, subtitle: m.leagueName || 'Match', logo: m.teamALogo, link: 'vote.html?id=' + m.id });
+      }
+    });
+    
+    state.allTeams.forEach(tm => {
+      if (tm.name.toLowerCase().includes(t) || (tm.leagueName && tm.leagueName.toLowerCase().includes(t))) {
+        results.push({ type: 'team', id: tm.id, title: tm.name, subtitle: tm.leagueName || 'Team', logo: tm.logoUrl, link: 'profile.html?team=' + tm.id });
+      }
+    });
+    
+    el.searchResults.innerHTML = results.length === 0 ? 
+      '<div class="search-result-item"><div class="search-result-info"><div class="search-result-title">No results</div></div></div>' :
+      results.slice(0, 8).map(r => `
+        <div class="search-result-item" onclick="window.location.href='${r.link}'">
+          <div class="search-result-logo">${r.logo ? `<img src="${r.logo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
+          <div class="search-result-info">
+            <div class="search-result-title">${r.title}</div>
+            <div class="search-result-subtitle">${r.subtitle}</div>
           </div>
-        `).join('');
-      
-      el.searchResults.classList.add('active');
-    }, 300);
-  });
+          <div class="search-result-type">${r.type}</div>
+        </div>
+      `).join('');
+    
+    el.searchResults.classList.add('active');
+  };
 
-  el.filterDateSelect.addEventListener('change', function() {
-    el.filterDate.style.display = this.value === 'custom' ? 'block' : 'none';
-  });
-
-  el.applyFilterBtn.addEventListener('click', () => {
-    state.filtersActive = true;
-    updateFilterUI();
-    renderMatches();
-  });
-
-  el.clearFiltersBtn.addEventListener('click', clearAllFilters);
-
-  // Data Loading
+  // ========== ANNOUNCEMENTS ==========
   const loadAnnouncements = async () => {
     try {
       const snap = await db.collection('announcements').where('active', '==', true).orderBy('createdAt', 'desc').limit(1).get();
@@ -445,6 +415,7 @@
     }
   };
 
+  // ========== LEAGUES & TEAMS ==========
   const loadLeaguesAndTeams = async () => {
     const leaguesSnap = await db.collection('leagues').get();
     state.leagues = leaguesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -516,6 +487,7 @@
     });
   };
 
+  // ========== MATCHES ==========
   const loadMatches = async () => {
     try {
       let query = db.collection('matches').where('sport', '==', state.currentSport);
@@ -542,7 +514,6 @@
     
     let filtered = state.matches;
     
-    // Only apply filters if filters are active
     if (state.filtersActive) {
       filtered = state.matches.filter(m => {
         if (sportFilter !== 'all' && m.sport !== sportFilter) return false;
@@ -617,6 +588,7 @@
     checkFiltersActive();
   };
 
+  // ========== DEBATES ==========
   const loadDebates = async () => {
     const snap = await db.collection('matches').get();
     const debates = [];
@@ -640,9 +612,10 @@
       return;
     }
     
+    const emojis = ['🔥', '💥', '⚡', '😱', '🤯', '🎯'];
     el.dynamicList.innerHTML = debates.slice(0,3).map((d,i) => {
       const m = d.match;
-      const emoji = ['🔥','💥','⚡','😱','🤯','🎯'][i % 6];
+      const emoji = emojis[i % emojis.length];
       return `
         <div class="debate-card" onclick="window.location.href='vote.html?id=${m.id}'">
           <div class="debate-header">
@@ -661,6 +634,7 @@
     }).join('');
   };
 
+  // ========== VIEW CONTROLLERS ==========
   const setHomeView = () => {
     el.contextDisplay.innerHTML = 'HOME · SPORTS & LIVE';
     loadAnnouncements();
@@ -692,7 +666,43 @@
     loadMatches();
   };
 
-  // Navigation
+  // ========== EVENT LISTENERS ==========
+  el.menuToggleBtn.addEventListener('click', () => { 
+    state.leftTabVisible = !state.leftTabVisible; 
+    el.leftTab.classList.toggle('visible', state.leftTabVisible); 
+  });
+
+  document.addEventListener('click', (e) => { 
+    if (!e.target.closest('.search-wrapper')) el.searchResults.classList.remove('active'); 
+  });
+
+  el.searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const val = this.value.trim();
+    if (!val) { 
+      el.searchResults.classList.remove('active'); 
+      if (state.filtersActive) {
+        state.filtersActive = false;
+        updateFilterUI();
+        renderMatches();
+      }
+      return;
+    }
+    searchTimeout = setTimeout(() => performGlobalSearch(val), 300);
+  });
+
+  el.filterDateSelect.addEventListener('change', function() {
+    el.filterDate.style.display = this.value === 'custom' ? 'block' : 'none';
+  });
+
+  el.applyFilterBtn.addEventListener('click', () => {
+    state.filtersActive = true;
+    updateFilterUI();
+    renderMatches();
+  });
+
+  el.clearFiltersBtn.addEventListener('click', clearAllFilters);
+
   el.contextSportsBtn.addEventListener('click', () => {
     el.contextSportsBtn.classList.add('active-context');
     el.contextLiveBtn.classList.remove('active-context');
@@ -742,7 +752,7 @@
         el.contextDisplay.innerHTML = 'TOP <span>DEBATES</span>';
         el.announcementContainer.innerHTML = el.promoContainer.innerHTML = '';
         el.filterBar.style.display = 'none';
-        el.cardHint.innerText = 'HOTTEST CONVERSATIONS RIGHT NOW';
+        el.cardHint.innerText = '🔥 HOTTEST CONVERSATIONS RIGHT NOW 🔥';
         loadDebates();
       } else if (state.currentNav === 'games') {
         window.location.href = 'game.html';
@@ -755,12 +765,13 @@
         el.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING';
         el.announcementContainer.innerHTML = el.promoContainer.innerHTML = '';
         el.filterBar.style.display = 'flex';
+        el.cardHint.innerText = '📊 MOST POPULAR MATCHES 📊';
         loadMatches();
       }
     });
   });
 
-  // Initialize
+  // ========== INITIALIZATION ==========
   Promise.all([loadAnnouncements(), loadLeaguesAndTeams()]).then(() => {
     updateBreadcrumb('football', 'sports');
     setHomeView();

@@ -2,62 +2,670 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>ORAFUT · Games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>ORAFUT · Games Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #293136; min-height: 100vh; font-family: 'Poppins', sans-serif; padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    :root { --vibrant-green: #9CE800; --dark-bg: #252A2D; }
-    .header { background: var(--dark-bg); padding: 20px 24px; border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .back-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; display: inline-block; }
-    .back-btn:hover { background: var(--vibrant-green); color: #000; }
-    .header h1 { color: white; font-size: 24px; }
-    .header h1 span { color: var(--vibrant-green); }
-    .header-right { margin-left: auto; }
-    .add-btn { background: var(--vibrant-green); border: none; color: #000; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 0 #6B9E00; }
-    .add-btn:hover { background: #A8F010; transform: translateY(-2px); box-shadow: 0 6px 0 #6B9E00; }
-    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 30px; background: white; border-radius: 0 0 16px 16px; }
-    .game-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: 2px solid #E0E0E0; }
-    .game-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-color: var(--vibrant-green); }
-    .game-image { width: 100%; height: 150px; background: linear-gradient(135deg, #2D3337, #1A1A1A); display: flex; align-items: center; justify-content: center; }
-    .game-image img { width: 100%; height: 100%; object-fit: cover; }
-    .game-image .iconify { font-size: 60px; color: var(--vibrant-green); }
-    .game-info { padding: 16px; }
-    .game-name { font-weight: 700; font-size: 16px; color: #1A1A1A; margin-bottom: 4px; text-transform: uppercase; }
-    .game-category { font-size: 12px; color: #999; }
-    .loading { text-align: center; padding: 60px; color: #999; font-size: 16px; background: white; border-radius: 0 0 16px 16px; }
-    .error-message { background: #fee; color: #c00; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; }
-    .empty-state { text-align: center; padding: 60px; color: #999; background: white; border-radius: 0 0 16px 16px; }
-    .empty-state .iconify { font-size: 64px; color: #D0D0D0; margin-bottom: 16px; }
-    @media (max-width: 768px) {
-      body { padding: 10px; }
-      .header { padding: 16px; }
-      .header h1 { font-size: 20px; }
-      .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px 16px; }
-      .game-image { height: 120px; }
-      .game-name { font-size: 14px; }
+
+    body {
+      background: #293136;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
     }
-    @media (max-width: 480px) {
-      .games-grid { grid-template-columns: 1fr; }
-      .header-right { margin-left: 0; width: 100%; margin-top: 10px; }
-      .add-btn { width: 100%; text-align: center; }
+
+    .mobile-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    :root {
+      --vibrant-green: #9CE800;
+      --header-bg: #252A2D;
+      --section-bg: #353B40;
+      --left-tab-bg: #2D3337;
+      --white: #FFFFFF;
+      --black: #1A1A1A;
+      --bottom-nav-height: 70px;
+    }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--header-bg);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-btn {
+      background: transparent;
+      border: 2px solid var(--vibrant-green);
+      color: var(--vibrant-green);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      line-height: 1;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+    .brand .ora { color: var(--white); }
+    .brand .fut { color: var(--vibrant-green); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .leaderboard-btn {
+      background: transparent;
+      border: 2px solid var(--vibrant-green);
+      color: var(--vibrant-green);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-transform: uppercase;
+    }
+
+    .banner-ad {
+      background: var(--section-bg);
+      padding: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #252A2D;
+      flex-shrink: 0;
+    }
+    #mobile-banner {
+      width: 320px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2D3337;
+      border-radius: 6px;
+    }
+
+    .social-bar {
+      background: var(--section-bg);
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #252A2D;
+      flex-shrink: 0;
+    }
+
+    .breadcrumb-section {
+      background: var(--section-bg);
+      padding: 6px 16px;
+      border-bottom: 1px solid #252A2D;
+      flex-shrink: 0;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.5);
+      flex-wrap: wrap;
+    }
+    .breadcrumb a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb .iconify { font-size: 10px; color: rgba(255,255,255,0.3); }
+    .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
+
+    .main-content {
+      flex: 1;
+      padding: 16px 16px 0 16px;
+      background: var(--white);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--vibrant-green) #E0E0E0;
+      padding-bottom: calc(var(--bottom-nav-height) + 16px);
+    }
+    .main-content::-webkit-scrollbar { width: 4px; }
+    .main-content::-webkit-scrollbar-track { background: #E0E0E0; }
+    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 4px; }
+
+    .games-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .games-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1A1A1A;
+      text-transform: uppercase;
+    }
+    .games-title span { color: var(--vibrant-green); }
+    .game-count {
+      background: #F0F0F0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .trending-section {
+      background: #F8F9FA;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 2px solid #E8E8E8;
+    }
+    .trending-title {
+      font-weight: 800;
+      font-size: 14px;
+      color: #1A1A1A;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .trending-title .iconify { color: var(--vibrant-green); }
+    .trending-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .trending-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .trending-rank {
+      width: 24px;
+      height: 24px;
+      background: var(--vibrant-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      color: #000;
+    }
+    .trending-info { font-size: 12px; }
+    .trending-name { font-weight: 700; color: #1A1A1A; }
+    .trending-plays { font-size: 10px; color: #888; }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .game-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #E8E8E8;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .game-card:active { transform: scale(0.98); }
+    .game-image {
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(135deg, #2D3337, #1A1A1A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .game-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .game-image .iconify {
+      font-size: 40px;
+      color: var(--vibrant-green);
+    }
+    .game-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: var(--vibrant-green);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 8px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .game-info { padding: 10px; }
+    .game-name {
+      font-weight: 800;
+      font-size: 13px;
+      color: #1A1A1A;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+    .game-desc {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .play-btn {
+      background: var(--vibrant-green);
+      border: none;
+      color: #000;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0 #6B9E00;
+    }
+
+    .bottom-nav-float {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: var(--header-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 8px;
+      border-top: 3px solid var(--vibrant-green);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      z-index: 100;
+      height: var(--bottom-nav-height);
+    }
+    .nav-item-float {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: transparent;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      transition: 0.15s;
+      padding: 6px 10px;
+      border-radius: 30px;
+      text-decoration: none;
+    }
+    .nav-item-float .iconify { font-size: 22px; }
+    .nav-item-float span {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .nav-item-float.active {
+      background: var(--vibrant-green);
+      color: #000;
+    }
+    .nav-item-float.active .iconify { color: #000; }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100vh;
+      background: var(--left-tab-bg);
+      z-index: 1000;
+      transition: left 0.3s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+      overflow-y: auto;
+    }
+    .side-menu.open { left: 0; }
+    .side-menu-header {
+      padding: 20px 16px;
+      border-bottom: 2px solid var(--vibrant-green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .close-menu {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .side-menu-content { padding: 16px; padding-bottom: 30px; }
+    .menu-section { margin-bottom: 24px; }
+    .menu-section-title {
+      color: var(--vibrant-green);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .menu-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: #CCC;
+      text-decoration: none;
+      border-bottom: 1px solid #3A4146;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .menu-link .iconify { color: var(--vibrant-green); font-size: 18px; }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.show { display: block; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 2px solid #E8E8E8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1A1A1A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+    }
+    .modal-content {
+      padding: 16px 20px;
+      max-height: calc(85vh - 70px);
+      overflow-y: auto;
+    }
+    .leaderboard-search {
+      display: flex;
+      align-items: center;
+      background: #F0F0F0;
+      padding: 10px 16px;
+      border-radius: 30px;
+      margin-bottom: 16px;
+      border: 2px solid #E0E0E0;
+    }
+    .leaderboard-search .iconify { color: #999; margin-right: 10px; }
+    .leaderboard-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+    }
+    .leaderboard-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .leaderboard-tab {
+      background: #F0F0F0;
+      border: 2px solid #E0E0E0;
+      color: #666;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .leaderboard-tab.active {
+      background: var(--vibrant-green);
+      border-color: var(--vibrant-green);
+      color: #000;
+    }
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #F8F9FA;
+      border-radius: 10px;
+      border-left: 4px solid var(--vibrant-green);
+    }
+    .leaderboard-rank {
+      width: 28px;
+      height: 28px;
+      background: var(--vibrant-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 12px;
+    }
+    .leaderboard-avatar {
+      width: 36px;
+      height: 36px;
+      background: #2D3337;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+    .leaderboard-info { flex: 1; }
+    .leaderboard-name {
+      font-weight: 700;
+      color: #1A1A1A;
+      font-size: 13px;
+    }
+    .leaderboard-stats {
+      display: flex;
+      gap: 10px;
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .leaderboard-score {
+      font-weight: 800;
+      color: var(--vibrant-green);
+      font-size: 16px;
+    }
+
+    .hint-text-mobile {
+      margin-top: 14px;
+      margin-bottom: 8px;
+      color: #999;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <a href="index.html" class="back-btn">← BACK</a>
-    <h1>ORA<span>FUT</span> · GAMES</h1>
+<div class="mobile-container">
+  <header class="main-header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuToggleBtn" aria-label="Menu">
+        <span class="iconify" data-icon="mdi:menu"></span>
+      </button>
+      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    </div>
     <div class="header-right">
-      <a href="addgame.html" class="add-btn">+ ADD GAME</a>
+      <button class="leaderboard-btn" id="leaderboardBtn">
+        <span class="iconify" data-icon="mdi:podium-gold"></span> RANK
+      </button>
+    </div>
+  </header>
+
+  <div class="banner-ad">
+    <div id="mobile-banner">
+      <script type="text/javascript">atOptions={'key':'84b968fa543d8c4d3957f1b6b0a1d07f','format':'iframe','height':50,'width':320,'params':{}};</script>
+      <script src="https://www.highperformanceformat.com/84b968fa543d8c4d3957f1b6b0a1d07f/invoke.js"></script>
     </div>
   </div>
-  <div id="gamesContainer">
-    <div class="loading">Loading games...</div>
+
+  <div class="social-bar">
+    <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+  </div>
+
+  <div class="breadcrumb-section">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="iconify" data-icon="mdi:chevron-right"></span>
+      <span class="current">Games Hub</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="games-header">
+      <div class="games-title">GAMES <span>HUB</span></div>
+      <div class="game-count"><span id="gameCount">0</span> Games</div>
+    </div>
+
+    <div class="trending-section">
+      <div class="trending-title">
+        <span class="iconify" data-icon="mdi:fire"></span> Trending This Week
+      </div>
+      <div class="trending-list" id="trendingList"></div>
+    </div>
+
+    <div class="games-grid" id="gamesGrid"></div>
+    <div class="hint-text-mobile">⚡ TAP ANY GAME TO PLAY ⚡</div>
+  </div>
+
+  <div class="bottom-nav-float">
+    <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>Home</span></button>
+    <button class="nav-item-float" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span><span>Sports</span></button>
+    <button class="nav-item-float active" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span><span>Games</span></button>
+    <button class="nav-item-float" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>Account</span></button>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="side-menu" id="sideMenu">
+    <div class="side-menu-header">
+      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+      <button class="close-menu" id="closeMenuBtn"><span class="iconify" data-icon="mdi:close"></span></button>
+    </div>
+    <div class="side-menu-content">
+      <div class="menu-section">
+        <div class="menu-section-title">NAVIGATION</div>
+        <a class="menu-link" data-menu="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</a>
+        <a class="menu-link" data-menu="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</a>
+        <a class="menu-link" data-menu="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</a>
+        <a class="menu-link" data-menu="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</a>
+        <a class="menu-link" data-menu="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</a>
+        <a class="menu-link" data-menu="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> Games</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="leaderboardModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title"><span class="iconify" data-icon="mdi:podium-gold"></span> LEADERBOARD</div>
+        <button class="modal-close" id="closeModalBtn"><span class="iconify" data-icon="mdi:close"></span></button>
+      </div>
+      <div class="modal-content">
+        <div class="leaderboard-search">
+          <span class="iconify" data-icon="mdi:magnify"></span>
+          <input type="text" id="leaderboardSearch" placeholder="Search players...">
+        </div>
+        <div class="leaderboard-tabs">
+          <button class="leaderboard-tab active" data-tab="all">ALL TIME</button>
+          <button class="leaderboard-tab" data-tab="weekly">THIS WEEK</button>
+          <button class="leaderboard-tab" data-tab="daily">TODAY</button>
+        </div>
+        <div class="leaderboard-list" id="leaderboardList">
+          <div style="text-align:center;padding:20px;color:#999;">Loading...</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -67,43 +675,210 @@
 <script>
 (function(){
   "use strict";
-  
-  firebase.initializeApp({ apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" });
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+    authDomain: "orafut-58b5f.firebaseapp.com",
+    projectId: "orafut-58b5f",
+    storageBucket: "orafut-58b5f.firebasestorage.app",
+    messagingSenderId: "500581059835",
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+  };
+
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  
-  const container = document.getElementById('gamesContainer');
-  
-  async function loadGames() {
-    try {
-      var snap = await db.collection('games').orderBy('createdAt', 'desc').get();
-      var games = [];
-      snap.forEach(function(doc) { games.push({ id: doc.id, ...doc.data() }); });
-      
-      if (games.length === 0) {
-        container.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span><h3>No games yet</h3><p style="margin-top:8px;">Click "ADD GAME" to add your first game!</p></div>';
-        return;
-      }
-      
-      var html = '<div class="games-grid">';
-      games.forEach(function(game) {
-        html += '<div class="game-card" onclick="openGame(\'' + game.location + '\')"><div class="game-image">' + 
-          (game.imageUrl ? '<img src="' + game.imageUrl + '" alt="' + game.name + '">' : '<span class="iconify" data-icon="mdi:gamepad-variant"></span>') + 
-          '</div><div class="game-info"><div class="game-name">' + game.name + '</div><div class="game-category">Click to Play</div></div></div>';
-      });
-      html += '</div>';
-      container.innerHTML = html;
-    } catch(e) {
-      container.innerHTML = '<div class="error-message">Failed to load games. Please refresh.</div>';
-    }
+
+  const defaultGames = [
+    { name: 'LOGO CHALLENGE', description: 'Identify teams from logos', location: 'logochallenge', badge: 'POPULAR', plays: 1245 },
+    { name: 'MEMORY MATCH', description: 'Match pairs of logos', location: 'memory', badge: 'NEW', plays: 892 },
+    { name: 'SPEED MATCH', description: 'Fast logo matching', location: 'speedmatch', badge: 'FAST', plays: 756 },
+    { name: 'LOGO DUEL', description: 'Pick the correct logo', location: 'logoduel', badge: 'DUEL', plays: 634 },
+    { name: 'LOGO RACE', description: 'Find the right logo', location: 'logorace', badge: 'RACE', plays: 521 },
+    { name: 'FOOTBALL TRIVIA', description: 'Test your knowledge', location: 'trivia', badge: 'QUIZ', plays: 412 }
+  ];
+
+  let games = [...defaultGames];
+  let leaderboardData = [];
+  let currentTab = 'all';
+
+  const menuToggleBtn = document.getElementById('menuToggleBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  const leaderboardBtn = document.getElementById('leaderboardBtn');
+  const leaderboardModal = document.getElementById('leaderboardModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const bottomNavItems = document.querySelectorAll('.nav-item-float');
+  const menuLinks = document.querySelectorAll('[data-menu]');
+
+  function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('show'); }
+  function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
+  function openLeaderboard() { leaderboardModal.classList.add('active'); loadLeaderboard(); }
+  function closeLeaderboard() { leaderboardModal.classList.remove('active'); }
+
+  menuToggleBtn.addEventListener('click', openMenu);
+  closeMenuBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+  leaderboardBtn.addEventListener('click', openLeaderboard);
+  closeModalBtn.addEventListener('click', closeLeaderboard);
+  leaderboardModal.addEventListener('click', (e) => { if (e.target === leaderboardModal) closeLeaderboard(); });
+
+  menuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const nav = link.dataset.menu;
+      const pages = { home: 'index.html', sports: 'edge.html', debates: 'debate.html', live: 'live.html', popular: 'popular.html', games: 'game.html' };
+      if (pages[nav]) window.location.href = pages[nav];
+      closeMenu();
+    });
+  });
+
+  bottomNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const nav = item.dataset.nav;
+      const pages = { home: 'index.html', sports: 'edge.html', games: 'game.html', account: 'account.html' };
+      if (pages[nav]) window.location.href = pages[nav];
+    });
+  });
+
+  function renderGames() {
+    const gamesGrid = document.getElementById('gamesGrid');
+    const trendingList = document.getElementById('trendingList');
+    const gameCount = document.getElementById('gameCount');
+
+    const sortedGames = [...games].sort((a, b) => (b.plays || 0) - (a.plays || 0));
+    const trending = sortedGames.slice(0, 3);
+
+    let trendingHtml = '';
+    trending.forEach((game, i) => {
+      trendingHtml += `<div class="trending-item"><div class="trending-rank">${i+1}</div><div class="trending-info"><div class="trending-name">${game.name}</div><div class="trending-plays">${game.plays || 0} plays</div></div></div>`;
+    });
+    trendingList.innerHTML = trendingHtml;
+
+    let cardsHtml = '';
+    games.forEach(game => {
+      cardsHtml += `
+        <div class="game-card" onclick="openGame('${game.location}')">
+          <div class="game-image">
+            <span class="iconify" data-icon="mdi:gamepad-variant"></span>
+            ${game.badge ? `<span class="game-badge">${game.badge}</span>` : ''}
+          </div>
+          <div class="game-info">
+            <div class="game-name">${game.name}</div>
+            <div class="game-desc">${game.description}</div>
+            <button class="play-btn" onclick="event.stopPropagation();openGame('${game.location}')"><span class="iconify" data-icon="mdi:play"></span> PLAY</button>
+          </div>
+        </div>
+      `;
+    });
+    gamesGrid.innerHTML = cardsHtml;
+    gameCount.textContent = games.length;
   }
-  
+
   window.openGame = function(location) {
     if (location) {
+      db.collection('games').where('location', '==', location).get().then(snap => {
+        snap.forEach(doc => {
+          db.collection('games').doc(doc.id).update({
+            plays: firebase.firestore.FieldValue.increment(1)
+          });
+        });
+      }).catch(() => {});
       window.location.href = location + '.html';
     }
   };
-  
-  loadGames();
+
+  async function loadLeaderboard() {
+    try {
+      const scoresSnap = await db.collection('leaderboard_scores').orderBy('totalScore', 'desc').limit(50).get();
+      leaderboardData = [];
+      scoresSnap.forEach(doc => leaderboardData.push({ id: doc.id, ...doc.data() }));
+
+      if (leaderboardData.length === 0) {
+        leaderboardData = [
+          { playerName: 'FootballKing', totalScore: 12500, gamesPlayed: 156, wins: 89 },
+          { playerName: 'SoccerPro', totalScore: 10800, gamesPlayed: 134, wins: 72 },
+          { playerName: 'GoalMachine', totalScore: 9500, gamesPlayed: 112, wins: 58 },
+          { playerName: 'Legend10', totalScore: 8900, gamesPlayed: 98, wins: 52 },
+          { playerName: 'AcePlayer', totalScore: 7600, gamesPlayed: 87, wins: 45 }
+        ];
+      }
+      renderLeaderboard();
+    } catch(e) {
+      leaderboardData = [
+        { playerName: 'FootballKing', totalScore: 12500, gamesPlayed: 156, wins: 89 },
+        { playerName: 'SoccerPro', totalScore: 10800, gamesPlayed: 134, wins: 72 }
+      ];
+      renderLeaderboard();
+    }
+  }
+
+  function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    const searchInput = document.getElementById('leaderboardSearch');
+    const searchTerm = searchInput.value.toLowerCase();
+
+    let filtered = leaderboardData.filter(p => 
+      !searchTerm || p.playerName.toLowerCase().includes(searchTerm)
+    );
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No players found</div>';
+      return;
+    }
+
+    let html = '';
+    filtered.forEach((player, index) => {
+      html += `
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">${index + 1}</div>
+          <div class="leaderboard-avatar">${player.playerName.charAt(0)}</div>
+          <div class="leaderboard-info">
+            <div class="leaderboard-name">${player.playerName}</div>
+            <div class="leaderboard-stats">
+              <span><span class="iconify" data-icon="mdi:gamepad-variant"></span> ${player.gamesPlayed || 0}</span>
+              <span><span class="iconify" data-icon="mdi:trophy"></span> ${player.wins || 0} wins</span>
+            </div>
+          </div>
+          <div class="leaderboard-score">${player.totalScore.toLocaleString()}</div>
+        </div>
+      `;
+    });
+    list.innerHTML = html;
+  }
+
+  document.getElementById('leaderboardSearch').addEventListener('input', renderLeaderboard);
+
+  document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTab = tab.dataset.tab;
+      renderLeaderboard();
+    });
+  });
+
+  async function loadGamesFromDB() {
+    try {
+      const snap = await db.collection('games').orderBy('plays', 'desc').get();
+      const dbGames = [];
+      snap.forEach(doc => dbGames.push({ id: doc.id, ...doc.data() }));
+      if (dbGames.length > 0) games = dbGames;
+      renderGames();
+    } catch(e) {
+      renderGames();
+    }
+  }
+
+  let anonymousId = localStorage.getItem('anonymousId');
+  if (!anonymousId) {
+    anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('anonymousId', anonymousId);
+  }
+  db.collection('anonymous_users').doc(anonymousId).set({
+    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(() => {});
+
+  loadGamesFromDB();
 })();
 </script>
 </body>

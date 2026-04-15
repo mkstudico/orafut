@@ -211,9 +211,29 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
 (function(){
-  firebase.initializeApp({ apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" });
-  window.db = firebase.firestore();
-  window.anonymousId = localStorage.getItem('anonymousId') || (function(){ var id='anon_'+Date.now()+'_'+Math.random().toString(36).substr(2,9); localStorage.setItem('anonymousId',id); return id; })();
+  "use strict";
+  
+  // Firebase init
+  firebase.initializeApp({ 
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", 
+    authDomain: "orafut-58b5f.firebaseapp.com", 
+    projectId: "orafut-58b5f", 
+    storageBucket: "orafut-58b5f.firebasestorage.app", 
+    messagingSenderId: "500581059835", 
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e" 
+  });
+  
+  const db = firebase.firestore();
+  const anonymousId = localStorage.getItem('anonymousId') || (() => { 
+    const id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); 
+    localStorage.setItem('anonymousId', id); 
+    return id; 
+  })();
+  
+  // Track user
+  db.collection('anonymous_users').doc(anonymousId).set({ 
+    lastActive: firebase.firestore.FieldValue.serverTimestamp() 
+  }, { merge: true }).catch(() => {});
   
   // DOM elements
   const leftTab = document.getElementById('leftTab');
@@ -224,9 +244,17 @@
   const teamsDisplayArea = document.getElementById('teamsDisplayArea');
   const globalSearchInput = document.getElementById('globalSearchInput');
   const searchResultsDiv = document.getElementById('searchResults');
+  const breadcrumbMatch = document.getElementById('breadcrumbMatch');
   
-  let state = { leftTabVisible: false, allTeams: [], leagues: [] };
+  // State
+  const state = { 
+    leftTabVisible: false, 
+    allTeams: [], 
+    leagues: [],
+    currentNav: 'home'
+  };
   
+  // Menu toggle
   menuToggleBtn.addEventListener('click', () => {
     state.leftTabVisible = !state.leftTabVisible;
     leftTab.classList.toggle('visible', state.leftTabVisible);
@@ -237,7 +265,7 @@
     try {
       const leaguesSnap = await db.collection('leagues').get();
       state.leagues = [];
-      leaguesSnap.forEach(doc => state.leagues.push({ id: doc.id, name: doc.data().name }));
+      leaguesSnap.forEach(doc => state.leagues.push({ id: doc.id, name: doc.data().name, sport: doc.data().sport }));
       
       const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
       state.allTeams = [];
@@ -254,13 +282,22 @@
       });
       
       populateLeagueFilters();
-      renderTeamCarouselOrSearch(); // initial carousel with only logos
-    } catch (err) { console.error("Load error:", err); }
+      renderTeamCarouselOrSearch();
+    } catch (err) { 
+      console.error("Load error:", err); 
+      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">Error loading teams. Please refresh.</div>';
+    }
   }
   
   function populateLeagueFilters() {
+    const sport = profileSportFilter.value;
     let html = '<option value="all">All Leagues</option>';
-    state.leagues.forEach(l => html += `<option value="${l.id}">${l.name}</option>`);
+    
+    const filteredLeagues = sport === 'all' 
+      ? state.leagues 
+      : state.leagues.filter(l => l.sport === sport);
+    
+    filteredLeagues.forEach(l => html += `<option value="${l.id}">${l.name}</option>`);
     profileLeagueFilter.innerHTML = html;
   }
   
@@ -277,7 +314,7 @@
       return true;
     });
     
-    // SEARCH MODE: display as LIST (no boxes, just vertical list)
+    // SEARCH MODE: display as LIST
     if (searchTerm !== "") {
       if (filtered.length === 0) {
         teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams match your search.</div>';
@@ -288,7 +325,7 @@
         listHtml += `
           <div class="searched-team-list-item" onclick="window.location.href='profile.html?team=${team.id}'">
             <div class="list-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${team.name}">` : '<span class="iconify" data-icon="mdi:shield-half-full" style="font-size:28px;"></span>'}
+              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full" style="font-size:28px;"></span>'}
             </div>
             <div class="list-info">
               <div class="list-team-name">${escapeHtml(team.name)}</div>
@@ -302,28 +339,25 @@
       return;
     }
     
-    // CAROUSEL MODE: only logos, 6 rows, fast bidirectional animations
+    // CAROUSEL MODE
     if (filtered.length === 0) {
-      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams available.</div>';
+      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams available for selected filters.</div>';
       return;
     }
     
-    // Distribute teams into 6 rows (circular / repeating for smooth infinite feel)
+    // Distribute teams into 6 rows
     const rowsCount = 6;
-    const teamsPerRow = Math.ceil(filtered.length / rowsCount);
     const rows = Array.from({ length: rowsCount }, () => []);
     filtered.forEach((team, idx) => {
       const rowIdx = idx % rowsCount;
       rows[rowIdx].push(team);
     });
     
-    // For smooth animation, duplicate each row's items (so infinite scroll looks seamless)
     let carouselHtml = '';
     for (let i = 0; i < rowsCount; i++) {
       const rowTeams = rows[i];
       if (rowTeams.length === 0) continue;
-      // duplicate items to create seamless loop
-      const doubled = [...rowTeams, ...rowTeams];
+      const doubled = [...rowTeams, ...rowTeams, ...rowTeams]; // Triple for smooth loop
       carouselHtml += `<div class="carousel-row">`;
       doubled.forEach(team => {
         carouselHtml += `
@@ -337,23 +371,28 @@
     teamsDisplayArea.innerHTML = carouselHtml;
   }
   
-  // Global Search (top bar) returns list results for teams
+  // Global Search
   function performGlobalSearch(term) {
     const t = term.toLowerCase().trim();
     if (!t) {
       searchResultsDiv.classList.remove('active');
       return;
     }
-    const matchedTeams = state.allTeams.filter(team => team.name.toLowerCase().includes(t));
+    
+    const matchedTeams = state.allTeams.filter(team => 
+      team.name.toLowerCase().includes(t) || 
+      (team.leagueName && team.leagueName.toLowerCase().includes(t))
+    );
+    
     if (matchedTeams.length === 0) {
-      searchResultsDiv.innerHTML = '<div class="search-result-item" style="cursor:default;">No teams found</div>';
+      searchResultsDiv.innerHTML = '<div class="search-result-item" style="cursor:default;"><div class="search-result-info"><div class="search-result-title">No teams found</div></div></div>';
     } else {
       let resultsHtml = '';
       matchedTeams.slice(0, 8).forEach(team => {
         resultsHtml += `
           <div class="search-result-item" onclick="window.location.href='profile.html?team=${team.id}'">
             <div class="search-result-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
+              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
             </div>
             <div class="search-result-info">
               <div class="search-result-title">${escapeHtml(team.name)}</div>
@@ -368,51 +407,111 @@
   }
   
   // Helper to escape HTML
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+  function escapeHtml(str) { 
+    if(!str) return ''; 
+    return str.replace(/[&<>]/g, function(m){ 
+      if(m==='&') return '&amp;'; 
+      if(m==='<') return '&lt;'; 
+      if(m==='>') return '&gt;'; 
+      return m;
+    }); 
+  }
   
-  // Event listeners with 150ms debounce (faster than 300ms, 2x speed)
+  // Navigation handler - FULLY FUNCTIONAL
+  function handleNav(nav) {
+    // Update active state
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.nav === nav) btn.classList.add('active');
+    });
+    
+    // Update breadcrumb
+    const navNames = {
+      home: 'Home',
+      sports: 'Sports',
+      debates: 'Debates',
+      games: 'Games',
+      live: 'Live',
+      popular: 'Popular'
+    };
+    breadcrumbMatch.textContent = navNames[nav] || nav;
+    
+    state.currentNav = nav;
+    
+    // Navigation actions
+    switch(nav) {
+      case 'games':
+        window.location.href = 'game.html';
+        break;
+      case 'debates':
+        window.location.href = 'edge.html?view=debates';
+        break;
+      case 'sports':
+        window.location.href = 'edge.html?view=sports';
+        break;
+      case 'popular':
+        window.location.href = 'edge.html?view=popular';
+        break;
+      case 'live':
+        window.location.href = 'edge.html?view=live';
+        break;
+      case 'home':
+      default:
+        // Already on index.html
+        if (nav !== 'home') {
+          window.location.href = 'edge.html';
+        }
+        break;
+    }
+  }
+  
+  // Event listeners with debounce
   let teamDebounce;
   teamSearchInput.addEventListener('input', () => {
     clearTimeout(teamDebounce);
     teamDebounce = setTimeout(() => renderTeamCarouselOrSearch(), 150);
   });
-  profileSportFilter.addEventListener('change', () => renderTeamCarouselOrSearch());
+  
+  profileSportFilter.addEventListener('change', () => {
+    populateLeagueFilters();
+    renderTeamCarouselOrSearch();
+  });
+  
   profileLeagueFilter.addEventListener('change', () => renderTeamCarouselOrSearch());
   
   let globalDebounce;
   globalSearchInput.addEventListener('input', (e) => {
     clearTimeout(globalDebounce);
-    globalDebounce = setTimeout(() => performGlobalSearch(e.target.value), 150);
+    const val = e.target.value.trim();
+    if (!val) {
+      searchResultsDiv.classList.remove('active');
+      return;
+    }
+    globalDebounce = setTimeout(() => performGlobalSearch(val), 150);
   });
+  
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.search-wrapper')) searchResultsDiv.classList.remove('active');
   });
   
-  // Navigation handlers (lightweight, no match rendering)
-  function handleNav(nav){
-    if(nav === 'games'){ window.location.href = 'game.html'; }
-    else if(nav === 'debates'){ alert("🔥 Debate section — join conversations soon!"); }
-    else if(nav === 'sports' || nav === 'popular' || nav === 'live' || nav === 'home'){ alert(`✨ ${nav.toUpperCase()} mode — matches will appear in the next update.`); }
-  }
+  // Navigation event listeners
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
       handleNav(btn.dataset.nav);
     });
   });
+  
+  // Action buttons
   document.querySelectorAll('.action-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.quick;
-      if(type === 'games') window.location.href = 'game.html';
-      else handleNav(type);
+      handleNav(type);
     });
   });
   
   // Initialize everything
-  loadData().then(() => {
-    renderTeamCarouselOrSearch();
-  });
+  loadData();
+  
 })();
 </script>
 </body>

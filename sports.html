@@ -20,9 +20,9 @@
     .brand { font-size: 28px; font-weight: 800; font-style: italic; letter-spacing: -0.5px; text-transform: uppercase; }
     .brand .ora { color: var(--white); }
     .brand .fut { color: var(--vibrant-green); }
-    .header-center { flex: 1; display: flex; justify-content: center; }
-    .home-link { color: var(--vibrant-green); font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; background: rgba(156,232,0,0.15); padding: 8px 20px; border-radius: 30px; transition: 0.2s; border: 1px solid var(--vibrant-green); }
-    .home-link:hover { background: var(--vibrant-green); color: #000; }
+    .header-center { flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .home-icon { color: var(--vibrant-green); font-size: 22px; }
+    .home-text { color: var(--vibrant-green); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; background: rgba(156,232,0,0.15); padding: 6px 18px; border-radius: 30px; border: 1px solid var(--vibrant-green); }
     .header-right { display: flex; align-items: center; gap: 16px; }
     .search-wrapper { position: relative; }
     .search-bar { display: flex; align-items: center; background: rgba(255,255,255,0.08); padding: 6px 14px; border: 2px solid #3A4146; border-radius: 8px; transition: border-color 0.2s; }
@@ -64,35 +64,41 @@
     .dashboard-layout { display: flex; flex: 1; background: var(--white); }
     .main-content { flex: 1; padding: 24px; overflow-y: auto; }
     .display-list { display: flex; flex-direction: column; gap: 16px; }
-    .match-card { background: white; padding: 18px 20px; border-radius: 12px; border: 2px solid #E0E0E0; transition: 0.15s; cursor: pointer; }
-    .match-card:hover { border-color: var(--vibrant-green); box-shadow: 0 6px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
-    .match-teams { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    
+    /* NEW MATCH CARD with tall rectangular bar (no percentages text, just bar) */
+    .match-card { background: white; padding: 18px 20px; border-radius: 16px; border: 2px solid #E0E0E0; transition: 0.15s; cursor: pointer; }
+    .match-card:hover { border-color: var(--vibrant-green); box-shadow: 0 8px 20px rgba(0,0,0,0.1); transform: translateY(-3px); }
+    .match-teams { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .team { display: flex; align-items: center; gap: 12px; flex: 1; }
     .team:last-child { justify-content: flex-end; }
-    .team-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #2D3337, #1A1A1A); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--vibrant-green); overflow: hidden; }
+    .team-logo { width: 52px; height: 52px; background: linear-gradient(135deg, #2D3337, #1A1A1A); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--vibrant-green); overflow: hidden; }
     .team-logo img { width: 100%; height: 100%; object-fit: cover; }
     .team-logo .iconify { font-size: 28px; color: white; }
     .team-info { display: flex; flex-direction: column; }
     .team-name { font-weight: 800; font-size: 16px; color: #1A1A1A; text-transform: uppercase; }
     .team-odds { font-size: 11px; color: #777; font-weight: 500; margin-top: 4px; }
     .match-vs { font-weight: 800; font-size: 14px; color: #999; padding: 0 15px; }
-    .percentage-bar { display: flex; align-items: center; gap: 15px; margin-top: 12px; }
-    .percentage-option { flex: 1; text-align: center; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.15s; }
-    .percentage-option:hover { background: #F5F5F5; }
-    .percentage-label { font-size: 12px; font-weight: 800; color: #555; margin-bottom: 6px; text-transform: uppercase; }
-    .percentage-value { font-size: 18px; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
-    .percentage-fill { height: 6px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
-    .percentage-fill-bar { height: 100%; background: var(--vibrant-green); border-radius: 10px; }
-    .draw-bar { background: #FFB800; }
-    .debate-card { background: white; padding: 20px; border-radius: 12px; border: 2px solid #E0E0E0; margin-bottom: 12px; cursor: pointer; transition: 0.15s; }
-    .debate-card:hover { border-color: var(--vibrant-green); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    
+    /* Tall rectangular vote bar (big height) */
+    .vote-bar-container { display: flex; gap: 8px; margin-top: 12px; height: 48px; }
+    .vote-bar-option { flex: 1; cursor: pointer; transition: all 0.2s; border-radius: 12px; overflow: hidden; background: #F0F0F0; position: relative; }
+    .vote-bar-option:hover { transform: scaleY(1.02); opacity: 0.9; }
+    .vote-bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #1A1A1A; }
+    .vote-bar-fill.team1-fill { background: var(--vibrant-green); }
+    .vote-bar-fill.draw-fill { background: #FFB800; }
+    .vote-bar-fill.team2-fill { background: var(--vibrant-green); }
+    .vote-label-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 800; color: rgba(0,0,0,0.6); pointer-events: none; }
+    
+    /* Debate Card */
+    .debate-card { background: white; padding: 20px; border-radius: 16px; border: 2px solid #E0E0E0; margin-bottom: 12px; cursor: pointer; transition: 0.15s; }
+    .debate-card:hover { border-color: var(--vibrant-green); box-shadow: 0 6px 14px rgba(0,0,0,0.08); transform: translateY(-2px); }
     .debate-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .debate-title { font-size: 18px; font-weight: 800; color: #1A1A1A; }
-    .debate-stats { display: flex; gap: 16px; font-size: 12px; color: #666; margin-bottom: 12px; }
-    .debate-messages { background: #F8F8F8; padding: 12px; border-radius: 8px; }
+    .debate-stats { display: flex; gap: 20px; font-size: 12px; color: #666; margin-bottom: 12px; }
+    .debate-messages { background: #F8F8F8; padding: 12px; border-radius: 12px; }
     .message-preview { font-size: 12px; color: #555; padding: 6px 0; border-bottom: 1px solid #E0E0E0; }
     .message-preview:last-child { border-bottom: none; }
-    .no-data { text-align: center; padding: 60px 20px; color: #999; font-weight: 600; }
+    .no-data { text-align: center; padding: 60px 20px; color: #999; font-weight: 600; background: #FAFAFA; border-radius: 20px; }
     .hint-text { margin-top: 20px; color: #888; font-size: 11px; font-weight: 600; text-align: center; }
     
     /* Right Ad Banner */
@@ -101,7 +107,6 @@
     .ad-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
     #adsterra-banner { width: 160px; height: 600px; display: flex; align-items: center; justify-content: center; }
     
-    /* Scrollbar */
     .main-content::-webkit-scrollbar { width: 6px; }
     .main-content::-webkit-scrollbar-track { background: #E0E0E0; border-radius: 10px; }
     .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 10px; }
@@ -115,7 +120,8 @@
       <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
     </div>
     <div class="header-center">
-      <a href="index.html" class="home-link">🏠 HOME</a>
+      <span class="home-icon"><span class="iconify" data-icon="mdi:home-outline"></span></span>
+      <span class="home-text">HOME</span>
     </div>
     <div class="header-right">
       <div class="search-wrapper">
@@ -129,7 +135,7 @@
     </div>
   </header>
 
-  <!-- Navigation Buttons: HOME, DEBATES, POPULAR, GAMES -->
+  <!-- Navigation Buttons -->
   <div class="nav-section">
     <button class="nav-btn active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> HOME</button>
     <button class="nav-btn" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
@@ -137,7 +143,7 @@
     <button class="nav-btn" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
   </div>
 
-  <!-- Filter Bar (visible for home/popular, hidden for debates/games) -->
+  <!-- Filter Bar -->
   <div class="filter-bar" id="filterBar">
     <div class="filter-group"><label><span class="iconify" data-icon="mdi:soccer"></span> Sport</label><select id="filterSport"><option value="all">All</option><option value="football">Football</option><option value="basketball">Basketball</option></select></div>
     <div class="filter-group"><label><span class="iconify" data-icon="mdi:trophy-outline"></span> League</label><select id="filterLeague"><option value="all">All Leagues</option></select></div>
@@ -148,7 +154,7 @@
   <div class="dashboard-layout">
     <div class="main-content">
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ Click on any match card or percentage to vote ⚡</div>
+      <div class="hint-text" id="cardHint">⚡ Click match card to vote & join predictions ⚡</div>
     </div>
     <div class="ad-space">
       <div class="ad-container"><div class="ad-label">ADVERTISEMENT</div><div id="adsterra-banner"><script type="text/javascript">atOptions = { 'key': '513405c41397d2263bdcca6adf74206c', 'format': 'iframe', 'height': 600, 'width': 160, 'params': {} };</script><script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script></div></div>
@@ -163,7 +169,7 @@
 
 <script>
 (function(){
-  // Firebase
+  // FAST INIT: Firebase
   firebase.initializeApp({ 
     apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", 
     authDomain: "orafut-58b5f.firebaseapp.com", 
@@ -179,7 +185,7 @@
     return id; 
   })();
 
-  // DOM Elements
+  // DOM
   const filterBar = document.getElementById('filterBar');
   const filterSport = document.getElementById('filterSport');
   const filterLeague = document.getElementById('filterLeague');
@@ -191,15 +197,14 @@
   const globalSearchInput = document.getElementById('globalSearchInput');
   const searchResultsDiv = document.getElementById('searchResults');
 
-  // State
   let currentNav = 'home';
   let allMatches = [];
   let allLeagues = [];
-  let debatesData = []; // store debates separately
+  let debatesCache = []; // store debates
 
   filterDate.value = new Date().toISOString().split('T')[0];
 
-  // Load leagues for filter
+  // Load leagues fast
   async function loadLeagues() {
     const snap = await db.collection('leagues').get();
     allLeagues = [];
@@ -209,7 +214,7 @@
     filterLeague.innerHTML = options;
   }
 
-  // Load matches
+  // Load matches with percentages (only for bar rendering)
   async function loadMatches() {
     const snap = await db.collection('matches').orderBy('startTime', 'asc').get();
     allMatches = [];
@@ -238,7 +243,6 @@
         league: data.league,
         leagueName: data.leagueName,
         startTime: data.startTime,
-        status: data.status || 'upcoming',
         sport: data.sport || 'football',
         percentages: percentages,
         totalVotes: total
@@ -247,32 +251,32 @@
     renderCurrentView();
   }
 
-  // Load debates (recent messages grouped by match)
+  // Load debates (optimized, only messages count & preview)
   async function loadDebates() {
     const matchesSnap = await db.collection('matches').get();
-    const debates = [];
+    const debatesTemp = [];
     for(const doc of matchesSnap.docs) {
       const matchData = doc.data();
       const msgsSnap = await db.collection('messages').where('matchId', '==', doc.id).orderBy('createdAt', 'desc').limit(3).get();
       if(msgsSnap.size > 0) {
-        const recentMessages = [];
-        msgsSnap.forEach(msg => recentMessages.push(msg.data()));
-        debates.push({
+        const recent = [];
+        msgsSnap.forEach(msg => recent.push(msg.data()));
+        debatesTemp.push({
           matchId: doc.id,
           teamAName: matchData.teamAName,
           teamBName: matchData.teamBName,
           leagueName: matchData.leagueName,
           messageCount: msgsSnap.size,
-          recentMessages: recentMessages.reverse()
+          recentMessages: recent.reverse()
         });
       }
     }
-    debates.sort((a,b) => b.messageCount - a.messageCount);
-    debatesData = debates.slice(0, 8);
+    debatesTemp.sort((a,b) => b.messageCount - a.messageCount);
+    debatesCache = debatesTemp.slice(0, 12);
     renderDebates();
   }
 
-  // Render matches based on filters + currentNav (popular sorting)
+  // RENDER MATCHES with tall rectangular bars (no percentage text)
   function renderMatches() {
     let filtered = [...allMatches];
     const sportVal = filterSport.value;
@@ -291,16 +295,15 @@
 
     if(currentNav === 'popular') {
       filtered.sort((a,b) => (b.totalVotes || 0) - (a.totalVotes || 0));
-      filtered = filtered.slice(0, 10);
+      filtered = filtered.slice(0, 12);
+      cardHint.innerText = '🔥 MOST VOTED MATCHES — Click any card to vote! 🔥';
     } else {
-      filtered.sort((a,b) => {
-        if(a.startTime && b.startTime) return a.startTime.toDate() - b.startTime.toDate();
-        return 0;
-      });
+      filtered.sort((a,b) => a.startTime?.toDate() - b.startTime?.toDate());
+      cardHint.innerText = '⚡ Click match card to vote & see live predictions ⚡';
     }
 
     if(filtered.length === 0) {
-      dynamicList.innerHTML = '<div class="no-data">⚽ No matches found. Adjust filters or check later.</div>';
+      dynamicList.innerHTML = '<div class="no-data"><span class="iconify" data-icon="mdi:emoticon-sad-outline" style="font-size:40px;"></span><br/>No matches found</div>';
       return;
     }
 
@@ -309,6 +312,7 @@
       const timeStr = m.startTime ? m.startTime.toDate().toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : 'TBD';
       const leagueName = m.leagueName || 'League';
       const p = m.percentages;
+      // tall bar (height 48px)
       html += `
         <div class="match-card" onclick="window.location.href='vote.html?id=${m.id}'">
           <div class="match-teams">
@@ -316,7 +320,7 @@
               <div class="team-logo">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
               <div class="team-info">
                 <span class="team-name">${escapeHtml(m.teamAName)}</span>
-                <span class="team-odds">${leagueName}</span>
+                <span class="team-odds">${escapeHtml(leagueName)}</span>
               </div>
             </div>
             <div class="match-vs">VS</div>
@@ -328,37 +332,34 @@
               <div class="team-logo">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
             </div>
           </div>
-          <div class="percentage-bar">
-            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'team1')">
-              <div class="percentage-label">1</div>
-              <div class="percentage-value">${p.team1}%</div>
-              <div class="percentage-fill"><div class="percentage-fill-bar" style="width:${p.team1}%;"></div></div>
+          <div class="vote-bar-container">
+            <div class="vote-bar-option" onclick="event.stopPropagation(); window.location.href='vote.html?id=${m.id}'">
+              <div class="vote-bar-fill team1-fill" style="width: ${p.team1}%;"></div>
+              <span class="vote-label-icon">1</span>
             </div>
-            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'draw')">
-              <div class="percentage-label">X</div>
-              <div class="percentage-value">${p.draw}%</div>
-              <div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:${p.draw}%;"></div></div>
+            <div class="vote-bar-option" onclick="event.stopPropagation(); window.location.href='vote.html?id=${m.id}'">
+              <div class="vote-bar-fill draw-fill" style="width: ${p.draw}%;"></div>
+              <span class="vote-label-icon">X</span>
             </div>
-            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'team2')">
-              <div class="percentage-label">2</div>
-              <div class="percentage-value">${p.team2}%</div>
-              <div class="percentage-fill"><div class="percentage-fill-bar" style="width:${p.team2}%;"></div></div>
+            <div class="vote-bar-option" onclick="event.stopPropagation(); window.location.href='vote.html?id=${m.id}'">
+              <div class="vote-bar-fill team2-fill" style="width: ${p.team2}%;"></div>
+              <span class="vote-label-icon">2</span>
             </div>
           </div>
         </div>
       `;
     });
     dynamicList.innerHTML = html;
-    cardHint.innerText = currentNav === 'popular' ? '🔥 Most voted matches — click to vote!' : '⚡ Click on any match card or percentages to vote ⚡';
   }
 
   function renderDebates() {
-    if(debatesData.length === 0) {
-      dynamicList.innerHTML = '<div class="no-data">💬 No active debates yet. Be the first to start a conversation!</div>';
+    if(!debatesCache.length) {
+      dynamicList.innerHTML = '<div class="no-data"><span class="iconify" data-icon="mdi:chat-processing-outline" style="font-size:40px;"></span><br/>No active debates yet. Start a conversation!</div>';
+      cardHint.innerText = '💬 Click any debate to join the discussion 💬';
       return;
     }
     let html = '';
-    debatesData.forEach(d => {
+    debatesCache.forEach(d => {
       html += `
         <div class="debate-card" onclick="window.location.href='vote.html?id=${d.matchId}'">
           <div class="debate-header">
@@ -370,19 +371,19 @@
             <span><span class="iconify" data-icon="mdi:trophy-outline"></span> ${escapeHtml(d.leagueName || 'League')}</span>
           </div>
           <div class="debate-messages">
-            ${d.recentMessages.map(msg => `<div class="message-preview">💬 ${escapeHtml(msg.content?.substring(0, 60) || 'Join the debate...')}</div>`).join('')}
+            ${d.recentMessages.map(msg => `<div class="message-preview">💬 ${escapeHtml(msg.content?.substring(0, 65) || 'Join the debate...')}</div>`).join('')}
           </div>
         </div>
       `;
     });
     dynamicList.innerHTML = html;
-    cardHint.innerText = '🔥 Join hot debates — click any card to participate!';
+    cardHint.innerText = '🔥 HOT DEBATES — Click card to join the conversation! 🔥';
   }
 
   function renderCurrentView() {
     if(currentNav === 'debates') {
       filterBar.style.display = 'none';
-      loadDebates();
+      loadDebates(); // fresh debates on view
     } 
     else if(currentNav === 'games') {
       window.location.href = 'game.html';
@@ -392,27 +393,6 @@
       renderMatches();
     }
   }
-
-  // Voting function
-  window.submitVote = async function(matchId, voteType) {
-    try {
-      const existing = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', window.anonymousId).get();
-      if(!existing.empty) {
-        cardHint.innerText = '⚠️ You already voted on this match!';
-        setTimeout(() => { if(currentNav !== 'debates') cardHint.innerText = '⚡ Click on percentages to vote ⚡'; }, 2500);
-        return;
-      }
-      await db.collection('votes').add({
-        matchId, anonymousId: window.anonymousId, voteType,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      await loadMatches();
-      cardHint.innerText = '✅ Vote recorded!';
-      setTimeout(() => { if(currentNav !== 'debates') cardHint.innerText = '⚡ Click on percentages to vote ⚡'; }, 2000);
-    } catch(e) {
-      cardHint.innerText = '❌ Error voting, try again';
-    }
-  };
 
   // Navigation handlers
   function setActiveNav(nav) {
@@ -432,7 +412,7 @@
     if(currentNav !== 'debates') renderMatches();
   });
 
-  // Global Search (matches only)
+  // GLOBAL SEARCH (matches only, fast)
   let searchTimeout;
   globalSearchInput.addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
@@ -462,7 +442,7 @@
         searchResultsDiv.innerHTML = html;
       }
       searchResultsDiv.classList.add('active');
-    }, 200);
+    }, 180); // very-fast loading feel
   });
   document.addEventListener('click', (e) => {
     if(!e.target.closest('.search-wrapper')) searchResultsDiv.classList.remove('active');
@@ -470,9 +450,10 @@
 
   function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-  // Initialize
-  loadLeagues();
-  loadMatches();
+  // Parallel fast loading
+  Promise.all([loadLeagues(), loadMatches()]).then(() => {
+    // preload debates if needed later, but not blocking
+  });
 })();
 </script>
 </body>

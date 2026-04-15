@@ -7,757 +7,198 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #293136;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .mobile-container {
-      width: 100%;
-      max-width: 480px;
-      background-color: #ffffff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    :root {
-      --vibrant-green: #9CE800;
-      --header-bg: #252A2D;
-      --section-bg: #353B40;
-      --left-tab-bg: #2D3337;
-      --white: #FFFFFF;
-      --black: #1A1A1A;
-      --progress-low: #E53935;
-      --progress-medium: #FB8C00;
-      --progress-best: #9CE800;
-      --bottom-nav-height: 70px;
-    }
-
-    .main-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: var(--header-bg);
-      flex-shrink: 0;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .menu-btn {
-      background: transparent;
-      border: 2px solid var(--vibrant-green);
-      color: var(--vibrant-green);
-      font-size: 18px;
-      cursor: pointer;
-      padding: 6px 10px;
-      border-radius: 8px;
-      transition: all 0.2s;
-      line-height: 1;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand {
-      font-size: 24px;
-      font-weight: 800;
-      font-style: italic;
-      font-family: 'Poppins', sans-serif;
-      letter-spacing: -0.5px;
-      text-transform: uppercase;
-    }
-    .brand .ora { color: var(--white); }
-    .brand .fut { color: var(--vibrant-green); }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .search-bar-mobile {
-      display: flex;
-      align-items: center;
-      background: rgba(255,255,255,0.08);
-      padding: 4px 10px;
-      border: 1.5px solid #3A4146;
-      border-radius: 20px;
-    }
-    .search-bar-mobile .iconify {
-      color: var(--vibrant-green);
-      font-size: 14px;
-    }
-    .search-bar-mobile input {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--white);
-      font-size: 12px;
-      width: 120px;
-      font-family: 'Poppins', sans-serif;
-    }
-    .search-bar-mobile input::placeholder {
-      color: rgba(255,255,255,0.4);
-      font-size: 11px;
-    }
-
-    .banner-ad {
-      background: var(--section-bg);
-      padding: 6px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 2px solid #252A2D;
-      flex-shrink: 0;
-    }
-    #mobile-banner {
-      width: 320px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #2D3337;
-      border-radius: 6px;
-    }
-
-    .social-bar {
-      background: var(--section-bg);
-      padding: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 2px solid #252A2D;
-      flex-shrink: 0;
-    }
-
-    .breadcrumb-section {
-      background: var(--section-bg);
-      padding: 6px 16px;
-      border-bottom: 1px solid #252A2D;
-      flex-shrink: 0;
-    }
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.5);
-      flex-wrap: wrap;
-    }
-    .breadcrumb a {
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .breadcrumb .iconify { font-size: 10px; color: rgba(255,255,255,0.3); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #293136; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Poppins', sans-serif; }
+    .mobile-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --left-tab-bg: #2D3337; --white: #FFFFFF; --black: #1A1A1A; --bottom-nav-height: 70px; --arrow-up: #4CAF50; --arrow-down: #F44336; --arrow-draw: #FF9800; }
+    .main-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); flex-shrink: 0; position: relative; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .menu-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); font-size: 18px; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
+    .brand { font-size: 24px; font-weight: 800; font-style: italic; text-transform: uppercase; }
+    .brand .ora { color: var(--white); } .brand .fut { color: var(--vibrant-green); }
+    .header-right { position: relative; }
+    .search-bar-mobile { display: flex; align-items: center; background: rgba(255,255,255,0.08); padding: 4px 10px; border: 1.5px solid #3A4146; border-radius: 20px; cursor: pointer; }
+    .search-bar-mobile .iconify { color: var(--vibrant-green); font-size: 14px; }
+    .search-bar-mobile input { background: transparent; border: none; outline: none; color: var(--white); font-size: 12px; width: 120px; font-family: 'Poppins', sans-serif; cursor: pointer; }
+    .search-bar-mobile input::placeholder { color: rgba(255,255,255,0.4); font-size: 11px; }
+    .search-results-box { position: absolute; top: 45px; right: 0; width: 280px; background: #2D3337; border-radius: 12px; border: 2px solid var(--vibrant-green); z-index: 200; max-height: 300px; overflow-y: auto; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .search-result-item { padding: 12px; border-bottom: 1px solid #3A4146; cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 10px; color: white; }
+    .search-result-item:hover { background: #3A4146; }
+    .search-result-icon { color: var(--vibrant-green); font-size: 18px; }
+    .search-result-info { flex: 1; }
+    .search-result-title { font-weight: 600; font-size: 13px; }
+    .search-result-sub { font-size: 10px; color: #aaa; }
+    .banner-ad { background: var(--section-bg); padding: 6px; display: flex; justify-content: center; border-bottom: 2px solid #252A2D; flex-shrink: 0; }
+    #mobile-banner { width: 320px; height: 50px; background: #2D3337; border-radius: 6px; }
+    .social-bar { background: var(--section-bg); padding: 8px; display: flex; justify-content: center; border-bottom: 2px solid #252A2D; flex-shrink: 0; }
+    .breadcrumb-section { background: var(--section-bg); padding: 6px 16px; border-bottom: 1px solid #252A2D; flex-shrink: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.5); flex-wrap: wrap; }
+    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; }
     .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
-
-    .main-content {
-      flex: 1;
-      padding: 16px 16px 0 16px;
-      background: var(--white);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--vibrant-green) #E0E0E0;
-      padding-bottom: calc(var(--bottom-nav-height) + 16px);
-    }
-    .main-content::-webkit-scrollbar { width: 4px; }
-    .main-content::-webkit-scrollbar-track { background: #E0E0E0; }
-    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 4px; }
-
-    .nav-row-mobile {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #E0E0E0;
-    }
-    .nav-btn-mobile {
-      background: #F0F0F0;
-      border: 2px solid #D0D0D0;
-      color: #555;
-      font-weight: 700;
-      font-size: 11px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      text-transform: uppercase;
-      box-shadow: 0 3px 0 #B0B0B0;
-    }
-    .nav-btn-mobile .iconify { font-size: 14px; }
-    .nav-btn-mobile.active {
-      background: var(--vibrant-green);
-      border-color: var(--vibrant-green);
-      color: #000;
-      font-weight: 800;
-      box-shadow: 0 3px 0 #6B9E00;
-    }
-
-    .context-header-mobile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #E0E0E0;
-    }
-    .context-text-mobile {
-      font-size: 16px;
-      font-weight: 800;
-      color: #1A1A1A;
-      text-transform: uppercase;
-    }
-    .context-text-mobile span { color: var(--vibrant-green); font-style: italic; }
-    .clickable-context-mobile {
-      display: flex;
-      gap: 6px;
-      margin-left: auto;
-    }
-    .context-toggle-mobile {
-      background: #F0F0F0;
-      border: 2px solid #D0D0D0;
-      color: #555;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 10px;
-      cursor: pointer;
-      transition: 0.15s;
-      text-transform: uppercase;
-      box-shadow: 0 3px 0 #B0B0B0;
-    }
-    .context-toggle-mobile.active-context {
-      background: var(--vibrant-green);
-      border-color: var(--vibrant-green);
-      color: #000;
-      font-weight: 800;
-      box-shadow: 0 3px 0 #6B9E00;
-    }
-
-    .filter-bar-mobile {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      background: #F8F8F8;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      border: 2px solid #E0E0E0;
-    }
-    .filter-group-mobile {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .filter-group-mobile select {
-      background: white;
-      border: 2px solid #D0D0D0;
-      color: #333;
-      padding: 5px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 500;
-      outline: none;
-    }
-    .filter-btn-mobile {
-      background: var(--vibrant-green);
-      border: none;
-      color: #000;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 11px;
-      margin-left: auto;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 3px 0 #6B9E00;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .other-games-btn {
-      background: linear-gradient(135deg, #2D3337, #1A1A1A);
-      border: 2px solid var(--vibrant-green);
-      color: var(--vibrant-green);
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 13px;
-      text-align: center;
-      margin-bottom: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .match-card-mobile {
-      background: white;
-      padding: 12px;
-      border-radius: 10px;
-      border: 2px solid #E8E8E8;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+    .main-content { flex: 1; padding: 16px 16px 0 16px; background: var(--white); overflow-y: auto; padding-bottom: calc(var(--bottom-nav-height) + 16px); }
+    .nav-row-mobile { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 2px solid #E0E0E0; }
+    .nav-btn-mobile { background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; font-weight: 700; font-size: 11px; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; }
+    .nav-btn-mobile.active { background: var(--vibrant-green); border-color: var(--vibrant-green); color: #000; box-shadow: 0 3px 0 #6B9E00; }
+    .filter-bar-mobile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #F8F8F8; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; border: 2px solid #E0E0E0; }
+    .filter-group-mobile select, .filter-group-mobile input { background: white; border: 2px solid #D0D0D0; color: #333; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; outline: none; }
+    .filter-btn-mobile { background: var(--vibrant-green); border: none; color: #000; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 3px 0 #6B9E00; }
+    .match-card-mobile { background: white; padding: 16px 12px; border-radius: 16px; border: 2px solid #E8E8E8; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
     .match-card-mobile:active { transform: scale(0.98); background: #FAFAFA; }
-    .match-teams-mobile {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .team-mobile {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
+    .match-teams-mobile { display: flex; align-items: center; justify-content: space-between; }
+    .team-mobile { display: flex; align-items: center; gap: 8px; flex: 1; }
     .team-mobile:last-child { justify-content: flex-end; }
-    .team-logo-mobile {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #2D3337, #1A1A1A);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--vibrant-green);
-    }
-    .team-logo-mobile img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-    .team-logo-mobile .iconify { font-size: 20px; color: white; }
+    .team-logo-mobile img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; }
+    .team-logo-mobile .iconify { font-size: 36px; color: #333; }
     .team-info-mobile { display: flex; flex-direction: column; }
-    .team-name-mobile {
-      font-weight: 700;
-      font-size: 13px;
-      color: #1A1A1A;
-      text-transform: uppercase;
-    }
-    .team-odds-mobile { font-size: 10px; color: #777; }
-    .match-vs-mobile {
-      font-weight: 800;
-      font-size: 12px;
-      color: #999;
-      padding: 0 6px;
-    }
-    .progress-bar-container {
-      width: 100%;
-      margin-top: 8px;
-    }
-    .progress-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      color: #555;
-      letter-spacing: 0.5px;
-    }
-    .progress-bar-bg {
-      width: 100%;
-      height: 12px;
-      background-color: #E0E0E0;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 20px;
-      transition: width 0.3s ease;
-    }
-    .progress-fill.low { background-color: var(--progress-low); }
-    .progress-fill.medium { background-color: var(--progress-medium); }
-    .progress-fill.best { background-color: var(--progress-best); }
-    .vote-hint {
-      text-align: center;
-      margin-top: 6px;
-      font-size: 9px;
-      font-weight: 600;
-      color: #999;
-      text-transform: uppercase;
-    }
-
-    .promo-banner-mobile {
-      background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%);
-      border: 2px solid var(--vibrant-green);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 16px;
-      color: white;
-    }
-    .promo-banner-mobile h4 {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--vibrant-green);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .promo-features-mobile {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .promo-feature-mobile {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #E0E0E0;
-      font-weight: 500;
-      font-size: 10px;
-    }
-    .promo-feature-mobile .iconify { color: var(--vibrant-green); font-size: 14px; }
-
-    .hint-text-mobile {
-      margin-top: 14px;
-      margin-bottom: 8px;
-      color: #999;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-align: center;
-    }
-
-    .bottom-nav-float {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
-      background: var(--header-bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 10px 8px;
-      border-top: 3px solid var(--vibrant-green);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-      z-index: 100;
-      height: var(--bottom-nav-height);
-    }
-    .nav-item-float {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      background: transparent;
-      border: none;
-      color: #999;
-      cursor: pointer;
-      transition: 0.15s;
-      padding: 6px 10px;
-      border-radius: 30px;
-      text-decoration: none;
-    }
+    .team-name-mobile { font-weight: 800; font-size: 14px; color: #1A1A1A; text-transform: uppercase; }
+    .team-odds-mobile { font-size: 9px; color: #777; }
+    .match-center { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 16px; }
+    .match-vs-mobile { font-weight: 800; font-size: 14px; color: #666; }
+    .arrow-indicators { display: flex; gap: 12px; margin-top: 4px; }
+    .arrow-up { color: var(--arrow-up); font-size: 18px; }
+    .arrow-down { color: var(--arrow-down); font-size: 18px; }
+    .arrow-draw { color: var(--arrow-draw); font-size: 18px; transform: rotate(90deg); }
+    .promo-banner-mobile { background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%); border: 2px solid var(--vibrant-green); border-radius: 10px; padding: 14px; margin-bottom: 16px; color: white; display: block; }
+    .promo-banner-mobile h4 { font-size: 14px; font-weight: 800; color: var(--vibrant-green); text-transform: uppercase; margin-bottom: 10px; }
+    .promo-features-mobile { display: flex; flex-direction: column; gap: 5px; }
+    .promo-feature-mobile { display: flex; align-items: center; gap: 8px; font-size: 10px; }
+    .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--header-bg); display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid var(--vibrant-green); z-index: 100; height: var(--bottom-nav-height); }
+    .nav-item-float { display: flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; color: #999; cursor: pointer; padding: 6px 10px; border-radius: 30px; }
     .nav-item-float .iconify { font-size: 22px; }
-    .nav-item-float span {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .nav-item-float.active {
-      background: var(--vibrant-green);
-      color: #000;
-    }
-    .nav-item-float.active .iconify { color: #000; }
-
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -280px;
-      width: 280px;
-      height: 100vh;
-      background: var(--left-tab-bg);
-      z-index: 1000;
-      transition: left 0.3s ease;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-      overflow-y: auto;
-    }
+    .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .nav-item-float.active { background: var(--vibrant-green); color: #000; }
+    .side-menu { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: var(--left-tab-bg); z-index: 1000; transition: left 0.3s ease; overflow-y: auto; }
     .side-menu.open { left: 0; }
-    .side-menu-header {
-      padding: 20px 16px;
-      border-bottom: 2px solid var(--vibrant-green);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .close-menu {
-      background: transparent;
-      border: none;
-      color: var(--white);
-      font-size: 24px;
-      cursor: pointer;
-    }
-    .side-menu-content { padding: 16px; padding-bottom: 30px; }
+    .side-menu-header { padding: 20px 16px; border-bottom: 2px solid var(--vibrant-green); display: flex; justify-content: space-between; }
+    .close-menu { background: transparent; border: none; color: var(--white); font-size: 24px; cursor: pointer; }
+    .side-menu-content { padding: 16px; }
     .menu-section { margin-bottom: 24px; }
-    .menu-section-title {
-      color: var(--vibrant-green);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-    .menu-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      color: #CCC;
-      text-decoration: none;
-      border-bottom: 1px solid #3A4146;
-      font-weight: 500;
-      font-size: 13px;
-      cursor: pointer;
-    }
+    .menu-section-title { color: var(--vibrant-green); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .menu-link { display: flex; align-items: center; gap: 12px; padding: 12px 0; color: #CCC; border-bottom: 1px solid #3A4146; font-size: 13px; cursor: pointer; }
     .menu-link .iconify { color: var(--vibrant-green); font-size: 18px; }
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 999;
-      display: none;
-    }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
     .overlay.show { display: block; }
-
-    .league-item-mobile, .team-item-mobile {
-      background: #252A2D;
-      padding: 10px 12px;
-      border-radius: 6px;
-      color: #E0E0E0;
-      font-size: 12px;
-      font-weight: 600;
-      border-left: 4px solid var(--vibrant-green);
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: 0.1s;
-    }
-    .league-item-mobile:hover, .team-item-mobile:hover { background: #3A4146; }
-    .menu-sport-buttons { display: flex; gap: 12px; margin-top: 8px; margin-bottom: 16px; }
-    .menu-sport-btn {
-      flex: 1;
-      background: #252A2D;
-      border: 2px solid #3A4146;
-      padding: 10px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 700;
-      text-align: center;
-      cursor: pointer;
-    }
-    .menu-sport-btn.active-menu-sport { background: var(--vibrant-green); color: #000; border-color: var(--vibrant-green); }
+    .league-item-mobile, .team-item-mobile { background: #252A2D; padding: 10px 12px; border-radius: 6px; color: #E0E0E0; font-size: 12px; font-weight: 600; border-left: 4px solid var(--vibrant-green); margin-bottom: 6px; cursor: pointer; }
+    .menu-sport-buttons { display: flex; gap: 12px; margin-bottom: 16px; }
+    .menu-sport-btn { flex: 1; background: #252A2D; border: 2px solid #3A4146; padding: 10px; border-radius: 8px; color: white; font-weight: 700; text-align: center; cursor: pointer; }
+    .menu-sport-btn.active-menu-sport { background: var(--vibrant-green); color: #000; }
+    .team-search-box { margin-bottom: 12px; }
+    .team-search-box input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 2px solid #3A4146; background: #252A2D; color: white; font-size: 12px; outline: none; }
+    .footer-credits { margin-top: 20px; padding: 16px; text-align: center; border-top: 1px solid #3A4146; color: #888; font-size: 10px; }
+    .footer-credits a { color: var(--vibrant-green); text-decoration: none; cursor: pointer; }
+    .notification-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 40px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .loading-spinner { text-align: center; padding: 40px; color: var(--vibrant-green); }
   </style>
 </head>
 <body>
 <div class="mobile-container">
+  <div class="notification-toast" id="notificationToast"><span class="iconify" data-icon="mdi:information-outline"></span><span id="toastMessage"></span></div>
   <header class="main-header">
-    <div class="header-left">
-      <button class="menu-btn" id="menuToggleBtn" aria-label="Menu"><span class="iconify" data-icon="mdi:menu"></span></button>
-      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
-    </div>
-    <div class="header-right">
-      <div class="search-bar-mobile">
-        <span class="iconify" data-icon="mdi:magnify"></span>
-        <input type="text" id="searchInputMobile" placeholder="Search matches or teams...">
-      </div>
-    </div>
+    <div class="header-left"><button class="menu-btn" id="menuToggleBtn"><span class="iconify" data-icon="mdi:menu"></span></button><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div></div>
+    <div class="header-right"><div class="search-bar-mobile"><span class="iconify" data-icon="mdi:magnify"></span><input type="text" id="searchInputMobile" placeholder="Search..."></div><div class="search-results-box" id="searchResultsBox"></div></div>
   </header>
   <div class="banner-ad"><div id="mobile-banner"><script type="text/javascript">atOptions = {'key':'84b968fa543d8c4d3957f1b6b0a1d07f','format':'iframe','height':50,'width':320,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/84b968fa543d8c4d3957f1b6b0a1d07f/invoke.js"></script></div></div>
   <div class="social-bar"><script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script></div>
-  <div class="breadcrumb-section"><div class="breadcrumb" id="breadcrumbMobile"><a href="#">Home</a><span class="iconify" data-icon="mdi:chevron-right"></span><a href="#" id="breadcrumbSportMobile">Football</a><span class="iconify" data-icon="mdi:chevron-right"></span><span class="current" id="breadcrumbMatchMobile">Upcoming</span></div></div>
-  <div class="main-content" id="mainContent">
-    <div class="promo-banner-mobile" id="promoBannerMobile"><h4>🏆 Africa's #1 Prediction Brand</h4><div class="promo-features-mobile"><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div></div>
-    <div class="nav-row-mobile"><button class="nav-btn-mobile active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</button><button class="nav-btn-mobile" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</button><button class="nav-btn-mobile" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</button><button class="nav-btn-mobile" data-nav="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</button><button class="nav-btn-mobile" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</button></div>
-    
-    <div class="context-header-mobile"><div class="context-text-mobile" id="contextDisplayMobile">SPORTS <span>&</span> LIVE</div><div class="clickable-context-mobile"><button class="context-toggle-mobile active-context" id="contextSportsBtnMobile">SPORTS</button><button class="context-toggle-mobile" id="contextLiveBtnMobile">LIVE</button></div></div>
-    
-    <div class="filter-bar-mobile"><div class="filter-group-mobile"><select id="filterSportMobile"><option value="all">All</option><option value="football" selected>Football</option><option value="basketball">Basketball</option></select></div><div class="filter-group-mobile"><select id="filterLeagueMobile"><option value="all">All Leagues</option></select></div><button class="filter-btn-mobile" id="applyFilterBtnMobile"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button></div>
-    
-    <div class="other-games-btn" id="otherGamesBtn"><span class="iconify" data-icon="mdi:gamepad-variant"></span> OTHER GAMES <span class="iconify" data-icon="mdi:arrow-right-bold"></span></div>
-    
+  <div class="breadcrumb-section"><div class="breadcrumb"><a href="#">Home</a><span class="iconify" data-icon="mdi:chevron-right"></span><span class="current" id="breadcrumbCurrent">Matches</span></div></div>
+  <div class="main-content">
+    <div class="promo-banner-mobile" id="promoBanner"><h4>🏆 Africa's #1 Prediction Brand</h4><div class="promo-features-mobile"><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div></div>
+    <div class="nav-row-mobile"><button class="nav-btn-mobile active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</button><button class="nav-btn-mobile" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</button><button class="nav-btn-mobile" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span> Games</button><button class="nav-btn-mobile" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</button><button class="nav-btn-mobile" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</button></div>
+    <div class="filter-bar-mobile"><div class="filter-group-mobile"><select id="filterSportMobile"><option value="all">All</option><option value="football" selected>Football</option><option value="basketball">Basketball</option></select></div><div class="filter-group-mobile"><select id="filterLeagueMobile"><option value="all">All Leagues</option></select></div><div class="filter-group-mobile"><input type="date" id="filterDateMobile"></div><button class="filter-btn-mobile" id="applyFilterBtnMobile"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button></div>
     <div id="dynamicListMobile"></div>
-    <div class="hint-text-mobile" id="cardHintMobile">⚡ TAP ON ANY MATCH CARD TO VOTE ⚡</div>
   </div>
   <div class="bottom-nav-float"><button class="nav-item-float active" data-nav-bottom="menu"><span class="iconify" data-icon="mdi:menu"></span><span>Menu</span></button><button class="nav-item-float" data-nav-bottom="sports"><span class="iconify" data-icon="mdi:soccer"></span><span>Sports</span></button><button class="nav-item-float" data-nav-bottom="debate"><span class="iconify" data-icon="mdi:chat-outline"></span><span>Debate</span></button><button class="nav-item-float" data-nav-bottom="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>Account</span></button></div>
   <div class="overlay" id="overlay"></div>
-  <div class="side-menu" id="sideMenu"><div class="side-menu-header"><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div><button class="close-menu" id="closeMenuBtn"><span class="iconify" data-icon="mdi:close"></span></button></div><div class="side-menu-content"><div class="menu-section"><div class="menu-section-title">NAVIGATION</div><a class="menu-link" data-menu="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</a><a class="menu-link" data-menu="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</a><a class="menu-link" data-menu="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</a><a class="menu-link" data-menu="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</a><a class="menu-link" data-menu="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</a></div><div class="menu-section"><div class="menu-section-title">SELECT SPORT</div><div class="menu-sport-buttons" id="menuSportButtons"><button class="menu-sport-btn active-menu-sport" data-menu-sport="football">⚽ FOOTBALL</button><button class="menu-sport-btn" data-menu-sport="basketball">🏀 BASKETBALL</button></div></div><div class="menu-section"><div class="menu-section-title">LEAGUES</div><div id="menuLeagueList"></div></div><div class="menu-section"><div class="menu-section-title">TEAMS</div><div id="menuTeamList"></div></div></div></div>
+  <div class="side-menu" id="sideMenu"><div class="side-menu-header"><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div><button class="close-menu" id="closeMenuBtn"><span class="iconify" data-icon="mdi:close"></span></button></div><div class="side-menu-content"><div class="menu-section"><div class="menu-section-title">NAVIGATION</div><a class="menu-link" data-menu="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</a><a class="menu-link" data-menu="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</a><a class="menu-link" data-menu="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span> Games</a><a class="menu-link" data-menu="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</a><a class="menu-link" data-menu="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</a></div><div class="menu-section"><div class="menu-section-title">SELECT SPORT</div><div class="menu-sport-buttons"><button class="menu-sport-btn active-menu-sport" data-menu-sport="football">⚽ FOOTBALL</button><button class="menu-sport-btn" data-menu-sport="basketball">🏀 BASKETBALL</button></div></div><div class="menu-section"><div class="menu-section-title">LEAGUES</div><div id="menuLeagueList"></div></div><div class="menu-section"><div class="menu-section-title">TEAMS</div><div class="team-search-box"><input type="text" id="teamSearchInput" placeholder="🔍 Search teams..."></div><div id="menuTeamList"></div></div><div class="footer-credits">© 2026 ORAFUT · <a id="pireactiveLink">Made by PIReactive</a></div></div></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
 <script>
 (function(){
-    const firebaseConfig = {
-        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
-        authDomain: "orafut-58b5f.firebaseapp.com",
-        projectId: "orafut-58b5f",
-        storageBucket: "orafut-58b5f.firebasestorage.app",
-        messagingSenderId: "500581059835",
-        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
-    };
-    
+    const firebaseConfig = { apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" };
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
     let currentNav = 'home';
     let currentSport = 'football';
-    let currentContext = 'sports';
-    let leagues = [];
-    let teams = [];
-    let matches = [];
+    let leagues = [], teams = [], matches = [];
     let anonymousId = localStorage.getItem('anonymousId');
+    if(!anonymousId){ anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('anonymousId', anonymousId); }
     
-    if(!anonymousId){
-        anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('anonymousId', anonymousId);
-    }
-    
-    db.collection('anonymous_users').doc(anonymousId).set({
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).catch(()=>{});
-    
+    // DOM elements
     const searchInput = document.getElementById('searchInputMobile');
+    const searchResultsBox = document.getElementById('searchResultsBox');
     const dynamicList = document.getElementById('dynamicListMobile');
     const filterSport = document.getElementById('filterSportMobile');
     const filterLeague = document.getElementById('filterLeagueMobile');
+    const filterDate = document.getElementById('filterDateMobile');
     const applyFilterBtn = document.getElementById('applyFilterBtnMobile');
-    const sportBtns = document.querySelectorAll('.sport-btn-mobile');
-    const contextSportsBtn = document.getElementById('contextSportsBtnMobile');
-    const contextLiveBtn = document.getElementById('contextLiveBtnMobile');
-    const breadcrumbSport = document.getElementById('breadcrumbSportMobile');
-    const breadcrumbMatch = document.getElementById('breadcrumbMatchMobile');
-    const cardHint = document.getElementById('cardHintMobile');
+    const promoBanner = document.getElementById('promoBanner');
     const menuToggleBtn = document.getElementById('menuToggleBtn');
     const sideMenu = document.getElementById('sideMenu');
     const overlay = document.getElementById('overlay');
     const closeMenuBtn = document.getElementById('closeMenuBtn');
     const menuLeagueList = document.getElementById('menuLeagueList');
     const menuTeamList = document.getElementById('menuTeamList');
-    const menuSportBtns = document.querySelectorAll('[data-menu-sport]');
+    const teamSearchInput = document.getElementById('teamSearchInput');
     const navButtons = document.querySelectorAll('.nav-btn-mobile');
     const bottomNavItems = document.querySelectorAll('.nav-item-float');
-    const promoBanner = document.getElementById('promoBannerMobile');
-    const otherGamesBtn = document.getElementById('otherGamesBtn');
+    const toast = document.getElementById('notificationToast');
+    const toastMsg = document.getElementById('toastMessage');
+    const pireactiveLink = document.getElementById('pireactiveLink');
     
     let menuSelectedSport = 'football';
+    let searchTimeout = null;
     
+    function showNotification(msg, isError = false){ toastMsg.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = isError ? '#F44336' : '#9CE800'; setTimeout(() => { toast.style.display = 'none'; }, 3000); }
+    function showLoading(show){ dynamicList.innerHTML = show ? '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading" style="font-size:32px; animation:spin 1s linear infinite;"></span><br>Loading...</div>' : ''; if(show) dynamicList.innerHTML = '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading"></span><br>Loading...</div>'; }
     function closeMenuGlobal(){ sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
     function openMenu(){ sideMenu.classList.add('open'); overlay.classList.add('show'); }
     
-    if(menuToggleBtn) menuToggleBtn.addEventListener('click', openMenu);
-    if(closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenuGlobal);
-    if(overlay) overlay.addEventListener('click', closeMenuGlobal);
+    menuToggleBtn?.addEventListener('click', openMenu);
+    closeMenuBtn?.addEventListener('click', closeMenuGlobal);
+    overlay?.addEventListener('click', closeMenuGlobal);
+    if(pireactiveLink) pireactiveLink.addEventListener('click', () => window.open('https://pireactive.vercel.app', '_blank'));
     
-    document.querySelectorAll('[data-menu]').forEach(link => {
-        link.addEventListener('click', () => {
-            const menuNav = link.dataset.menu;
-            const btn = document.querySelector(`[data-nav="${menuNav}"]`);
-            if(btn) btn.click();
-            closeMenuGlobal();
-        });
-    });
+    document.querySelectorAll('[data-menu]').forEach(link => { link.addEventListener('click', () => { const btn = document.querySelector(`[data-nav="${link.dataset.menu}"]`); if(btn) btn.click(); closeMenuGlobal(); }); });
     
-    async function loadLeaguesAndTeams(){
-        const leaguesSnap = await db.collection('leagues').get();
-        leagues = [];
-        leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
-        const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
-        teams = [];
-        teamsSnap.forEach(doc => teams.push({ id: doc.id, ...doc.data() }));
-        populateLeagueFilter();
-        renderMenuLeaguesAndTeams();
-        await loadMatches();
+    async function loadData(){
+        try{
+            showLoading(true);
+            const [leaguesSnap, teamsSnap] = await Promise.all([db.collection('leagues').get(), db.collection('teams').where('isActive', '==', true).get()]);
+            leagues = []; leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+            teams = []; teamsSnap.forEach(doc => teams.push({ id: doc.id, ...doc.data() }));
+            populateLeagueFilter();
+            renderMenuLeaguesAndTeams();
+            await loadMatches();
+            showLoading(false);
+        } catch(e){ showLoading(false); showNotification('Failed to load data', true); console.error(e); }
     }
     
-    function filterLeaguesBySport(sport){
-        return leagues.filter(l => sport === 'football' ? !l.name?.toLowerCase().includes('basketball') : l.name?.toLowerCase().includes('basketball'));
-    }
+    function filterLeaguesBySport(sport){ return leagues.filter(l => sport === 'football' ? !l.name?.toLowerCase().includes('basketball') : l.name?.toLowerCase().includes('basketball')); }
     
     function renderMenuLeaguesAndTeams(){
         const filteredLeagues = filterLeaguesBySport(menuSelectedSport);
-        let leaguesHtml = '';
-        filteredLeagues.forEach(league => {
-            leaguesHtml += `<div class="league-item-mobile" data-league-id="${league.id}" data-league-name="${league.name.replace(/'/g, "\\'")}">${league.name}</div>`;
-        });
+        let leaguesHtml = ''; filteredLeagues.forEach(league => { leaguesHtml += `<div class="league-item-mobile" data-league-id="${league.id}" data-league-name="${league.name.replace(/'/g, "\\'")}">${league.name}</div>`; });
         menuLeagueList.innerHTML = leaguesHtml || '<div class="league-item-mobile">No leagues</div>';
-        
-        document.querySelectorAll('[data-league-id]').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const leagueTeams = teams.filter(t => t.leagueId === el.dataset.leagueId || t.leagueName === el.innerText);
-                let teamsHtml = '';
-                leagueTeams.forEach(t => {
-                    teamsHtml += `<div class="team-item-mobile" data-team-id="${t.id}" data-team-name="${t.name.replace(/'/g, "\\'")}">${t.name}</div>`;
-                });
-                menuTeamList.innerHTML = teamsHtml || '<div class="team-item-mobile">No teams in this league</div>';
-                document.querySelectorAll('[data-team-id]').forEach(tm => {
-                    tm.addEventListener('click', (e2) => {
-                        e2.stopPropagation();
-                        window.location.href = `profile.html?id=${tm.dataset.teamId}`;
-                    });
-                });
-                closeMenuGlobal();
-            });
-        });
+        document.querySelectorAll('[data-league-id]').forEach(el => { el.addEventListener('click', (e) => { e.stopPropagation(); const leagueTeams = teams.filter(t => t.leagueId === el.dataset.leagueId || t.leagueName === el.innerText); renderTeamList(leagueTeams); closeMenuGlobal(); }); });
+        renderTeamList(teams.filter(t => menuSelectedSport === 'football' ? !t.leagueName?.toLowerCase().includes('basketball') : t.leagueName?.toLowerCase().includes('basketball')));
     }
     
-    menuSportBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            menuSportBtns.forEach(b => b.classList.remove('active-menu-sport'));
-            btn.classList.add('active-menu-sport');
-            menuSelectedSport = btn.dataset.menuSport;
-            renderMenuLeaguesAndTeams();
-        });
-    });
+    function renderTeamList(teamArray){ 
+        const searchTerm = teamSearchInput?.value.toLowerCase() || '';
+        const filtered = teamArray.filter(t => t.name?.toLowerCase().includes(searchTerm));
+        let teamsHtml = ''; filtered.forEach(t => { teamsHtml += `<div class="team-item-mobile" data-team-id="${t.id}">${t.name}</div>`; });
+        menuTeamList.innerHTML = teamsHtml || '<div class="team-item-mobile">No teams found</div>';
+        document.querySelectorAll('[data-team-id]').forEach(tm => { tm.addEventListener('click', (e2) => { e2.stopPropagation(); window.location.href = `profile.html?id=${tm.dataset.teamId}`; }); });
+    }
+    if(teamSearchInput) teamSearchInput.addEventListener('input', () => renderTeamList(teams.filter(t => menuSelectedSport === 'football' ? !t.leagueName?.toLowerCase().includes('basketball') : t.leagueName?.toLowerCase().includes('basketball'))));
+    
+    document.querySelectorAll('.menu-sport-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.menu-sport-btn').forEach(b => b.classList.remove('active-menu-sport')); btn.classList.add('active-menu-sport'); menuSelectedSport = btn.dataset.menuSport; renderMenuLeaguesAndTeams(); }); });
     
     async function loadMatches(){
         try{
-            let query = db.collection('matches');
-            if(currentContext === 'live') query = query.where('status', '==', 'live');
-            else query = query.where('status', 'in', ['upcoming', 'live']);
-            query = query.orderBy('startTime', 'asc');
+            let query = db.collection('matches').where('status', 'in', ['upcoming', 'live']).orderBy('startTime', 'asc');
             const matchesSnap = await query.get();
             matches = [];
             for(const doc of matchesSnap.docs){
@@ -767,155 +208,78 @@
                 const teamA = votesSnap.docs.filter(v => v.data().voteType === 'team1').length;
                 const draw = votesSnap.docs.filter(v => v.data().voteType === 'draw').length;
                 const teamB = votesSnap.docs.filter(v => v.data().voteType === 'team2').length;
-                let pA = 33, pD = 34, pB = 33;
-                if(total > 0){
-                    pA = Math.round((teamA / total) * 100);
-                    pD = Math.round((draw / total) * 100);
-                    pB = Math.round((teamB / total) * 100);
-                }
-                match.percentages = { team1: pA, draw: pD, team2: pB };
+                match.totalVotes = total;
+                match.percentages = { team1: total > 0 ? Math.round((teamA/total)*100) : 33, draw: total > 0 ? Math.round((draw/total)*100) : 34, team2: total > 0 ? Math.round((teamB/total)*100) : 33 };
                 matches.push(match);
             }
             renderList();
-        } catch(e){ console.error(e); }
+        } catch(e){ showNotification('Error loading matches', true); }
     }
     
-    function getProgressColorClass(percent){
-        if(percent < 40) return 'low';
-        if(percent < 70) return 'medium';
-        return 'best';
-    }
-    
-    function redirectToVote(matchId){
-        window.location.href = `vote.html?id=${matchId}`;
+    function getArrowStatus(p1, p2, pDraw){
+        if(p1 > p2 && p1 > pDraw) return { left: 'arrow-up', right: 'arrow-down', showLeft: true, showRight: true };
+        if(p2 > p1 && p2 > pDraw) return { left: 'arrow-down', right: 'arrow-up', showLeft: true, showRight: true };
+        if(pDraw > p1 && pDraw > p2) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
+        if(p1 === p2 && p1 === pDraw) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
+        if(p1 === p2) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
+        return { left: 'arrow-up', right: 'arrow-down', showLeft: true, showRight: true };
     }
     
     function renderList(){
         let sportFilterVal = filterSport.value;
         let leagueFilterVal = filterLeague.value;
-        let searchTerm = searchInput.value.toLowerCase().trim();
-        
+        let dateFilterVal = filterDate.value;
         let filtered = matches.filter(m => {
             const leagueObj = leagues.find(l => l.id === m.league);
-            if(sportFilterVal !== 'all'){
-                const isFootball = !leagueObj?.name?.toLowerCase().includes('basketball');
-                if(sportFilterVal === 'football' && !isFootball) return false;
-                if(sportFilterVal === 'basketball' && isFootball) return false;
-            }
+            if(sportFilterVal !== 'all'){ const isFootball = !leagueObj?.name?.toLowerCase().includes('basketball'); if(sportFilterVal === 'football' && !isFootball) return false; if(sportFilterVal === 'basketball' && isFootball) return false; }
             if(leagueFilterVal !== 'all' && m.league !== leagueFilterVal) return false;
-            if(searchTerm){
-                const matchStr = `${m.teamAName} ${m.teamBName}`.toLowerCase();
-                const teamMatches = teams.some(t => t.name?.toLowerCase().includes(searchTerm));
-                if(!matchStr.includes(searchTerm) && !teamMatches) return false;
-            }
+            if(dateFilterVal){ const matchDate = m.startTime?.toDate(); if(matchDate){ const dateStr = matchDate.toISOString().split('T')[0]; if(dateStr !== dateFilterVal) return false; } }
             return true;
         });
-        
-        filtered.sort((a,b) => (a.isTopMatch && !b.isTopMatch) ? -1 : (!a.isTopMatch && b.isTopMatch) ? 1 : 0);
+        if(currentNav === 'popular') filtered.sort((a,b) => (b.totalVotes || 0) - (a.totalVotes || 0));
+        else filtered.sort((a,b) => (a.isTopMatch && !b.isTopMatch) ? -1 : (!a.isTopMatch && b.isTopMatch) ? 1 : 0);
         
         let html = '';
-        if(filtered.length === 0){
-            html = '<div style="text-align:center;padding:40px;color:#999;">No matches found</div>';
-        } else {
-            filtered.forEach(m => {
-                const leagueName = leagues.find(l => l.id === m.league)?.name || 'Unknown';
-                const maxPercent = Math.max(m.percentages.team1, m.percentages.draw, m.percentages.team2);
-                const colorClass = getProgressColorClass(maxPercent);
-                const timeStr = m.status === 'live' ? 'LIVE' : (m.startTime?.toDate().toLocaleString('en-US', { weekday: 'short', hour: '2-digit', minute:'2-digit' }) || 'TBD');
-                
-                html += `<div class="match-card-mobile" data-match-id="${m.id}">
-                    <div class="match-teams-mobile">
-                        <div class="team-mobile">
-                            <div class="team-logo-mobile">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
-                            <div class="team-info-mobile"><span class="team-name-mobile">${m.teamAName}</span><span class="team-odds-mobile">${leagueName}</span></div>
-                        </div>
-                        <div class="match-vs-mobile">VS</div>
-                        <div class="team-mobile">
-                            <div class="team-info-mobile" style="text-align:right;"><span class="team-name-mobile">${m.teamBName}</span><span class="team-odds-mobile">${timeStr}</span></div>
-                            <div class="team-logo-mobile">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-label">🔵 COMMUNITY CONFIDENCE (${maxPercent}%)</div>
-                        <div class="progress-bar-bg"><div class="progress-fill ${colorClass}" style="width:${maxPercent}%;"></div></div>
-                        <div class="vote-hint">tap card to vote</div>
-                    </div>
-                </div>`;
-            });
-        }
+        if(filtered.length === 0) html = '<div style="text-align:center;padding:40px;color:#999;">No matches found</div>';
+        else filtered.forEach(m => {
+            const leagueName = leagues.find(l => l.id === m.league)?.name || 'Unknown';
+            const maxP = Math.max(m.percentages.team1, m.percentages.draw, m.percentages.team2);
+            const arrows = getArrowStatus(m.percentages.team1, m.percentages.team2, m.percentages.draw);
+            const timeStr = m.status === 'live' ? 'LIVE' : (m.startTime?.toDate().toLocaleString('en-US', { weekday: 'short', hour:'2-digit', minute:'2-digit' }) || 'TBD');
+            html += `<div class="match-card-mobile" data-match-id="${m.id}"><div class="match-teams-mobile"><div class="team-mobile"><div class="team-logo-mobile">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div><div class="team-info-mobile"><span class="team-name-mobile">${m.teamAName}</span><span class="team-odds-mobile">${leagueName}</span></div></div><div class="match-center"><div class="match-vs-mobile">VS</div><div class="arrow-indicators"><span class="iconify ${arrows.left}" data-icon="mdi:arrow-up-bold"></span><span class="iconify ${arrows.right}" data-icon="mdi:arrow-down-bold"></span></div></div><div class="team-mobile"><div class="team-info-mobile" style="text-align:right;"><span class="team-name-mobile">${m.teamBName}</span><span class="team-odds-mobile">${timeStr}</span></div><div class="team-logo-mobile">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div></div></div></div>`;
+        });
         dynamicList.innerHTML = html;
-        
-        document.querySelectorAll('.match-card-mobile').forEach(card => {
-            card.addEventListener('click', () => {
-                const matchId = card.dataset.matchId;
-                redirectToVote(matchId);
-            });
-        });
+        document.querySelectorAll('.match-card-mobile').forEach(card => { card.addEventListener('click', () => { window.location.href = `vote.html?id=${card.dataset.matchId}`; }); });
     }
     
-    function populateLeagueFilter(){
-        filterLeague.innerHTML = '<option value="all">All Leagues</option>';
-        leagues.forEach(l => { filterLeague.innerHTML += `<option value="${l.id}">${l.name}</option>`; });
+    function populateLeagueFilter(){ filterLeague.innerHTML = '<option value="all">All Leagues</option>'; leagues.forEach(l => { filterLeague.innerHTML += `<option value="${l.id}">${l.name}</option>`; }); }
+    
+    // Search with 300ms debounce
+    if(searchInput){
+        searchInput.addEventListener('input', (e) => {
+            if(searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const term = e.target.value.toLowerCase().trim();
+                if(term.length < 2){ searchResultsBox.style.display = 'none'; return; }
+                const matchResults = matches.filter(m => `${m.teamAName} ${m.teamBName}`.toLowerCase().includes(term)).slice(0,5);
+                const teamResults = teams.filter(t => t.name?.toLowerCase().includes(term)).slice(0,5);
+                if(matchResults.length === 0 && teamResults.length === 0){ searchResultsBox.style.display = 'none'; return; }
+                let html = '';
+                matchResults.forEach(m => { html += `<div class="search-result-item" data-type="match" data-id="${m.id}"><span class="iconify search-result-icon" data-icon="mdi:soccer"></span><div class="search-result-info"><div class="search-result-title">${m.teamAName} vs ${m.teamBName}</div><div class="search-result-sub">Match · ${m.startTime?.toDate().toLocaleDateString() || 'Upcoming'}</div></div></div>`; });
+                teamResults.forEach(t => { html += `<div class="search-result-item" data-type="team" data-id="${t.id}"><span class="iconify search-result-icon" data-icon="mdi:shield"></span><div class="search-result-info"><div class="search-result-title">${t.name}</div><div class="search-result-sub">Team Profile</div></div></div>`; });
+                searchResultsBox.innerHTML = html; searchResultsBox.style.display = 'block';
+                document.querySelectorAll('.search-result-item').forEach(item => { item.addEventListener('click', () => { const type = item.dataset.type; const id = item.dataset.id; searchResultsBox.style.display = 'none'; searchInput.value = ''; if(type === 'match') window.location.href = `vote.html?id=${id}`; else window.location.href = `profile.html?id=${id}`; }); });
+            }, 300);
+        });
+        document.addEventListener('click', (e) => { if(!searchInput.contains(e.target) && !searchResultsBox.contains(e.target)) searchResultsBox.style.display = 'none'; });
     }
     
-    function updateBreadcrumb(){
-        breadcrumbSport.textContent = currentSport === 'football' ? 'Football' : 'Basketball';
-        breadcrumbMatch.textContent = currentContext === 'sports' ? 'Upcoming' : 'Live Now';
-    }
+    applyFilterBtn?.addEventListener('click', renderList);
+    navButtons.forEach(btn => { btn.addEventListener('click', () => { navButtons.forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentNav = btn.dataset.nav; if(currentNav === 'games'){ window.location.href = 'game.html'; return; } if(currentNav === 'debates'){ window.location.href = 'debate.html'; return; } if(promoBanner){ if(currentNav === 'sports' || currentNav === 'popular') promoBanner.style.display = 'none'; else promoBanner.style.display = 'block'; } renderList(); }); });
     
-    if(contextSportsBtn && contextLiveBtn){
-        contextSportsBtn.addEventListener('click', () => {
-            contextSportsBtn.classList.add('active-context');
-            contextLiveBtn.classList.remove('active-context');
-            currentContext = 'sports';
-            updateBreadcrumb();
-            loadMatches();
-        });
-        contextLiveBtn.addEventListener('click', () => {
-            contextLiveBtn.classList.add('active-context');
-            contextSportsBtn.classList.remove('active-context');
-            currentContext = 'live';
-            updateBreadcrumb();
-            loadMatches();
-        });
-    }
+    bottomNavItems.forEach(item => { item.addEventListener('click', () => { bottomNavItems.forEach(i => i.classList.remove('active')); item.classList.add('active'); const nav = item.dataset.navBottom; if(nav === 'menu') openMenu(); else if(nav === 'account') window.location.href = 'account.html'; else if(nav === 'sports') document.querySelector('[data-nav="sports"]')?.click(); else if(nav === 'debate') window.location.href = 'debate.html'; }); });
     
-    if(applyFilterBtn) applyFilterBtn.addEventListener('click', renderList);
-    if(searchInput) searchInput.addEventListener('input', renderList);
-    if(otherGamesBtn) otherGamesBtn.addEventListener('click', () => { window.location.href = 'other-games.html'; });
-    
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            navButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentNav = btn.dataset.nav;
-            if(currentNav === 'debates'){
-                window.location.href = 'debate.html';
-                return;
-            }
-            if(promoBanner){
-                if(currentNav === 'sports' || currentNav === 'live') promoBanner.style.display = 'none';
-                else promoBanner.style.display = 'block';
-            }
-            if(currentNav === 'popular') loadMatches();
-            else loadMatches();
-        });
-    });
-    
-    bottomNavItems.forEach(item => {
-        item.addEventListener('click', () => {
-            bottomNavItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            const nav = item.dataset.navBottom;
-            if(nav === 'menu') openMenu();
-            else if(nav === 'account') window.location.href = 'account.html';
-            else if(nav === 'sports') document.querySelector('[data-nav="sports"]')?.click();
-            else if(nav === 'debate') window.location.href = 'debate.html';
-        });
-    });
-    
-    loadLeaguesAndTeams();
-    updateBreadcrumb();
+    loadData();
 })();
 </script>
 </body>

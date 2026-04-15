@@ -116,21 +116,20 @@
     .match-teams { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .team { display: flex; align-items: center; gap: 12px; flex: 1; }
     .team:last-child { justify-content: flex-end; }
-    .team-logo { width: 40px; height: 40px; background: linear-gradient(135deg, #2D3337, #1A1A1A); border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--vibrant-green); }
-    .team-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-    .team-logo .iconify { font-size: 24px; color: white; }
+    .team-logo { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
+    .team-logo img { width: 100%; height: 100%; object-fit: contain; }
     .team-info { display: flex; flex-direction: column; }
     .team-name { font-weight: 700; font-size: 15px; color: #1A1A1A; text-transform: uppercase; }
     .team-odds { font-size: 11px; color: #777; font-weight: 500; }
     .match-vs { font-weight: 800; font-size: 14px; color: #999; padding: 0 10px; }
-    .percentage-bar { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-    .percentage-option { flex: 1; text-align: center; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.15s; }
-    .percentage-option:hover { background: #F0F0F0; }
-    .percentage-label { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
-    .percentage-value { font-size: 16px; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
-    .percentage-fill { height: 6px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
-    .percentage-fill-bar { height: 100%; background: var(--vibrant-green); border-radius: 10px; }
-    .draw-bar { background: #FFB800; }
+    .popularity-bar { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+    .popularity-option { flex: 1; text-align: center; padding: 8px; border-radius: 8px; }
+    .popularity-label { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+    .popularity-fill { height: 8px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+    .popularity-fill-bar { height: 100%; border-radius: 10px; transition: width 0.3s; }
+    .popularity-fill-bar.low { background: #ff4444; }
+    .popularity-fill-bar.medium { background: #ffa500; }
+    .popularity-fill-bar.high { background: #00C851; }
     .debate-card { background: white; padding: 20px; border-radius: 10px; border: 2px solid #E0E0E0; margin-bottom: 12px; cursor: pointer; transition: 0.15s; }
     .debate-card:hover { border-color: var(--vibrant-green); box-shadow: 0 4px 0 #D0D0D0; }
     .debate-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -144,6 +143,7 @@
     .ad-container { padding: 8px 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
     .ad-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; text-align: center; }
     #adsterra-banner { width: 160px; height: 600px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+    #customDateInput { display: none; }
   </style>
 </head>
 <body>
@@ -214,11 +214,19 @@
       <div class="filter-bar" id="filterBar">
         <div class="filter-group"><label><span class="iconify" data-icon="mdi:soccer"></span> Sport</label><select id="filterSport"><option value="all">All</option><option value="football">Football</option><option value="basketball">Basketball</option></select></div>
         <div class="filter-group"><label><span class="iconify" data-icon="mdi:trophy-outline"></span> League</label><select id="filterLeague"><option value="all">All Leagues</option></select></div>
-        <div class="filter-group"><label><span class="iconify" data-icon="mdi:calendar-blank"></span> Date</label><input type="date" id="filterDate"></div>
+        <div class="filter-group"><label><span class="iconify" data-icon="mdi:calendar-blank"></span> Date</label>
+          <select id="filterDateSelect">
+            <option value="all">ALL</option>
+            <option value="today">TODAY</option>
+            <option value="tomorrow">TOMORROW</option>
+            <option value="custom">CUSTOM</option>
+          </select>
+          <input type="date" id="filterDate" style="display:none;">
+        </div>
         <button class="filter-btn" id="applyFilterBtn"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
       </div>
       <div class="display-list" id="dynamicList"></div>
-      <div class="hint-text" id="cardHint">⚡ CLICK ON PERCENTAGES TO VOTE ⚡</div>
+      <div class="hint-text" id="cardHint">⚡ CLICK ON MATCH CARD TO VIEW DETAILS ⚡</div>
     </div>
 
     <div class="ad-space">
@@ -300,6 +308,7 @@
     dynamicList: document.getElementById('dynamicList'), 
     filterSport: document.getElementById('filterSport'),
     filterLeague: document.getElementById('filterLeague'), 
+    filterDateSelect: document.getElementById('filterDateSelect'),
     filterDate: document.getElementById('filterDate'),
     applyFilterBtn: document.getElementById('applyFilterBtn'), 
     cardHint: document.getElementById('cardHint'),
@@ -329,8 +338,14 @@
   
   window.searchTimeout = null;
   
-  // Set default date
-  window.elements.filterDate.value = new Date().toISOString().split('T')[0];
+  // Date select change handler
+  window.elements.filterDateSelect.addEventListener('change', function() {
+    if (this.value === 'custom') {
+      window.elements.filterDate.style.display = 'block';
+    } else {
+      window.elements.filterDate.style.display = 'none';
+    }
+  });
   
   console.log('DOM elements and state initialized');
 })();
@@ -461,7 +476,7 @@
 </script>
 
 <!-- ============================================ -->
-<!-- SCRIPT 7: LEAGUES & TEAMS                    -->
+<!-- SCRIPT 7: LEAGUES & TEAMS - UPDATED FOR SPORT FILTERING -->
 <!-- ============================================ -->
 <script>
 (function(){
@@ -471,10 +486,32 @@
     const db = window.db;
     const st = window.state;
     var leaguesSnap = await db.collection('leagues').get();
-    st.leagues = []; leaguesSnap.forEach(function(d) { st.leagues.push({ id: d.id, name: d.data().name, logoUrl: d.data().logoUrl }); });
+    st.leagues = []; 
+    leaguesSnap.forEach(function(d) { 
+      st.leagues.push({ 
+        id: d.id, 
+        name: d.data().name, 
+        logoUrl: d.data().logoUrl,
+        sport: d.data().sport || 'football'
+      }); 
+    });
+    
     var teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
-    st.teams = []; st.allTeams = [];
-    teamsSnap.forEach(function(d) { var t = { id: d.id, name: d.data().name, league: d.data().league, leagueName: d.data().leagueName, logoUrl: d.data().logoUrl }; st.teams.push(t); st.allTeams.push(t); });
+    st.teams = []; 
+    st.allTeams = [];
+    teamsSnap.forEach(function(d) { 
+      var t = { 
+        id: d.id, 
+        name: d.data().name, 
+        league: d.data().league, 
+        leagueName: d.data().leagueName, 
+        logoUrl: d.data().logoUrl,
+        sport: d.data().sport || 'football'
+      }; 
+      st.teams.push(t); 
+      st.allTeams.push(t); 
+    });
+    
     window.updateLeaguesTeams(); 
     window.populateLeagueFilter();
   };
@@ -482,38 +519,76 @@
   window.updateLeaguesTeams = function() {
     const el = window.elements;
     const st = window.state;
-    var filteredLeagues = st.leagues;
+    
+    // Filter leagues by current sport
+    var filteredLeagues = st.leagues.filter(function(l) {
+      return l.sport === st.currentSport;
+    });
+    
     var html = '<div class="section-label"><span class="iconify" data-icon="mdi:trophy-outline"></span> LEAGUES</div><div class="sub-section"><div class="item-list">';
-    filteredLeagues.slice(0, 7).forEach(function(l) { html += '<div class="item-chip" data-league="' + l.id + '"><span class="iconify" data-icon="mdi:chevron-right"></span>' + l.name + '</div>'; });
+    filteredLeagues.slice(0, 7).forEach(function(l) { 
+      html += '<div class="item-chip" data-league="' + l.id + '"><span class="iconify" data-icon="mdi:chevron-right"></span>' + l.name + '</div>'; 
+    });
     html += '</div></div><div class="section-label" style="margin-top:20px;"><span class="iconify" data-icon="mdi:account-group-outline"></span> TEAMS</div><div class="sub-section"><div class="team-search-box"><input type="text" id="teamSearchInput" placeholder="Search teams..." value="' + st.teamSearchTerm + '"></div><div class="item-list" id="teamsListContainer">';
+    
+    // Filter teams by current sport
     var teamsToShow = st.teams.filter(function(t) { 
+      if (t.sport !== st.currentSport) return false;
       if (st.selectedLeague && t.league !== st.selectedLeague) return false;
       if (st.teamSearchTerm && t.name.toLowerCase().indexOf(st.teamSearchTerm.toLowerCase()) === -1) return false;
       return true;
     });
-    teamsToShow.slice(0, 15).forEach(function(t) { html += '<div class="item-chip" data-team="' + t.id + '"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + t.name + '</div>'; });
+    
+    teamsToShow.slice(0, 15).forEach(function(t) { 
+      html += '<div class="item-chip" data-team="' + t.id + '"><span class="iconify" data-icon="mdi:shield-half-full"></span>' + t.name + '</div>'; 
+    });
     if (teamsToShow.length === 0) html += '<div class="item-chip"><span class="iconify" data-icon="mdi:shield-half-full"></span>No teams found</div>';
     html += '</div></div>';
     el.leagueContainer.innerHTML = html;
+    
     var teamSearchInput = document.getElementById('teamSearchInput');
-    if (teamSearchInput) teamSearchInput.addEventListener('input', function() { clearTimeout(window.searchTimeout); window.searchTimeout = setTimeout(function() { st.teamSearchTerm = teamSearchInput.value; window.updateLeaguesTeams(); }, 300); });
-    document.querySelectorAll('[data-league]').forEach(function(el) { el.addEventListener('click', function() { st.selectedLeague = el.dataset.league; st.teamSearchTerm = ''; window.updateLeaguesTeams(); el.filterLeague.value = st.selectedLeague; window.renderMatches(); }); });
-    document.querySelectorAll('[data-team]').forEach(function(el) { el.addEventListener('click', function() { window.location.href = 'profile.html?team=' + el.dataset.team; }); });
+    if (teamSearchInput) teamSearchInput.addEventListener('input', function() { 
+      clearTimeout(window.searchTimeout); 
+      window.searchTimeout = setTimeout(function() { 
+        st.teamSearchTerm = teamSearchInput.value; 
+        window.updateLeaguesTeams(); 
+      }, 300); 
+    });
+    
+    document.querySelectorAll('[data-league]').forEach(function(el) { 
+      el.addEventListener('click', function() { 
+        st.selectedLeague = el.dataset.league; 
+        st.teamSearchTerm = ''; 
+        window.updateLeaguesTeams(); 
+        el.filterLeague.value = st.selectedLeague; 
+        window.renderMatches(); 
+      }); 
+    });
+    
+    document.querySelectorAll('[data-team]').forEach(function(el) { 
+      el.addEventListener('click', function() { 
+        window.location.href = 'profile.html?team=' + el.dataset.team; 
+      }); 
+    });
   };
   
   window.populateLeagueFilter = function() {
     const el = window.elements;
     const st = window.state;
     el.filterLeague.innerHTML = '<option value="all">All Leagues</option>';
-    st.leagues.forEach(function(l) { el.filterLeague.innerHTML += '<option value="' + l.id + '">' + l.name + '</option>'; });
+    
+    // Only show leagues for current sport
+    st.leagues.filter(function(l) { return l.sport === st.currentSport; }).forEach(function(l) { 
+      el.filterLeague.innerHTML += '<option value="' + l.id + '">' + l.name + '</option>'; 
+    });
   };
   
-  console.log('Leagues & Teams loaded');
+  console.log('Leagues & Teams loaded with sport filtering');
 })();
 </script>
 
 <!-- ============================================ -->
-<!-- SCRIPT 8: MATCHES LOADING                    -->
+<!-- SCRIPT 8: MATCHES LOADING - UPDATED WITH DATE FILTERS -->
 <!-- ============================================ -->
 <script>
 (function(){
@@ -524,55 +599,55 @@
     const st = window.state;
     try {
       var query = db.collection('matches');
-      if (st.currentContext === 'live') { query = query.where('status', '==', 'live'); } 
-      else { query = query.where('status', 'in', ['upcoming', 'live', 'Upcoming', 'Live']); }
+      
+      // Filter by sport
+      query = query.where('sport', '==', st.currentSport);
+      
+      // Filter by status
+      if (st.currentContext === 'live') { 
+        query = query.where('status', '==', 'live'); 
+      } else { 
+        query = query.where('status', 'in', ['upcoming', 'live']); 
+      }
+      
       query = query.orderBy('startTime', 'asc');
       var snap = await query.get();
       
-      // If no matches with filter, try without
-      if (snap.empty) { snap = await db.collection('matches').orderBy('startTime', 'asc').get(); }
-      
-      st.matches = []; st.allMatches = [];
+      st.matches = []; 
+      st.allMatches = [];
       
       for (var i = 0; i < snap.docs.length; i++) {
         var d = snap.docs[i];
         var m = { 
-          id: d.id, teamAName: d.data().teamAName || 'Team A', teamBName: d.data().teamBName || 'Team B', 
-          teamALogo: d.data().teamALogo, teamBLogo: d.data().teamBLogo, league: d.data().league, 
-          leagueName: d.data().leagueName, startTime: d.data().startTime, status: d.data().status || 'upcoming', 
-          isTopMatch: d.data().isTopMatch || false, sport: d.data().sport || 'football' 
+          id: d.id, 
+          teamAName: d.data().teamAName || 'Team A', 
+          teamBName: d.data().teamBName || 'Team B', 
+          teamALogo: d.data().teamALogo, 
+          teamBLogo: d.data().teamBLogo, 
+          league: d.data().league, 
+          leagueName: d.data().leagueName, 
+          startTime: d.data().startTime, 
+          status: d.data().status || 'upcoming', 
+          isTopMatch: d.data().isTopMatch || false, 
+          sport: d.data().sport || 'football',
+          popularity: d.data().popularity || Math.floor(Math.random() * 100)
         };
         
-        var votesSnap = await db.collection('votes').where('matchId', '==', d.id).get();
-        var totalVotes = votesSnap.size;
-        var teamAVotes = 0, drawVotes = 0, teamBVotes = 0;
-        votesSnap.docs.forEach(function(v) { var vt = v.data().voteType; if (vt === 'team1') teamAVotes++; else if (vt === 'draw') drawVotes++; else if (vt === 'team2') teamBVotes++; });
-        m.percentages = { team1: totalVotes > 0 ? Math.round((teamAVotes / totalVotes) * 100) : 33, draw: totalVotes > 0 ? Math.round((drawVotes / totalVotes) * 100) : 34, team2: totalVotes > 0 ? Math.round((teamBVotes / totalVotes) * 100) : 33 };
-        m.totalVotes = totalVotes;
-        st.matches.push(m); st.allMatches.push(m);
+        // Generate random popularity for demo if not set
+        if (!d.data().popularity) {
+          m.popularity = Math.floor(Math.random() * 100);
+        }
+        
+        st.matches.push(m); 
+        st.allMatches.push(m);
       }
       window.renderMatches();
-    } catch(e) { console.error('Match load error:', e); }
+    } catch(e) { 
+      console.error('Match load error:', e); 
+    }
   };
   
-  window.submitVote = async function(matchId, voteType) {
-    const db = window.db;
-    const st = window.state;
-    const el = window.elements;
-    try {
-      var existingVote = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', window.anonymousId).get();
-      if (!existingVote.empty) { el.cardHint.innerText = '⚠️ YOU ALREADY VOTED! ⚠️'; setTimeout(function() { el.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); return; }
-      var match = st.matches.find(function(m) { return m.id === matchId; });
-      await db.collection('votes').add({ matchId: matchId, anonymousId: window.anonymousId, voteType: voteType, matchName: (match.teamAName || 'Team A') + ' vs ' + (match.teamBName || 'Team B'), sport: match.sport || 'football', league: match.league, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      await window.loadMatches();
-      el.cardHint.innerText = '✅ VOTE RECORDED! ✅';
-      setTimeout(function() { el.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
-    } catch(e) { el.cardHint.innerText = '❌ ERROR VOTING ❌'; setTimeout(function() { el.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000); }
-  };
-  
-  window.submitVote = window.submitVote;
-  
-  console.log('Matches loading and voting loaded');
+  console.log('Matches loading updated with sport filtering');
 })();
 </script>
 
@@ -616,7 +691,7 @@
 </script>
 
 <!-- ============================================ -->
-<!-- SCRIPT 10: RENDER MATCHES                    -->
+<!-- SCRIPT 10: RENDER MATCHES - UPDATED WITH DATE FILTERS AND POPULARITY -->
 <!-- ============================================ -->
 <script>
 (function(){
@@ -628,20 +703,53 @@
     var sportFilter = el.filterSport.value;
     var leagueFilter = el.filterLeague.value;
     var searchTerm = el.searchInput.value.toLowerCase();
-    var selectedDate = el.filterDate.value;
+    var dateFilterType = el.filterDateSelect.value;
+    var customDate = el.filterDate.value;
     
     var filtered = st.matches.filter(function(m) {
-      if (sportFilter !== 'all') { var league = st.leagues.find(function(l) { return l.id === m.league; }); if (!league) return false; var isFootball = !league.name.toLowerCase().includes('basketball'); if (sportFilter === 'football' && !isFootball) return false; if (sportFilter === 'basketball' && isFootball) return false; }
+      if (sportFilter !== 'all' && m.sport !== sportFilter) return false;
       if (leagueFilter !== 'all' && m.league !== leagueFilter) return false;
-      if (searchTerm) { var searchString = (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName || '')).toLowerCase(); if (!searchString.includes(searchTerm)) return false; }
-      if (selectedDate && m.startTime) { var matchDate = m.startTime.toDate().toISOString().split('T')[0]; if (matchDate !== selectedDate) return false; }
+      if (searchTerm) { 
+        var searchString = (m.teamAName + ' ' + m.teamBName + ' ' + (m.leagueName || '')).toLowerCase(); 
+        if (!searchString.includes(searchTerm)) return false; 
+      }
+      
+      // Date filtering
+      if (dateFilterType !== 'all' && m.startTime) {
+        var matchDate = m.startTime.toDate();
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        if (dateFilterType === 'today') {
+          var matchDay = new Date(matchDate);
+          matchDay.setHours(0, 0, 0, 0);
+          if (matchDay.getTime() !== today.getTime()) return false;
+        } else if (dateFilterType === 'tomorrow') {
+          var matchDay = new Date(matchDate);
+          matchDay.setHours(0, 0, 0, 0);
+          if (matchDay.getTime() !== tomorrow.getTime()) return false;
+        } else if (dateFilterType === 'custom' && customDate) {
+          var matchDateStr = matchDate.toISOString().split('T')[0];
+          if (matchDateStr !== customDate) return false;
+        }
+      }
+      
       return true;
     });
     
-    if (st.currentNav === 'popular') filtered = filtered.sort(function(a, b) { return (b.totalVotes || 0) - (a.totalVotes || 0); }).slice(0, 5);
-    else filtered.sort(function(a, b) { if (a.isTopMatch && !b.isTopMatch) return -1; if (!a.isTopMatch && b.isTopMatch) return 1; return a.startTime.toDate() - b.startTime.toDate(); });
+    if (st.currentNav === 'popular') filtered = filtered.sort(function(a, b) { return (b.popularity || 0) - (a.popularity || 0); }).slice(0, 5);
+    else filtered.sort(function(a, b) { 
+      if (a.isTopMatch && !b.isTopMatch) return -1; 
+      if (!a.isTopMatch && b.isTopMatch) return 1; 
+      return a.startTime.toDate() - b.startTime.toDate(); 
+    });
     
-    if (!filtered.length) { el.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; return; }
+    if (!filtered.length) { 
+      el.dynamicList.innerHTML = '<div class="match-card" style="text-align:center;padding:40px;">No matches found</div>'; 
+      return; 
+    }
     
     var html = '';
     filtered.forEach(function(m) {
@@ -649,19 +757,35 @@
       var isLive = (m.status || '').toLowerCase() === 'live';
       var timeStr = isLive ? 'LIVE' : time.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       var leagueName = m.leagueName || (st.leagues.find(function(l) { return l.id === m.league; }) || {}).name || 'Unknown League';
-      var p = m.percentages || { team1: 33, draw: 34, team2: 33 };
       
-      html += '<div class="match-card"><div class="match-teams"><div class="team"><div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div><div class="team-info"><span class="team-name">' + (m.teamAName || 'Team A') + '</span><span class="team-odds">' + leagueName + '</span></div></div><div class="match-vs">VS</div><div class="team"><div class="team-info" style="text-align:right;"><span class="team-name">' + (m.teamBName || 'Team B') + '</span><span class="team-odds">' + timeStr + '</span></div><div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div></div></div>';
-      html += '<div class="percentage-bar">';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team1\')"><div class="percentage-label">1</div><div class="percentage-value">' + p.team1 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team1 + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'draw\')"><div class="percentage-label">X</div><div class="percentage-value">' + p.draw + '%</div><div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:' + p.draw + '%;"></div></div></div>';
-      html += '<div class="percentage-option" onclick="submitVote(\'' + m.id + '\', \'team2\')"><div class="percentage-label">2</div><div class="percentage-value">' + p.team2 + '%</div><div class="percentage-fill"><div class="percentage-fill-bar" style="width:' + p.team2 + '%;"></div></div></div>';
-      html += '</div></div>';
+      // Determine popularity level
+      var popularity = m.popularity || 50;
+      var popularityClass = popularity < 33 ? 'low' : (popularity < 66 ? 'medium' : 'high');
+      
+      html += '<div class="match-card" onclick="window.location.href=\'vote.html?id=' + m.id + '\'">';
+      html += '<div class="match-teams">';
+      html += '<div class="team">';
+      html += '<div class="team-logo">' + (m.teamALogo ? '<img src="' + m.teamALogo + '" alt="' + m.teamAName + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div>';
+      html += '<div class="team-info"><span class="team-name">' + (m.teamAName || 'Team A') + '</span><span class="team-odds">' + leagueName + '</span></div>';
+      html += '</div>';
+      html += '<div class="match-vs">VS</div>';
+      html += '<div class="team">';
+      html += '<div class="team-info" style="text-align:right;"><span class="team-name">' + (m.teamBName || 'Team B') + '</span><span class="team-odds">' + timeStr + '</span></div>';
+      html += '<div class="team-logo">' + (m.teamBLogo ? '<img src="' + m.teamBLogo + '" alt="' + m.teamBName + '">' : '<span class="iconify" data-icon="mdi:shield-half-full"></span>') + '</div>';
+      html += '</div>';
+      html += '</div>';
+      
+      // Popularity bars
+      html += '<div class="popularity-bar">';
+      html += '<div class="popularity-option"><div class="popularity-label">POPULARITY</div>';
+      html += '<div class="popularity-fill"><div class="popularity-fill-bar ' + popularityClass + '" style="width:' + popularity + '%;"></div></div>';
+      html += '</div></div></div>';
     });
+    
     el.dynamicList.innerHTML = html;
   };
   
-  console.log('Render matches loaded');
+  console.log('Render matches updated with date filters and popularity bars');
 })();
 </script>
 
@@ -679,7 +803,7 @@
     window.updateAnnouncement(); 
     el.promoContainer.innerHTML = '<div class="promo-banner"><h2>🏆 Join Africa\'s #1 Prediction Brand</h2><div class="promo-features"><div class="promo-feature"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div><div class="promo-feature"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div><div class="promo-feature"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div><div class="promo-highlight"><div class="promo-badge">FREE</div><div class="promo-text">Free callbacks whenever you need us.</div></div></div>'; 
     el.filterBar.style.display = 'flex'; 
-    el.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; 
+    el.cardHint.innerText = '⚡ CLICK ON MATCH CARD TO VIEW DETAILS ⚡'; 
     st.currentContext = 'sports'; 
     el.contextSportsBtn.classList.add('active-context'); 
     el.contextLiveBtn.classList.remove('active-context');
@@ -691,7 +815,7 @@
     el.contextDisplay.innerHTML = 'SPORTS <span>&</span> LIVE'; 
     el.announcementContainer.innerHTML = el.promoContainer.innerHTML = ''; 
     el.filterBar.style.display = 'flex'; 
-    el.cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; 
+    el.cardHint.innerText = '⚡ CLICK ON MATCH CARD TO VIEW DETAILS ⚡'; 
     window.loadMatches(); 
   };
   
@@ -716,7 +840,7 @@
     st.currentContext = 'sports'; 
     window.updateBreadcrumb(st.currentSport, 'sports'); 
     window.loadMatches();
-    el.cardHint.innerText = '⚽ UPCOMING & POPULAR MATCHES - CLICK TO VOTE ⚽';
+    el.cardHint.innerText = '⚽ UPCOMING & POPULAR MATCHES - CLICK CARD TO VIEW ⚽';
   });
 
   el.contextLiveBtn.addEventListener('click', function() {
@@ -725,7 +849,7 @@
     st.currentContext = 'live'; 
     window.updateBreadcrumb(st.currentSport, 'live'); 
     window.loadMatches();
-    el.cardHint.innerText = '🔴 LIVE MATCHES IN PROGRESS - VOTE NOW 🔴';
+    el.cardHint.innerText = '🔴 LIVE MATCHES IN PROGRESS - CLICK CARD TO VIEW 🔴';
   });
 
   // Sport buttons
@@ -772,7 +896,7 @@
         el.contextDisplay.innerHTML = 'POPULAR <span>&</span> TRENDING'; 
         el.announcementContainer.innerHTML = el.promoContainer.innerHTML = ''; 
         el.filterBar.style.display = 'flex'; 
-        el.cardHint.innerText = 'MOST VOTED MATCHES'; 
+        el.cardHint.innerText = 'MOST POPULAR MATCHES'; 
         window.loadMatches(); 
       }
     });
@@ -788,4 +912,4 @@
 })();
 </script>
 </body>
-</html> 
+</html>

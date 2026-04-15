@@ -3,28 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>ORAFUT · Edge</title>
+  <title>ORAFUT · Sports</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #293136; display: flex; justify-content: center; min-height: 100vh; padding: 0; font-family: 'Poppins', sans-serif; overflow: hidden; }
-    .app-container { width: 959px; max-width: 100%; background-color: #ffffff; overflow: hidden; display: flex; flex-direction: column; margin: 0 auto; height: 100vh; }
-    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --left-tab-bg: #2D3337; --left-tab-border: #252A2D; --white: #FFFFFF; --black: #1A1A1A; }
+    body { background: #293136; display: flex; justify-content: center; min-height: 100vh; font-family: 'Poppins', sans-serif; }
+    .app-container { width: 959px; max-width: 100%; background-color: #ffffff; overflow: hidden; display: flex; flex-direction: column; margin: 0 auto; min-height: 100vh; }
+    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --white: #FFFFFF; --black: #1A1A1A; }
+    
+    /* Header */
     .main-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--header-bg); flex-shrink: 0; }
     .header-left { display: flex; align-items: center; gap: 20px; }
-    .menu-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); font-size: 20px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; line-height: 1; font-weight: bold; }
-    .menu-btn:hover { background: var(--vibrant-green); color: #000; transform: scale(1.05); }
-    .brand { font-size: 28px; font-weight: 800; font-style: italic; font-family: 'Poppins', sans-serif; letter-spacing: -0.5px; text-transform: uppercase; }
+    .back-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); font-size: 20px; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; line-height: 1; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+    .back-btn:hover { background: var(--vibrant-green); color: #000; transform: scale(1.05); }
+    .brand { font-size: 28px; font-weight: 800; font-style: italic; letter-spacing: -0.5px; text-transform: uppercase; }
     .brand .ora { color: var(--white); }
     .brand .fut { color: var(--vibrant-green); }
-    .header-right { display: flex; align-items: center; gap: 16px; position: relative; }
+    .header-center { flex: 1; display: flex; justify-content: center; }
+    .home-link { color: var(--vibrant-green); font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; background: rgba(156,232,0,0.15); padding: 8px 20px; border-radius: 30px; transition: 0.2s; border: 1px solid var(--vibrant-green); }
+    .home-link:hover { background: var(--vibrant-green); color: #000; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
     .search-wrapper { position: relative; }
     .search-bar { display: flex; align-items: center; background: rgba(255,255,255,0.08); padding: 6px 14px; border: 2px solid #3A4146; border-radius: 8px; transition: border-color 0.2s; }
     .search-bar:focus-within { border-color: var(--vibrant-green); }
     .search-bar .iconify { color: var(--vibrant-green); margin-right: 8px; font-size: 16px; }
-    .search-bar input { background: transparent; border: none; outline: none; color: var(--white); font-size: 13px; width: 180px; font-family: 'Poppins', sans-serif; font-weight: 400; }
-    .search-bar input::placeholder { color: rgba(255,255,255,0.4); font-weight: 300; font-size: 12px; }
+    .search-bar input { background: transparent; border: none; outline: none; color: var(--white); font-size: 13px; width: 180px; font-family: 'Poppins', sans-serif; }
+    .search-bar input::placeholder { color: rgba(255,255,255,0.4); font-size: 12px; }
     .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-height: 400px; overflow-y: auto; z-index: 1000; display: none; }
     .search-results.active { display: block; }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.15s; }
@@ -33,104 +38,90 @@
     .search-result-logo img { width: 100%; height: 100%; object-fit: cover; }
     .search-result-info { flex: 1; }
     .search-result-title { font-weight: 600; color: #1A1A1A; font-size: 13px; }
-    .search-result-subtitle { font-size: 11px; color: #777; margin-top: 2px; }
-    .account-btn { background: var(--vibrant-green); border: none; color: #000; padding: 8px 18px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 6px; text-decoration: none; font-family: 'Poppins', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 0 #6B9E00; }
-    .account-btn .iconify { font-size: 16px; }
+    .account-btn { background: var(--vibrant-green); border: none; color: #000; padding: 8px 18px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 6px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 0 #6B9E00; }
     .account-btn:hover { background: #A8F010; transform: translateY(-2px); box-shadow: 0 6px 0 #6B9E00; }
-    .breadcrumb-section { background: var(--section-bg); padding: 8px 24px; border-bottom: 2px solid #252A2D; flex-shrink: 0; }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); font-family: 'Poppins', sans-serif; }
-    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.15s; font-weight: 600; }
-    .breadcrumb a:hover { color: var(--vibrant-green); }
-    .breadcrumb .iconify { font-size: 12px; color: rgba(255,255,255,0.3); }
-    .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
-    .dashboard-layout { display: flex; flex: 1; min-height: 0; position: relative; background: var(--white); overflow: hidden; }
-    .left-tab { width: 260px; background: var(--left-tab-bg); border-right: 3px solid var(--left-tab-border); display: none; flex-direction: column; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
-    .left-tab::-webkit-scrollbar { display: none; }
-    .left-tab.visible { display: flex; }
-    .tab-content { padding: 20px 14px; flex: 1; }
-    .nav-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .nav-btn { background: var(--left-tab-border); border: 2px solid #3A4146; color: #CCCCCC; font-weight: 700; font-size: 11px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-family: 'Poppins', sans-serif; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.3px; flex: 1 0 auto; justify-content: center; }
-    .nav-btn .iconify { font-size: 14px; color: var(--vibrant-green); }
-    .nav-btn:hover { background: #3A4146; border-color: var(--vibrant-green); color: var(--vibrant-green); }
-    .nav-btn.active { background: var(--vibrant-green); border-color: var(--vibrant-green); color: #000; font-weight: 800; box-shadow: 0 4px 0 #6B9E00; }
+    
+    /* Navigation Buttons */
+    .nav-section { background: #F8F8F8; border-bottom: 2px solid #E0E0E0; padding: 12px 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .nav-btn { background: #1A1A1A; border: 2px solid var(--vibrant-green); color: white; padding: 10px 24px; border-radius: 40px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nav-btn .iconify { font-size: 18px; color: var(--vibrant-green); }
+    .nav-btn:hover { background: var(--vibrant-green); color: #000; transform: translateY(-2px); }
+    .nav-btn:hover .iconify { color: #000; }
+    .nav-btn.active { background: var(--vibrant-green); color: #000; box-shadow: 0 4px 0 #6B9E00; }
     .nav-btn.active .iconify { color: #000; }
-    .tab-footer { padding: 18px 14px 20px; border-top: 3px solid var(--vibrant-green); background: var(--left-tab-border); margin-top: auto; color: #BBBBBB; font-size: 11px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    .tab-footer .professional-note { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #DDDDDD; text-transform: uppercase; letter-spacing: 0.5px; }
-    .tab-footer .iconify { color: var(--vibrant-green); font-size: 14px; }
-    .main-content { flex: 1; padding: 24px; background: var(--white); display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--vibrant-green) #E0E0E0; }
-    .main-content::-webkit-scrollbar { width: 8px; }
+    
+    /* Filter Bar */
+    .filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: #FFFFFF; padding: 16px 24px; border-bottom: 2px solid #E8E8E8; }
+    .filter-group { display: flex; align-items: center; gap: 8px; }
+    .filter-group label { font-size: 11px; font-weight: 700; color: #555; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+    .filter-group label .iconify { font-size: 14px; color: var(--vibrant-green); }
+    .filter-group select, .filter-group input { background: white; border: 2px solid #D0D0D0; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; outline: none; cursor: pointer; }
+    .filter-group select:focus, .filter-group input:focus { border-color: var(--vibrant-green); }
+    .filter-btn { background: var(--vibrant-green); border: none; color: #000; padding: 8px 24px; border-radius: 8px; font-weight: 800; font-size: 12px; margin-left: auto; cursor: pointer; text-transform: uppercase; box-shadow: 0 3px 0 #6B9E00; transition: 0.1s; display: flex; align-items: center; gap: 6px; }
+    .filter-btn:hover { background: #A8F010; transform: translateY(-2px); box-shadow: 0 5px 0 #6B9E00; }
+    
+    /* Layout: Main + Ad */
+    .dashboard-layout { display: flex; flex: 1; background: var(--white); }
+    .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+    .display-list { display: flex; flex-direction: column; gap: 16px; }
+    .match-card { background: white; padding: 18px 20px; border-radius: 12px; border: 2px solid #E0E0E0; transition: 0.15s; cursor: pointer; }
+    .match-card:hover { border-color: var(--vibrant-green); box-shadow: 0 6px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .match-teams { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .team { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .team:last-child { justify-content: flex-end; }
+    .team-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #2D3337, #1A1A1A); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--vibrant-green); overflow: hidden; }
+    .team-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .team-logo .iconify { font-size: 28px; color: white; }
+    .team-info { display: flex; flex-direction: column; }
+    .team-name { font-weight: 800; font-size: 16px; color: #1A1A1A; text-transform: uppercase; }
+    .team-odds { font-size: 11px; color: #777; font-weight: 500; margin-top: 4px; }
+    .match-vs { font-weight: 800; font-size: 14px; color: #999; padding: 0 15px; }
+    .percentage-bar { display: flex; align-items: center; gap: 15px; margin-top: 12px; }
+    .percentage-option { flex: 1; text-align: center; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.15s; }
+    .percentage-option:hover { background: #F5F5F5; }
+    .percentage-label { font-size: 12px; font-weight: 800; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+    .percentage-value { font-size: 18px; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
+    .percentage-fill { height: 6px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+    .percentage-fill-bar { height: 100%; background: var(--vibrant-green); border-radius: 10px; }
+    .draw-bar { background: #FFB800; }
+    .debate-card { background: white; padding: 20px; border-radius: 12px; border: 2px solid #E0E0E0; margin-bottom: 12px; cursor: pointer; transition: 0.15s; }
+    .debate-card:hover { border-color: var(--vibrant-green); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .debate-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .debate-title { font-size: 18px; font-weight: 800; color: #1A1A1A; }
+    .debate-stats { display: flex; gap: 16px; font-size: 12px; color: #666; margin-bottom: 12px; }
+    .debate-messages { background: #F8F8F8; padding: 12px; border-radius: 8px; }
+    .message-preview { font-size: 12px; color: #555; padding: 6px 0; border-bottom: 1px solid #E0E0E0; }
+    .message-preview:last-child { border-bottom: none; }
+    .no-data { text-align: center; padding: 60px 20px; color: #999; font-weight: 600; }
+    .hint-text { margin-top: 20px; color: #888; font-size: 11px; font-weight: 600; text-align: center; }
+    
+    /* Right Ad Banner */
+    .ad-space { width: 170px; background: #FAFAFA; border-left: 2px solid #E8E8E8; flex-shrink: 0; display: flex; flex-direction: column; }
+    .ad-container { padding: 16px 8px; display: flex; flex-direction: column; align-items: center; }
+    .ad-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    #adsterra-banner { width: 160px; height: 600px; display: flex; align-items: center; justify-content: center; }
+    
+    /* Scrollbar */
+    .main-content::-webkit-scrollbar { width: 6px; }
     .main-content::-webkit-scrollbar-track { background: #E0E0E0; border-radius: 10px; }
-    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 10px; border: 1px solid #6B9E00; }
-    
-    /* PROMO BANNER */
-    .promo-banner-main { background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%); border: 3px solid var(--vibrant-green); border-radius: 16px; padding: 28px 32px; margin-bottom: 28px; color: white; box-shadow: 0 10px 0 #6B9E00; }
-    .promo-banner-main h2 { font-size: 24px; font-weight: 800; color: var(--vibrant-green); text-transform: uppercase; margin-bottom: 20px; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
-    .promo-features-main { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 30px; margin-bottom: 24px; }
-    .promo-feature-main { display: flex; align-items: center; gap: 12px; color: #E0E0E0; font-weight: 600; font-size: 14px; }
-    .promo-feature-main .iconify { color: var(--vibrant-green); font-size: 24px; }
-    .promo-highlight-main { display: flex; align-items: center; gap: 20px; padding-top: 20px; border-top: 1px solid #444; }
-    .promo-badge-main { background: var(--vibrant-green); color: #000; font-weight: 900; font-size: 32px; padding: 10px 28px; border-radius: 12px; box-shadow: 0 6px 0 #6B9E00; }
-    .promo-text-main { color: #DDD; font-size: 14px; font-weight: 500; }
-    
-    .action-buttons-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-    .action-btn { background: #1A1A1A; border: 2px solid var(--vibrant-green); color: white; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; flex: 1; justify-content: center; }
-    .action-btn .iconify { font-size: 20px; color: var(--vibrant-green); }
-    .action-btn:hover { background: var(--vibrant-green); color: #000; transform: translateY(-3px); box-shadow: 0 6px 0 #6B9E00; }
-    .action-btn:hover .iconify { color: #000; }
-    .team-profile-section { background: #F8F9FA; border-radius: 16px; padding: 20px; margin-bottom: 28px; border: 2px solid #E8E8E8; }
-    .section-title { font-size: 18px; font-weight: 800; color: #1A1A1A; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; border-left: 5px solid var(--vibrant-green); padding-left: 15px; }
-    .filters-group { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-    .filter-select { flex: 1; min-width: 150px; padding: 12px; border: 2px solid #DDD; border-radius: 10px; font-weight: 600; font-size: 13px; background: white; cursor: pointer; outline: none; transition: 0.15s; }
-    .filter-select:focus { border-color: var(--vibrant-green); }
-    .team-search-input { width: 100%; padding: 12px; border: 2px solid #DDD; border-radius: 10px; font-size: 13px; margin-bottom: 20px; outline: none; transition: 0.15s; }
-    .team-search-input:focus { border-color: var(--vibrant-green); }
-    
-    /* NEW CAROUSEL: 6 rows, only logos, fast bidirectional animations */
-    .teams-carousel { min-height: 360px; position: relative; overflow: hidden; margin-bottom: 15px; }
-    .carousel-row { display: flex; gap: 24px; margin-bottom: 20px; white-space: nowrap; width: max-content; }
-    /* Different directions: odd rows left->right, even rows right->left */
-    .carousel-row:nth-child(odd) { animation: slideLeftToRight 16s linear infinite; }
-    .carousel-row:nth-child(even) { animation: slideRightToLeft 18s linear infinite; }
-    @keyframes slideLeftToRight { 0% { transform: translateX(-30%); } 100% { transform: translateX(0%); } }
-    @keyframes slideRightToLeft { 0% { transform: translateX(0%); } 100% { transform: translateX(-30%); } }
-    /* Logo-only card: no text, just image container */
-    .team-logo-card { flex-shrink: 0; width: 80px; height: 80px; background: #FFFFFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 14px rgba(0,0,0,0.1); border: 2px solid var(--vibrant-green); transition: all 0.2s ease; cursor: pointer; overflow: hidden; background: #f0f0f0; }
-    .team-logo-card:hover { transform: scale(1.08); border-width: 3px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-    .team-logo-card img { width: 100%; height: 100%; object-fit: cover; }
-    .team-logo-card .iconify { font-size: 48px; color: #2D3337; }
-    
-    /* Search results: list form (not boxes) */
-    .searched-teams-list { display: flex; flex-direction: column; gap: 0px; }
-    .searched-team-list-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #E8E8E8; cursor: pointer; transition: 0.1s linear; background: white; }
-    .searched-team-list-item:hover { background: #F5F7FA; border-left: 4px solid var(--vibrant-green); }
-    .list-logo { width: 44px; height: 44px; border-radius: 50%; background: #2D3337; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #DDD; }
-    .list-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .list-info { flex: 1; }
-    .list-team-name { font-weight: 700; font-size: 14px; color: #1A1A1A; }
-    .list-league-name { font-size: 11px; color: #777; margin-top: 2px; }
-    
-    .copyright-footer { text-align: center; padding: 20px 0 10px; border-top: 2px solid #E8E8E8; margin-top: 15px; color: #666; font-size: 12px; font-weight: 500; }
-    .made-by { cursor: pointer; color: var(--vibrant-green); font-weight: 800; text-decoration: underline; transition: 0.15s; display: inline-block; }
-    .made-by:hover { color: #000; }
-    
-    /* Hide old match/filter elements completely */
-    .filter-bar, .display-list, .hint-text, #dynamicList, #filterBar, #applyFilterBtn, .context-header, .context-toggle, .percentage-bar, .match-card {
-      display: none !important;
-    }
+    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 10px; }
   </style>
 </head>
 <body>
 <div class="app-container">
   <header class="main-header">
     <div class="header-left">
-      <button class="menu-btn" id="menuToggleBtn"><span class="iconify" data-icon="mdi:menu"></span></button>
+      <button class="back-btn" onclick="window.location.href='index.html'"><span class="iconify" data-icon="mdi:arrow-left"></span> BACK</button>
       <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    </div>
+    <div class="header-center">
+      <a href="index.html" class="home-link">🏠 HOME</a>
     </div>
     <div class="header-right">
       <div class="search-wrapper">
         <div class="search-bar">
           <span class="iconify" data-icon="mdi:magnify"></span>
-          <input type="text" id="globalSearchInput" placeholder="Search teams...">
+          <input type="text" id="globalSearchInput" placeholder="Search matches...">
         </div>
         <div class="search-results" id="searchResults"></div>
       </div>
@@ -138,281 +129,350 @@
     </div>
   </header>
 
-  <div class="breadcrumb-section">
-    <div class="breadcrumb"><a href="#">Home</a><span class="iconify" data-icon="mdi:chevron-right"></span><a href="#">Sports</a><span class="iconify" data-icon="mdi:chevron-right"></span><span class="current" id="breadcrumbMatch">Teams Hub</span></div>
+  <!-- Navigation Buttons: HOME, DEBATES, POPULAR, GAMES -->
+  <div class="nav-section">
+    <button class="nav-btn active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> HOME</button>
+    <button class="nav-btn" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
+    <button class="nav-btn" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> POPULAR</button>
+    <button class="nav-btn" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
+  </div>
+
+  <!-- Filter Bar (visible for home/popular, hidden for debates/games) -->
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-group"><label><span class="iconify" data-icon="mdi:soccer"></span> Sport</label><select id="filterSport"><option value="all">All</option><option value="football">Football</option><option value="basketball">Basketball</option></select></div>
+    <div class="filter-group"><label><span class="iconify" data-icon="mdi:trophy-outline"></span> League</label><select id="filterLeague"><option value="all">All Leagues</option></select></div>
+    <div class="filter-group"><label><span class="iconify" data-icon="mdi:calendar-blank"></span> Date</label><input type="date" id="filterDate"></div>
+    <button class="filter-btn" id="applyFilterBtn"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
   </div>
 
   <div class="dashboard-layout">
-    <div class="left-tab" id="leftTab">
-      <div class="tab-content">
-        <div class="nav-row">
-          <button class="nav-btn" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> HOME</button>
-          <button class="nav-btn" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> SPORTS</button>
-          <button class="nav-btn" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
-          <button class="nav-btn" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
-          <button class="nav-btn" data-nav="live"><span class="iconify" data-icon="mdi:circle-medium"></span> LIVE</button>
-          <button class="nav-btn" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> POPULAR</button>
-        </div>
-      </div>
-      <div class="tab-footer">
-        <div class="professional-note"><span class="iconify" data-icon="mdi:shield-outline"></span><span>ORAFUT · 2026</span></div>
-        <div class="professional-note"><span class="iconify" data-icon="mdi:headset"></span><span>24/7 SUPPORT</span></div>
-      </div>
-    </div>
-
     <div class="main-content">
-      <!-- Big Promo Box -->
-      <div class="promo-banner-main">
-        <h2><span class="iconify" data-icon="mdi:trophy"></span> Join Africa's #1 Prediction Brand</h2>
-        <div class="promo-features-main">
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:robot-off"></span> No BOTS Just Humans</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
-        </div>
-        <div class="promo-highlight-main">
-          <div class="promo-badge-main">FREE</div>
-          <div class="promo-text-main">Free callbacks whenever you need us.</div>
-        </div>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="action-buttons-row">
-        <button class="action-btn" data-quick="sports"><span class="iconify" data-icon="mdi:soccer"></span> SPORTS</button>
-        <button class="action-btn" data-quick="popular"><span class="iconify" data-icon="mdi:fire"></span> POPULAR</button>
-        <button class="action-btn" data-quick="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
-        <button class="action-btn" data-quick="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
-      </div>
-      
-      <!-- CHECK TEAM PROFILE Section -->
-      <div class="team-profile-section">
-        <div class="section-title"><span class="iconify" data-icon="mdi:account-search"></span> CHECK TEAM PROFILE</div>
-        <div class="filters-group">
-          <select id="profileSportFilter" class="filter-select"><option value="all">All Sports</option><option value="football">Football</option><option value="basketball">Basketball</option></select>
-          <select id="profileLeagueFilter" class="filter-select"><option value="all">All Leagues</option></select>
-        </div>
-        <input type="text" id="teamSearchInput" class="team-search-input" placeholder="Search for a team... (e.g., Liverpool, Lakers)" autocomplete="off">
-        <div id="teamsDisplayArea" class="teams-carousel"></div>
-      </div>
-      
-      <div class="copyright-footer">
-        © 2026 ORAFUT — All rights reserved. <span class="made-by" onclick="window.open('https://pireactive.vercel.app', '_blank')">Made by PIReactive</span>
-      </div>
+      <div class="display-list" id="dynamicList"></div>
+      <div class="hint-text" id="cardHint">⚡ Click on any match card or percentage to vote ⚡</div>
     </div>
-
     <div class="ad-space">
       <div class="ad-container"><div class="ad-label">ADVERTISEMENT</div><div id="adsterra-banner"><script type="text/javascript">atOptions = { 'key': '513405c41397d2263bdcca6adf74206c', 'format': 'iframe', 'height': 600, 'width': 160, 'params': {} };</script><script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script></div></div>
     </div>
   </div>
 </div>
+
 <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
 <script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <script>
 (function(){
-  firebase.initializeApp({ apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" });
-  window.db = firebase.firestore();
-  window.anonymousId = localStorage.getItem('anonymousId') || (function(){ var id='anon_'+Date.now()+'_'+Math.random().toString(36).substr(2,9); localStorage.setItem('anonymousId',id); return id; })();
-  
-  // DOM elements
-  const leftTab = document.getElementById('leftTab');
-  const menuToggleBtn = document.getElementById('menuToggleBtn');
-  const profileSportFilter = document.getElementById('profileSportFilter');
-  const profileLeagueFilter = document.getElementById('profileLeagueFilter');
-  const teamSearchInput = document.getElementById('teamSearchInput');
-  const teamsDisplayArea = document.getElementById('teamsDisplayArea');
+  // Firebase
+  firebase.initializeApp({ 
+    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", 
+    authDomain: "orafut-58b5f.firebaseapp.com", 
+    projectId: "orafut-58b5f", 
+    storageBucket: "orafut-58b5f.firebasestorage.app", 
+    messagingSenderId: "500581059835", 
+    appId: "1:500581059835:web:7be0994b65ff21dae0b45e" 
+  });
+  const db = firebase.firestore();
+  window.anonymousId = localStorage.getItem('anonymousId') || (function(){ 
+    let id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2,9); 
+    localStorage.setItem('anonymousId', id); 
+    return id; 
+  })();
+
+  // DOM Elements
+  const filterBar = document.getElementById('filterBar');
+  const filterSport = document.getElementById('filterSport');
+  const filterLeague = document.getElementById('filterLeague');
+  const filterDate = document.getElementById('filterDate');
+  const applyFilterBtn = document.getElementById('applyFilterBtn');
+  const dynamicList = document.getElementById('dynamicList');
+  const cardHint = document.getElementById('cardHint');
+  const navBtns = document.querySelectorAll('.nav-btn');
   const globalSearchInput = document.getElementById('globalSearchInput');
   const searchResultsDiv = document.getElementById('searchResults');
-  
-  let state = { leftTabVisible: false, allTeams: [], leagues: [] };
-  
-  menuToggleBtn.addEventListener('click', () => {
-    state.leftTabVisible = !state.leftTabVisible;
-    leftTab.classList.toggle('visible', state.leftTabVisible);
-  });
-  
-  // Load teams and leagues from Firebase
-  async function loadData() {
-    try {
-      const leaguesSnap = await db.collection('leagues').get();
-      state.leagues = [];
-      leaguesSnap.forEach(doc => state.leagues.push({ id: doc.id, name: doc.data().name }));
-      
-      const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
-      state.allTeams = [];
-      teamsSnap.forEach(doc => {
-        const data = doc.data();
-        state.allTeams.push({
-          id: doc.id,
-          name: data.name || 'Unknown',
-          league: data.league,
-          leagueName: data.leagueName || '',
-          logoUrl: data.logoUrl || null,
-          sport: data.sport || 'football'
-        });
+
+  // State
+  let currentNav = 'home';
+  let allMatches = [];
+  let allLeagues = [];
+  let debatesData = []; // store debates separately
+
+  filterDate.value = new Date().toISOString().split('T')[0];
+
+  // Load leagues for filter
+  async function loadLeagues() {
+    const snap = await db.collection('leagues').get();
+    allLeagues = [];
+    snap.forEach(doc => allLeagues.push({ id: doc.id, name: doc.data().name }));
+    let options = '<option value="all">All Leagues</option>';
+    allLeagues.forEach(l => options += `<option value="${l.id}">${l.name}</option>`);
+    filterLeague.innerHTML = options;
+  }
+
+  // Load matches
+  async function loadMatches() {
+    const snap = await db.collection('matches').orderBy('startTime', 'asc').get();
+    allMatches = [];
+    for(const doc of snap.docs) {
+      const data = doc.data();
+      const votesSnap = await db.collection('votes').where('matchId', '==', doc.id).get();
+      let teamAVotes = 0, drawVotes = 0, teamBVotes = 0;
+      votesSnap.forEach(v => {
+        const vt = v.data().voteType;
+        if(vt === 'team1') teamAVotes++;
+        else if(vt === 'draw') drawVotes++;
+        else if(vt === 'team2') teamBVotes++;
       });
-      
-      populateLeagueFilters();
-      renderTeamCarouselOrSearch(); // initial carousel with only logos
-    } catch (err) { console.error("Load error:", err); }
+      const total = votesSnap.size;
+      const percentages = {
+        team1: total ? Math.round((teamAVotes/total)*100) : 33,
+        draw: total ? Math.round((drawVotes/total)*100) : 34,
+        team2: total ? Math.round((teamBVotes/total)*100) : 33
+      };
+      allMatches.push({
+        id: doc.id,
+        teamAName: data.teamAName || 'Team A',
+        teamBName: data.teamBName || 'Team B',
+        teamALogo: data.teamALogo,
+        teamBLogo: data.teamBLogo,
+        league: data.league,
+        leagueName: data.leagueName,
+        startTime: data.startTime,
+        status: data.status || 'upcoming',
+        sport: data.sport || 'football',
+        percentages: percentages,
+        totalVotes: total
+      });
+    }
+    renderCurrentView();
   }
-  
-  function populateLeagueFilters() {
-    let html = '<option value="all">All Leagues</option>';
-    state.leagues.forEach(l => html += `<option value="${l.id}">${l.name}</option>`);
-    profileLeagueFilter.innerHTML = html;
+
+  // Load debates (recent messages grouped by match)
+  async function loadDebates() {
+    const matchesSnap = await db.collection('matches').get();
+    const debates = [];
+    for(const doc of matchesSnap.docs) {
+      const matchData = doc.data();
+      const msgsSnap = await db.collection('messages').where('matchId', '==', doc.id).orderBy('createdAt', 'desc').limit(3).get();
+      if(msgsSnap.size > 0) {
+        const recentMessages = [];
+        msgsSnap.forEach(msg => recentMessages.push(msg.data()));
+        debates.push({
+          matchId: doc.id,
+          teamAName: matchData.teamAName,
+          teamBName: matchData.teamBName,
+          leagueName: matchData.leagueName,
+          messageCount: msgsSnap.size,
+          recentMessages: recentMessages.reverse()
+        });
+      }
+    }
+    debates.sort((a,b) => b.messageCount - a.messageCount);
+    debatesData = debates.slice(0, 8);
+    renderDebates();
   }
-  
-  // RENDER: either 6-row fast bidirectional logo carousel OR list view when searching
-  function renderTeamCarouselOrSearch() {
-    const sport = profileSportFilter.value;
-    const league = profileLeagueFilter.value;
-    const searchTerm = teamSearchInput.value.trim().toLowerCase();
-    
-    let filtered = state.allTeams.filter(team => {
-      if (sport !== 'all' && team.sport !== sport) return false;
-      if (league !== 'all' && team.league !== league) return false;
-      if (searchTerm && !team.name.toLowerCase().includes(searchTerm)) return false;
+
+  // Render matches based on filters + currentNav (popular sorting)
+  function renderMatches() {
+    let filtered = [...allMatches];
+    const sportVal = filterSport.value;
+    const leagueVal = filterLeague.value;
+    const dateVal = filterDate.value;
+
+    filtered = filtered.filter(m => {
+      if(sportVal !== 'all' && m.sport !== sportVal) return false;
+      if(leagueVal !== 'all' && m.league !== leagueVal) return false;
+      if(dateVal && m.startTime) {
+        const matchDate = m.startTime.toDate().toISOString().split('T')[0];
+        if(matchDate !== dateVal) return false;
+      }
       return true;
     });
-    
-    // SEARCH MODE: display as LIST (no boxes, just vertical list)
-    if (searchTerm !== "") {
-      if (filtered.length === 0) {
-        teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams match your search.</div>';
+
+    if(currentNav === 'popular') {
+      filtered.sort((a,b) => (b.totalVotes || 0) - (a.totalVotes || 0));
+      filtered = filtered.slice(0, 10);
+    } else {
+      filtered.sort((a,b) => {
+        if(a.startTime && b.startTime) return a.startTime.toDate() - b.startTime.toDate();
+        return 0;
+      });
+    }
+
+    if(filtered.length === 0) {
+      dynamicList.innerHTML = '<div class="no-data">⚽ No matches found. Adjust filters or check later.</div>';
+      return;
+    }
+
+    let html = '';
+    filtered.forEach(m => {
+      const timeStr = m.startTime ? m.startTime.toDate().toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : 'TBD';
+      const leagueName = m.leagueName || 'League';
+      const p = m.percentages;
+      html += `
+        <div class="match-card" onclick="window.location.href='vote.html?id=${m.id}'">
+          <div class="match-teams">
+            <div class="team">
+              <div class="team-logo">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
+              <div class="team-info">
+                <span class="team-name">${escapeHtml(m.teamAName)}</span>
+                <span class="team-odds">${leagueName}</span>
+              </div>
+            </div>
+            <div class="match-vs">VS</div>
+            <div class="team">
+              <div class="team-info" style="text-align:right;">
+                <span class="team-name">${escapeHtml(m.teamBName)}</span>
+                <span class="team-odds">${timeStr}</span>
+              </div>
+              <div class="team-logo">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
+            </div>
+          </div>
+          <div class="percentage-bar">
+            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'team1')">
+              <div class="percentage-label">1</div>
+              <div class="percentage-value">${p.team1}%</div>
+              <div class="percentage-fill"><div class="percentage-fill-bar" style="width:${p.team1}%;"></div></div>
+            </div>
+            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'draw')">
+              <div class="percentage-label">X</div>
+              <div class="percentage-value">${p.draw}%</div>
+              <div class="percentage-fill"><div class="percentage-fill-bar draw-bar" style="width:${p.draw}%;"></div></div>
+            </div>
+            <div class="percentage-option" onclick="event.stopPropagation(); submitVote('${m.id}', 'team2')">
+              <div class="percentage-label">2</div>
+              <div class="percentage-value">${p.team2}%</div>
+              <div class="percentage-fill"><div class="percentage-fill-bar" style="width:${p.team2}%;"></div></div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    dynamicList.innerHTML = html;
+    cardHint.innerText = currentNav === 'popular' ? '🔥 Most voted matches — click to vote!' : '⚡ Click on any match card or percentages to vote ⚡';
+  }
+
+  function renderDebates() {
+    if(debatesData.length === 0) {
+      dynamicList.innerHTML = '<div class="no-data">💬 No active debates yet. Be the first to start a conversation!</div>';
+      return;
+    }
+    let html = '';
+    debatesData.forEach(d => {
+      html += `
+        <div class="debate-card" onclick="window.location.href='vote.html?id=${d.matchId}'">
+          <div class="debate-header">
+            <span class="iconify" data-icon="mdi:message-text-outline" style="color:#9CE800;font-size:28px;"></span>
+            <div class="debate-title">${escapeHtml(d.teamAName)} vs ${escapeHtml(d.teamBName)}</div>
+          </div>
+          <div class="debate-stats">
+            <span><span class="iconify" data-icon="mdi:message-outline"></span> ${d.messageCount} messages</span>
+            <span><span class="iconify" data-icon="mdi:trophy-outline"></span> ${escapeHtml(d.leagueName || 'League')}</span>
+          </div>
+          <div class="debate-messages">
+            ${d.recentMessages.map(msg => `<div class="message-preview">💬 ${escapeHtml(msg.content?.substring(0, 60) || 'Join the debate...')}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    });
+    dynamicList.innerHTML = html;
+    cardHint.innerText = '🔥 Join hot debates — click any card to participate!';
+  }
+
+  function renderCurrentView() {
+    if(currentNav === 'debates') {
+      filterBar.style.display = 'none';
+      loadDebates();
+    } 
+    else if(currentNav === 'games') {
+      window.location.href = 'game.html';
+    }
+    else {
+      filterBar.style.display = 'flex';
+      renderMatches();
+    }
+  }
+
+  // Voting function
+  window.submitVote = async function(matchId, voteType) {
+    try {
+      const existing = await db.collection('votes').where('matchId', '==', matchId).where('anonymousId', '==', window.anonymousId).get();
+      if(!existing.empty) {
+        cardHint.innerText = '⚠️ You already voted on this match!';
+        setTimeout(() => { if(currentNav !== 'debates') cardHint.innerText = '⚡ Click on percentages to vote ⚡'; }, 2500);
         return;
       }
-      let listHtml = '<div class="searched-teams-list">';
-      filtered.forEach(team => {
-        listHtml += `
-          <div class="searched-team-list-item" onclick="window.location.href='profile.html?team=${team.id}'">
-            <div class="list-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${team.name}">` : '<span class="iconify" data-icon="mdi:shield-half-full" style="font-size:28px;"></span>'}
-            </div>
-            <div class="list-info">
-              <div class="list-team-name">${escapeHtml(team.name)}</div>
-              <div class="list-league-name">${escapeHtml(team.leagueName || 'Unknown League')}</div>
-            </div>
-          </div>
-        `;
+      await db.collection('votes').add({
+        matchId, anonymousId: window.anonymousId, voteType,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      listHtml += '</div>';
-      teamsDisplayArea.innerHTML = listHtml;
-      return;
+      await loadMatches();
+      cardHint.innerText = '✅ Vote recorded!';
+      setTimeout(() => { if(currentNav !== 'debates') cardHint.innerText = '⚡ Click on percentages to vote ⚡'; }, 2000);
+    } catch(e) {
+      cardHint.innerText = '❌ Error voting, try again';
     }
-    
-    // CAROUSEL MODE: only logos, 6 rows, fast bidirectional animations
-    if (filtered.length === 0) {
-      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams available.</div>';
-      return;
-    }
-    
-    // Distribute teams into 6 rows (circular / repeating for smooth infinite feel)
-    const rowsCount = 6;
-    const teamsPerRow = Math.ceil(filtered.length / rowsCount);
-    const rows = Array.from({ length: rowsCount }, () => []);
-    filtered.forEach((team, idx) => {
-      const rowIdx = idx % rowsCount;
-      rows[rowIdx].push(team);
+  };
+
+  // Navigation handlers
+  function setActiveNav(nav) {
+    currentNav = nav;
+    navBtns.forEach(btn => {
+      if(btn.dataset.nav === nav) btn.classList.add('active');
+      else btn.classList.remove('active');
     });
-    
-    // For smooth animation, duplicate each row's items (so infinite scroll looks seamless)
-    let carouselHtml = '';
-    for (let i = 0; i < rowsCount; i++) {
-      const rowTeams = rows[i];
-      if (rowTeams.length === 0) continue;
-      // duplicate items to create seamless loop
-      const doubled = [...rowTeams, ...rowTeams];
-      carouselHtml += `<div class="carousel-row">`;
-      doubled.forEach(team => {
-        carouselHtml += `
-          <div class="team-logo-card" onclick="window.location.href='profile.html?team=${team.id}'" title="${escapeHtml(team.name)}">
-            ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-          </div>
-        `;
-      });
-      carouselHtml += `</div>`;
-    }
-    teamsDisplayArea.innerHTML = carouselHtml;
+    renderCurrentView();
   }
-  
-  // Global Search (top bar) returns list results for teams
-  function performGlobalSearch(term) {
-    const t = term.toLowerCase().trim();
-    if (!t) {
-      searchResultsDiv.classList.remove('active');
-      return;
-    }
-    const matchedTeams = state.allTeams.filter(team => team.name.toLowerCase().includes(t));
-    if (matchedTeams.length === 0) {
-      searchResultsDiv.innerHTML = '<div class="search-result-item" style="cursor:default;">No teams found</div>';
-    } else {
-      let resultsHtml = '';
-      matchedTeams.slice(0, 8).forEach(team => {
-        resultsHtml += `
-          <div class="search-result-item" onclick="window.location.href='profile.html?team=${team.id}'">
-            <div class="search-result-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-            </div>
-            <div class="search-result-info">
-              <div class="search-result-title">${escapeHtml(team.name)}</div>
-              <div class="search-result-subtitle">${escapeHtml(team.leagueName || 'Team')}</div>
-            </div>
-          </div>
-        `;
-      });
-      searchResultsDiv.innerHTML = resultsHtml;
-    }
-    searchResultsDiv.classList.add('active');
-  }
-  
-  // Helper to escape HTML
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-  
-  // Event listeners with 150ms debounce (faster than 300ms, 2x speed)
-  let teamDebounce;
-  teamSearchInput.addEventListener('input', () => {
-    clearTimeout(teamDebounce);
-    teamDebounce = setTimeout(() => renderTeamCarouselOrSearch(), 150);
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveNav(btn.dataset.nav));
   });
-  profileSportFilter.addEventListener('change', () => renderTeamCarouselOrSearch());
-  profileLeagueFilter.addEventListener('change', () => renderTeamCarouselOrSearch());
-  
-  let globalDebounce;
+
+  applyFilterBtn.addEventListener('click', () => {
+    if(currentNav !== 'debates') renderMatches();
+  });
+
+  // Global Search (matches only)
+  let searchTimeout;
   globalSearchInput.addEventListener('input', (e) => {
-    clearTimeout(globalDebounce);
-    globalDebounce = setTimeout(() => performGlobalSearch(e.target.value), 150);
+    clearTimeout(searchTimeout);
+    const term = e.target.value.trim().toLowerCase();
+    if(!term) { searchResultsDiv.classList.remove('active'); return; }
+    searchTimeout = setTimeout(() => {
+      const filteredMatches = allMatches.filter(m => 
+        m.teamAName.toLowerCase().includes(term) || 
+        m.teamBName.toLowerCase().includes(term) ||
+        (m.leagueName && m.leagueName.toLowerCase().includes(term))
+      );
+      if(filteredMatches.length === 0) {
+        searchResultsDiv.innerHTML = '<div class="search-result-item">No matches found</div>';
+      } else {
+        let html = '';
+        filteredMatches.slice(0, 6).forEach(m => {
+          html += `
+            <div class="search-result-item" onclick="window.location.href='vote.html?id=${m.id}'">
+              <div class="search-result-logo">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:soccer"></span>'}</div>
+              <div class="search-result-info">
+                <div class="search-result-title">${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div>
+                <div class="search-result-subtitle">${escapeHtml(m.leagueName || 'Match')}</div>
+              </div>
+            </div>
+          `;
+        });
+        searchResultsDiv.innerHTML = html;
+      }
+      searchResultsDiv.classList.add('active');
+    }, 200);
   });
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-wrapper')) searchResultsDiv.classList.remove('active');
+    if(!e.target.closest('.search-wrapper')) searchResultsDiv.classList.remove('active');
   });
-  
-  // Navigation handlers (lightweight, no match rendering)
-  function handleNav(nav){
-    if(nav === 'games'){ window.location.href = 'game.html'; }
-    else if(nav === 'debates'){ alert("🔥 Debate section — join conversations soon!"); }
-    else if(nav === 'sports' || nav === 'popular' || nav === 'live' || nav === 'home'){ alert(`✨ ${nav.toUpperCase()} mode — matches will appear in the next update.`); }
-  }
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      handleNav(btn.dataset.nav);
-    });
-  });
-  document.querySelectorAll('.action-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const type = btn.dataset.quick;
-      if(type === 'games') window.location.href = 'game.html';
-      else handleNav(type);
-    });
-  });
-  
-  // Initialize everything
-  loadData().then(() => {
-    renderTeamCarouselOrSearch();
-  });
+
+  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+  // Initialize
+  loadLeagues();
+  loadMatches();
 })();
 </script>
 </body>

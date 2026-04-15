@@ -2,517 +2,1174 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>ORAFUT · Edge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>ORAFUT · Mobile</title>
+  <!-- Poppins font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Iconify -->
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #293136; display: flex; justify-content: center; min-height: 100vh; padding: 0; font-family: 'Poppins', sans-serif; overflow: hidden; }
-    .app-container { width: 959px; max-width: 100%; background-color: #ffffff; overflow: hidden; display: flex; flex-direction: column; margin: 0 auto; height: 100vh; }
-    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --left-tab-bg: #2D3337; --left-tab-border: #252A2D; --white: #FFFFFF; --black: #1A1A1A; }
-    .main-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--header-bg); flex-shrink: 0; }
-    .header-left { display: flex; align-items: center; gap: 20px; }
-    .menu-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); font-size: 20px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; line-height: 1; font-weight: bold; }
-    .menu-btn:hover { background: var(--vibrant-green); color: #000; transform: scale(1.05); }
-    .brand { font-size: 28px; font-weight: 800; font-style: italic; font-family: 'Poppins', sans-serif; letter-spacing: -0.5px; text-transform: uppercase; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #293136;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .mobile-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    :root {
+      --vibrant-green: #9CE800;
+      --header-bg: #252A2D;
+      --section-bg: #353B40;
+      --left-tab-bg: #2D3337;
+      --white: #FFFFFF;
+      --black: #1A1A1A;
+    }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--header-bg);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-btn {
+      background: transparent;
+      border: 2px solid var(--vibrant-green);
+      color: var(--vibrant-green);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      line-height: 1;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
     .brand .ora { color: var(--white); }
     .brand .fut { color: var(--vibrant-green); }
-    .header-right { display: flex; align-items: center; gap: 16px; position: relative; }
-    .search-wrapper { position: relative; }
-    .search-bar { display: flex; align-items: center; background: rgba(255,255,255,0.08); padding: 6px 14px; border: 2px solid #3A4146; border-radius: 8px; transition: border-color 0.2s; }
-    .search-bar:focus-within { border-color: var(--vibrant-green); }
-    .search-bar .iconify { color: var(--vibrant-green); margin-right: 8px; font-size: 16px; }
-    .search-bar input { background: transparent; border: none; outline: none; color: var(--white); font-size: 13px; width: 180px; font-family: 'Poppins', sans-serif; font-weight: 400; }
-    .search-bar input::placeholder { color: rgba(255,255,255,0.4); font-weight: 300; font-size: 12px; }
-    .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-height: 400px; overflow-y: auto; z-index: 1000; display: none; }
-    .search-results.active { display: block; }
-    .search-result-item { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.15s; }
-    .search-result-item:hover { background: #F5F5F5; }
-    .search-result-logo { width: 32px; height: 32px; border-radius: 50%; background: #2D3337; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .search-result-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .search-result-info { flex: 1; }
-    .search-result-title { font-weight: 600; color: #1A1A1A; font-size: 13px; }
-    .search-result-subtitle { font-size: 11px; color: #777; margin-top: 2px; }
-    .account-btn { background: var(--vibrant-green); border: none; color: #000; padding: 8px 18px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 6px; text-decoration: none; font-family: 'Poppins', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 0 #6B9E00; }
-    .account-btn .iconify { font-size: 16px; }
-    .account-btn:hover { background: #A8F010; transform: translateY(-2px); box-shadow: 0 6px 0 #6B9E00; }
-    .breadcrumb-section { background: var(--section-bg); padding: 8px 24px; border-bottom: 2px solid #252A2D; flex-shrink: 0; }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); font-family: 'Poppins', sans-serif; }
-    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.15s; font-weight: 600; }
-    .breadcrumb a:hover { color: var(--vibrant-green); }
-    .breadcrumb .iconify { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-bar-mobile {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border: 1.5px solid #3A4146;
+      border-radius: 20px;
+    }
+    .search-bar-mobile .iconify {
+      color: var(--vibrant-green);
+      font-size: 14px;
+    }
+    .search-bar-mobile input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--white);
+      font-size: 12px;
+      width: 120px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .search-bar-mobile input::placeholder {
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+    }
+
+    .banner-ad {
+      background: var(--section-bg);
+      padding: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #252A2D;
+      flex-shrink: 0;
+    }
+    #mobile-banner {
+      width: 320px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2D3337;
+      border-radius: 6px;
+    }
+
+    .social-bar {
+      background: var(--section-bg);
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #252A2D;
+      flex-shrink: 0;
+    }
+
+    .breadcrumb-section {
+      background: var(--section-bg);
+      padding: 6px 16px;
+      border-bottom: 1px solid #252A2D;
+      flex-shrink: 0;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.5);
+      flex-wrap: wrap;
+    }
+    .breadcrumb a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb .iconify { font-size: 10px; color: rgba(255,255,255,0.3); }
     .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
-    .dashboard-layout { display: flex; flex: 1; min-height: 0; position: relative; background: var(--white); overflow: hidden; }
-    .left-tab { width: 260px; background: var(--left-tab-bg); border-right: 3px solid var(--left-tab-border); display: none; flex-direction: column; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
-    .left-tab::-webkit-scrollbar { display: none; }
-    .left-tab.visible { display: flex; }
-    .tab-content { padding: 20px 14px; flex: 1; }
-    .nav-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .nav-btn { background: var(--left-tab-border); border: 2px solid #3A4146; color: #CCCCCC; font-weight: 700; font-size: 11px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-family: 'Poppins', sans-serif; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.3px; flex: 1 0 auto; justify-content: center; }
-    .nav-btn .iconify { font-size: 14px; color: var(--vibrant-green); }
-    .nav-btn:hover { background: #3A4146; border-color: var(--vibrant-green); color: var(--vibrant-green); }
-    .nav-btn.active { background: var(--vibrant-green); border-color: var(--vibrant-green); color: #000; font-weight: 800; box-shadow: 0 4px 0 #6B9E00; }
-    .nav-btn.active .iconify { color: #000; }
-    .tab-footer { padding: 18px 14px 20px; border-top: 3px solid var(--vibrant-green); background: var(--left-tab-border); margin-top: auto; color: #BBBBBB; font-size: 11px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    .tab-footer .professional-note { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #DDDDDD; text-transform: uppercase; letter-spacing: 0.5px; }
-    .tab-footer .iconify { color: var(--vibrant-green); font-size: 14px; }
-    .main-content { flex: 1; padding: 24px; background: var(--white); display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--vibrant-green) #E0E0E0; }
-    .main-content::-webkit-scrollbar { width: 8px; }
-    .main-content::-webkit-scrollbar-track { background: #E0E0E0; border-radius: 10px; }
-    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 10px; border: 1px solid #6B9E00; }
-    
-    /* PROMO BANNER */
-    .promo-banner-main { background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%); border: 3px solid var(--vibrant-green); border-radius: 16px; padding: 28px 32px; margin-bottom: 28px; color: white; box-shadow: 0 10px 0 #6B9E00; }
-    .promo-banner-main h2 { font-size: 24px; font-weight: 800; color: var(--vibrant-green); text-transform: uppercase; margin-bottom: 20px; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
-    .promo-features-main { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 30px; margin-bottom: 24px; }
-    .promo-feature-main { display: flex; align-items: center; gap: 12px; color: #E0E0E0; font-weight: 600; font-size: 14px; }
-    .promo-feature-main .iconify { color: var(--vibrant-green); font-size: 24px; }
-    .promo-highlight-main { display: flex; align-items: center; gap: 20px; padding-top: 20px; border-top: 1px solid #444; }
-    .promo-badge-main { background: var(--vibrant-green); color: #000; font-weight: 900; font-size: 32px; padding: 10px 28px; border-radius: 12px; box-shadow: 0 6px 0 #6B9E00; }
-    .promo-text-main { color: #DDD; font-size: 14px; font-weight: 500; }
-    
-    .action-buttons-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-    .action-btn { background: #1A1A1A; border: 2px solid var(--vibrant-green); color: white; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; flex: 1; justify-content: center; }
-    .action-btn .iconify { font-size: 20px; color: var(--vibrant-green); }
-    .action-btn:hover { background: var(--vibrant-green); color: #000; transform: translateY(-3px); box-shadow: 0 6px 0 #6B9E00; }
-    .action-btn:hover .iconify { color: #000; }
-    .team-profile-section { background: #F8F9FA; border-radius: 16px; padding: 20px; margin-bottom: 28px; border: 2px solid #E8E8E8; }
-    .section-title { font-size: 18px; font-weight: 800; color: #1A1A1A; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; border-left: 5px solid var(--vibrant-green); padding-left: 15px; }
-    .filters-group { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-    .filter-select { flex: 1; min-width: 150px; padding: 12px; border: 2px solid #DDD; border-radius: 10px; font-weight: 600; font-size: 13px; background: white; cursor: pointer; outline: none; transition: 0.15s; }
-    .filter-select:focus { border-color: var(--vibrant-green); }
-    .team-search-input { width: 100%; padding: 12px; border: 2px solid #DDD; border-radius: 10px; font-size: 13px; margin-bottom: 20px; outline: none; transition: 0.15s; }
-    .team-search-input:focus { border-color: var(--vibrant-green); }
-    
-    /* NEW CAROUSEL: 6 rows, only logos, fast bidirectional animations */
-    .teams-carousel { min-height: 360px; position: relative; overflow: hidden; margin-bottom: 15px; }
-    .carousel-row { display: flex; gap: 24px; margin-bottom: 20px; white-space: nowrap; width: max-content; }
-    /* Different directions: odd rows left->right, even rows right->left */
-    .carousel-row:nth-child(odd) { animation: slideLeftToRight 16s linear infinite; }
-    .carousel-row:nth-child(even) { animation: slideRightToLeft 18s linear infinite; }
-    @keyframes slideLeftToRight { 0% { transform: translateX(-30%); } 100% { transform: translateX(0%); } }
-    @keyframes slideRightToLeft { 0% { transform: translateX(0%); } 100% { transform: translateX(-30%); } }
-    /* Logo-only card: no text, just image container */
-    .team-logo-card { flex-shrink: 0; width: 80px; height: 80px; background: #FFFFFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 14px rgba(0,0,0,0.1); border: 2px solid var(--vibrant-green); transition: all 0.2s ease; cursor: pointer; overflow: hidden; background: #f0f0f0; }
-    .team-logo-card:hover { transform: scale(1.08); border-width: 3px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-    .team-logo-card img { width: 100%; height: 100%; object-fit: cover; }
-    .team-logo-card .iconify { font-size: 48px; color: #2D3337; }
-    
-    /* Search results: list form (not boxes) */
-    .searched-teams-list { display: flex; flex-direction: column; gap: 0px; }
-    .searched-team-list-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #E8E8E8; cursor: pointer; transition: 0.1s linear; background: white; }
-    .searched-team-list-item:hover { background: #F5F7FA; border-left: 4px solid var(--vibrant-green); }
-    .list-logo { width: 44px; height: 44px; border-radius: 50%; background: #2D3337; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #DDD; }
-    .list-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .list-info { flex: 1; }
-    .list-team-name { font-weight: 700; font-size: 14px; color: #1A1A1A; }
-    .list-league-name { font-size: 11px; color: #777; margin-top: 2px; }
-    
-    .copyright-footer { text-align: center; padding: 20px 0 10px; border-top: 2px solid #E8E8E8; margin-top: 15px; color: #666; font-size: 12px; font-weight: 500; }
-    .made-by { cursor: pointer; color: var(--vibrant-green); font-weight: 800; text-decoration: underline; transition: 0.15s; display: inline-block; }
-    .made-by:hover { color: #000; }
-    
-    /* Hide old match/filter elements completely */
-    .filter-bar, .display-list, .hint-text, #dynamicList, #filterBar, #applyFilterBtn, .context-header, .context-toggle, .percentage-bar, .match-card {
-      display: none !important;
+
+    .main-content {
+      flex: 1;
+      padding: 16px 16px 80px 16px;
+      background: var(--white);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--vibrant-green) #E0E0E0;
+    }
+    .main-content::-webkit-scrollbar { width: 4px; }
+    .main-content::-webkit-scrollbar-track { background: #E0E0E0; }
+    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 4px; }
+
+    .nav-row-mobile {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #E0E0E0;
+    }
+    .nav-btn-mobile {
+      background: #F0F0F0;
+      border: 2px solid #D0D0D0;
+      color: #555;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0 #B0B0B0;
+    }
+    .nav-btn-mobile .iconify { font-size: 14px; }
+    .nav-btn-mobile.active {
+      background: var(--vibrant-green);
+      border-color: var(--vibrant-green);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 3px 0 #6B9E00;
+    }
+
+    .sport-choice-mobile { margin-bottom: 16px; }
+    .sport-title-mobile {
+      color: #555;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .sport-buttons-mobile {
+      display: flex;
+      gap: 8px;
+    }
+    .sport-btn-mobile {
+      background: #F0F0F0;
+      border: 2px solid #D0D0D0;
+      color: #555;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+      flex: 1;
+      text-align: center;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: 0 3px 0 #B0B0B0;
+    }
+    .sport-btn-mobile .iconify { font-size: 16px; }
+    .sport-btn-mobile.active-sport {
+      background: var(--vibrant-green);
+      border-color: var(--vibrant-green);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 3px 0 #6B9E00;
+    }
+
+    .context-header-mobile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #E0E0E0;
+    }
+    .context-text-mobile {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1A1A1A;
+      text-transform: uppercase;
+    }
+    .context-text-mobile span { color: var(--vibrant-green); font-style: italic; }
+    .clickable-context-mobile {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+    .context-toggle-mobile {
+      background: #F0F0F0;
+      border: 2px solid #D0D0D0;
+      color: #555;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.15s;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0 #B0B0B0;
+    }
+    .context-toggle-mobile.active-context {
+      background: var(--vibrant-green);
+      border-color: var(--vibrant-green);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 3px 0 #6B9E00;
+    }
+
+    .filter-bar-mobile {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      background: #F8F8F8;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 2px solid #E0E0E0;
+    }
+    .filter-group-mobile {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .filter-group-mobile select {
+      background: white;
+      border: 2px solid #D0D0D0;
+      color: #333;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      outline: none;
+    }
+    .filter-btn-mobile {
+      background: var(--vibrant-green);
+      border: none;
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 11px;
+      margin-left: auto;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0 #6B9E00;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .match-card-mobile {
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #E8E8E8;
+      margin-bottom: 10px;
+    }
+    .match-teams-mobile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .team-mobile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .team-mobile:last-child { justify-content: flex-end; }
+    .team-logo-mobile {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #2D3337, #1A1A1A);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--vibrant-green);
+    }
+    .team-logo-mobile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .team-logo-mobile .iconify { font-size: 20px; color: white; }
+    .team-info-mobile { display: flex; flex-direction: column; }
+    .team-name-mobile {
+      font-weight: 700;
+      font-size: 13px;
+      color: #1A1A1A;
+      text-transform: uppercase;
+    }
+    .team-odds-mobile { font-size: 10px; color: #777; }
+    .match-vs-mobile {
+      font-weight: 800;
+      font-size: 12px;
+      color: #999;
+      padding: 0 6px;
+    }
+    .percentage-bar-mobile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .percentage-option-mobile {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .percentage-option-mobile:hover { background: #F0F0F0; }
+    .percentage-label-mobile {
+      font-size: 9px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .percentage-value-mobile {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1A1A1A;
+      margin-bottom: 4px;
+    }
+    .percentage-fill-mobile {
+      height: 5px;
+      background: #E0E0E0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .percentage-fill-bar-mobile {
+      height: 100%;
+      background: var(--vibrant-green);
+      border-radius: 5px;
+    }
+    .draw-bar-mobile { background: #FFB800; }
+
+    .promo-banner-mobile {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%);
+      border: 2px solid var(--vibrant-green);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      color: white;
+    }
+    .promo-banner-mobile h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--vibrant-green);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .promo-features-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .promo-feature-mobile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #E0E0E0;
+      font-weight: 500;
+      font-size: 10px;
+    }
+    .promo-feature-mobile .iconify { color: var(--vibrant-green); font-size: 14px; }
+
+    .hint-text-mobile {
+      margin-top: 14px;
+      color: #999;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .bottom-nav-float {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 440px;
+      background: var(--header-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 8px;
+      border-radius: 40px;
+      border: 3px solid var(--vibrant-green);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+    .nav-item-float {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: transparent;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      transition: 0.15s;
+      padding: 6px 10px;
+      border-radius: 30px;
+      text-decoration: none;
+    }
+    .nav-item-float .iconify { font-size: 22px; }
+    .nav-item-float span {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .nav-item-float.active {
+      background: var(--vibrant-green);
+      color: #000;
+    }
+    .nav-item-float.active .iconify { color: #000; }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 260px;
+      height: 100vh;
+      background: var(--left-tab-bg);
+      z-index: 1000;
+      transition: left 0.3s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+      overflow-y: auto;
+    }
+    .side-menu.open { left: 0; }
+    .side-menu-header {
+      padding: 20px 16px;
+      border-bottom: 2px solid var(--vibrant-green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .close-menu {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .side-menu-content { padding: 16px; }
+    .menu-section { margin-bottom: 24px; }
+    .menu-section-title {
+      color: var(--vibrant-green);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .menu-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: #CCC;
+      text-decoration: none;
+      border-bottom: 1px solid #3A4146;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .menu-link .iconify { color: var(--vibrant-green); font-size: 18px; }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.show { display: block; }
+
+    .league-list-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .league-item-mobile {
+      background: #252A2D;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: #E0E0E0;
+      font-size: 12px;
+      font-weight: 600;
+      border-left: 4px solid var(--vibrant-green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 769px) {
+      .mobile-container { display: none; }
+      body::after {
+        content: "Redirecting to desktop version...";
+        color: white;
+        font-size: 18px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   </style>
 </head>
 <body>
-<div class="app-container">
+<div class="mobile-container">
   <header class="main-header">
     <div class="header-left">
-      <button class="menu-btn" id="menuToggleBtn"><span class="iconify" data-icon="mdi:menu"></span></button>
-      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+      <button class="menu-btn" id="menuToggleBtn" aria-label="Menu">
+        <span class="iconify" data-icon="mdi:menu"></span>
+      </button>
+      <div class="brand">
+        <span class="ora">ORA</span><span class="fut">FUT</span>
+      </div>
     </div>
     <div class="header-right">
-      <div class="search-wrapper">
-        <div class="search-bar">
-          <span class="iconify" data-icon="mdi:magnify"></span>
-          <input type="text" id="globalSearchInput" placeholder="Search teams...">
-        </div>
-        <div class="search-results" id="searchResults"></div>
+      <div class="search-bar-mobile">
+        <span class="iconify" data-icon="mdi:magnify"></span>
+        <input type="text" id="searchInputMobile" placeholder="Search...">
       </div>
-      <a href="account.html" class="account-btn"><span class="iconify" data-icon="mdi:account-circle-outline"></span> ACCOUNT</a>
     </div>
   </header>
 
-  <div class="breadcrumb-section">
-    <div class="breadcrumb"><a href="#">Home</a><span class="iconify" data-icon="mdi:chevron-right"></span><a href="#">Sports</a><span class="iconify" data-icon="mdi:chevron-right"></span><span class="current" id="breadcrumbMatch">Teams Hub</span></div>
+  <!-- BANNER AD 320x50 -->
+  <div class="banner-ad">
+    <div id="mobile-banner">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '84b968fa543d8c4d3957f1b6b0a1d07f',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/84b968fa543d8c4d3957f1b6b0a1d07f/invoke.js"></script>
+    </div>
   </div>
 
-  <div class="dashboard-layout">
-    <div class="left-tab" id="leftTab">
-      <div class="tab-content">
-        <div class="nav-row">
-          <button class="nav-btn" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> HOME</button>
-          <button class="nav-btn" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> SPORTS</button>
-          <button class="nav-btn" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
-          <button class="nav-btn" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
-          <button class="nav-btn" data-nav="live"><span class="iconify" data-icon="mdi:circle-medium"></span> LIVE</button>
-          <button class="nav-btn" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> POPULAR</button>
-        </div>
-      </div>
-      <div class="tab-footer">
-        <div class="professional-note"><span class="iconify" data-icon="mdi:shield-outline"></span><span>ORAFUT · 2026</span></div>
-        <div class="professional-note"><span class="iconify" data-icon="mdi:headset"></span><span>24/7 SUPPORT</span></div>
+  <!-- SOCIAL BAR -->
+  <div class="social-bar">
+    <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
+  </div>
+
+  <div class="breadcrumb-section">
+    <div class="breadcrumb" id="breadcrumbMobile">
+      <a href="#">Home</a>
+      <span class="iconify" data-icon="mdi:chevron-right"></span>
+      <a href="#" id="breadcrumbSportMobile">Football</a>
+      <span class="iconify" data-icon="mdi:chevron-right"></span>
+      <span class="current" id="breadcrumbMatchMobile">Upcoming</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="promo-banner-mobile" id="promoBannerMobile">
+      <h4>🏆 Africa's #1 Prediction Brand</h4>
+      <div class="promo-features-mobile">
+        <div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div>
+        <div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
+        <div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div>
+        <div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
       </div>
     </div>
 
-    <div class="main-content">
-      <!-- Big Promo Box -->
-      <div class="promo-banner-main">
-        <h2><span class="iconify" data-icon="mdi:trophy"></span> Join Africa's #1 Prediction Brand</h2>
-        <div class="promo-features-main">
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:robot-off"></span> No BOTS Just Humans</div>
-          <div class="promo-feature-main"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div>
-        </div>
-        <div class="promo-highlight-main">
-          <div class="promo-badge-main">FREE</div>
-          <div class="promo-text-main">Free callbacks whenever you need us.</div>
-        </div>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="action-buttons-row">
-        <button class="action-btn" data-quick="sports"><span class="iconify" data-icon="mdi:soccer"></span> SPORTS</button>
-        <button class="action-btn" data-quick="popular"><span class="iconify" data-icon="mdi:fire"></span> POPULAR</button>
-        <button class="action-btn" data-quick="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> DEBATES</button>
-        <button class="action-btn" data-quick="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> GAMES</button>
-      </div>
-      
-      <!-- CHECK TEAM PROFILE Section -->
-      <div class="team-profile-section">
-        <div class="section-title"><span class="iconify" data-icon="mdi:account-search"></span> CHECK TEAM PROFILE</div>
-        <div class="filters-group">
-          <select id="profileSportFilter" class="filter-select"><option value="all">All Sports</option><option value="football">Football</option><option value="basketball">Basketball</option></select>
-          <select id="profileLeagueFilter" class="filter-select"><option value="all">All Leagues</option></select>
-        </div>
-        <input type="text" id="teamSearchInput" class="team-search-input" placeholder="Search for a team... (e.g., Liverpool, Lakers)" autocomplete="off">
-        <div id="teamsDisplayArea" class="teams-carousel"></div>
-      </div>
-      
-      <div class="copyright-footer">
-        © 2026 ORAFUT — All rights reserved. <span class="made-by" onclick="window.open('https://pireactive.vercel.app', '_blank')">Made by PIReactive</span>
+    <div class="nav-row-mobile">
+      <button class="nav-btn-mobile active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</button>
+      <button class="nav-btn-mobile" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</button>
+      <button class="nav-btn-mobile" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</button>
+      <button class="nav-btn-mobile" data-nav="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</button>
+      <button class="nav-btn-mobile" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</button>
+    </div>
+
+    <div class="sport-choice-mobile">
+      <div class="sport-title-mobile">SELECT SPORT</div>
+      <div class="sport-buttons-mobile">
+        <button class="sport-btn-mobile active-sport" data-sport="football"><span class="iconify" data-icon="mdi:soccer"></span> Football</button>
+        <button class="sport-btn-mobile" data-sport="basketball"><span class="iconify" data-icon="mdi:basketball"></span> Basketball</button>
       </div>
     </div>
 
-    <div class="ad-space">
-      <div class="ad-container"><div class="ad-label">ADVERTISEMENT</div><div id="adsterra-banner"><script type="text/javascript">atOptions = { 'key': '513405c41397d2263bdcca6adf74206c', 'format': 'iframe', 'height': 600, 'width': 160, 'params': {} };</script><script type="text/javascript" src="https://www.highperformanceformat.com/513405c41397d2263bdcca6adf74206c/invoke.js"></script></div></div>
+    <div class="context-header-mobile">
+      <div class="context-text-mobile" id="contextDisplayMobile">SPORTS <span>&</span> LIVE</div>
+      <div class="clickable-context-mobile">
+        <button class="context-toggle-mobile active-context" id="contextSportsBtnMobile">SPORTS</button>
+        <button class="context-toggle-mobile" id="contextLiveBtnMobile">LIVE</button>
+      </div>
+    </div>
+
+    <div class="filter-bar-mobile">
+      <div class="filter-group-mobile">
+        <select id="filterSportMobile">
+          <option value="all">All</option>
+          <option value="football" selected>Football</option>
+          <option value="basketball">Basketball</option>
+        </select>
+      </div>
+      <div class="filter-group-mobile">
+        <select id="filterLeagueMobile">
+          <option value="all">All Leagues</option>
+        </select>
+      </div>
+      <button class="filter-btn-mobile" id="applyFilterBtnMobile"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button>
+    </div>
+
+    <div id="dynamicListMobile"></div>
+    <div class="hint-text-mobile" id="cardHintMobile">⚡ CLICK ON PERCENTAGES TO VOTE ⚡</div>
+  </div>
+
+  <div class="bottom-nav-float">
+    <button class="nav-item-float active" data-nav-bottom="menu">
+      <span class="iconify" data-icon="mdi:menu"></span>
+      <span>Menu</span>
+    </button>
+    <button class="nav-item-float" data-nav-bottom="sports">
+      <span class="iconify" data-icon="mdi:soccer"></span>
+      <span>Sports</span>
+    </button>
+    <button class="nav-item-float" data-nav-bottom="debate">
+      <span class="iconify" data-icon="mdi:chat-outline"></span>
+      <span>Debate</span>
+    </button>
+    <button class="nav-item-float" data-nav-bottom="account">
+      <span class="iconify" data-icon="mdi:account-circle-outline"></span>
+      <span>Account</span>
+    </button>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="side-menu" id="sideMenu">
+    <div class="side-menu-header">
+      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+      <button class="close-menu" id="closeMenuBtn"><span class="iconify" data-icon="mdi:close"></span></button>
+    </div>
+    <div class="side-menu-content">
+      <div class="menu-section">
+        <div class="menu-section-title">NAVIGATION</div>
+        <a class="menu-link" data-menu="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</a>
+        <a class="menu-link" data-menu="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</a>
+        <a class="menu-link" data-menu="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</a>
+        <a class="menu-link" data-menu="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</a>
+        <a class="menu-link" data-menu="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">LEAGUES</div>
+        <div class="league-list-mobile" id="leagueListMobile"></div>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">TEAMS</div>
+        <div class="league-list-mobile" id="teamListMobile"></div>
+      </div>
     </div>
   </div>
 </div>
-<script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
-<script src="https://pl29147023.profitablecpmratenetwork.com/3f/8c/ed/3f8cedc8b36e1e62e490f2911466c0e3.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <script>
-(function(){
-  "use strict";
-  
-  // Firebase init
-  firebase.initializeApp({ 
-    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", 
-    authDomain: "orafut-58b5f.firebaseapp.com", 
-    projectId: "orafut-58b5f", 
-    storageBucket: "orafut-58b5f.firebasestorage.app", 
-    messagingSenderId: "500581059835", 
-    appId: "1:500581059835:web:7be0994b65ff21dae0b45e" 
-  });
-  
-  const db = firebase.firestore();
-  const anonymousId = localStorage.getItem('anonymousId') || (() => { 
-    const id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); 
-    localStorage.setItem('anonymousId', id); 
-    return id; 
-  })();
-  
-  // Track user
-  db.collection('anonymous_users').doc(anonymousId).set({ 
-    lastActive: firebase.firestore.FieldValue.serverTimestamp() 
-  }, { merge: true }).catch(() => {});
-  
-  // DOM elements
-  const leftTab = document.getElementById('leftTab');
-  const menuToggleBtn = document.getElementById('menuToggleBtn');
-  const profileSportFilter = document.getElementById('profileSportFilter');
-  const profileLeagueFilter = document.getElementById('profileLeagueFilter');
-  const teamSearchInput = document.getElementById('teamSearchInput');
-  const teamsDisplayArea = document.getElementById('teamsDisplayArea');
-  const globalSearchInput = document.getElementById('globalSearchInput');
-  const searchResultsDiv = document.getElementById('searchResults');
-  const breadcrumbMatch = document.getElementById('breadcrumbMatch');
-  
-  // State
-  const state = { 
-    leftTabVisible: false, 
-    allTeams: [], 
-    leagues: [],
-    currentNav: 'home'
-  };
-  
-  // Menu toggle
-  menuToggleBtn.addEventListener('click', () => {
-    state.leftTabVisible = !state.leftTabVisible;
-    leftTab.classList.toggle('visible', state.leftTabVisible);
-  });
-  
-  // Load teams and leagues from Firebase
-  async function loadData() {
-    try {
-      const leaguesSnap = await db.collection('leagues').get();
-      state.leagues = [];
-      leaguesSnap.forEach(doc => state.leagues.push({ id: doc.id, name: doc.data().name, sport: doc.data().sport }));
+  (function(){
+    "use strict";
+
+    if (window.innerWidth >= 769) {
+      window.location.href = 'indexp.html';
+      return;
+    }
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+      authDomain: "orafut-58b5f.firebaseapp.com",
+      projectId: "orafut-58b5f",
+      storageBucket: "orafut-58b5f.firebasestorage.app",
+      messagingSenderId: "500581059835",
+      appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let currentNav = 'home';
+    let currentSport = 'football';
+    let currentContext = 'sports';
+    let leagues = [];
+    let teams = [];
+    let matches = [];
+    let anonymousId = localStorage.getItem('anonymousId');
+
+    if (!anonymousId) {
+      anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('anonymousId', anonymousId);
+    }
+
+    db.collection('anonymous_users').doc(anonymousId).set({
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(() => {});
+
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const navButtons = document.querySelectorAll('.nav-btn-mobile');
+    const sportBtns = document.querySelectorAll('.sport-btn-mobile');
+    const contextSportsBtn = document.getElementById('contextSportsBtnMobile');
+    const contextLiveBtn = document.getElementById('contextLiveBtnMobile');
+    const contextDisplay = document.getElementById('contextDisplayMobile');
+    const dynamicList = document.getElementById('dynamicListMobile');
+    const filterSport = document.getElementById('filterSportMobile');
+    const filterLeague = document.getElementById('filterLeagueMobile');
+    const applyFilterBtn = document.getElementById('applyFilterBtnMobile');
+    const promoBanner = document.getElementById('promoBannerMobile');
+    const breadcrumbSport = document.getElementById('breadcrumbSportMobile');
+    const breadcrumbMatch = document.getElementById('breadcrumbMatchMobile');
+    const leagueList = document.getElementById('leagueListMobile');
+    const teamList = document.getElementById('teamListMobile');
+    const bottomNavItems = document.querySelectorAll('.nav-item-float');
+    const searchInput = document.getElementById('searchInputMobile');
+    const cardHint = document.getElementById('cardHintMobile');
+    const menuLinks = document.querySelectorAll('[data-menu]');
+
+    menuToggleBtn.addEventListener('click', () => {
+      sideMenu.classList.add('open');
+      overlay.classList.add('show');
+    });
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    closeMenuBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const menu = link.dataset.menu;
+        const navBtn = document.querySelector(`[data-nav="${menu}"]`);
+        if (navBtn) navBtn.click();
+        closeMenu();
+      });
+    });
+
+    bottomNavItems.forEach(item => {
+      item.addEventListener('click', () => {
+        bottomNavItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        const nav = item.dataset.navBottom;
+        if (nav === 'menu') {
+          sideMenu.classList.add('open');
+          overlay.classList.add('show');
+        } else if (nav === 'account') {
+          window.location.href = 'account.html';
+        } else if (nav === 'sports') {
+          document.querySelector('[data-nav="sports"]').click();
+        } else if (nav === 'debate') {
+          window.location.href = 'debate.html';
+        }
+      });
+    });
+
+    async function loadLeaguesAndTeams() {
+      try {
+        const leaguesSnap = await db.collection('leagues').get();
+        leagues = [];
+        leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+
+        const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
+        teams = [];
+        teamsSnap.forEach(doc => teams.push({ id: doc.id, ...doc.data() }));
+
+        updateLeaguesTeams(currentSport);
+        populateLeagueFilter();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    function updateLeaguesTeams(sport) {
+      const filteredLeagues = leagues.filter(l => {
+        if (sport === 'football') return l.name && !l.name.toLowerCase().includes('basketball');
+        return l.name && l.name.toLowerCase().includes('basketball');
+      });
       
-      const teamsSnap = await db.collection('teams').where('isActive', '==', true).get();
-      state.allTeams = [];
-      teamsSnap.forEach(doc => {
-        const data = doc.data();
-        state.allTeams.push({
-          id: doc.id,
-          name: data.name || 'Unknown',
-          league: data.league,
-          leagueName: data.leagueName || '',
-          logoUrl: data.logoUrl || null,
-          sport: data.sport || 'football'
+      const filteredTeams = teams.filter(t => {
+        if (sport === 'football') return t.leagueName && !t.leagueName.toLowerCase().includes('basketball');
+        return t.leagueName && t.leagueName.toLowerCase().includes('basketball');
+      });
+
+      let leaguesHtml = '';
+      filteredLeagues.slice(0, 5).forEach(league => {
+        leaguesHtml += `<div class="league-item-mobile" data-league="${league.id}">${league.name}</div>`;
+      });
+      leagueList.innerHTML = leaguesHtml || '<div class="league-item-mobile">No leagues</div>';
+
+      let teamsHtml = '';
+      filteredTeams.slice(0, 5).forEach(team => {
+        teamsHtml += `<div class="league-item-mobile" data-team="${team.id}">${team.name}</div>`;
+      });
+      teamList.innerHTML = teamsHtml || '<div class="league-item-mobile">No teams</div>';
+
+      document.querySelectorAll('[data-league]').forEach(el => {
+        el.addEventListener('click', () => {
+          filterLeague.value = el.dataset.league;
+          renderList();
+          closeMenu();
         });
       });
-      
-      populateLeagueFilters();
-      renderTeamCarouselOrSearch();
-    } catch (err) { 
-      console.error("Load error:", err); 
-      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">Error loading teams. Please refresh.</div>';
     }
-  }
-  
-  function populateLeagueFilters() {
-    const sport = profileSportFilter.value;
-    let html = '<option value="all">All Leagues</option>';
-    
-    const filteredLeagues = sport === 'all' 
-      ? state.leagues 
-      : state.leagues.filter(l => l.sport === sport);
-    
-    filteredLeagues.forEach(l => html += `<option value="${l.id}">${l.name}</option>`);
-    profileLeagueFilter.innerHTML = html;
-  }
-  
-  // RENDER: either 6-row fast bidirectional logo carousel OR list view when searching
-  function renderTeamCarouselOrSearch() {
-    const sport = profileSportFilter.value;
-    const league = profileLeagueFilter.value;
-    const searchTerm = teamSearchInput.value.trim().toLowerCase();
-    
-    let filtered = state.allTeams.filter(team => {
-      if (sport !== 'all' && team.sport !== sport) return false;
-      if (league !== 'all' && team.league !== league) return false;
-      if (searchTerm && !team.name.toLowerCase().includes(searchTerm)) return false;
-      return true;
-    });
-    
-    // SEARCH MODE: display as LIST
-    if (searchTerm !== "") {
-      if (filtered.length === 0) {
-        teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams match your search.</div>';
-        return;
-      }
-      let listHtml = '<div class="searched-teams-list">';
-      filtered.forEach(team => {
-        listHtml += `
-          <div class="searched-team-list-item" onclick="window.location.href='profile.html?team=${team.id}'">
-            <div class="list-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full" style="font-size:28px;"></span>'}
-            </div>
-            <div class="list-info">
-              <div class="list-team-name">${escapeHtml(team.name)}</div>
-              <div class="list-league-name">${escapeHtml(team.leagueName || 'Unknown League')}</div>
-            </div>
-          </div>
-        `;
+
+    function populateLeagueFilter() {
+      filterLeague.innerHTML = '<option value="all">All Leagues</option>';
+      leagues.forEach(league => {
+        filterLeague.innerHTML += `<option value="${league.id}">${league.name}</option>`;
       });
-      listHtml += '</div>';
-      teamsDisplayArea.innerHTML = listHtml;
-      return;
     }
-    
-    // CAROUSEL MODE
-    if (filtered.length === 0) {
-      teamsDisplayArea.innerHTML = '<div style="padding: 30px; text-align: center; color: #777;">No teams available for selected filters.</div>';
-      return;
-    }
-    
-    // Distribute teams into 6 rows
-    const rowsCount = 6;
-    const rows = Array.from({ length: rowsCount }, () => []);
-    filtered.forEach((team, idx) => {
-      const rowIdx = idx % rowsCount;
-      rows[rowIdx].push(team);
-    });
-    
-    let carouselHtml = '';
-    for (let i = 0; i < rowsCount; i++) {
-      const rowTeams = rows[i];
-      if (rowTeams.length === 0) continue;
-      const doubled = [...rowTeams, ...rowTeams, ...rowTeams]; // Triple for smooth loop
-      carouselHtml += `<div class="carousel-row">`;
-      doubled.forEach(team => {
-        carouselHtml += `
-          <div class="team-logo-card" onclick="window.location.href='profile.html?team=${team.id}'" title="${escapeHtml(team.name)}">
-            ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-          </div>
-        `;
-      });
-      carouselHtml += `</div>`;
-    }
-    teamsDisplayArea.innerHTML = carouselHtml;
-  }
-  
-  // Global Search
-  function performGlobalSearch(term) {
-    const t = term.toLowerCase().trim();
-    if (!t) {
-      searchResultsDiv.classList.remove('active');
-      return;
-    }
-    
-    const matchedTeams = state.allTeams.filter(team => 
-      team.name.toLowerCase().includes(t) || 
-      (team.leagueName && team.leagueName.toLowerCase().includes(t))
-    );
-    
-    if (matchedTeams.length === 0) {
-      searchResultsDiv.innerHTML = '<div class="search-result-item" style="cursor:default;"><div class="search-result-info"><div class="search-result-title">No teams found</div></div></div>';
-    } else {
-      let resultsHtml = '';
-      matchedTeams.slice(0, 8).forEach(team => {
-        resultsHtml += `
-          <div class="search-result-item" onclick="window.location.href='profile.html?team=${team.id}'">
-            <div class="search-result-logo">
-              ${team.logoUrl ? `<img src="${team.logoUrl}" alt="${escapeHtml(team.name)}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
-            </div>
-            <div class="search-result-info">
-              <div class="search-result-title">${escapeHtml(team.name)}</div>
-              <div class="search-result-subtitle">${escapeHtml(team.leagueName || 'Team')}</div>
-            </div>
-          </div>
-        `;
-      });
-      searchResultsDiv.innerHTML = resultsHtml;
-    }
-    searchResultsDiv.classList.add('active');
-  }
-  
-  // Helper to escape HTML
-  function escapeHtml(str) { 
-    if(!str) return ''; 
-    return str.replace(/[&<>]/g, function(m){ 
-      if(m==='&') return '&amp;'; 
-      if(m==='<') return '&lt;'; 
-      if(m==='>') return '&gt;'; 
-      return m;
-    }); 
-  }
-  
-  // Navigation handler - FULLY FUNCTIONAL
-  function handleNav(nav) {
-    // Update active state
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.dataset.nav === nav) btn.classList.add('active');
-    });
-    
-    // Update breadcrumb
-    const navNames = {
-      home: 'Home',
-      sports: 'Sports',
-      debates: 'Debates',
-      games: 'Games',
-      live: 'Live',
-      popular: 'Popular'
-    };
-    breadcrumbMatch.textContent = navNames[nav] || nav;
-    
-    state.currentNav = nav;
-    
-    // Navigation actions
-    switch(nav) {
-      case 'games':
-        window.location.href = 'game.html';
-        break;
-      case 'debates':
-        window.location.href = 'edge.html?view=debates';
-        break;
-      case 'sports':
-        window.location.href = 'edge.html?view=sports';
-        break;
-      case 'popular':
-        window.location.href = 'edge.html?view=popular';
-        break;
-      case 'live':
-        window.location.href = 'edge.html?view=live';
-        break;
-      case 'home':
-      default:
-        // Already on index.html
-        if (nav !== 'home') {
-          window.location.href = 'edge.html';
+
+    async function loadMatches() {
+      try {
+        let query = db.collection('matches');
+        
+        if (currentContext === 'live') {
+          query = query.where('status', '==', 'live');
+        } else {
+          query = query.where('status', 'in', ['upcoming', 'live']);
         }
-        break;
+
+        query = query.orderBy('startTime', 'asc');
+
+        const matchesSnap = await query.get();
+        matches = [];
+        
+        for (const doc of matchesSnap.docs) {
+          const match = { id: doc.id, ...doc.data() };
+          
+          const votesSnap = await db.collection('votes').where('matchId', '==', doc.id).get();
+          const totalVotes = votesSnap.size;
+          const teamAVotes = votesSnap.docs.filter(v => v.data().voteType === 'team1').length;
+          const drawVotes = votesSnap.docs.filter(v => v.data().voteType === 'draw').length;
+          const teamBVotes = votesSnap.docs.filter(v => v.data().voteType === 'team2').length;
+
+          match.percentages = {
+            team1: totalVotes > 0 ? Math.round((teamAVotes / totalVotes) * 100) : 33,
+            draw: totalVotes > 0 ? Math.round((drawVotes / totalVotes) * 100) : 34,
+            team2: totalVotes > 0 ? Math.round((teamBVotes / totalVotes) * 100) : 33
+          };
+
+          matches.push(match);
+        }
+
+        renderList();
+      } catch (error) {
+        console.error('Error loading matches:', error);
+      }
     }
-  }
-  
-  // Event listeners with debounce
-  let teamDebounce;
-  teamSearchInput.addEventListener('input', () => {
-    clearTimeout(teamDebounce);
-    teamDebounce = setTimeout(() => renderTeamCarouselOrSearch(), 150);
-  });
-  
-  profileSportFilter.addEventListener('change', () => {
-    populateLeagueFilters();
-    renderTeamCarouselOrSearch();
-  });
-  
-  profileLeagueFilter.addEventListener('change', () => renderTeamCarouselOrSearch());
-  
-  let globalDebounce;
-  globalSearchInput.addEventListener('input', (e) => {
-    clearTimeout(globalDebounce);
-    const val = e.target.value.trim();
-    if (!val) {
-      searchResultsDiv.classList.remove('active');
-      return;
+
+    function updateBreadcrumb(sport, context) {
+      breadcrumbSport.textContent = sport === 'football' ? 'Football' : 'Basketball';
+      breadcrumbMatch.textContent = context === 'sports' ? 'Upcoming' : 'Live Now';
     }
-    globalDebounce = setTimeout(() => performGlobalSearch(val), 150);
-  });
-  
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-wrapper')) searchResultsDiv.classList.remove('active');
-  });
-  
-  // Navigation event listeners
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      handleNav(btn.dataset.nav);
+
+    async function submitVote(matchId, voteType) {
+      try {
+        const existingVote = await db.collection('votes')
+          .where('matchId', '==', matchId)
+          .where('anonymousId', '==', anonymousId)
+          .get();
+
+        if (!existingVote.empty) {
+          cardHint.innerText = '⚠️ YOU ALREADY VOTED! ⚠️';
+          setTimeout(() => { cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
+          return;
+        }
+
+        const match = matches.find(m => m.id === matchId);
+        
+        await db.collection('votes').add({
+          matchId: matchId,
+          anonymousId: anonymousId,
+          voteType: voteType,
+          matchName: `${match.teamAName} vs ${match.teamBName}`,
+          sport: currentSport,
+          league: match.league,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        await loadMatches();
+        cardHint.innerText = '✅ VOTE RECORDED! ✅';
+        setTimeout(() => { cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
+      } catch (error) {
+        console.error('Error voting:', error);
+        cardHint.innerText = '❌ ERROR VOTING ❌';
+        setTimeout(() => { cardHint.innerText = '⚡ CLICK ON PERCENTAGES TO VOTE ⚡'; }, 3000);
+      }
+    }
+
+    window.submitVote = submitVote;
+
+    sportBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sportBtns.forEach(b => b.classList.remove('active-sport'));
+        btn.classList.add('active-sport');
+        currentSport = btn.dataset.sport;
+        updateLeaguesTeams(currentSport);
+        updateBreadcrumb(currentSport, currentContext);
+        filterSport.value = currentSport;
+        loadMatches();
+      });
     });
-  });
-  
-  // Action buttons
-  document.querySelectorAll('.action-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const type = btn.dataset.quick;
-      handleNav(type);
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentNav = btn.dataset.nav;
+        
+        let displayText = '';
+        if (currentNav === 'home') {
+          displayText = 'HOME · SPORTS & LIVE';
+          promoBanner.style.display = 'block';
+        } else if (currentNav === 'debates') {
+          window.location.href = 'debate.html';
+          return;
+        } else {
+          displayText = currentNav === 'sports' ? 'SPORTS <span>&</span> LIVE' : 
+                       currentNav === 'live' ? 'LIVE <span>&</span> SPORTS' : 
+                       'POPULAR · SPORTS & LIVE';
+          promoBanner.style.display = 'none';
+        }
+        contextDisplay.innerHTML = displayText;
+        if (currentNav !== 'debates') loadMatches();
+      });
     });
-  });
-  
-  // Initialize everything
-  loadData();
-  
-})();
+
+    contextSportsBtn.addEventListener('click', () => {
+      contextSportsBtn.classList.add('active-context');
+      contextLiveBtn.classList.remove('active-context');
+      currentContext = 'sports';
+      updateBreadcrumb(currentSport, 'sports');
+      loadMatches();
+    });
+    
+    contextLiveBtn.addEventListener('click', () => {
+      contextLiveBtn.classList.add('active-context');
+      contextSportsBtn.classList.remove('active-context');
+      currentContext = 'live';
+      updateBreadcrumb(currentSport, 'live');
+      loadMatches();
+    });
+
+    applyFilterBtn.addEventListener('click', renderList);
+    searchInput.addEventListener('input', renderList);
+
+    function renderList() {
+      const sportFilter = filterSport.value;
+      const leagueFilter = filterLeague.value;
+      const searchTerm = searchInput.value.toLowerCase();
+
+      let filteredMatches = matches.filter(match => {
+        if (sportFilter !== 'all') {
+          const league = leagues.find(l => l.id === match.league);
+          if (!league) return false;
+          const isFootball = !league.name.toLowerCase().includes('basketball');
+          if (sportFilter === 'football' && !isFootball) return false;
+          if (sportFilter === 'basketball' && isFootball) return false;
+        }
+        if (leagueFilter !== 'all' && match.league !== leagueFilter) return false;
+        if (searchTerm) {
+          const searchString = `${match.teamAName} ${match.teamBName}`.toLowerCase();
+          if (!searchString.includes(searchTerm)) return false;
+        }
+        return true;
+      });
+
+      filteredMatches.sort((a, b) => {
+        if (a.isTopMatch && !b.isTopMatch) return -1;
+        if (!a.isTopMatch && b.isTopMatch) return 1;
+        return a.startTime.toDate() - b.startTime.toDate();
+      });
+
+      let listHtml = '';
+      
+      if (filteredMatches.length === 0) {
+        listHtml = `<div style="text-align:center;padding:40px;color:#999;">No matches found</div>`;
+      } else {
+        filteredMatches.forEach(match => {
+          const startTime = match.startTime ? match.startTime.toDate() : new Date();
+          const isLive = match.status === 'live';
+          const timeString = isLive ? 'LIVE' : 
+            startTime.toLocaleString('en-US', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+          const leagueName = match.leagueName || (leagues.find(l => l.id === match.league)?.name || 'Unknown League');
+
+          listHtml += `
+            <div class="match-card-mobile">
+              <div class="match-teams-mobile">
+                <div class="team-mobile">
+                  <div class="team-logo-mobile">
+                    ${match.teamALogo ? `<img src="${match.teamALogo}" alt="${match.teamAName}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
+                  </div>
+                  <div class="team-info-mobile">
+                    <span class="team-name-mobile">${match.teamAName}</span>
+                    <span class="team-odds-mobile">${leagueName}</span>
+                  </div>
+                </div>
+                <div class="match-vs-mobile">VS</div>
+                <div class="team-mobile">
+                  <div class="team-info-mobile" style="text-align: right;">
+                    <span class="team-name-mobile">${match.teamBName}</span>
+                    <span class="team-odds-mobile">${timeString}</span>
+                  </div>
+                  <div class="team-logo-mobile">
+                    ${match.teamBLogo ? `<img src="${match.teamBLogo}" alt="${match.teamBName}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}
+                  </div>
+                </div>
+              </div>
+              <div class="percentage-bar-mobile">
+                <div class="percentage-option-mobile" onclick="submitVote('${match.id}', 'team1')">
+                  <div class="percentage-label-mobile">1</div>
+                  <div class="percentage-value-mobile">${match.percentages.team1}%</div>
+                  <div class="percentage-fill-mobile">
+                    <div class="percentage-fill-bar-mobile" style="width: ${match.percentages.team1}%;"></div>
+                  </div>
+                </div>
+                <div class="percentage-option-mobile" onclick="submitVote('${match.id}', 'draw')">
+                  <div class="percentage-label-mobile">X</div>
+                  <div class="percentage-value-mobile">${match.percentages.draw}%</div>
+                  <div class="percentage-fill-mobile">
+                    <div class="percentage-fill-bar-mobile draw-bar-mobile" style="width: ${match.percentages.draw}%;"></div>
+                  </div>
+                </div>
+                <div class="percentage-option-mobile" onclick="submitVote('${match.id}', 'team2')">
+                  <div class="percentage-label-mobile">2</div>
+                  <div class="percentage-value-mobile">${match.percentages.team2}%</div>
+                  <div class="percentage-fill-mobile">
+                    <div class="percentage-fill-bar-mobile" style="width: ${match.percentages.team2}%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      dynamicList.innerHTML = listHtml;
+    }
+
+    loadLeaguesAndTeams().then(() => {
+      loadMatches();
+    });
+    updateBreadcrumb('football', 'sports');
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 769) {
+        window.location.href = 'indexp.html';
+      }
+    });
+
+  })();
+</script>
+
+<script>
+  (function(){
+    if (window.innerWidth >= 769) {
+      window.location.href = 'indexp.html';
+    }
+  })();
 </script>
 </body>
 </html>

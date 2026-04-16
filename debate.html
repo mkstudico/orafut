@@ -48,6 +48,7 @@
     .message-user { font-weight: 700; color: var(--vibrant-green); font-size: 11px; }
     .message-time { font-size: 9px; color: #999; margin-left: 8px; }
     .message-text { color: #444; margin-top: 4px; font-size: 12px; }
+    .message-image-preview { max-width: 60px; max-height: 60px; border-radius: 8px; margin-top: 6px; }
     .conversation-stats { display: flex; gap: 12px; margin-top: 10px; font-size: 10px; color: #888; }
     .live-badge { background: #F44336; color: white; font-size: 8px; padding: 2px 6px; border-radius: 20px; font-weight: 700; margin-left: 8px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
@@ -79,7 +80,7 @@
   
   <div class="main-content" id="mainContent">
     <div class="section-title">🗣️ Live Debates</div>
-    <div class="section-sub">Most active conversations · Real-time messages</div>
+    <div class="section-sub">Most active conversations · Real-time messages from chatMessages collection</div>
     <div id="debateList"></div>
   </div>
   
@@ -115,10 +116,10 @@
     const bottomNavItems = document.querySelectorAll('.nav-item-float');
     
     let allMatches = [];
-    let allMessages = [];
     let leagues = [];
     let searchTimeout = null;
-    let liveUnsubscribe = null;
+    let liveUpdateInterval = null;
+    let messageCounts = new Map(); // matchId -> { count, lastMessage }
     
     function showNotification(msg, isError = false){
         toastMsg.innerText = msg;
@@ -133,39 +134,52 @@
     
     // Load leagues for info
     async function loadLeagues(){
-        const leaguesSnap = await db.collection('leagues').get();
-        leagues = [];
-        leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+        try{
+            const leaguesSnap = await db.collection('leagues').get();
+            leagues = [];
+            leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+        } catch(e){ console.error(e); }
     }
     
-    // Get recent messages for a match (last 10)
-    async function getMatchMessages(matchId){
+    // Get message count and latest message for a match from chatMessages collection
+    async function getMatchMessageStats(matchId){
         try{
-            const messagesSnap = await db.collection('messages')
+            const messagesSnap = await db.collection('chatMessages')
                 .where('matchId', '==', matchId)
-                .orderBy('timestamp', 'desc')
-                .limit(10)
+                .orderBy('createdAt', 'desc')
+                .limit(1)
                 .get();
-            const messages = [];
-            messagesSnap.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
-            return messages.reverse(); // Oldest first for display
-        } catch(e){ return []; }
+            
+            const countSnap = await db.collection('chatMessages')
+                .where('matchId', '==', matchId)
+                .get();
+            
+            const count = countSnap.size;
+            let lastMessage = null;
+            
+            if(!messagesSnap.empty){
+                const msg = messagesSnap.docs[0].data();
+                lastMessage = {
+                    text: msg.text || (msg.imageUrl ? '📷 Image' : ''),
+                    userName: msg.userName || 'Anonymous',
+                    timestamp: msg.createdAt,
+                    imageUrl: msg.imageUrl || null
+                };
+            }
+            
+            return { count, lastMessage };
+        } catch(e){ 
+            console.error('Error getting message stats for match', matchId, e);
+            return { count: 0, lastMessage: null }; 
+        }
     }
     
-    // Get total message count for a match
-    async function getMessageCount(matchId){
-        try{
-            const snap = await db.collection('messages').where('matchId', '==', matchId).get();
-            return snap.size;
-        } catch(e){ return 0; }
-    }
-    
-    // Load top 5 matches by message count
+    // Get all matches with their message stats
     async function loadTopDebates(){
         try{
             showLoading(true);
             
-            // Get all matches
+            // Get all matches (upcoming and live)
             const matchesSnap = await db.collection('matches')
                 .where('status', 'in', ['upcoming', 'live'])
                 .get();
@@ -173,25 +187,34 @@
             const matches = [];
             matchesSnap.forEach(doc => matches.push({ id: doc.id, ...doc.data() }));
             
-            // Get message counts for each match
-            const matchesWithCounts = await Promise.all(matches.map(async (match) => {
-                const count = await getMessageCount(match.id);
-                const recentMessages = await getMatchMessages(match.id);
-                return { ...match, messageCount: count, recentMessages };
+            if(matches.length === 0){
+                debateList.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:forum-outline" style="font-size:48px; opacity:0.5;"></span><br><br>No matches found</div>';
+                showLoading(false);
+                return;
+            }
+            
+            // Get message stats for each match
+            const matchesWithStats = await Promise.all(matches.map(async (match) => {
+                const stats = await getMatchMessageStats(match.id);
+                return { ...match, messageCount: stats.count, lastMessage: stats.lastMessage };
             }));
             
             // Sort by message count descending and take top 5
-            const topMatches = matchesWithCounts
+            const topMatches = matchesWithStats
+                .filter(m => m.messageCount > 0) // Only show matches with at least 1 message
                 .sort((a,b) => b.messageCount - a.messageCount)
                 .slice(0, 5);
             
-            allMatches = topMatches;
-            renderDebates(topMatches);
+            // If no matches have messages, show top upcoming matches with 0 messages
+            const finalMatches = topMatches.length > 0 ? topMatches : matchesWithStats.slice(0, 5);
+            
+            allMatches = finalMatches;
+            renderDebates(finalMatches);
             showLoading(false);
             
-            // Set up real-time listener for messages to update live previews
-            if(liveUnsubscribe) liveUnsubscribe();
-            setupLiveMessageListener(topMatches.map(m => m.id));
+            // Start real-time polling for message updates (every 3 seconds)
+            if(liveUpdateInterval) clearInterval(liveUpdateInterval);
+            startRealTimeUpdates(finalMatches.map(m => m.id));
             
         } catch(e){
             showLoading(false);
@@ -200,40 +223,35 @@
         }
     }
     
-    // Real-time listener for new messages in top matches
-    function setupLiveMessageListener(matchIds){
+    // Real-time polling for new messages
+    function startRealTimeUpdates(matchIds){
         if(matchIds.length === 0) return;
         
-        // Listen to all messages from these matches
-        const queries = matchIds.map(matchId => 
-            db.collection('messages')
-                .where('matchId', '==', matchId)
-                .orderBy('timestamp', 'desc')
-                .limit(1)
-        );
-        
-        // Instead of multiple listeners, we'll poll every 5 seconds for updates (more stable)
-        // This avoids excessive listener setup
-        const interval = setInterval(async () => {
+        liveUpdateInterval = setInterval(async () => {
+            let hasUpdates = false;
+            
             for(const match of allMatches){
-                const newCount = await getMessageCount(match.id);
-                if(newCount !== match.messageCount){
-                    const newMessages = await getMatchMessages(match.id);
-                    match.messageCount = newCount;
-                    match.recentMessages = newMessages;
+                const newStats = await getMatchMessageStats(match.id);
+                if(newStats.count !== match.messageCount){
+                    match.messageCount = newStats.count;
+                    match.lastMessage = newStats.lastMessage;
+                    hasUpdates = true;
                 }
             }
-            renderDebates(allMatches);
-        }, 5000);
-        
-        // Store interval for cleanup
-        window.debateInterval = interval;
+            
+            if(hasUpdates){
+                // Re-sort and re-render
+                const sorted = [...allMatches].sort((a,b) => b.messageCount - a.messageCount);
+                allMatches = sorted;
+                renderDebates(sorted);
+            }
+        }, 3000);
     }
     
     // Format time ago
     function timeAgo(date){
         if(!date) return 'just now';
-        const seconds = Math.floor((new Date() - date) / 1000);
+        const seconds = Math.floor((new Date() - date.toDate()) / 1000);
         if(seconds < 60) return 'just now';
         const minutes = Math.floor(seconds / 60);
         if(minutes < 60) return `${minutes}m ago`;
@@ -261,7 +279,7 @@
     // Render debate cards
     function renderDebates(matches){
         if(!matches || matches.length === 0){
-            debateList.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:forum-outline" style="font-size:48px; opacity:0.5;"></span><br><br>No active debates yet<br><span style="font-size:11px;">Be the first to start a conversation!</span></div>';
+            debateList.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:forum-outline" style="font-size:48px; opacity:0.5;"></span><br><br>No active debates yet<br><span style="font-size:11px;">Be the first to start a conversation in chat!</span></div>';
             return;
         }
         
@@ -271,40 +289,40 @@
             const leagueName = getLeagueName(match.league);
             const timeStr = match.status === 'live' ? 'LIVE NOW' : (match.startTime?.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) || 'Upcoming');
             const messageCount = match.messageCount || 0;
-            const recentMessages = match.recentMessages || [];
+            const lastMessage = match.lastMessage;
             
-            // Build message preview HTML
+            // Build message preview HTML - show only ONE latest message as live preview
             let messagesHtml = '';
-            if(recentMessages.length > 0){
-                const latestMessages = recentMessages.slice(-3); // Last 3 messages
-                messagesHtml = `<div class="message-preview">`;
-                latestMessages.forEach(msg => {
-                    const userShort = msg.userName ? msg.userName.substring(0, 12) : 'Anonymous';
-                    const msgTime = msg.timestamp?.toDate();
-                    const timeAgoStr = timeAgo(msgTime);
-                    messagesHtml += `
+            if(lastMessage && lastMessage.text){
+                const msgTime = lastMessage.timestamp;
+                const timeAgoStr = timeAgo(msgTime);
+                const userShort = lastMessage.userName ? lastMessage.userName.substring(0, 15) : 'Anonymous';
+                const messageText = lastMessage.text.length > 50 ? lastMessage.text.substring(0, 50) + '...' : lastMessage.text;
+                
+                messagesHtml = `
+                    <div class="message-preview">
                         <div class="message-bubble">
                             <span class="message-user">💬 ${userShort}</span>
                             <span class="message-time">${timeAgoStr}</span>
-                            <div class="message-text">"${msg.text?.substring(0, 60)}${msg.text?.length > 60 ? '...' : ''}"</div>
+                            <div class="message-text">"${messageText}"</div>
+                            ${lastMessage.imageUrl ? `<img src="${lastMessage.imageUrl}" class="message-image-preview" onerror="this.style.display='none'">` : ''}
                         </div>
-                    `;
-                });
-                if(messageCount > 3){
-                    messagesHtml += `<div class="conversation-stats"><span class="iconify" data-icon="mdi:chat-processing-outline"></span> +${messageCount - 3} more messages...</div>`;
-                }
-                messagesHtml += `</div>`;
+                        ${messageCount > 1 ? `<div class="conversation-stats"><span class="iconify" data-icon="mdi:chat-processing-outline"></span> +${messageCount - 1} more messages...</div>` : ''}
+                    </div>
+                `;
+            } else if(messageCount > 0){
+                messagesHtml = `<div class="message-preview" style="color:#999; text-align:center;">💬 ${messageCount} message${messageCount > 1 ? 's' : ''} in this debate</div>`;
             } else {
                 messagesHtml = `<div class="message-preview" style="color:#999; text-align:center;">💬 No messages yet · Start the debate!</div>`;
             }
             
             html += `
                 <div class="debate-card" data-match-id="${match.id}">
-                    <div class="card-rank">${getRankEmoji(rank)} #${rank} · ${messageCount} messages</div>
+                    <div class="card-rank">${getRankEmoji(rank)} #${rank} · ${messageCount} ${messageCount === 1 ? 'message' : 'messages'}</div>
                     <div class="card-body">
-                        <div class="match-name">${match.teamAName} <span style="color:#999; font-size:12px;">VS</span> ${match.teamBName}${match.status === 'live' ? '<span class="live-badge">LIVE</span>' : ''}</div>
+                        <div class="match-name">${escapeHtml(match.teamAName)} <span style="color:#999; font-size:12px;">VS</span> ${escapeHtml(match.teamBName)}${match.status === 'live' ? '<span class="live-badge">LIVE</span>' : ''}</div>
                         <div class="match-info">
-                            <span class="iconify" data-icon="mdi:trophy-outline" style="font-size:10px;"></span> ${leagueName}
+                            <span class="iconify" data-icon="mdi:trophy-outline" style="font-size:10px;"></span> ${escapeHtml(leagueName)}
                             <span class="iconify" data-icon="mdi:calendar-outline" style="font-size:10px;"></span> ${timeStr}
                             <span class="iconify" data-icon="mdi:message-text-outline" style="font-size:10px;"></span> ${messageCount} conversations
                         </div>
@@ -325,6 +343,17 @@
         });
     }
     
+    // Escape HTML to prevent XSS
+    function escapeHtml(str){
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m){
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
     // Search functionality with 300ms debounce
     if(searchInput){
         searchInput.addEventListener('input', (e) => {
@@ -340,20 +369,25 @@
                 const matches = [];
                 matchesSnap.forEach(doc => matches.push({ id: doc.id, ...doc.data() }));
                 
-                const matchResults = matches.filter(m => 
-                    `${m.teamAName} ${m.teamBName}`.toLowerCase().includes(term)
-                ).slice(0,5);
+                // Get message counts for search results
+                const matchResults = [];
+                for(const m of matches){
+                    if(`${m.teamAName} ${m.teamBName}`.toLowerCase().includes(term)){
+                        const stats = await getMatchMessageStats(m.id);
+                        matchResults.push({ ...m, messageCount: stats.count });
+                    }
+                    if(matchResults.length >= 5) break;
+                }
                 
                 if(matchResults.length === 0){ searchResultsBox.style.display = 'none'; return; }
                 
                 let html = '';
                 for(const m of matchResults){
-                    const msgCount = await getMessageCount(m.id);
                     html += `<div class="search-result-item" data-match-id="${m.id}">
                         <span class="iconify search-result-icon" data-icon="mdi:forum-outline"></span>
                         <div class="search-result-info">
-                            <div class="search-result-title">${m.teamAName} vs ${m.teamBName}</div>
-                            <div class="search-result-sub">${msgCount} messages · ${m.status === 'live' ? 'LIVE' : 'Upcoming'}</div>
+                            <div class="search-result-title">${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div>
+                            <div class="search-result-sub">${m.messageCount} messages · ${m.status === 'live' ? 'LIVE' : 'Upcoming'}</div>
                         </div>
                     </div>`;
                 }
@@ -403,7 +437,7 @@
     
     // Cleanup interval on page unload
     window.addEventListener('beforeunload', () => {
-        if(window.debateInterval) clearInterval(window.debateInterval);
+        if(liveUpdateInterval) clearInterval(liveUpdateInterval);
     });
 })();
 </script>

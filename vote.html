@@ -7,447 +7,1141 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { background: #0f1219; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Poppins', sans-serif; padding: 12px; }
-    
-    /* Phone Frame - FIXED SIZE */
-    .phone-frame { 
-      width: 380px; 
-      max-width: 380px; 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #0f1219;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      padding: 12px;
+    }
+
+    /* Phone Frame - FIXED SIZE - no movement */
+    .phone-frame {
+      width: 380px;
+      max-width: 380px;
       min-width: 380px;
-      background: #ffffff; 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative; 
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       height: 700px;
       max-height: 700px;
       border-radius: 32px;
     }
-    
-    .main-header { background: #252A2D; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0; }
-    .back-btn { background: transparent; border: 1.5px solid #9CE800; color: #9CE800; padding: 6px 12px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer; border-radius: 30px; }
-    .brand { font-size: 20px; font-weight: 800; font-style: italic; }
-    .brand .ora { color: white; }
-    .brand .fut { color: #9CE800; }
-    .search-wrapper { position: relative; flex: 1; max-width: 150px; }
-    .search-bar { background: rgba(255,255,255,0.12); padding: 6px 10px; display: flex; align-items: center; gap: 6px; border: 1px solid #3a4146; border-radius: 30px; }
-    .search-bar .iconify { color: #9CE800; font-size: 14px; }
-    .search-bar input { background: none; border: none; color: white; font-size: 12px; width: 100%; outline: none; }
-    .search-results-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 200; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 4px; border-radius: 12px; }
-    .search-results-dropdown.active { display: block; }
-    .search-result-row { padding: 8px 12px; border-bottom: 1px solid #eef2f6; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    
+
+    /* Header */
+    .main-header {
+      background: #252A2D;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      background: transparent;
+      border: 1.5px solid #9CE800;
+      color: #9CE800;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border-radius: 30px;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      font-style: italic;
+    }
+
+    .brand .ora {
+      color: white;
+    }
+
+    .brand .fut {
+      color: #9CE800;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 150px;
+    }
+
+    .search-bar {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #3a4146;
+      border-radius: 30px;
+    }
+
+    .search-bar .iconify {
+      color: #9CE800;
+      font-size: 14px;
+    }
+
+    .search-bar input {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      z-index: 200;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-top: 4px;
+      border-radius: 12px;
+    }
+
+    .search-results-dropdown.active {
+      display: block;
+    }
+
+    .search-result-row {
+      padding: 8px 12px;
+      border-bottom: 1px solid #eef2f6;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* Hero Section with live stream integration */
-    .hero-section { position: relative; background: #0a0e14; padding: 16px; overflow: hidden; flex-shrink: 0; transition: all 0.2s; }
-    .hero-bg-split { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; pointer-events: none; opacity: 0.2; }
-    .hero-bg-left, .hero-bg-right { width: 50%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(3px); }
-    .teams-container { display: flex; align-items: center; justify-content: space-evenly; gap: 12px; position: relative; z-index: 2; }
-    .team-card { text-align: center; width: 100px; }
-    .team-logo-hero { width: 70px; height: 70px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; }
-    .team-logo-hero img { width: 100%; height: 100%; object-fit: contain; }
-    .team-name-hero { color: white; font-weight: 700; font-size: 13px; text-shadow: 0 1px 2px black; }
-    .vs-text { font-size: 20px; font-weight: 900; color: #9CE800; text-shadow: 0 0 6px #9CE800; }
-    .live-stream-overlay { margin-top: 12px; border-radius: 16px; overflow: hidden; display: none; position: relative; z-index: 3; }
-    .live-stream-overlay.active { display: block; }
-    .youtube-embed { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 16px; }
-    
+    .hero-section {
+      position: relative;
+      background: #0a0e14;
+      padding: 16px;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .hero-bg-split {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      opacity: 0.2;
+    }
+
+    .hero-bg-left,
+    .hero-bg-right {
+      width: 50%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(3px);
+    }
+
+    .teams-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .team-card {
+      text-align: center;
+      width: 100px;
+    }
+
+    .team-logo-hero {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .team-logo-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .team-name-hero {
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      text-shadow: 0 1px 2px black;
+    }
+
+    .vs-text {
+      font-size: 20px;
+      font-weight: 900;
+      color: #9CE800;
+      text-shadow: 0 0 6px #9CE800;
+    }
+
+    .live-stream-overlay {
+      margin-top: 12px;
+      border-radius: 16px;
+      overflow: hidden;
+      display: none;
+      position: relative;
+      z-index: 3;
+    }
+
+    .live-stream-overlay.active {
+      display: block;
+    }
+
+    .youtube-embed {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      border-radius: 16px;
+    }
+
     /* Match Status Badge - single unified indicator */
-    .match-status-badge { display: flex; justify-content: center; margin-top: 8px; position: relative; z-index: 3; }
-    .status-single { padding: 5px 16px; border-radius: 40px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-    .status-single.ended { background: #dc2626; }
-    .status-single.upcoming { background: #f97316; }
-    .status-single.kickoff { background: #10b981; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
-    
-    .tab-bar { display: flex; background: #ffffff; border-bottom: 1px solid #eef2f6; padding: 0 12px; gap: 8px; flex-shrink: 0; position: relative; }
-    .tab-item { flex: 1; text-align: center; padding: 12px 0; font-weight: 700; font-size: 13px; color: #64748b; cursor: pointer; position: relative; }
-    .tab-item.active { color: #9CE800; }
-    .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 20%; width: 60%; height: 2px; background: #9CE800; }
-    
-    .unread-notification { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 6px 16px; border-radius: 40px; font-size: 11px; font-weight: 600; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
-    .unread-notification.show { opacity: 1; }
-    
-    .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; scrollbar-width: thin; }
-    .content-area::-webkit-scrollbar { width: 3px; }
-    
-    .card { background: white; padding: 16px; margin-bottom: 16px; border: 1px solid #eef2f6; border-radius: 20px; }
-    .vote-boxes { display: flex; gap: 12px; margin: 12px 0; }
-    .vote-box { flex: 1; background: #f1f5f9; padding: 12px 6px; text-align: center; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 30px; border: 1.5px solid transparent; }
-    .vote-box.selected { background: #9CE800; border-color: #9CE800; color: #000; }
-    textarea, input, .img-upload-btn, .small-btn, .send-vote-btn, .chat-input-row input, .chat-send, .live-btn { border-radius: 30px !important; }
-    textarea { width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 13px; background: white; outline: none; }
-    .img-upload-btn { background: #f1f5f9; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 6px; }
-    .preview-images { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .preview-img-item { width: 50px; height: 50px; object-fit: cover; border-radius: 12px; }
-    .add-feature-row { display: flex; gap: 8px; margin: 8px 0; }
-    .small-btn { background: #9CE800; border: none; padding: 6px 16px; font-weight: 700; cursor: pointer; }
-    .send-vote-btn { background: #0f172a; color: white; width: 100%; padding: 12px; font-weight: 800; border: none; margin-top: 8px; cursor: pointer; }
-    .analysis-item { background: #f1f5f9; padding: 12px; margin-bottom: 10px; cursor: pointer; border-radius: 16px; }
-    .expanded-reason { margin-top: 10px; padding-top: 8px; border-top: 1px solid #ddd; display: none; font-size: 12px; }
-    .expanded-reason.show { display: block; }
-    .info-line { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eef2f6; font-size: 13px; }
-    .ai-insight { background: #eef2ff; padding: 12px; border-radius: 16px; margin-top: 12px; border-left: 4px solid #9CE800; font-size: 12px; }
-    
+    .match-status-badge {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .status-single {
+      padding: 5px 16px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-block;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-single.ended {
+      background: #dc2626;
+    }
+
+    .status-single.upcoming {
+      background: #f97316;
+    }
+
+    .status-single.kickoff {
+      background: #10b981;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    .tab-bar {
+      display: flex;
+      background: #ffffff;
+      border-bottom: 1px solid #eef2f6;
+      padding: 0 12px;
+      gap: 8px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .tab-item {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      font-weight: 700;
+      font-size: 13px;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab-item.active {
+      color: #9CE800;
+    }
+
+    .tab-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      width: 60%;
+      height: 2px;
+      background: #9CE800;
+    }
+
+    .unread-notification {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .unread-notification.show {
+      opacity: 1;
+    }
+
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f8fafc;
+      min-height: 0;
+      scrollbar-width: thin;
+    }
+
+    .content-area::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .card {
+      background: white;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #eef2f6;
+      border-radius: 20px;
+    }
+
+    .vote-boxes {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .vote-box {
+      flex: 1;
+      background: #f1f5f9;
+      padding: 12px 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 30px;
+      border: 1.5px solid transparent;
+    }
+
+    .vote-box.selected {
+      background: #9CE800;
+      border-color: #9CE800;
+      color: #000;
+    }
+
+    textarea,
+    input,
+    .img-upload-btn,
+    .small-btn,
+    .send-vote-btn,
+    .chat-input-row input,
+    .chat-send,
+    .live-btn {
+      border-radius: 30px !important;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #e2e8f0;
+      font-family: inherit;
+      font-size: 13px;
+      background: white;
+      outline: none;
+    }
+
+    .img-upload-btn {
+      background: #f1f5f9;
+      padding: 8px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .preview-images {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .preview-img-item {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .add-feature-row {
+      display: flex;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .small-btn {
+      background: #9CE800;
+      border: none;
+      padding: 6px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .send-vote-btn {
+      background: #0f172a;
+      color: white;
+      width: 100%;
+      padding: 12px;
+      font-weight: 800;
+      border: none;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    .analysis-item {
+      background: #f1f5f9;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border-radius: 16px;
+    }
+
+    .expanded-reason {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #ddd;
+      display: none;
+      font-size: 12px;
+    }
+
+    .expanded-reason.show {
+      display: block;
+    }
+
+    .info-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eef2f6;
+      font-size: 13px;
+    }
+
+    .ai-insight {
+      background: #eef2ff;
+      padding: 12px;
+      border-radius: 16px;
+      margin-top: 12px;
+      border-left: 4px solid #9CE800;
+      font-size: 12px;
+    }
+
     /* CHAT - bottom fixed input style */
-    .chat-container { display: flex; flex-direction: column; height: 100%; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 8px 0 12px 0; display: flex; flex-direction: column; gap: 8px; max-height: 400px; scrollbar-width: thin; }
-    .chat-bubble { background: white; padding: 10px 14px; border-radius: 20px; border: 1px solid #eef2f6; }
-    .chat-username { font-weight: 800; font-size: 11px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .chat-username.red { color: #dc2626; }
-    .chat-username.blue { color: #3b82f6; }
-    .chat-username.gray { color: #64748b; }
-    .chat-text { font-size: 12px; word-break: break-word; }
-    .chat-actions { display: flex; gap: 12px; margin-top: 6px; font-size: 10px; }
-    .chat-action { color: #94a3b8; cursor: pointer; }
-    .chat-input-area { background: #f8fafc; padding-top: 8px; border-top: 1px solid #eef2f6; margin-top: 4px; }
-    .chat-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
-    .chat-input-row input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; background: white; }
-    .chat-send { background: #9CE800; border: none; padding: 0 18px; font-weight: 800; cursor: pointer; }
-    .chat-icon-row { display: flex; gap: 12px; }
-    .chat-icon-btn { background: #f1f5f9; border: none; border-radius: 30px; padding: 8px 16px; cursor: pointer; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
-    .emoji-panel { background: white; border: 1px solid #e2e8f0; border-radius: 28px; padding: 12px; margin-top: 8px; display: none; }
-    .emoji-panel.active { display: block; }
-    .emoji-grid-normal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; max-height: 160px; overflow-y: auto; }
-    .normal-emoji { font-size: 28px; cursor: pointer; padding: 6px; border-radius: 40px; background: #f8fafc; text-align: center; }
-    .normal-emoji:hover { background: #9CE80030; }
-    .close-emoji-btn { margin-top: 8px; text-align: center; font-size: 11px; color: #64748b; cursor: pointer; }
-    
-    .toast-notify { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 8px 18px; font-size: 12px; z-index: 1000; animation: fadeUp 2s forwards; border-radius: 40px; }
-    @keyframes fadeUp { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 400px;
+      scrollbar-width: thin;
+    }
+
+    .chat-bubble {
+      background: white;
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid #eef2f6;
+    }
+
+    .chat-username {
+      font-weight: 800;
+      font-size: 11px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chat-username.red {
+      color: #dc2626;
+    }
+
+    .chat-username.blue {
+      color: #3b82f6;
+    }
+
+    .chat-username.gray {
+      color: #64748b;
+    }
+
+    .chat-text {
+      font-size: 12px;
+      word-break: break-word;
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      font-size: 10px;
+    }
+
+    .chat-action {
+      color: #94a3b8;
+      cursor: pointer;
+    }
+
+    .chat-input-area {
+      background: #f8fafc;
+      padding-top: 8px;
+      border-top: 1px solid #eef2f6;
+      margin-top: 4px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      background: white;
+    }
+
+    .chat-send {
+      background: #9CE800;
+      border: none;
+      padding: 0 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .chat-icon-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-icon-btn {
+      background: #f1f5f9;
+      border: none;
+      border-radius: 30px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .emoji-panel {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 12px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .emoji-panel.active {
+      display: block;
+    }
+
+    .emoji-grid-normal {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      text-align: center;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .normal-emoji {
+      font-size: 28px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 40px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .normal-emoji:hover {
+      background: #9CE80030;
+    }
+
+    .close-emoji-btn {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .toast-notify {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 8px 18px;
+      font-size: 12px;
+      z-index: 1000;
+      animation: fadeUp 2s forwards;
+      border-radius: 40px;
+    }
+
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="phone-frame">
-  <div class="main-header">
-    <button class="back-btn" id="backBtn"><span class="iconify" data-icon="mdi:arrow-left"></span> Back</button>
-    <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
-    <div class="search-wrapper">
-      <div class="search-bar"><span class="iconify" data-icon="mdi:magnify"></span><input type="text" id="globalSearchInput" placeholder="Search..."></div>
-      <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+  <div class="phone-frame">
+    <div class="main-header">
+      <button class="back-btn" id="backBtn"><span class="iconify" data-icon="mdi:arrow-left"></span> Back</button>
+      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+      <div class="search-wrapper">
+        <div class="search-bar"><span class="iconify" data-icon="mdi:magnify"></span><input type="text" id="globalSearchInput" placeholder="Search..."></div>
+        <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+      </div>
     </div>
-  </div>
-  
-  <!-- Hero Section with integrated live stream -->
-  <div class="hero-section" id="heroSection">
-    <div class="hero-bg-split">
-      <div class="hero-bg-left" id="heroBgLeft"></div>
-      <div class="hero-bg-right" id="heroBgRight"></div>
+
+    <!-- Hero Section with integrated live stream -->
+    <div class="hero-section" id="heroSection">
+      <div class="hero-bg-split">
+        <div class="hero-bg-left" id="heroBgLeft"></div>
+        <div class="hero-bg-right" id="heroBgRight"></div>
+      </div>
+      <div class="teams-container">
+        <div class="team-card">
+          <div class="team-logo-hero" id="heroLogoA"><img src=""></div>
+          <div class="team-name-hero" id="heroNameA">Team A</div>
+        </div>
+        <div class="vs-text">VS</div>
+        <div class="team-card">
+          <div class="team-logo-hero" id="heroLogoB"><img src=""></div>
+          <div class="team-name-hero" id="heroNameB">Team B</div>
+        </div>
+      </div>
+      <div id="liveStreamContainer" class="live-stream-overlay">
+        <iframe id="youtubeFrame" class="youtube-embed" src="" allowfullscreen></iframe>
+      </div>
+      <div class="match-status-badge" id="matchStatusBadge">
+        <span class="status-single upcoming" id="statusSingle">UPCOMING</span>
+      </div>
     </div>
-    <div class="teams-container">
-      <div class="team-card"><div class="team-logo-hero" id="heroLogoA"><img src=""></div><div class="team-name-hero" id="heroNameA">Team A</div></div>
-      <div class="vs-text">VS</div>
-      <div class="team-card"><div class="team-logo-hero" id="heroLogoB"><img src=""></div><div class="team-name-hero" id="heroNameB">Team B</div></div>
+
+    <div class="tab-bar">
+      <div class="tab-item active" data-tab="vote">VOTE</div>
+      <div class="tab-item" data-tab="analysis">ANALYSIS</div>
+      <div class="tab-item" data-tab="info">INFO</div>
+      <div class="tab-item" data-tab="chat">CHAT</div>
     </div>
-    <div id="liveStreamContainer" class="live-stream-overlay">
-      <iframe id="youtubeFrame" class="youtube-embed" src="" allowfullscreen></iframe>
-    </div>
-    <div class="match-status-badge" id="matchStatusBadge">
-      <span class="status-single upcoming" id="statusSingle">UPCOMING</span>
-    </div>
-  </div>
-  
-  <div class="tab-bar">
-    <div class="tab-item active" data-tab="vote">VOTE</div>
-    <div class="tab-item" data-tab="analysis">ANALYSIS</div>
-    <div class="tab-item" data-tab="info">INFO</div>
-    <div class="tab-item" data-tab="chat">CHAT</div>
-  </div>
-  
-  <div id="unreadBanner" class="unread-notification">0 new messages</div>
-  
-  <div class="content-area" id="contentArea">
-    <div id="voteTab" class="tab-pane"></div>
-    <div id="analysisTab" class="tab-pane" style="display:none;"></div>
-    <div id="infoTab" class="tab-pane" style="display:none;"></div>
-    <div id="chatTab" class="tab-pane" style="display:none;">
-      <div class="chat-container">
-        <div class="chat-messages" id="chatMessagesList"></div>
-        <div class="chat-input-area">
-          <div class="chat-input-row">
-            <input type="text" id="chatMessageInput" placeholder="Type message...">
-            <button id="sendChatMsgBtn" class="chat-send">Send</button>
-          </div>
-          <div class="chat-icon-row">
-            <button id="emojiChatBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:emoticon-happy-outline"></span> Emoji</button>
-            <button id="uploadChatImgBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:image-outline"></span> Image</button>
-            <button id="liveStreamChatBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:youtube"></span> Live</button>
-          </div>
-          <input type="file" id="chatImageInput" accept="image/*" style="display:none">
-          <div id="emojiNormalPanel" class="emoji-panel">
-            <div class="emoji-grid-normal" id="realEmojiGridNormal"></div>
-            <div class="close-emoji-btn" id="closeEmojiPanel">Close emoji panel ✖</div>
+
+    <div id="unreadBanner" class="unread-notification">0 new messages</div>
+
+    <div class="content-area" id="contentArea">
+      <div id="voteTab" class="tab-pane"></div>
+      <div id="analysisTab" class="tab-pane" style="display:none;"></div>
+      <div id="infoTab" class="tab-pane" style="display:none;"></div>
+      <div id="chatTab" class="tab-pane" style="display:none;">
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessagesList"></div>
+          <div class="chat-input-area">
+            <div class="chat-input-row">
+              <input type="text" id="chatMessageInput" placeholder="Type message...">
+              <button id="sendChatMsgBtn" class="chat-send">Send</button>
+            </div>
+            <div class="chat-icon-row">
+              <button id="emojiChatBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:emoticon-happy-outline"></span> Emoji</button>
+              <button id="uploadChatImgBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:image-outline"></span> Image</button>
+              <button id="liveStreamChatBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:youtube"></span> Live</button>
+            </div>
+            <input type="file" id="chatImageInput" accept="image/*" style="display:none">
+            <div id="emojiNormalPanel" class="emoji-panel">
+              <div class="emoji-grid-normal" id="realEmojiGridNormal"></div>
+              <div class="close-emoji-btn" id="closeEmojiPanel">Close emoji panel ✖</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script>
-  const firebaseConfig = { apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const auth = firebase.auth();
-  const IMGBB_KEY = "0f248e70fc4e7dffde307dd772823379";
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const matchId = urlParams.get('id') || "testMatch";
-  let currentUser = { uid: 'anon_' + Date.now(), displayName: 'Fan_' + Math.random().toString(36).substr(2,4) };
-  let matchData = null;
-  let userVote = null;
-  let uploadedImages = [];
-  let additionalFeatures = [];
-  let currentAnalysisType = 'team1';
-  let allMatchesCache = [];
-  let chatUnsub = null;
-  let unreadCount = 0;
-  let currentTab = 'vote';
-  let lastMessageCount = 0;
-  
-  function showToast(msg, isError = false) { const t = document.createElement('div'); t.className = 'toast-notify'; t.innerText = msg; t.style.background = isError ? '#dc2626' : '#1e293b'; document.body.appendChild(t); setTimeout(() => t.remove(), 2000); }
-  
-  // Normal emoji grid (real emojis)
-  function buildNormalEmojiGrid() {
-    const emojis = ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","👍","👎","👊","✊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🏆","🥇","🥈","🥉","🏅","🎖️","🎯"];
-    const grid = document.getElementById('realEmojiGridNormal');
-    if(grid) {
-      grid.innerHTML = emojis.map(emoji => `<div class="normal-emoji">${emoji}</div>`).join('');
-      document.querySelectorAll('.normal-emoji').forEach(el => {
-        el.addEventListener('click', () => {
-          const inputField = document.getElementById('chatMessageInput');
-          if(inputField) inputField.value += el.innerText;
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+      authDomain: "orafut-58b5f.firebaseapp.com",
+      projectId: "orafut-58b5f",
+      storageBucket: "orafut-58b5f.firebasestorage.app",
+      messagingSenderId: "500581059835",
+      appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const IMGBB_KEY = "0f248e70fc4e7dffde307dd772823379";
+
+    // App State
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('id') || "testMatch";
+    let currentUser = { uid: 'anon_' + Date.now(), displayName: 'Fan_' + Math.random().toString(36).substr(2, 4) };
+    let matchData = null;
+    let userVote = null;
+    let uploadedImages = [];
+    let additionalFeatures = [];
+    let currentAnalysisType = 'team1';
+    let allMatchesCache = [];
+    let chatUnsub = null;
+    let unreadCount = 0;
+    let currentTab = 'vote';
+    let lastMessageCount = 0;
+
+    // Helper Functions
+    function showToast(msg, isError = false) {
+      const t = document.createElement('div');
+      t.className = 'toast-notify';
+      t.innerText = msg;
+      t.style.background = isError ? '#dc2626' : '#1e293b';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2000);
+    }
+
+    // Normal emoji grid (real emojis)
+    function buildNormalEmojiGrid() {
+      const emojis = ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","👍","👎","👊","✊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🏆","🥇","🥈","🥉","🏅","🎖️","🎯"];
+      const grid = document.getElementById('realEmojiGridNormal');
+      if (grid) {
+        grid.innerHTML = emojis.map(emoji => `<div class="normal-emoji">${emoji}</div>`).join('');
+        document.querySelectorAll('.normal-emoji').forEach(el => {
+          el.addEventListener('click', () => {
+            const inputField = document.getElementById('chatMessageInput');
+            if (inputField) inputField.value += el.innerText;
+          });
         });
+      }
+      document.getElementById('closeEmojiPanel')?.addEventListener('click', () => {
+        document.getElementById('emojiNormalPanel').classList.remove('active');
       });
     }
-    document.getElementById('closeEmojiPanel')?.addEventListener('click', () => {
-      document.getElementById('emojiNormalPanel').classList.remove('active');
-    });
-  }
-  
-  function updateStatusUI() {
-    if(!matchData) return;
-    const status = (matchData.status || 'Upcoming').toLowerCase();
-    const badge = document.getElementById('statusSingle');
-    if(status === 'ended') { badge.className = 'status-single ended'; badge.innerText = 'ENDED'; }
-    else if(status === 'kickoff') { badge.className = 'status-single kickoff'; badge.innerText = 'KICK OFF'; }
-    else { badge.className = 'status-single upcoming'; badge.innerText = 'UPCOMING'; }
-  }
-  
-  async function loadMatch() {
-    const doc = await db.collection('matches').doc(matchId).get();
-    if(!doc.exists) { showToast("Match not found", true); return; }
-    matchData = doc.data();
-    document.getElementById('heroNameA').innerText = matchData.teamAName || 'Team A';
-    document.getElementById('heroNameB').innerText = matchData.teamBName || 'Team B';
-    const logoA = matchData.teamALogo || 'https://placehold.co/100?text=A';
-    const logoB = matchData.teamBLogo || 'https://placehold.co/100?text=B';
-    document.getElementById('heroLogoA').innerHTML = `<img src="${logoA}">`;
-    document.getElementById('heroLogoB').innerHTML = `<img src="${logoB}">`;
-    document.getElementById('heroBgLeft').style.backgroundImage = `url(${logoA})`;
-    document.getElementById('heroBgRight').style.backgroundImage = `url(${logoB})`;
-    updateStatusUI();
-    await checkUserVote();
-    renderVoteTab();
-    renderInfoTab();
-    renderAnalysisTab();
-    initChat();
-    loadAllMatchesForSearch();
-  }
-  
-  async function addAIPostMatchAnalytics() {
-    if(!matchData) return;
-    const votesSnap = await db.collection('votes').where('matchId','==',matchId).get();
-    let team1Count = 0, team2Count = 0, drawCount = 0;
-    votesSnap.forEach(v => {
-      if(v.data().voteType === 'team1') team1Count++;
-      else if(v.data().voteType === 'team2') team2Count++;
-      else if(v.data().voteType === 'draw') drawCount++;
-    });
-    const winnerName = matchData.winner;
-    matchData.aiPostInsight = `🤖 AI: ${team1Count+team2Count+drawCount} predictions. ${team1Count} backed ${matchData.teamAName}, ${team2Count} ${matchData.teamBName}, ${drawCount} draw. Final: ${winnerName} wins! ${Math.floor(Math.random() * 400) + 100} people just voted ${winnerName} to win.`;
-    renderInfoTab();
-  }
-  
-  async function loadAllMatchesForSearch() {
-    const snap = await db.collection('matches').limit(20).get();
-    allMatchesCache = snap.docs.map(d => ({ id: d.id, name: `${d.data().teamAName} vs ${d.data().teamBName}`, type: 'match' }));
-  }
-  
-  let searchTimeout;
-  document.getElementById('globalSearchInput').addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    const term = e.target.value.trim().toLowerCase();
-    const dropdown = document.getElementById('searchResultsDropdown');
-    if(!term) { dropdown.classList.remove('active'); return; }
-    searchTimeout = setTimeout(() => {
-      const filtered = allMatchesCache.filter(item => item.name.toLowerCase().includes(term)).slice(0, 6);
-      dropdown.innerHTML = filtered.map(r => `<div class="search-result-row" onclick="window.location.href='?id=${r.id}'">⚽ ${r.name}</div>`).join('');
-      dropdown.classList.add('active');
-    }, 300);
-  });
-  document.addEventListener('click', (e) => { if(!e.target.closest('.search-wrapper')) document.getElementById('searchResultsDropdown').classList.remove('active'); });
-  
-  async function checkUserVote() {
-    const snap = await db.collection('votes').where('matchId','==',matchId).where('userId','==',currentUser.uid).get();
-    userVote = snap.empty ? null : snap.docs[0].data();
-  }
-  
-  function renderVoteTab() {
-    const container = document.getElementById('voteTab');
-    if(userVote) {
-      container.innerHTML = `<div class="card"><div style="text-align:center;"><span class="iconify" data-icon="mdi:check-circle" style="font-size:40px;color:#9CE800;"></span><h3>You voted for ${userVote.voteType === 'team1' ? matchData?.teamAName : (userVote.voteType === 'team2' ? matchData?.teamBName : 'Draw')}</h3><p>${userVote.reason || 'No reason'}</p>${userVote.imageUrl ? `<img src="${userVote.imageUrl}" style="width:70px;border-radius:12px;">` : ''}</div></div>`;
-      return;
+
+    function updateStatusUI() {
+      if (!matchData) return;
+      const status = (matchData.status || 'Upcoming').toLowerCase();
+      const badge = document.getElementById('statusSingle');
+      if (status === 'ended') {
+        badge.className = 'status-single ended';
+        badge.innerText = 'ENDED';
+      } else if (status === 'kickoff') {
+        badge.className = 'status-single kickoff';
+        badge.innerText = 'KICK OFF';
+      } else {
+        badge.className = 'status-single upcoming';
+        badge.innerText = 'UPCOMING';
+      }
     }
-    container.innerHTML = `
-      <div class="card">
-        <label>Which one will win?</label>
-        <div class="vote-boxes">
-          <div class="vote-box" data-vote="team1">${matchData?.teamAName}</div>
-          <div class="vote-box" data-vote="draw">Draw</div>
-          <div class="vote-box" data-vote="team2">${matchData?.teamBName}</div>
-        </div>
-        <div class="form-group"><label>Why?</label><textarea id="voteReason" rows="2" placeholder="Share your insight..."></textarea></div>
-        <div><div class="img-upload-btn" id="uploadImagesBtn"><span class="iconify" data-icon="mdi:image-plus"></span> Add images (max 8)</div><input type="file" id="voteImagesInput" multiple accept="image/*" style="display:none"><div id="imagePreviewGrid" class="preview-images"></div></div>
-        <div class="form-group"><label>Other features</label><div class="add-feature-row"><input type="text" id="featureInput" placeholder="e.g., Key player missing"><button id="addFeatureBtn" class="small-btn">Add</button></div><div id="featuresList"></div></div>
-        <button id="sendVoteFinalBtn" class="send-vote-btn">✅ SEND VOTE</button>
-      </div>
-    `;
-    let selectedVote = null;
-    document.querySelectorAll('.vote-box').forEach(box => {
-      box.onclick = () => { document.querySelectorAll('.vote-box').forEach(b => b.classList.remove('selected')); box.classList.add('selected'); selectedVote = box.dataset.vote; };
+
+    async function loadMatch() {
+      const doc = await db.collection('matches').doc(matchId).get();
+      if (!doc.exists) {
+        showToast("Match not found", true);
+        return;
+      }
+      matchData = doc.data();
+      document.getElementById('heroNameA').innerText = matchData.teamAName || 'Team A';
+      document.getElementById('heroNameB').innerText = matchData.teamBName || 'Team B';
+      const logoA = matchData.teamALogo || 'https://placehold.co/100?text=A';
+      const logoB = matchData.teamBLogo || 'https://placehold.co/100?text=B';
+      document.getElementById('heroLogoA').innerHTML = `<img src="${logoA}">`;
+      document.getElementById('heroLogoB').innerHTML = `<img src="${logoB}">`;
+      document.getElementById('heroBgLeft').style.backgroundImage = `url(${logoA})`;
+      document.getElementById('heroBgRight').style.backgroundImage = `url(${logoB})`;
+      updateStatusUI();
+      await checkUserVote();
+      renderVoteTab();
+      renderInfoTab();
+      renderAnalysisTab();
+      initChat();
+      loadAllMatchesForSearch();
+    }
+
+    async function addAIPostMatchAnalytics() {
+      if (!matchData) return;
+      const votesSnap = await db.collection('votes').where('matchId', '==', matchId).get();
+      let team1Count = 0, team2Count = 0, drawCount = 0;
+      votesSnap.forEach(v => {
+        if (v.data().voteType === 'team1') team1Count++;
+        else if (v.data().voteType === 'team2') team2Count++;
+        else if (v.data().voteType === 'draw') drawCount++;
+      });
+      const winnerName = matchData.winner;
+      matchData.aiPostInsight = `🤖 AI: ${team1Count + team2Count + drawCount} predictions. ${team1Count} backed ${matchData.teamAName}, ${team2Count} ${matchData.teamBName}, ${drawCount} draw. Final: ${winnerName} wins! ${Math.floor(Math.random() * 400) + 100} people just voted ${winnerName} to win.`;
+      renderInfoTab();
+    }
+
+    async function loadAllMatchesForSearch() {
+      const snap = await db.collection('matches').limit(20).get();
+      allMatchesCache = snap.docs.map(d => ({ id: d.id, name: `${d.data().teamAName} vs ${d.data().teamBName}`, type: 'match' }));
+    }
+
+    let searchTimeout;
+    document.getElementById('globalSearchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      const term = e.target.value.trim().toLowerCase();
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (!term) {
+        dropdown.classList.remove('active');
+        return;
+      }
+      searchTimeout = setTimeout(() => {
+        const filtered = allMatchesCache.filter(item => item.name.toLowerCase().includes(term)).slice(0, 6);
+        dropdown.innerHTML = filtered.map(r => `<div class="search-result-row" onclick="window.location.href='?id=${r.id}'">⚽ ${r.name}</div>`).join('');
+        dropdown.classList.add('active');
+      }, 300);
     });
-    let imagesArray = [];
-    document.getElementById('uploadImagesBtn').onclick = () => document.getElementById('voteImagesInput').click();
-    document.getElementById('voteImagesInput').onchange = async (e) => {
-      const files = Array.from(e.target.files);
-      if(imagesArray.length + files.length > 8) { showToast("Max 8 images", true); return; }
-      for(let file of files) {
-        const fd = new FormData(); fd.append('image', file);
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-wrapper')) document.getElementById('searchResultsDropdown').classList.remove('active');
+    });
+
+    async function checkUserVote() {
+      const snap = await db.collection('votes').where('matchId', '==', matchId).where('userId', '==', currentUser.uid).get();
+      userVote = snap.empty ? null : snap.docs[0].data();
+    }
+
+    function renderVoteTab() {
+      const container = document.getElementById('voteTab');
+      if (userVote) {
+        container.innerHTML = `<div class="card"><div style="text-align:center;"><span class="iconify" data-icon="mdi:check-circle" style="font-size:40px;color:#9CE800;"></span><h3>You voted for ${userVote.voteType === 'team1' ? matchData?.teamAName : (userVote.voteType === 'team2' ? matchData?.teamBName : 'Draw')}</h3><p>${userVote.reason || 'No reason'}</p>${userVote.imageUrl ? `<img src="${userVote.imageUrl}" style="width:70px;border-radius:12px;">` : ''}</div></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div class="card">
+          <label>Which one will win?</label>
+          <div class="vote-boxes">
+            <div class="vote-box" data-vote="team1">${matchData?.teamAName}</div>
+            <div class="vote-box" data-vote="draw">Draw</div>
+            <div class="vote-box" data-vote="team2">${matchData?.teamBName}</div>
+          </div>
+          <div class="form-group"><label>Why?</label><textarea id="voteReason" rows="2" placeholder="Share your insight..."></textarea></div>
+          <div><div class="img-upload-btn" id="uploadImagesBtn"><span class="iconify" data-icon="mdi:image-plus"></span> Add images (max 8)</div><input type="file" id="voteImagesInput" multiple accept="image/*" style="display:none"><div id="imagePreviewGrid" class="preview-images"></div></div>
+          <div class="form-group"><label>Other features</label><div class="add-feature-row"><input type="text" id="featureInput" placeholder="e.g., Key player missing"><button id="addFeatureBtn" class="small-btn">Add</button></div><div id="featuresList"></div></div>
+          <button id="sendVoteFinalBtn" class="send-vote-btn">✅ SEND VOTE</button>
+        </div>
+      `;
+      let selectedVote = null;
+      document.querySelectorAll('.vote-box').forEach(box => {
+        box.onclick = () => {
+          document.querySelectorAll('.vote-box').forEach(b => b.classList.remove('selected'));
+          box.classList.add('selected');
+          selectedVote = box.dataset.vote;
+        };
+      });
+      let imagesArray = [];
+      document.getElementById('uploadImagesBtn').onclick = () => document.getElementById('voteImagesInput').click();
+      document.getElementById('voteImagesInput').onchange = async (e) => {
+        const files = Array.from(e.target.files);
+        if (imagesArray.length + files.length > 8) {
+          showToast("Max 8 images", true);
+          return;
+        }
+        for (let file of files) {
+          const fd = new FormData();
+          fd.append('image', file);
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.success) imagesArray.push(data.data.url);
+        }
+        document.getElementById('imagePreviewGrid').innerHTML = imagesArray.map(url => `<img src="${url}" class="preview-img-item">`).join('');
+      };
+      document.getElementById('addFeatureBtn').onclick = () => {
+        const inp = document.getElementById('featureInput');
+        if (inp.value.trim()) {
+          additionalFeatures.push(inp.value);
+          document.getElementById('featuresList').innerHTML = additionalFeatures.map(f => `<div style="background:#f1f5f9;padding:4px 10px;display:inline-block;margin:3px;border-radius:30px;">${f}</div>`).join('');
+          inp.value = '';
+        }
+      };
+      document.getElementById('sendVoteFinalBtn').onclick = async () => {
+        if (!selectedVote) {
+          showToast("Select winner", true);
+          return;
+        }
+        const reason = document.getElementById('voteReason').value;
+        await db.collection('votes').add({
+          matchId,
+          userId: currentUser.uid,
+          userName: currentUser.displayName,
+          voteType: selectedVote,
+          reason,
+          images: imagesArray,
+          features: additionalFeatures,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast("Vote submitted!");
+        userVote = { voteType: selectedVote, reason };
+        renderVoteTab();
+        renderAnalysisTab();
+        if (matchData?.winner && matchData.winner !== '—') await addAIPostMatchAnalytics();
+      };
+    }
+
+    async function renderAnalysisTab() {
+      const container = document.getElementById('analysisTab');
+      container.innerHTML = `<div style="display:flex; gap:12px; margin-bottom:16px;"><button id="analysisTeam1Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType === 'team1' ? '#9CE800' : 'white'};font-weight:700;">${matchData?.teamAName}</button><button id="analysisTeam2Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType === 'team2' ? '#9CE800' : 'white'};font-weight:700;">${matchData?.teamBName}</button></div><div id="reasonsListContainer"></div>`;
+      document.getElementById('analysisTeam1Btn').onclick = () => {
+        currentAnalysisType = 'team1';
+        renderAnalysisTab();
+      };
+      document.getElementById('analysisTeam2Btn').onclick = () => {
+        currentAnalysisType = 'team2';
+        renderAnalysisTab();
+      };
+      const votesSnap = await db.collection('votes').where('matchId', '==', matchId).where('voteType', '==', currentAnalysisType).get();
+      const reasons = [];
+      votesSnap.forEach(d => {
+        if (d.data().reason) reasons.push({ id: d.id, userName: d.data().userName, reason: d.data().reason, images: d.data().images || [] });
+      });
+      const containerReasons = document.getElementById('reasonsListContainer');
+      if (reasons.length === 0) {
+        containerReasons.innerHTML = '<div class="card">No reasons yet.</div>';
+        return;
+      }
+      containerReasons.innerHTML = reasons.map(r => `<div class="analysis-item" data-id="${r.id}"><div class="analysis-user"><span>${r.userName}</span><span class="analysis-preview">${r.reason.substring(0, 45)}...</span></div><div class="expanded-reason" id="exp-${r.id}"><div>${r.reason}</div>${r.images.map(img => `<img src="${img}" style="width:50px;border-radius:12px;">`).join('')}<button class="send-to-chat-btn" style="margin-top:8px;background:#9CE80020;border:none;padding:4px 10px;border-radius:30px;" data-reason="${r.reason.replace(/"/g, '&quot;')}">💬 Send to Chat</button></div></div>`).join('');
+      document.querySelectorAll('.analysis-item').forEach(el => {
+        const id = el.dataset.id;
+        const expandDiv = document.getElementById(`exp-${id}`);
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          expandDiv.classList.toggle('show');
+        });
+        const btn = el.querySelector('.send-to-chat-btn');
+        if (btn) btn.onclick = (e) => {
+          e.stopPropagation();
+          sendReasonToChat(btn.dataset.reason);
+        };
+      });
+    }
+
+    async function sendReasonToChat(text) {
+      await db.collection('chatMessages').add({
+        matchId,
+        userId: currentUser.uid,
+        userName: currentUser.displayName,
+        text: `📢 ${text}`,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showToast("Sent to chat!");
+    }
+
+    function renderInfoTab() {
+      if (!matchData) return;
+      let aiHtml = matchData.aiPostInsight ? `<div class="ai-insight">${matchData.aiPostInsight}</div>` : '<div class="ai-insight">📊 Waiting for match result...</div>';
+      document.getElementById('infoTab').innerHTML = `<div class="card"><div class="info-line"><span>League</span><strong>${matchData.leagueName || 'Unknown'}</strong></div><div class="info-line"><span>Match Time</span><strong>${matchData.startTime ? new Date(matchData.startTime.toDate()).toLocaleString() : 'TBD'}</strong></div><div class="info-line"><span>Status</span><strong>${matchData.status || 'Upcoming'}</strong></div><div class="info-line"><span>Winner</span><strong>${matchData.winner || '—'}</strong></div>${aiHtml}</div>`;
+    }
+
+    function toggleLiveStream() {
+      const container = document.getElementById('liveStreamContainer');
+      const iframe = document.getElementById('youtubeFrame');
+      if (container.classList.contains('active')) {
+        container.classList.remove('active');
+        iframe.src = "";
+      } else {
+        container.classList.add('active');
+        iframe.src = matchData?.streamUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ";
+      }
+    }
+
+    function initChat() {
+      if (chatUnsub) chatUnsub();
+      let lastSize = 0;
+      chatUnsub = db.collection('chatMessages').where('matchId', '==', matchId).orderBy('createdAt', 'asc').onSnapshot(snap => {
+        const currentSize = snap.size;
+        if (currentTab !== 'chat' && currentSize > lastSize && lastSize !== 0) {
+          unreadCount += (currentSize - lastSize);
+          const banner = document.getElementById('unreadBanner');
+          banner.innerText = `${unreadCount} new message${unreadCount > 1 ? 's' : ''}`;
+          banner.classList.add('show');
+          setTimeout(() => {
+            if (currentTab !== 'chat') banner.classList.remove('show');
+          }, 3000);
+        } else if (currentTab === 'chat') {
+          unreadCount = 0;
+          document.getElementById('unreadBanner').classList.remove('show');
+        }
+        lastSize = currentSize;
+        renderChatMessages();
+      });
+      document.getElementById('sendChatMsgBtn').onclick = sendChatMessage;
+      document.getElementById('chatMessageInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendChatMessage();
+      });
+      document.getElementById('emojiChatBtn').onclick = () => {
+        document.getElementById('emojiNormalPanel').classList.toggle('active');
+      };
+      document.getElementById('uploadChatImgBtn').onclick = () => document.getElementById('chatImageInput').click();
+      document.getElementById('liveStreamChatBtn').onclick = toggleLiveStream;
+      document.getElementById('chatImageInput').onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('image', file);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
         const data = await res.json();
-        if(data.success) imagesArray.push(data.data.url);
-      }
-      document.getElementById('imagePreviewGrid').innerHTML = imagesArray.map(url => `<img src="${url}" class="preview-img-item">`).join('');
-    };
-    document.getElementById('addFeatureBtn').onclick = () => {
-      const inp = document.getElementById('featureInput');
-      if(inp.value.trim()) { additionalFeatures.push(inp.value); document.getElementById('featuresList').innerHTML = additionalFeatures.map(f => `<div style="background:#f1f5f9;padding:4px 10px;display:inline-block;margin:3px;border-radius:30px;">${f}</div>`).join(''); inp.value = ''; }
-    };
-    document.getElementById('sendVoteFinalBtn').onclick = async () => {
-      if(!selectedVote) { showToast("Select winner", true); return; }
-      const reason = document.getElementById('voteReason').value;
-      await db.collection('votes').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, voteType: selectedVote, reason, images: imagesArray, features: additionalFeatures, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      showToast("Vote submitted!");
-      userVote = { voteType: selectedVote, reason };
-      renderVoteTab();
-      renderAnalysisTab();
-      if(matchData?.winner && matchData.winner !== '—') await addAIPostMatchAnalytics();
-    };
-  }
-  
-  async function renderAnalysisTab() {
-    const container = document.getElementById('analysisTab');
-    container.innerHTML = `<div style="display:flex; gap:12px; margin-bottom:16px;"><button id="analysisTeam1Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType==='team1'?'#9CE800':'white'};font-weight:700;">${matchData?.teamAName}</button><button id="analysisTeam2Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType==='team2'?'#9CE800':'white'};font-weight:700;">${matchData?.teamBName}</button></div><div id="reasonsListContainer"></div>`;
-    document.getElementById('analysisTeam1Btn').onclick = () => { currentAnalysisType='team1'; renderAnalysisTab(); };
-    document.getElementById('analysisTeam2Btn').onclick = () => { currentAnalysisType='team2'; renderAnalysisTab(); };
-    const votesSnap = await db.collection('votes').where('matchId','==',matchId).where('voteType','==',currentAnalysisType).get();
-    const reasons = [];
-    votesSnap.forEach(d => { if(d.data().reason) reasons.push({ id: d.id, userName: d.data().userName, reason: d.data().reason, images: d.data().images || [] }); });
-    const containerReasons = document.getElementById('reasonsListContainer');
-    if(reasons.length===0) { containerReasons.innerHTML = '<div class="card">No reasons yet.</div>'; return; }
-    containerReasons.innerHTML = reasons.map(r => `<div class="analysis-item" data-id="${r.id}"><div class="analysis-user"><span>${r.userName}</span><span class="analysis-preview">${r.reason.substring(0,45)}...</span></div><div class="expanded-reason" id="exp-${r.id}"><div>${r.reason}</div>${r.images.map(img => `<img src="${img}" style="width:50px;border-radius:12px;">`).join('')}<button class="send-to-chat-btn" style="margin-top:8px;background:#9CE80020;border:none;padding:4px 10px;border-radius:30px;" data-reason="${r.reason.replace(/"/g, '&quot;')}">💬 Send to Chat</button></div></div>`).join('');
-    document.querySelectorAll('.analysis-item').forEach(el => {
-      const id = el.dataset.id; const expandDiv = document.getElementById(`exp-${id}`);
-      el.addEventListener('click', (e) => { e.stopPropagation(); expandDiv.classList.toggle('show'); });
-      const btn = el.querySelector('.send-to-chat-btn'); if(btn) btn.onclick = (e) => { e.stopPropagation(); sendReasonToChat(btn.dataset.reason); };
-    });
-  }
-  async function sendReasonToChat(text) { await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: `📢 ${text}`, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); showToast("Sent to chat!"); }
-  
-  function renderInfoTab() {
-    if(!matchData) return;
-    let aiHtml = matchData.aiPostInsight ? `<div class="ai-insight">${matchData.aiPostInsight}</div>` : '<div class="ai-insight">📊 Waiting for match result...</div>';
-    document.getElementById('infoTab').innerHTML = `<div class="card"><div class="info-line"><span>League</span><strong>${matchData.leagueName || 'Unknown'}</strong></div><div class="info-line"><span>Match Time</span><strong>${matchData.startTime ? new Date(matchData.startTime.toDate()).toLocaleString() : 'TBD'}</strong></div><div class="info-line"><span>Status</span><strong>${matchData.status || 'Upcoming'}</strong></div><div class="info-line"><span>Winner</span><strong>${matchData.winner || '—'}</strong></div>${aiHtml}</div>`;
-  }
-  
-  function toggleLiveStream() {
-    const container = document.getElementById('liveStreamContainer');
-    const iframe = document.getElementById('youtubeFrame');
-    if(container.classList.contains('active')) {
-      container.classList.remove('active');
-      iframe.src = "";
-    } else {
-      container.classList.add('active');
-      iframe.src = matchData?.streamUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ";
+        if (data.success) await db.collection('chatMessages').add({
+          matchId,
+          userId: currentUser.uid,
+          userName: currentUser.displayName,
+          text: "📷 Image",
+          imageUrl: data.data.url,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast("Image sent");
+      };
     }
-  }
-  
-  function initChat() {
-    if(chatUnsub) chatUnsub();
-    let lastSize = 0;
-    chatUnsub = db.collection('chatMessages').where('matchId','==',matchId).orderBy('createdAt','asc').onSnapshot(snap => {
-      const currentSize = snap.size;
-      if(currentTab !== 'chat' && currentSize > lastSize && lastSize !== 0) {
-        unreadCount += (currentSize - lastSize);
-        const banner = document.getElementById('unreadBanner');
-        banner.innerText = `${unreadCount} new message${unreadCount > 1 ? 's' : ''}`;
-        banner.classList.add('show');
-        setTimeout(() => { if(currentTab !== 'chat') banner.classList.remove('show'); }, 3000);
-      } else if(currentTab === 'chat') { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); }
-      lastSize = currentSize;
-      renderChatMessages();
-    });
-    document.getElementById('sendChatMsgBtn').onclick = sendChatMessage;
-    document.getElementById('chatMessageInput').addEventListener('keypress', (e) => { if(e.key==='Enter') sendChatMessage(); });
-    document.getElementById('emojiChatBtn').onclick = () => { document.getElementById('emojiNormalPanel').classList.toggle('active'); };
-    document.getElementById('uploadChatImgBtn').onclick = () => document.getElementById('chatImageInput').click();
-    document.getElementById('liveStreamChatBtn').onclick = toggleLiveStream;
-    document.getElementById('chatImageInput').onchange = async (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      const fd = new FormData(); fd.append('image', file);
-      const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
-      const data = await res.json();
-      if(data.success) await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: "📷 Image", imageUrl: data.data.url, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      showToast("Image sent");
+
+    async function renderChatMessages() {
+      const container = document.getElementById('chatMessagesList');
+      if (!container) return;
+      const snap = await db.collection('chatMessages').where('matchId', '==', matchId).orderBy('createdAt', 'asc').get();
+      const messages = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      container.innerHTML = messages.map(msg => `<div class="chat-bubble"><div class="chat-username gray">${msg.userName || 'User'}</div><div class="chat-text">${msg.text || ''}</div>${msg.imageUrl ? `<img src="${msg.imageUrl}" style="max-width:100px;border-radius:12px;margin-top:6px;">` : ''}<div class="chat-actions"><span class="chat-action" onclick="copyMessage('${msg.text?.replace(/'/g, "\\'") || ''}')">Copy</span>${msg.userId === currentUser.uid ? `<span class="chat-action" onclick="editMessage('${msg.id}','${msg.text?.replace(/'/g, "\\'") || ''}')">Edit</span><span class="chat-action" onclick="deleteMessage('${msg.id}')">Delete</span>` : ''}</div></div>`).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    window.copyMessage = (text) => {
+      navigator.clipboard.writeText(text);
+      showToast("Copied!");
     };
-  }
-  
-  async function renderChatMessages() {
-    const container = document.getElementById('chatMessagesList');
-    if(!container) return;
-    const snap = await db.collection('chatMessages').where('matchId','==',matchId).orderBy('createdAt','asc').get();
-    const messages = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    container.innerHTML = messages.map(msg => `<div class="chat-bubble"><div class="chat-username gray">${msg.userName || 'User'}</div><div class="chat-text">${msg.text || ''}</div>${msg.imageUrl ? `<img src="${msg.imageUrl}" style="max-width:100px;border-radius:12px;margin-top:6px;">` : ''}<div class="chat-actions"><span class="chat-action" onclick="copyMessage('${msg.text?.replace(/'/g, "\\'") || ''}')">Copy</span>${msg.userId === currentUser.uid ? `<span class="chat-action" onclick="editMessage('${msg.id}','${msg.text?.replace(/'/g, "\\'") || ''}')">Edit</span><span class="chat-action" onclick="deleteMessage('${msg.id}')">Delete</span>` : ''}</div></div>`).join('');
-    container.scrollTop = container.scrollHeight;
-  }
-  window.copyMessage = (text) => { navigator.clipboard.writeText(text); showToast("Copied!"); };
-  window.editMessage = async (id, oldText) => { const newText = prompt("Edit message:", oldText); if(newText) await db.collection('chatMessages').doc(id).update({ text: newText }); };
-  window.deleteMessage = async (id) => { if(confirm("Delete?")) await db.collection('chatMessages').doc(id).delete(); };
-  async function sendChatMessage() { const inp = document.getElementById('chatMessageInput'); if(!inp.value.trim()) return; await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: inp.value, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); inp.value = ''; }
-  
-  document.querySelectorAll('.tab-item').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.tab;
-      currentTab = target;
-      document.getElementById('voteTab').style.display = target === 'vote' ? 'block' : 'none';
-      document.getElementById('analysisTab').style.display = target === 'analysis' ? 'block' : 'none';
-      document.getElementById('infoTab').style.display = target === 'info' ? 'block' : 'none';
-      document.getElementById('chatTab').style.display = target === 'chat' ? 'block' : 'none';
-      if(target === 'chat') { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); }
-      if(target === 'analysis') renderAnalysisTab();
+    window.editMessage = async (id, oldText) => {
+      const newText = prompt("Edit message:", oldText);
+      if (newText) await db.collection('chatMessages').doc(id).update({ text: newText });
+    };
+    window.deleteMessage = async (id) => {
+      if (confirm("Delete?")) await db.collection('chatMessages').doc(id).delete();
+    };
+
+    async function sendChatMessage() {
+      const inp = document.getElementById('chatMessageInput');
+      if (!inp.value.trim()) return;
+      await db.collection('chatMessages').add({
+        matchId,
+        userId: currentUser.uid,
+        userName: currentUser.displayName,
+        text: inp.value,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      inp.value = '';
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-item').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.tab;
+        currentTab = target;
+        document.getElementById('voteTab').style.display = target === 'vote' ? 'block' : 'none';
+        document.getElementById('analysisTab').style.display = target === 'analysis' ? 'block' : 'none';
+        document.getElementById('infoTab').style.display = target === 'info' ? 'block' : 'none';
+        document.getElementById('chatTab').style.display = target === 'chat' ? 'block' : 'none';
+        if (target === 'chat') {
+          unreadCount = 0;
+          document.getElementById('unreadBanner').classList.remove('show');
+        }
+        if (target === 'analysis') renderAnalysisTab();
+      });
     });
-  });
-  document.getElementById('backBtn').onclick = () => window.location.href = 'index.html';
-  
-  auth.signInAnonymously().then(user => { if(user) { currentUser = { uid: user.user.uid, displayName: 'Fan_' + user.user.uid.slice(-4) }; loadMatch(); buildNormalEmojiGrid(); } else loadMatch(); }).catch(() => loadMatch());
-</script>
+
+    document.getElementById('backBtn').onclick = () => window.location.href = 'index.html';
+
+    // Initialize
+    auth.signInAnonymously().then(user => {
+      if (user) {
+        currentUser = { uid: user.user.uid, displayName: 'Fan_' + user.user.uid.slice(-4) };
+        loadMatch();
+        buildNormalEmojiGrid();
+      } else {
+        loadMatch();
+      }
+    }).catch(() => loadMatch());
+  </script>
 </body>
 </html>

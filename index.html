@@ -39,6 +39,9 @@
     .nav-row-mobile { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 2px solid #E0E0E0; }
     .nav-btn-mobile { background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; font-weight: 700; font-size: 11px; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; }
     .nav-btn-mobile.active { background: var(--vibrant-green); border-color: var(--vibrant-green); color: #000; box-shadow: 0 3px 0 #6B9E00; }
+    .main-search-bar { margin-bottom: 12px; }
+    .main-search-input { width: 100%; padding: 12px 16px; border: 2px solid #E0E0E0; border-radius: 30px; font-size: 13px; font-family: 'Poppins', sans-serif; outline: none; background: #F8F8F8; transition: 0.2s; }
+    .main-search-input:focus { border-color: var(--vibrant-green); background: white; }
     .filter-bar-mobile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #F8F8F8; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; border: 2px solid #E0E0E0; }
     .filter-group-mobile select, .filter-group-mobile input { background: white; border: 2px solid #D0D0D0; color: #333; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; outline: none; }
     .filter-btn-mobile { background: var(--vibrant-green); border: none; color: #000; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 3px 0 #6B9E00; }
@@ -103,6 +106,10 @@
   <div class="main-content">
     <div class="promo-banner-mobile" id="promoBanner"><h4>🏆 Africa's #1 Prediction Brand</h4><div class="promo-features-mobile"><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:chart-line"></span> Biggest Wins</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:gift-outline"></span> 1000% FREE to Vote</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:robot-outline"></span> No BOTS Just Humans</div><div class="promo-feature-mobile"><span class="iconify" data-icon="mdi:headset"></span> 24/7 Customer Support</div></div></div>
     <div class="nav-row-mobile"><button class="nav-btn-mobile active" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</button><button class="nav-btn-mobile" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</button><button class="nav-btn-mobile" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span> Games</button><button class="nav-btn-mobile" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</button><button class="nav-btn-mobile" data-nav="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</button></div>
+    
+    <!-- Main Search Bar above filter -->
+    <div class="main-search-bar"><input type="text" id="mainSearchInput" class="main-search-input" placeholder="🔍 Search matches by team name..."></div>
+    
     <div class="filter-bar-mobile"><div class="filter-group-mobile"><select id="filterSportMobile"><option value="all">All</option><option value="football" selected>Football</option><option value="basketball">Basketball</option></select></div><div class="filter-group-mobile"><select id="filterLeagueMobile"><option value="all">All Leagues</option></select></div><div class="filter-group-mobile"><input type="date" id="filterDateMobile"></div><button class="filter-btn-mobile" id="applyFilterBtnMobile"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter</button></div>
     <div id="dynamicListMobile"></div>
   </div>
@@ -127,6 +134,7 @@
     
     // DOM elements
     const searchInput = document.getElementById('searchInputMobile');
+    const mainSearchInput = document.getElementById('mainSearchInput');
     const searchResultsBox = document.getElementById('searchResultsBox');
     const dynamicList = document.getElementById('dynamicListMobile');
     const filterSport = document.getElementById('filterSportMobile');
@@ -149,15 +157,36 @@
     
     let menuSelectedSport = 'football';
     let searchTimeout = null;
+    let mainSearchTimeout = null;
+    let currentMainSearchTerm = '';
     
     function showNotification(msg, isError = false){ toastMsg.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = isError ? '#F44336' : '#9CE800'; setTimeout(() => { toast.style.display = 'none'; }, 3000); }
-    function showLoading(show){ dynamicList.innerHTML = show ? '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading" style="font-size:32px; animation:spin 1s linear infinite;"></span><br>Loading...</div>' : ''; if(show) dynamicList.innerHTML = '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading"></span><br>Loading...</div>'; }
-    function closeMenuGlobal(){ sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
-    function openMenu(){ sideMenu.classList.add('open'); overlay.classList.add('show'); }
+    function showLoading(show){ if(show) dynamicList.innerHTML = '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading" style="font-size:32px; animation:spin 1s linear infinite;"></span><br>Loading...</div>'; }
+    
+    // Improved menu closing: click outside, close button, or overlay
+    function closeMenuGlobal(){ 
+        sideMenu.classList.remove('open'); 
+        overlay.classList.remove('show'); 
+    }
+    function openMenu(){ 
+        sideMenu.classList.add('open'); 
+        overlay.classList.add('show'); 
+    }
     
     menuToggleBtn?.addEventListener('click', openMenu);
     closeMenuBtn?.addEventListener('click', closeMenuGlobal);
     overlay?.addEventListener('click', closeMenuGlobal);
+    
+    // Close menu when clicking outside (on main content area)
+    document.addEventListener('click', function(event) {
+        const isMenuOpen = sideMenu.classList.contains('open');
+        const isClickInsideMenu = sideMenu.contains(event.target);
+        const isClickOnMenuBtn = menuToggleBtn.contains(event.target);
+        if(isMenuOpen && !isClickInsideMenu && !isClickOnMenuBtn) {
+            closeMenuGlobal();
+        }
+    });
+    
     if(pireactiveLink) pireactiveLink.addEventListener('click', () => window.open('https://pireactive.vercel.app', '_blank'));
     
     document.querySelectorAll('[data-menu]').forEach(link => { link.addEventListener('click', () => { const btn = document.querySelector(`[data-nav="${link.dataset.menu}"]`); if(btn) btn.click(); closeMenuGlobal(); }); });
@@ -229,11 +258,17 @@
         let sportFilterVal = filterSport.value;
         let leagueFilterVal = filterLeague.value;
         let dateFilterVal = filterDate.value;
+        let mainSearchTerm = currentMainSearchTerm.toLowerCase().trim();
+        
         let filtered = matches.filter(m => {
             const leagueObj = leagues.find(l => l.id === m.league);
             if(sportFilterVal !== 'all'){ const isFootball = !leagueObj?.name?.toLowerCase().includes('basketball'); if(sportFilterVal === 'football' && !isFootball) return false; if(sportFilterVal === 'basketball' && isFootball) return false; }
             if(leagueFilterVal !== 'all' && m.league !== leagueFilterVal) return false;
             if(dateFilterVal){ const matchDate = m.startTime?.toDate(); if(matchDate){ const dateStr = matchDate.toISOString().split('T')[0]; if(dateStr !== dateFilterVal) return false; } }
+            if(mainSearchTerm){
+                const matchStr = `${m.teamAName} ${m.teamBName}`.toLowerCase();
+                if(!matchStr.includes(mainSearchTerm)) return false;
+            }
             return true;
         });
         if(currentNav === 'popular') filtered.sort((a,b) => (b.totalVotes || 0) - (a.totalVotes || 0));
@@ -243,7 +278,6 @@
         if(filtered.length === 0) html = '<div style="text-align:center;padding:40px;color:#999;">No matches found</div>';
         else filtered.forEach(m => {
             const leagueName = leagues.find(l => l.id === m.league)?.name || 'Unknown';
-            const maxP = Math.max(m.percentages.team1, m.percentages.draw, m.percentages.team2);
             const arrows = getArrowStatus(m.percentages.team1, m.percentages.team2, m.percentages.draw);
             const timeStr = m.status === 'live' ? 'LIVE' : (m.startTime?.toDate().toLocaleString('en-US', { weekday: 'short', hour:'2-digit', minute:'2-digit' }) || 'TBD');
             html += `<div class="match-card-mobile" data-match-id="${m.id}"><div class="match-teams-mobile"><div class="team-mobile"><div class="team-logo-mobile">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div><div class="team-info-mobile"><span class="team-name-mobile">${m.teamAName}</span><span class="team-odds-mobile">${leagueName}</span></div></div><div class="match-center"><div class="match-vs-mobile">VS</div><div class="arrow-indicators"><span class="iconify ${arrows.left}" data-icon="mdi:arrow-up-bold"></span><span class="iconify ${arrows.right}" data-icon="mdi:arrow-down-bold"></span></div></div><div class="team-mobile"><div class="team-info-mobile" style="text-align:right;"><span class="team-name-mobile">${m.teamBName}</span><span class="team-odds-mobile">${timeStr}</span></div><div class="team-logo-mobile">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div></div></div></div>`;
@@ -254,7 +288,18 @@
     
     function populateLeagueFilter(){ filterLeague.innerHTML = '<option value="all">All Leagues</option>'; leagues.forEach(l => { filterLeague.innerHTML += `<option value="${l.id}">${l.name}</option>`; }); }
     
-    // Search with 300ms debounce
+    // Main Search Bar with 300ms debounce - filters match cards directly
+    if(mainSearchInput){
+        mainSearchInput.addEventListener('input', (e) => {
+            if(mainSearchTimeout) clearTimeout(mainSearchTimeout);
+            mainSearchTimeout = setTimeout(() => {
+                currentMainSearchTerm = e.target.value;
+                renderList();
+            }, 300);
+        });
+    }
+    
+    // Top-right search with 300ms debounce - shows dropdown for matches and teams
     if(searchInput){
         searchInput.addEventListener('input', (e) => {
             if(searchTimeout) clearTimeout(searchTimeout);

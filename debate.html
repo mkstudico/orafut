@@ -1,1 +1,411 @@
-hey
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>ORAFUT · Debate Arena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #293136; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Poppins', sans-serif; }
+    .mobile-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --left-tab-bg: #2D3337; --white: #FFFFFF; --black: #1A1A1A; --bottom-nav-height: 70px; }
+    
+    .main-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); flex-shrink: 0; }
+    .brand { font-size: 24px; font-weight: 800; font-style: italic; text-transform: uppercase; }
+    .brand .ora { color: var(--white); } .brand .fut { color: var(--vibrant-green); }
+    .header-right { position: relative; }
+    .search-bar-mobile { display: flex; align-items: center; background: rgba(255,255,255,0.08); padding: 4px 10px; border: 1.5px solid #3A4146; border-radius: 20px; cursor: pointer; }
+    .search-bar-mobile .iconify { color: var(--vibrant-green); font-size: 14px; }
+    .search-bar-mobile input { background: transparent; border: none; outline: none; color: var(--white); font-size: 12px; width: 120px; font-family: 'Poppins', sans-serif; }
+    .search-bar-mobile input::placeholder { color: rgba(255,255,255,0.4); font-size: 11px; }
+    .search-results-box { position: absolute; top: 45px; right: 0; width: 280px; background: #2D3337; border-radius: 12px; border: 2px solid var(--vibrant-green); z-index: 200; max-height: 300px; overflow-y: auto; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .search-result-item { padding: 12px; border-bottom: 1px solid #3A4146; cursor: pointer; display: flex; align-items: center; gap: 10px; color: white; }
+    .search-result-item:hover { background: #3A4146; }
+    .search-result-icon { color: var(--vibrant-green); font-size: 18px; }
+    .search-result-info { flex: 1; }
+    .search-result-title { font-weight: 600; font-size: 13px; }
+    .search-result-sub { font-size: 10px; color: #aaa; }
+    
+    .breadcrumb-section { background: var(--section-bg); padding: 6px 16px; border-bottom: 1px solid #252A2D; flex-shrink: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.5); }
+    .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
+    
+    .main-content { flex: 1; padding: 16px 16px 0 16px; background: var(--white); overflow-y: auto; padding-bottom: calc(var(--bottom-nav-height) + 16px); }
+    
+    .section-title { font-size: 20px; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    .section-sub { font-size: 11px; color: #777; margin-bottom: 20px; border-left: 3px solid var(--vibrant-green); padding-left: 10px; }
+    
+    .debate-card { background: white; border-radius: 16px; border: 2px solid #E8E8E8; margin-bottom: 14px; cursor: pointer; transition: all 0.2s; overflow: hidden; }
+    .debate-card:active { transform: scale(0.98); background: #FAFAFA; }
+    .card-rank { background: var(--vibrant-green); padding: 6px 12px; font-weight: 800; font-size: 14px; color: #000; display: inline-block; border-radius: 0 0 12px 0; }
+    .card-body { padding: 14px; }
+    .match-name { font-weight: 800; font-size: 15px; color: #1A1A1A; text-transform: uppercase; margin-bottom: 6px; }
+    .match-info { font-size: 10px; color: #777; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .message-preview { background: #F5F5F5; border-radius: 12px; padding: 12px; margin-top: 8px; border-left: 3px solid var(--vibrant-green); }
+    .message-bubble { font-size: 12px; color: #333; margin-bottom: 6px; }
+    .message-user { font-weight: 700; color: var(--vibrant-green); font-size: 11px; }
+    .message-time { font-size: 9px; color: #999; margin-left: 8px; }
+    .message-text { color: #444; margin-top: 4px; font-size: 12px; }
+    .conversation-stats { display: flex; gap: 12px; margin-top: 10px; font-size: 10px; color: #888; }
+    .live-badge { background: #F44336; color: white; font-size: 8px; padding: 2px 6px; border-radius: 20px; font-weight: 700; margin-left: 8px; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    
+    .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--header-bg); display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid var(--vibrant-green); z-index: 100; height: var(--bottom-nav-height); }
+    .nav-item-float { display: flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; color: #999; cursor: pointer; padding: 6px 10px; border-radius: 30px; text-decoration: none; }
+    .nav-item-float .iconify { font-size: 22px; }
+    .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .nav-item-float.active { background: var(--vibrant-green); color: #000; }
+    
+    .loading-spinner { text-align: center; padding: 40px; color: var(--vibrant-green); }
+    .notification-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 40px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+  </style>
+</head>
+<body>
+<div class="mobile-container">
+  <div class="notification-toast" id="notificationToast"><span class="iconify" data-icon="mdi:information-outline"></span><span id="toastMessage"></span></div>
+  
+  <header class="main-header">
+    <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    <div class="header-right">
+      <div class="search-bar-mobile"><span class="iconify" data-icon="mdi:magnify"></span><input type="text" id="searchInputMobile" placeholder="Search debates..."></div>
+      <div class="search-results-box" id="searchResultsBox"></div>
+    </div>
+  </header>
+  
+  <div class="breadcrumb-section"><div class="breadcrumb"><span class="current">🔥 DEBATE ARENA · TOP CONVERSATIONS</span></div></div>
+  
+  <div class="main-content" id="mainContent">
+    <div class="section-title">🗣️ Live Debates</div>
+    <div class="section-sub">Most active conversations · Real-time messages</div>
+    <div id="debateList"></div>
+  </div>
+  
+  <div class="bottom-nav-float">
+    <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
+    <button class="nav-item-float active" data-nav="debates"><span class="iconify" data-icon="mdi:chat-outline"></span><span>DEBATES</span></button>
+    <button class="nav-item-float" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span><span>GAMES</span></button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+(function(){
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+        authDomain: "orafut-58b5f.firebaseapp.com",
+        projectId: "orafut-58b5f",
+        storageBucket: "orafut-58b5f.firebasestorage.app",
+        messagingSenderId: "500581059835",
+        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
+    
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // DOM elements
+    const debateList = document.getElementById('debateList');
+    const searchInput = document.getElementById('searchInputMobile');
+    const searchResultsBox = document.getElementById('searchResultsBox');
+    const toast = document.getElementById('notificationToast');
+    const toastMsg = document.getElementById('toastMessage');
+    const bottomNavItems = document.querySelectorAll('.nav-item-float');
+    
+    let allMatches = [];
+    let allMessages = [];
+    let leagues = [];
+    let searchTimeout = null;
+    let liveUnsubscribe = null;
+    
+    function showNotification(msg, isError = false){
+        toastMsg.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = isError ? '#F44336' : '#9CE800';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+    
+    function showLoading(show){
+        if(show) debateList.innerHTML = '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading" style="font-size:32px; animation:spin 1s linear infinite;"></span><br>Loading hot debates...</div>';
+    }
+    
+    // Load leagues for info
+    async function loadLeagues(){
+        const leaguesSnap = await db.collection('leagues').get();
+        leagues = [];
+        leaguesSnap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+    }
+    
+    // Get recent messages for a match (last 10)
+    async function getMatchMessages(matchId){
+        try{
+            const messagesSnap = await db.collection('messages')
+                .where('matchId', '==', matchId)
+                .orderBy('timestamp', 'desc')
+                .limit(10)
+                .get();
+            const messages = [];
+            messagesSnap.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
+            return messages.reverse(); // Oldest first for display
+        } catch(e){ return []; }
+    }
+    
+    // Get total message count for a match
+    async function getMessageCount(matchId){
+        try{
+            const snap = await db.collection('messages').where('matchId', '==', matchId).get();
+            return snap.size;
+        } catch(e){ return 0; }
+    }
+    
+    // Load top 5 matches by message count
+    async function loadTopDebates(){
+        try{
+            showLoading(true);
+            
+            // Get all matches
+            const matchesSnap = await db.collection('matches')
+                .where('status', 'in', ['upcoming', 'live'])
+                .get();
+            
+            const matches = [];
+            matchesSnap.forEach(doc => matches.push({ id: doc.id, ...doc.data() }));
+            
+            // Get message counts for each match
+            const matchesWithCounts = await Promise.all(matches.map(async (match) => {
+                const count = await getMessageCount(match.id);
+                const recentMessages = await getMatchMessages(match.id);
+                return { ...match, messageCount: count, recentMessages };
+            }));
+            
+            // Sort by message count descending and take top 5
+            const topMatches = matchesWithCounts
+                .sort((a,b) => b.messageCount - a.messageCount)
+                .slice(0, 5);
+            
+            allMatches = topMatches;
+            renderDebates(topMatches);
+            showLoading(false);
+            
+            // Set up real-time listener for messages to update live previews
+            if(liveUnsubscribe) liveUnsubscribe();
+            setupLiveMessageListener(topMatches.map(m => m.id));
+            
+        } catch(e){
+            showLoading(false);
+            showNotification('Failed to load debates', true);
+            console.error(e);
+        }
+    }
+    
+    // Real-time listener for new messages in top matches
+    function setupLiveMessageListener(matchIds){
+        if(matchIds.length === 0) return;
+        
+        // Listen to all messages from these matches
+        const queries = matchIds.map(matchId => 
+            db.collection('messages')
+                .where('matchId', '==', matchId)
+                .orderBy('timestamp', 'desc')
+                .limit(1)
+        );
+        
+        // Instead of multiple listeners, we'll poll every 5 seconds for updates (more stable)
+        // This avoids excessive listener setup
+        const interval = setInterval(async () => {
+            for(const match of allMatches){
+                const newCount = await getMessageCount(match.id);
+                if(newCount !== match.messageCount){
+                    const newMessages = await getMatchMessages(match.id);
+                    match.messageCount = newCount;
+                    match.recentMessages = newMessages;
+                }
+            }
+            renderDebates(allMatches);
+        }, 5000);
+        
+        // Store interval for cleanup
+        window.debateInterval = interval;
+    }
+    
+    // Format time ago
+    function timeAgo(date){
+        if(!date) return 'just now';
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if(seconds < 60) return 'just now';
+        const minutes = Math.floor(seconds / 60);
+        if(minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if(hours < 24) return `${hours}h ago`;
+        return `${Math.floor(hours / 24)}d ago`;
+    }
+    
+    // Get league name
+    function getLeagueName(leagueId){
+        const league = leagues.find(l => l.id === leagueId);
+        return league ? league.name : 'Unknown League';
+    }
+    
+    // Get rank emoji
+    function getRankEmoji(rank){
+        switch(rank){
+            case 1: return '🥇';
+            case 2: return '🥈';
+            case 3: return '🥉';
+            default: return '📊';
+        }
+    }
+    
+    // Render debate cards
+    function renderDebates(matches){
+        if(!matches || matches.length === 0){
+            debateList.innerHTML = '<div class="empty-state"><span class="iconify" data-icon="mdi:forum-outline" style="font-size:48px; opacity:0.5;"></span><br><br>No active debates yet<br><span style="font-size:11px;">Be the first to start a conversation!</span></div>';
+            return;
+        }
+        
+        let html = '';
+        matches.forEach((match, idx) => {
+            const rank = idx + 1;
+            const leagueName = getLeagueName(match.league);
+            const timeStr = match.status === 'live' ? 'LIVE NOW' : (match.startTime?.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) || 'Upcoming');
+            const messageCount = match.messageCount || 0;
+            const recentMessages = match.recentMessages || [];
+            
+            // Build message preview HTML
+            let messagesHtml = '';
+            if(recentMessages.length > 0){
+                const latestMessages = recentMessages.slice(-3); // Last 3 messages
+                messagesHtml = `<div class="message-preview">`;
+                latestMessages.forEach(msg => {
+                    const userShort = msg.userName ? msg.userName.substring(0, 12) : 'Anonymous';
+                    const msgTime = msg.timestamp?.toDate();
+                    const timeAgoStr = timeAgo(msgTime);
+                    messagesHtml += `
+                        <div class="message-bubble">
+                            <span class="message-user">💬 ${userShort}</span>
+                            <span class="message-time">${timeAgoStr}</span>
+                            <div class="message-text">"${msg.text?.substring(0, 60)}${msg.text?.length > 60 ? '...' : ''}"</div>
+                        </div>
+                    `;
+                });
+                if(messageCount > 3){
+                    messagesHtml += `<div class="conversation-stats"><span class="iconify" data-icon="mdi:chat-processing-outline"></span> +${messageCount - 3} more messages...</div>`;
+                }
+                messagesHtml += `</div>`;
+            } else {
+                messagesHtml = `<div class="message-preview" style="color:#999; text-align:center;">💬 No messages yet · Start the debate!</div>`;
+            }
+            
+            html += `
+                <div class="debate-card" data-match-id="${match.id}">
+                    <div class="card-rank">${getRankEmoji(rank)} #${rank} · ${messageCount} messages</div>
+                    <div class="card-body">
+                        <div class="match-name">${match.teamAName} <span style="color:#999; font-size:12px;">VS</span> ${match.teamBName}${match.status === 'live' ? '<span class="live-badge">LIVE</span>' : ''}</div>
+                        <div class="match-info">
+                            <span class="iconify" data-icon="mdi:trophy-outline" style="font-size:10px;"></span> ${leagueName}
+                            <span class="iconify" data-icon="mdi:calendar-outline" style="font-size:10px;"></span> ${timeStr}
+                            <span class="iconify" data-icon="mdi:message-text-outline" style="font-size:10px;"></span> ${messageCount} conversations
+                        </div>
+                        ${messagesHtml}
+                    </div>
+                </div>
+            `;
+        });
+        
+        debateList.innerHTML = html;
+        
+        // Add click handlers
+        document.querySelectorAll('.debate-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const matchId = card.dataset.matchId;
+                window.location.href = `vote.html?id=${matchId}`;
+            });
+        });
+    }
+    
+    // Search functionality with 300ms debounce
+    if(searchInput){
+        searchInput.addEventListener('input', (e) => {
+            if(searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const term = e.target.value.toLowerCase().trim();
+                if(term.length < 2){ searchResultsBox.style.display = 'none'; return; }
+                
+                // Search in matches
+                const matchesSnap = await db.collection('matches')
+                    .where('status', 'in', ['upcoming', 'live'])
+                    .get();
+                const matches = [];
+                matchesSnap.forEach(doc => matches.push({ id: doc.id, ...doc.data() }));
+                
+                const matchResults = matches.filter(m => 
+                    `${m.teamAName} ${m.teamBName}`.toLowerCase().includes(term)
+                ).slice(0,5);
+                
+                if(matchResults.length === 0){ searchResultsBox.style.display = 'none'; return; }
+                
+                let html = '';
+                for(const m of matchResults){
+                    const msgCount = await getMessageCount(m.id);
+                    html += `<div class="search-result-item" data-match-id="${m.id}">
+                        <span class="iconify search-result-icon" data-icon="mdi:forum-outline"></span>
+                        <div class="search-result-info">
+                            <div class="search-result-title">${m.teamAName} vs ${m.teamBName}</div>
+                            <div class="search-result-sub">${msgCount} messages · ${m.status === 'live' ? 'LIVE' : 'Upcoming'}</div>
+                        </div>
+                    </div>`;
+                }
+                searchResultsBox.innerHTML = html;
+                searchResultsBox.style.display = 'block';
+                
+                document.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const matchId = item.dataset.matchId;
+                        searchResultsBox.style.display = 'none';
+                        searchInput.value = '';
+                        window.location.href = `vote.html?id=${matchId}`;
+                    });
+                });
+            }, 300);
+        });
+        
+        document.addEventListener('click', (e) => {
+            if(!searchInput.contains(e.target) && !searchResultsBox.contains(e.target)){
+                searchResultsBox.style.display = 'none';
+            }
+        });
+    }
+    
+    // Bottom navigation
+    bottomNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const nav = item.dataset.nav;
+            if(nav === 'home'){
+                window.location.href = 'index.html';
+            } else if(nav === 'debates'){
+                // Already on debates page, just refresh
+                loadTopDebates();
+            } else if(nav === 'games'){
+                window.location.href = 'game.html';
+            }
+        });
+    });
+    
+    // Initialize page
+    async function init(){
+        await loadLeagues();
+        await loadTopDebates();
+    }
+    
+    init();
+    
+    // Cleanup interval on page unload
+    window.addEventListener('beforeunload', () => {
+        if(window.debateInterval) clearInterval(window.debateInterval);
+    });
+})();
+</script>
+</body>
+</html>

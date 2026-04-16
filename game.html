@@ -36,7 +36,6 @@
       --vibrant-green: #9CE800;
       --header-bg: #252A2D;
       --section-bg: #353B40;
-      --left-tab-bg: #2D3337;
       --white: #FFFFFF;
       --black: #1A1A1A;
       --bottom-nav-height: 70px;
@@ -57,20 +56,20 @@
       gap: 12px;
     }
 
-    .menu-btn {
+    .back-btn {
       background: transparent;
       border: 2px solid var(--vibrant-green);
       color: var(--vibrant-green);
-      font-size: 18px;
+      font-size: 14px;
       cursor: pointer;
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 8px;
       transition: all 0.2s;
-      line-height: 1;
       font-weight: bold;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
     }
 
     .brand {
@@ -183,13 +182,6 @@
       text-transform: uppercase;
     }
     .games-title span { color: var(--vibrant-green); }
-    .game-count {
-      background: #F0F0F0;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
 
     .trending-section {
       background: #F8F9FA;
@@ -339,6 +331,7 @@
       padding: 6px 10px;
       border-radius: 30px;
       text-decoration: none;
+      flex: 1;
     }
     .nav-item-float .iconify { font-size: 22px; }
     .nav-item-float span {
@@ -352,67 +345,6 @@
       color: #000;
     }
     .nav-item-float.active .iconify { color: #000; }
-
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -280px;
-      width: 280px;
-      height: 100vh;
-      background: var(--left-tab-bg);
-      z-index: 1000;
-      transition: left 0.3s ease;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-      overflow-y: auto;
-    }
-    .side-menu.open { left: 0; }
-    .side-menu-header {
-      padding: 20px 16px;
-      border-bottom: 2px solid var(--vibrant-green);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .close-menu {
-      background: transparent;
-      border: none;
-      color: var(--white);
-      font-size: 24px;
-      cursor: pointer;
-    }
-    .side-menu-content { padding: 16px; padding-bottom: 30px; }
-    .menu-section { margin-bottom: 24px; }
-    .menu-section-title {
-      color: var(--vibrant-green);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-    .menu-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      color: #CCC;
-      text-decoration: none;
-      border-bottom: 1px solid #3A4146;
-      font-weight: 500;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .menu-link .iconify { color: var(--vibrant-green); font-size: 18px; }
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 999;
-      display: none;
-    }
-    .overlay.show { display: block; }
 
     .modal-overlay {
       position: fixed;
@@ -565,15 +497,33 @@
       letter-spacing: 1px;
       text-align: center;
     }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+    
+    .empty-state {
+      grid-column: span 2;
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .empty-state .iconify {
+      font-size: 48px;
+      color: #D0D0D0;
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 <body>
 <div class="mobile-container">
   <header class="main-header">
     <div class="header-left">
-      <button class="menu-btn" id="menuToggleBtn" aria-label="Menu">
-        <span class="iconify" data-icon="mdi:menu"></span>
-      </button>
+      <a href="index.html" class="back-btn">
+        <span class="iconify" data-icon="mdi:arrow-left"></span> BACK
+      </a>
       <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
     </div>
     <div class="header-right">
@@ -605,44 +555,27 @@
   <div class="main-content">
     <div class="games-header">
       <div class="games-title">GAMES <span>HUB</span></div>
-      <div class="game-count"><span id="gameCount">0</span> Games</div>
     </div>
 
     <div class="trending-section">
       <div class="trending-title">
         <span class="iconify" data-icon="mdi:fire"></span> Trending This Week
       </div>
-      <div class="trending-list" id="trendingList"></div>
+      <div class="trending-list" id="trendingList">
+        <div class="loading">Loading...</div>
+      </div>
     </div>
 
-    <div class="games-grid" id="gamesGrid"></div>
+    <div class="games-grid" id="gamesGrid">
+      <div class="loading" style="grid-column: span 2;">Loading games...</div>
+    </div>
     <div class="hint-text-mobile">⚡ TAP ANY GAME TO PLAY ⚡</div>
   </div>
 
   <div class="bottom-nav-float">
     <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>Home</span></button>
-    <button class="nav-item-float" data-nav="sports"><span class="iconify" data-icon="mdi:soccer"></span><span>Sports</span></button>
     <button class="nav-item-float active" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span><span>Games</span></button>
     <button class="nav-item-float" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>Account</span></button>
-  </div>
-
-  <div class="overlay" id="overlay"></div>
-  <div class="side-menu" id="sideMenu">
-    <div class="side-menu-header">
-      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
-      <button class="close-menu" id="closeMenuBtn"><span class="iconify" data-icon="mdi:close"></span></button>
-    </div>
-    <div class="side-menu-content">
-      <div class="menu-section">
-        <div class="menu-section-title">NAVIGATION</div>
-        <a class="menu-link" data-menu="home"><span class="iconify" data-icon="mdi:home-outline"></span> Home</a>
-        <a class="menu-link" data-menu="sports"><span class="iconify" data-icon="mdi:soccer"></span> Sports</a>
-        <a class="menu-link" data-menu="debates"><span class="iconify" data-icon="mdi:chat-outline"></span> Debates</a>
-        <a class="menu-link" data-menu="live"><span class="iconify" data-icon="mdi:circle-medium"></span> Live</a>
-        <a class="menu-link" data-menu="popular"><span class="iconify" data-icon="mdi:fire"></span> Popular</a>
-        <a class="menu-link" data-menu="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span> Games</a>
-      </div>
-    </div>
   </div>
 
   <div class="modal-overlay" id="leaderboardModal">
@@ -676,6 +609,7 @@
 (function(){
   "use strict";
 
+  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
     authDomain: "orafut-58b5f.firebaseapp.com",
@@ -685,140 +619,215 @@
     appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
   };
 
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const db = firebase.firestore();
 
-  const defaultGames = [
-    { name: 'LOGO CHALLENGE', description: 'Identify teams from logos', location: 'logochallenge', badge: 'POPULAR', plays: 1245 },
-    { name: 'MEMORY MATCH', description: 'Match pairs of logos', location: 'memory', badge: 'NEW', plays: 892 },
-    { name: 'SPEED MATCH', description: 'Fast logo matching', location: 'speedmatch', badge: 'FAST', plays: 756 },
-    { name: 'LOGO DUEL', description: 'Pick the correct logo', location: 'logoduel', badge: 'DUEL', plays: 634 },
-    { name: 'LOGO RACE', description: 'Find the right logo', location: 'logorace', badge: 'RACE', plays: 521 },
-    { name: 'FOOTBALL TRIVIA', description: 'Test your knowledge', location: 'trivia', badge: 'QUIZ', plays: 412 }
-  ];
-
-  let games = [...defaultGames];
+  let games = [];
   let leaderboardData = [];
   let currentTab = 'all';
 
-  const menuToggleBtn = document.getElementById('menuToggleBtn');
-  const sideMenu = document.getElementById('sideMenu');
-  const overlay = document.getElementById('overlay');
-  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  // DOM Elements
   const leaderboardBtn = document.getElementById('leaderboardBtn');
   const leaderboardModal = document.getElementById('leaderboardModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const bottomNavItems = document.querySelectorAll('.nav-item-float');
-  const menuLinks = document.querySelectorAll('[data-menu]');
 
-  function openMenu() { sideMenu.classList.add('open'); overlay.classList.add('show'); }
-  function closeMenu() { sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
-  function openLeaderboard() { leaderboardModal.classList.add('active'); loadLeaderboard(); }
-  function closeLeaderboard() { leaderboardModal.classList.remove('active'); }
+  // Initialize anonymous user
+  let anonymousId = localStorage.getItem('anonymousId');
+  if (!anonymousId) {
+    anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('anonymousId', anonymousId);
+  }
 
-  menuToggleBtn.addEventListener('click', openMenu);
-  closeMenuBtn.addEventListener('click', closeMenu);
-  overlay.addEventListener('click', closeMenu);
+  // Track user activity
+  db.collection('anonymous_users').doc(anonymousId).set({
+    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+    lastPage: 'game.html'
+  }, { merge: true }).catch(err => console.error('Error tracking user:', err));
+
+  // Leaderboard functions
+  function openLeaderboard() { 
+    leaderboardModal.classList.add('active'); 
+    loadLeaderboard(); 
+  }
+  
+  function closeLeaderboard() { 
+    leaderboardModal.classList.remove('active'); 
+  }
+
   leaderboardBtn.addEventListener('click', openLeaderboard);
   closeModalBtn.addEventListener('click', closeLeaderboard);
-  leaderboardModal.addEventListener('click', (e) => { if (e.target === leaderboardModal) closeLeaderboard(); });
-
-  menuLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      const nav = link.dataset.menu;
-      const pages = { home: 'index.html', sports: 'edge.html', debates: 'debate.html', live: 'live.html', popular: 'popular.html', games: 'game.html' };
-      if (pages[nav]) window.location.href = pages[nav];
-      closeMenu();
-    });
+  leaderboardModal.addEventListener('click', (e) => { 
+    if (e.target === leaderboardModal) closeLeaderboard(); 
   });
 
+  // Bottom navigation
   bottomNavItems.forEach(item => {
     item.addEventListener('click', () => {
       const nav = item.dataset.nav;
-      const pages = { home: 'index.html', sports: 'edge.html', games: 'game.html', account: 'account.html' };
-      if (pages[nav]) window.location.href = pages[nav];
+      const pages = { 
+        home: 'index.html', 
+        games: 'game.html', 
+        account: 'account.html' 
+      };
+      if (pages[nav] && nav !== 'games') {
+        window.location.href = pages[nav];
+      }
     });
   });
 
-  function renderGames() {
-    const gamesGrid = document.getElementById('gamesGrid');
-    const trendingList = document.getElementById('trendingList');
-    const gameCount = document.getElementById('gameCount');
+  // Load games from Firestore
+  async function loadGamesFromDB() {
+    try {
+      const gamesGrid = document.getElementById('gamesGrid');
+      const trendingList = document.getElementById('trendingList');
 
-    const sortedGames = [...games].sort((a, b) => (b.plays || 0) - (a.plays || 0));
-    const trending = sortedGames.slice(0, 3);
+      const snap = await db.collection('games').orderBy('plays', 'desc').get();
+      
+      if (!snap.empty) {
+        games = [];
+        snap.forEach(doc => {
+          games.push({ id: doc.id, ...doc.data() });
+        });
+        renderGames(games, gamesGrid, trendingList);
+      } else {
+        // Show empty state
+        gamesGrid.innerHTML = `
+          <div class="empty-state">
+            <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
+            <p>No games available yet</p>
+            <p style="font-size:11px;margin-top:5px;">Check back soon!</p>
+          </div>
+        `;
+        trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
+      }
+    } catch (error) {
+      console.error('Error loading games:', error);
+      const gamesGrid = document.getElementById('gamesGrid');
+      gamesGrid.innerHTML = `
+        <div class="empty-state">
+          <span class="iconify" data-icon="mdi:alert-circle-outline"></span>
+          <p>Error loading games</p>
+          <p style="font-size:11px;margin-top:5px;">Please refresh</p>
+        </div>
+      `;
+    }
+  }
 
+  function renderGames(gamesList, grid, trending) {
+    // Render trending (top 3 by plays)
+    const topGames = gamesList.slice(0, 3);
+    
     let trendingHtml = '';
-    trending.forEach((game, i) => {
-      trendingHtml += `<div class="trending-item"><div class="trending-rank">${i+1}</div><div class="trending-info"><div class="trending-name">${game.name}</div><div class="trending-plays">${game.plays || 0} plays</div></div></div>`;
-    });
-    trendingList.innerHTML = trendingHtml;
+    if (topGames.length > 0) {
+      topGames.forEach((game, i) => {
+        trendingHtml += `
+          <div class="trending-item">
+            <div class="trending-rank">${i+1}</div>
+            <div class="trending-info">
+              <div class="trending-name">${game.name || 'Unknown Game'}</div>
+              <div class="trending-plays">${game.plays || 0} plays</div>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      trendingHtml = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
+    }
+    trending.innerHTML = trendingHtml;
+
+    // Render game cards
+    if (gamesList.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
+          <p>No games available yet</p>
+        </div>
+      `;
+      return;
+    }
 
     let cardsHtml = '';
-    games.forEach(game => {
+    gamesList.forEach(game => {
+      const imageUrl = game.imageUrl || '';
+      const name = game.name || 'Game';
+      const location = game.location || '';
+      const plays = game.plays || 0;
+      
       cardsHtml += `
-        <div class="game-card" onclick="openGame('${game.location}')">
+        <div class="game-card" onclick="openGame('${location}')">
           <div class="game-image">
-            <span class="iconify" data-icon="mdi:gamepad-variant"></span>
-            ${game.badge ? `<span class="game-badge">${game.badge}</span>` : ''}
+            ${imageUrl ? 
+              `<img src="${imageUrl}" alt="${name}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:gamepad-variant\\'></span>'">` : 
+              '<span class="iconify" data-icon="mdi:gamepad-variant"></span>'
+            }
           </div>
           <div class="game-info">
-            <div class="game-name">${game.name}</div>
-            <div class="game-desc">${game.description}</div>
-            <button class="play-btn" onclick="event.stopPropagation();openGame('${game.location}')"><span class="iconify" data-icon="mdi:play"></span> PLAY</button>
+            <div class="game-name">${name}</div>
+            <div class="game-desc">${plays} plays</div>
+            <button class="play-btn" onclick="event.stopPropagation();openGame('${location}')">
+              <span class="iconify" data-icon="mdi:play"></span> PLAY
+            </button>
           </div>
         </div>
       `;
     });
-    gamesGrid.innerHTML = cardsHtml;
-    gameCount.textContent = games.length;
+    grid.innerHTML = cardsHtml;
   }
 
   window.openGame = function(location) {
     if (location) {
+      // Increment play count in Firestore
       db.collection('games').where('location', '==', location).get().then(snap => {
         snap.forEach(doc => {
           db.collection('games').doc(doc.id).update({
             plays: firebase.firestore.FieldValue.increment(1)
           });
         });
-      }).catch(() => {});
+      }).catch(err => console.error('Error updating plays:', err));
+      
+      // Navigate to game
       window.location.href = location + '.html';
     }
   };
 
+  // Load leaderboard from Firestore
   async function loadLeaderboard() {
     try {
-      const scoresSnap = await db.collection('leaderboard_scores').orderBy('totalScore', 'desc').limit(50).get();
-      leaderboardData = [];
-      scoresSnap.forEach(doc => leaderboardData.push({ id: doc.id, ...doc.data() }));
+      const leaderboardList = document.getElementById('leaderboardList');
+      leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">Loading...</div>';
 
-      if (leaderboardData.length === 0) {
-        leaderboardData = [
-          { playerName: 'FootballKing', totalScore: 12500, gamesPlayed: 156, wins: 89 },
-          { playerName: 'SoccerPro', totalScore: 10800, gamesPlayed: 134, wins: 72 },
-          { playerName: 'GoalMachine', totalScore: 9500, gamesPlayed: 112, wins: 58 },
-          { playerName: 'Legend10', totalScore: 8900, gamesPlayed: 98, wins: 52 },
-          { playerName: 'AcePlayer', totalScore: 7600, gamesPlayed: 87, wins: 45 }
-        ];
+      const scoresSnap = await db.collection('leaderboard_scores')
+        .orderBy('totalScore', 'desc')
+        .limit(50)
+        .get();
+
+      if (!scoresSnap.empty) {
+        leaderboardData = [];
+        scoresSnap.forEach(doc => {
+          leaderboardData.push({ id: doc.id, ...doc.data() });
+        });
+      } else {
+        leaderboardData = [];
       }
-      renderLeaderboard();
-    } catch(e) {
-      leaderboardData = [
-        { playerName: 'FootballKing', totalScore: 12500, gamesPlayed: 156, wins: 89 },
-        { playerName: 'SoccerPro', totalScore: 10800, gamesPlayed: 134, wins: 72 }
-      ];
-      renderLeaderboard();
+
+      renderLeaderboard(leaderboardList);
+    } catch (error) {
+      console.error('Error loading leaderboard:', error);
+      const leaderboardList = document.getElementById('leaderboardList');
+      leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No scores yet</div>';
     }
   }
 
-  function renderLeaderboard() {
-    const list = document.getElementById('leaderboardList');
+  function renderLeaderboard(list) {
     const searchInput = document.getElementById('leaderboardSearch');
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
     let filtered = leaderboardData.filter(p => 
-      !searchTerm || p.playerName.toLowerCase().includes(searchTerm)
+      !searchTerm || (p.playerName && p.playerName.toLowerCase().includes(searchTerm))
     );
 
     if (filtered.length === 0) {
@@ -828,57 +837,43 @@
 
     let html = '';
     filtered.forEach((player, index) => {
+      const playerName = player.playerName || 'Anonymous';
       html += `
         <div class="leaderboard-item">
           <div class="leaderboard-rank">${index + 1}</div>
-          <div class="leaderboard-avatar">${player.playerName.charAt(0)}</div>
+          <div class="leaderboard-avatar">${playerName.charAt(0)}</div>
           <div class="leaderboard-info">
-            <div class="leaderboard-name">${player.playerName}</div>
+            <div class="leaderboard-name">${playerName}</div>
             <div class="leaderboard-stats">
               <span><span class="iconify" data-icon="mdi:gamepad-variant"></span> ${player.gamesPlayed || 0}</span>
               <span><span class="iconify" data-icon="mdi:trophy"></span> ${player.wins || 0} wins</span>
             </div>
           </div>
-          <div class="leaderboard-score">${player.totalScore.toLocaleString()}</div>
+          <div class="leaderboard-score">${(player.totalScore || 0).toLocaleString()}</div>
         </div>
       `;
     });
     list.innerHTML = html;
   }
 
-  document.getElementById('leaderboardSearch').addEventListener('input', renderLeaderboard);
+  // Search functionality
+  document.getElementById('leaderboardSearch').addEventListener('input', () => {
+    renderLeaderboard(document.getElementById('leaderboardList'));
+  });
 
+  // Tab switching
   document.querySelectorAll('.leaderboard-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentTab = tab.dataset.tab;
-      renderLeaderboard();
+      renderLeaderboard(document.getElementById('leaderboardList'));
     });
   });
 
-  async function loadGamesFromDB() {
-    try {
-      const snap = await db.collection('games').orderBy('plays', 'desc').get();
-      const dbGames = [];
-      snap.forEach(doc => dbGames.push({ id: doc.id, ...doc.data() }));
-      if (dbGames.length > 0) games = dbGames;
-      renderGames();
-    } catch(e) {
-      renderGames();
-    }
-  }
-
-  let anonymousId = localStorage.getItem('anonymousId');
-  if (!anonymousId) {
-    anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('anonymousId', anonymousId);
-  }
-  db.collection('anonymous_users').doc(anonymousId).set({
-    lastActive: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true }).catch(() => {});
-
+  // Initialize everything
   loadGamesFromDB();
+
 })();
 </script>
 </body>

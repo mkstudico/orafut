@@ -234,17 +234,16 @@
     userVote = snap.empty ? null : snap.docs[0].data();
   }
 
+  // UPDATED: VOTE TAB NO LONGER REQUIRES LOGIN — renders full interactive voting UI for guests + logged-in users
   function renderVoteTab() {
     const container = document.getElementById('voteTab');
-    if (!currentUser) {
-      container.innerHTML = renderLoginPrompt('vote', 'vote for a team and share your prediction');
-      document.getElementById('loginRedirectBtn')?.addEventListener('click', redirectToLogin);
-      return;
-    }
-    if (userVote) {
+    // Guest voting allowed: always show voting interface, no login prompt.
+    // If user is logged in and already voted, show thank you state.
+    if (currentUser && userVote) {
       container.innerHTML = `<div class="card"><div style="text-align:center;"><span class="iconify" data-icon="mdi:check-circle" style="font-size:40px;color:#9CE800;"></span><h3>You voted for ${userVote.voteType === 'team1' ? matchData?.teamAName : (userVote.voteType === 'team2' ? matchData?.teamBName : 'Draw')}</h3><p>${userVote.reason || 'No reason'}</p></div></div>`;
       return;
     }
+    // Render full voting form for anyone (no login wall)
     container.innerHTML = `
       <div class="card">
         <div class="vote-boxes">
@@ -307,6 +306,10 @@
     renderFeaturesList();
     document.getElementById('sendVoteFinalBtn').onclick = async () => {
       if (!selectedVote) { showToast("Select who will win", true); return; }
+      if (!currentUser) {
+        showToast("Please log in to submit your vote", true);
+        return;
+      }
       const reason = document.getElementById('voteReason').value;
       await db.collection('votes').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, voteType: selectedVote, reason, images: imagesArray, features: additionalFeatures, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       showToast("Vote submitted!");

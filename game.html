@@ -223,6 +223,87 @@
     .trending-name { font-weight: 700; color: #1A1A1A; }
     .trending-plays { font-size: 10px; color: #888; }
 
+    /* Search Bar */
+    .search-section {
+      margin-bottom: 16px;
+    }
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #F0F0F0;
+      border: 2px solid #E0E0E0;
+      border-radius: 40px;
+      padding: 10px 16px;
+      gap: 8px;
+    }
+    .search-input-wrapper .iconify {
+      color: #999;
+      font-size: 18px;
+    }
+    .search-input-wrapper input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .search-results-dropdown {
+      background: white;
+      border: 2px solid #E8E8E8;
+      border-radius: 20px;
+      margin-top: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .search-results-dropdown.active {
+      display: block;
+    }
+    .search-result-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #EEEEEE;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .search-result-item:hover {
+      background: #F8F9FA;
+    }
+    .search-result-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #2D3337, #1A1A1A);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .search-result-icon .iconify {
+      font-size: 20px;
+      color: var(--vibrant-green);
+    }
+    .search-result-info {
+      flex: 1;
+    }
+    .search-result-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: #1A1A1A;
+    }
+    .search-result-plays {
+      font-size: 10px;
+      color: #888;
+    }
+    .no-results {
+      padding: 20px;
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+    }
+
     .games-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -254,18 +335,6 @@
     .game-image .iconify {
       font-size: 40px;
       color: var(--vibrant-green);
-    }
-    .game-badge {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: var(--vibrant-green);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 8px;
-      font-weight: 800;
-      text-transform: uppercase;
     }
     .game-info { padding: 10px; }
     .game-name {
@@ -584,6 +653,15 @@
       </div>
     </div>
 
+    <!-- Search Bar -->
+    <div class="search-section">
+      <div class="search-input-wrapper">
+        <span class="iconify" data-icon="mdi:magnify"></span>
+        <input type="text" id="gameSearchInput" placeholder="Search games...">
+      </div>
+      <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+    </div>
+
     <div class="games-grid" id="gamesGrid">
       <div class="loading" style="grid-column: span 2;">Loading games...</div>
     </div>
@@ -628,7 +706,6 @@
 (function(){
   "use strict";
 
-  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
     authDomain: "orafut-58b5f.firebaseapp.com",
@@ -638,7 +715,6 @@
     appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
   };
 
-  // Initialize Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -648,6 +724,7 @@
   let games = [];
   let leaderboardData = [];
   let currentTab = 'all';
+  let searchTimeout = null;
 
   function showToast(msg) {
     const t = document.createElement('div');
@@ -657,80 +734,92 @@
     setTimeout(() => t.remove(), 2200);
   }
 
-  // DOM Elements
-  const leaderboardBtn = document.getElementById('leaderboardBtn');
-  const leaderboardModal = document.getElementById('leaderboardModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const bottomNavItems = document.querySelectorAll('.nav-item-float');
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
-  // Initialize anonymous user
+  // Get or create anonymous user ID for tracking clicks
   let anonymousId = localStorage.getItem('anonymousId');
   if (!anonymousId) {
     anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     localStorage.setItem('anonymousId', anonymousId);
   }
 
-  // Track user activity
-  db.collection('anonymous_users').doc(anonymousId).set({
-    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-    lastPage: 'games.html'
-  }, { merge: true }).catch(err => console.error('Error tracking user:', err));
-
-  // Leaderboard functions
-  function openLeaderboard() { 
-    leaderboardModal.classList.add('active'); 
-    loadLeaderboard(); 
+  // Track game click (increment plays whether signed in or not)
+  async function trackGameClick(gameId, gameLocation) {
+    try {
+      // Increment global plays counter
+      await db.collection('games').doc(gameId).update({
+        plays: firebase.firestore.FieldValue.increment(1)
+      });
+      
+      // Track individual user click for trending accuracy
+      const clickRef = db.collection('game_clicks').doc();
+      await clickRef.set({
+        gameId: gameId,
+        userId: anonymousId,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        gameLocation: gameLocation
+      });
+    } catch (err) {
+      console.error('Error tracking click:', err);
+    }
   }
-  
-  function closeLeaderboard() { 
-    leaderboardModal.classList.remove('active'); 
-  }
 
-  leaderboardBtn.addEventListener('click', openLeaderboard);
-  closeModalBtn.addEventListener('click', closeLeaderboard);
-  leaderboardModal.addEventListener('click', (e) => { 
-    if (e.target === leaderboardModal) closeLeaderboard(); 
-  });
-
-  // Bottom navigation
-  bottomNavItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const nav = item.dataset.nav;
-      if (nav === 'home') {
-        window.location.href = 'match.html';
-      } else if (nav === 'account') {
-        window.location.href = 'account.html';
-      }
-      // games stays on same page
-    });
-  });
-
-  // Load games from Firestore
+  // Load games and calculate trending based on actual clicks (last 7 days)
   async function loadGamesFromDB() {
     try {
       const gamesGrid = document.getElementById('gamesGrid');
       const trendingList = document.getElementById('trendingList');
 
-      // Show loading state
       gamesGrid.innerHTML = '<div class="loading" style="grid-column: span 2;">Loading games...</div>';
       trendingList.innerHTML = '<div class="loading">Loading...</div>';
 
-      const snap = await db.collection('games').orderBy('plays', 'desc').get();
+      const gamesSnap = await db.collection('games').get();
       
-      if (!snap.empty) {
+      if (!gamesSnap.empty) {
         games = [];
-        snap.forEach(doc => {
+        gamesSnap.forEach(doc => {
           const gameData = doc.data();
           games.push({ 
             id: doc.id, 
             name: gameData.name || 'Unnamed Game',
             imageUrl: gameData.imageUrl || '',
             location: gameData.location || '',
-            plays: gameData.plays || 0,
-            createdAt: gameData.createdAt
+            plays: gameData.plays || 0
           });
         });
-        renderGames(games, gamesGrid, trendingList);
+        
+        // Calculate trending based on clicks in last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        
+        const clicksSnap = await db.collection('game_clicks')
+          .where('timestamp', '>=', sevenDaysAgo)
+          .get();
+        
+        const clickCounts = {};
+        clicksSnap.forEach(click => {
+          const gameId = click.data().gameId;
+          clickCounts[gameId] = (clickCounts[gameId] || 0) + 1;
+        });
+        
+        // Add click count to games
+        const gamesWithClicks = games.map(game => ({
+          ...game,
+          weeklyClicks: clickCounts[game.id] || 0
+        }));
+        
+        // Sort by weekly clicks for trending
+        const trendingGames = [...gamesWithClicks].sort((a, b) => b.weeklyClicks - a.weeklyClicks).slice(0, 3);
+        
+        renderGames(gamesWithClicks, gamesGrid, trendingList, trendingGames);
       } else {
         gamesGrid.innerHTML = `
           <div class="empty-state">
@@ -748,57 +837,54 @@
         <div class="empty-state">
           <span class="iconify" data-icon="mdi:alert-circle-outline"></span>
           <p>Error loading games</p>
-          <p style="font-size:11px;margin-top:5px;">Please check your connection and refresh</p>
+          <p style="font-size:11px;margin-top:5px;">Please check your connection</p>
         </div>
       `;
-      const trendingList = document.getElementById('trendingList');
-      trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">!</div><div class="trending-info"><div class="trending-name">Failed to load</div></div></div>';
     }
   }
 
-  function renderGames(gamesList, grid, trending) {
-    // Render trending (top 3 by plays)
-    const topGames = [...gamesList].sort((a, b) => (b.plays || 0) - (a.plays || 0)).slice(0, 3);
-    
+  function renderGames(gamesList, grid, trending, trendingGames) {
+    // Render trending (top 3 by weekly clicks)
     let trendingHtml = '';
-    if (topGames.length > 0) {
-      topGames.forEach((game, i) => {
+    if (trendingGames.length > 0) {
+      trendingGames.forEach((game, i) => {
         trendingHtml += `
           <div class="trending-item">
             <div class="trending-rank">${i+1}</div>
             <div class="trending-info">
               <div class="trending-name">${escapeHtml(game.name || 'Unknown Game')}</div>
-              <div class="trending-plays">${game.plays || 0} plays</div>
+              <div class="trending-plays">${game.weeklyClicks} clicks this week</div>
             </div>
           </div>
         `;
       });
     } else {
-      trendingHtml = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
+      trendingHtml = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No clicks yet</div></div></div>';
     }
     trending.innerHTML = trendingHtml;
 
-    // Render game cards
-    if (gamesList.length === 0) {
+    // Render game cards sorted by total plays
+    const sortedGames = [...gamesList].sort((a, b) => (b.plays || 0) - (a.plays || 0));
+    
+    if (sortedGames.length === 0) {
       grid.innerHTML = `
         <div class="empty-state">
           <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
           <p>No games available yet</p>
-          <p style="font-size:11px;margin-top:5px;">Games will appear here once added</p>
         </div>
       `;
       return;
     }
 
     let cardsHtml = '';
-    gamesList.forEach(game => {
+    sortedGames.forEach(game => {
       const imageUrl = game.imageUrl || '';
       const name = escapeHtml(game.name || 'Game');
       const location = game.location || '';
       const plays = game.plays || 0;
       
       cardsHtml += `
-        <div class="game-card" onclick="openGame('${escapeHtml(location)}')">
+        <div class="game-card" data-game-id="${game.id}" data-game-location="${escapeHtml(location)}">
           <div class="game-image">
             ${imageUrl ? 
               `<img src="${imageUrl}" alt="${name}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:gamepad-variant\\'></span>'">` : 
@@ -807,8 +893,8 @@
           </div>
           <div class="game-info">
             <div class="game-name">${name}</div>
-            <div class="game-desc">${plays} plays</div>
-            <button class="play-btn" onclick="event.stopPropagation();openGame('${escapeHtml(location)}')">
+            <div class="game-desc">${plays} total plays</div>
+            <button class="play-btn" data-game-id="${game.id}" data-game-location="${escapeHtml(location)}">
               <span class="iconify" data-icon="mdi:play"></span> PLAY
             </button>
           </div>
@@ -816,26 +902,122 @@
       `;
     });
     grid.innerHTML = cardsHtml;
+    
+    // Attach click handlers
+    document.querySelectorAll('.game-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('play-btn')) return;
+        const gameId = card.dataset.gameId;
+        const gameLocation = card.dataset.gameLocation;
+        if (gameId && gameLocation) {
+          trackGameClick(gameId, gameLocation);
+          window.location.href = gameLocation + '.html';
+        }
+      });
+    });
+    
+    document.querySelectorAll('.play-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const gameId = btn.dataset.gameId;
+        const gameLocation = btn.dataset.gameLocation;
+        if (gameId && gameLocation) {
+          trackGameClick(gameId, gameLocation);
+          window.location.href = gameLocation + '.html';
+        }
+      });
+    });
   }
 
-  window.openGame = function(location) {
-    if (location && location.trim() !== '') {
-      // Find the game to increment play count
-      const gameToUpdate = games.find(g => g.location === location);
-      if (gameToUpdate) {
-        db.collection('games').doc(gameToUpdate.id).update({
-          plays: firebase.firestore.FieldValue.increment(1)
-        }).catch(err => console.error('Error updating plays:', err));
-      }
-      
-      // Navigate to game page
-      window.location.href = location + '.html';
-    } else {
-      showToast('Game location not found');
+  // Search functionality with 300ms debounce
+  const searchInput = document.getElementById('gameSearchInput');
+  const searchDropdown = document.getElementById('searchResultsDropdown');
+  
+  function performSearch() {
+    const term = searchInput.value.trim().toLowerCase();
+    if (!term) {
+      searchDropdown.classList.remove('active');
+      return;
     }
-  };
+    
+    const filtered = games.filter(game => 
+      game.name.toLowerCase().includes(term)
+    ).slice(0, 8);
+    
+    if (filtered.length === 0) {
+      searchDropdown.innerHTML = '<div class="no-results">No games found</div>';
+    } else {
+      searchDropdown.innerHTML = filtered.map(game => `
+        <div class="search-result-item" data-game-id="${game.id}" data-game-location="${escapeHtml(game.location)}">
+          <div class="search-result-icon">
+            <span class="iconify" data-icon="mdi:gamepad-variant"></span>
+          </div>
+          <div class="search-result-info">
+            <div class="search-result-name">${escapeHtml(game.name)}</div>
+            <div class="search-result-plays">${game.plays || 0} plays</div>
+          </div>
+        </div>
+      `).join('');
+      
+      document.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const gameId = item.dataset.gameId;
+          const gameLocation = item.dataset.gameLocation;
+          if (gameId && gameLocation) {
+            trackGameClick(gameId, gameLocation);
+            window.location.href = gameLocation + '.html';
+          }
+          searchDropdown.classList.remove('active');
+          searchInput.value = '';
+        });
+      });
+    }
+    searchDropdown.classList.add('active');
+  }
+  
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(performSearch, 300);
+  });
+  
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-section')) {
+      searchDropdown.classList.remove('active');
+    }
+  });
 
-  // Load leaderboard from Firestore
+  // Leaderboard functions
+  const leaderboardBtn = document.getElementById('leaderboardBtn');
+  const leaderboardModal = document.getElementById('leaderboardModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const bottomNavItems = document.querySelectorAll('.nav-item-float');
+
+  function openLeaderboard() { 
+    leaderboardModal.classList.add('active'); 
+    loadLeaderboard(); 
+  }
+  
+  function closeLeaderboard() { 
+    leaderboardModal.classList.remove('active'); 
+  }
+
+  leaderboardBtn.addEventListener('click', openLeaderboard);
+  closeModalBtn.addEventListener('click', closeLeaderboard);
+  leaderboardModal.addEventListener('click', (e) => { 
+    if (e.target === leaderboardModal) closeLeaderboard(); 
+  });
+
+  bottomNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const nav = item.dataset.nav;
+      if (nav === 'home') {
+        window.location.href = 'match.html';
+      } else if (nav === 'account') {
+        window.location.href = 'account.html';
+      }
+    });
+  });
+
   async function loadLeaderboard() {
     try {
       const leaderboardList = document.getElementById('leaderboardList');
@@ -864,8 +1046,8 @@
   }
 
   function renderLeaderboard(list) {
-    const searchInput = document.getElementById('leaderboardSearch');
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const searchInputLeaderboard = document.getElementById('leaderboardSearch');
+    const searchTerm = searchInputLeaderboard ? searchInputLeaderboard.value.toLowerCase() : '';
 
     let filtered = leaderboardData.filter(p => 
       !searchTerm || (p.playerName && p.playerName.toLowerCase().includes(searchTerm))
@@ -897,25 +1079,13 @@
     list.innerHTML = html;
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  // Search functionality
-  const searchInput = document.getElementById('leaderboardSearch');
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
+  const leaderboardSearch = document.getElementById('leaderboardSearch');
+  if (leaderboardSearch) {
+    leaderboardSearch.addEventListener('input', () => {
       renderLeaderboard(document.getElementById('leaderboardList'));
     });
   }
 
-  // Tab switching
   document.querySelectorAll('.leaderboard-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
@@ -925,28 +1095,18 @@
     });
   });
 
-  // Initialize everything
+  // Track anonymous user activity
+  db.collection('anonymous_users').doc(anonymousId).set({
+    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+    lastPage: 'games.html'
+  }, { merge: true }).catch(err => console.error('Error tracking user:', err));
+
+  // Initialize
   loadGamesFromDB();
 
-  // Set up real-time listener for games updates
-  db.collection('games').onSnapshot((snapshot) => {
-    if (!snapshot.empty) {
-      const newGames = [];
-      snapshot.forEach(doc => {
-        const gameData = doc.data();
-        newGames.push({ 
-          id: doc.id, 
-          name: gameData.name || 'Unnamed Game',
-          imageUrl: gameData.imageUrl || '',
-          location: gameData.location || '',
-          plays: gameData.plays || 0
-        });
-      });
-      games = newGames;
-      const gamesGrid = document.getElementById('gamesGrid');
-      const trendingList = document.getElementById('trendingList');
-      renderGames(games, gamesGrid, trendingList);
-    }
+  // Real-time listener for games updates
+  db.collection('games').onSnapshot(() => {
+    loadGamesFromDB();
   }, (error) => {
     console.error('Realtime listener error:', error);
   });

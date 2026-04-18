@@ -77,6 +77,65 @@
     .game-brand .ora { color: white; }
     .game-brand .fut { color: #9CE800; }
     
+    /* Connection Status */
+    .connection-status {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .connection-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .connection-icon .iconify {
+      font-size: 20px;
+    }
+    .connection-status.green .connection-icon {
+      background: rgba(76, 175, 80, 0.2);
+    }
+    .connection-status.green .connection-icon .iconify {
+      color: #4caf50;
+    }
+    .connection-status.red .connection-icon {
+      background: rgba(244, 67, 54, 0.2);
+    }
+    .connection-status.red .connection-icon .iconify {
+      color: #f44336;
+    }
+    .connection-status.gray .connection-icon {
+      background: rgba(158, 158, 158, 0.2);
+    }
+    .connection-status.gray .connection-icon .iconify {
+      color: #9e9e9e;
+    }
+    .connection-tooltip {
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background: #1a1a1a;
+      color: white;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .connection-status:hover .connection-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    
     .stats-bar {
       display: flex;
       justify-content: space-around;
@@ -345,6 +404,12 @@
       </button>
       <div class="game-brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
     </div>
+    <div class="connection-status gray" id="connectionStatus">
+      <div class="connection-icon">
+        <span class="iconify" data-icon="mdi:wifi"></span>
+      </div>
+      <div class="connection-tooltip" id="connectionTooltip">Checking connection...</div>
+    </div>
   </div>
   
   <div class="loading-screen" id="loadingScreen">
@@ -426,7 +491,7 @@
       <span class="iconify" data-icon="mdi:refresh"></span> PLAY AGAIN
     </button>
     <br>
-    <a href="index.html" class="home-link">
+    <a href="#" class="home-link" id="homeLink">
       <span class="iconify" data-icon="mdi:home"></span> Home
     </a>
   </div>
@@ -453,20 +518,26 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
 (function(){
   "use strict";
   
-  firebase.initializeApp({
+  const firebaseConfig = {
     apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
     authDomain: "orafut-58b5f.firebaseapp.com",
     projectId: "orafut-58b5f",
     storageBucket: "orafut-58b5f.firebasestorage.app",
     messagingSenderId: "500581059835",
     appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
-  });
+  };
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const db = firebase.firestore();
+  const auth = firebase.auth();
   
   let teams = [];
   let usedTeamIds = new Set();
@@ -484,6 +555,12 @@
   let canAnswer = true;
   let gameActive = false;
   
+  // Connection/auth state
+  let currentUser = null;
+  let firebaseInitialized = true;
+  let networkConnected = true;
+  
+  // DOM Elements
   const loadingScreen = document.getElementById('loadingScreen');
   const gameArea = document.getElementById('gameArea');
   const resultScreen = document.getElementById('resultScreen');
@@ -500,8 +577,110 @@
   const finalCorrect = document.getElementById('finalCorrect');
   const finalStreak = document.getElementById('finalStreak');
   const finalCombo = document.getElementById('finalCombo');
+  const connectionStatus = document.getElementById('connectionStatus');
+  const connectionTooltip = document.getElementById('connectionTooltip');
+  const homeLink = document.getElementById('homeLink');
   
-  window.goBack = function() { window.history.back(); };
+  // Update connection status UI
+  function updateConnectionStatus() {
+    if (!firebaseInitialized || !networkConnected) {
+      connectionStatus.className = 'connection-status red';
+      connectionTooltip.textContent = '❌ Connection error - Scores saved locally only';
+    } else if (currentUser) {
+      connectionStatus.className = 'connection-status green';
+      connectionTooltip.textContent = `✅ Account: ${currentUser.email || 'User'} - Scores will sync to cloud`;
+    } else {
+      connectionStatus.className = 'connection-status gray';
+      connectionTooltip.textContent = '👤 No account - Scores saved locally only';
+    }
+  }
+  
+  // Check network status
+  function checkNetwork() {
+    networkConnected = navigator.onLine;
+    updateConnectionStatus();
+  }
+  
+  window.addEventListener('online', () => { networkConnected = true; updateConnectionStatus(); });
+  window.addEventListener('offline', () => { networkConnected = false; updateConnectionStatus(); });
+  
+  // Go back to games hub
+  window.goBack = function() {
+    window.location.href = 'https://orafut.vercel.app/game.html';
+  };
+  
+  // Home link click handler
+  if (homeLink) {
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'https://orafut.vercel.app/game.html';
+    });
+  }
+  
+  // Save score to Firebase (only if user is logged in)
+  async function saveScoreToFirebase() {
+    if (!currentUser) {
+      console.log('User not logged in - score saved locally only');
+      return false;
+    }
+    
+    if (!networkConnected || !firebaseInitialized) {
+      console.log('Network/Firebase issue - score saved locally');
+      return false;
+    }
+    
+    try {
+      await db.collection('logorace_scores').add({
+        userId: currentUser.uid,
+        userEmail: currentUser.email || 'anonymous_user',
+        gameType: 'logo_race',
+        score: score,
+        correctAnswers: correctAnswers,
+        bestStreak: bestStreak,
+        maxCombo: maxCombo,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      console.log('Score saved to Firebase');
+      return true;
+    } catch (error) {
+      console.error('Error saving score to Firebase:', error);
+      return false;
+    }
+  }
+  
+  // Save score locally (always)
+  function saveScoreLocally() {
+    const localScores = JSON.parse(localStorage.getItem('logorace_scores') || '[]');
+    localScores.push({
+      score: score,
+      correctAnswers: correctAnswers,
+      bestStreak: bestStreak,
+      maxCombo: maxCombo,
+      timestamp: Date.now()
+    });
+    while (localScores.length > 20) localScores.shift();
+    localStorage.setItem('logorace_scores', JSON.stringify(localScores));
+  }
+  
+  // Save score (hybrid - always local, cloud if logged in)
+  async function saveScore() {
+    saveScoreLocally();
+    await saveScoreToFirebase();
+  }
+  
+  // Auth state listener
+  auth.onAuthStateChanged((user) => {
+    currentUser = user;
+    firebaseInitialized = true;
+    updateConnectionStatus();
+  });
+  
+  // Sign in anonymously for tracking
+  auth.signInAnonymously().catch((error) => {
+    console.warn('Anonymous auth failed:', error);
+    firebaseInitialized = false;
+    updateConnectionStatus();
+  });
   
   async function loadTeams() {
     try {
@@ -732,23 +911,6 @@
     saveScore();
   }
   
-  async function saveScore() {
-    try {
-      const anonymousId = localStorage.getItem('anonymousId') || 'anon_' + Date.now();
-      await db.collection('logorace_scores').add({
-        anonymousId: anonymousId,
-        gameType: 'logo_race',
-        score: score,
-        correctAnswers: correctAnswers,
-        bestStreak: bestStreak,
-        maxCombo: maxCombo,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } catch (error) {
-      console.error('Error saving score:', error);
-    }
-  }
-  
   function startNewGame() {
     currentRound = 0;
     score = 0;
@@ -767,6 +929,7 @@
     nextRound();
   }
   
+  checkNetwork();
   loadTeams();
   window.startNewGame = startNewGame;
 })();

@@ -12,11 +12,9 @@
     .mobile-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
     :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --bottom-nav-height: 70px; }
     .main-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); flex-shrink: 0; }
-    .header-left { display: flex; align-items: center; gap: 12px; }
     .brand { font-size: 24px; font-weight: 800; font-style: italic; text-transform: uppercase; }
     .brand .ora { color: white; } .brand .fut { color: var(--vibrant-green); }
     .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; scrollbar-width: thin; }
-    .content-area::-webkit-scrollbar { width: 3px; }
     
     /* Auth Forms */
     .auth-container { display: flex; flex-direction: column; gap: 24px; }
@@ -34,15 +32,15 @@
     .auth-switch-text { text-align: center; margin-top: 16px; font-size: 12px; color: #64748b; }
     .auth-switch-text span { color: var(--vibrant-green); font-weight: 800; cursor: pointer; text-transform: uppercase; }
     
-    /* Dashboard */
+    /* Dashboard - Flexbox Layout */
     .dashboard-header { display: flex; align-items: center; gap: 16px; background: white; padding: 16px; border: 2px solid #E0E0E0; border-radius: 8px; margin-bottom: 12px; }
     .avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #9CE800, #6B9E00); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .avatar .iconify { font-size: 32px; color: white; }
-    .user-info h2 { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
+    .user-info { flex: 1; }
+    .user-info h2 { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
     .user-info p { font-size: 11px; color: #64748b; margin-top: 4px; }
-    .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-left: 8px; cursor: pointer; box-shadow: 0 2px 0 #B0B0B0; }
+    .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 0 #B0B0B0; }
     .logout-red-btn { background: #F44336; border: 2px solid #c62828; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 12px; box-shadow: 0 3px 0 #b71c1c; transition: 0.1s; }
-    .logout-red-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b71c1c; }
     
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
     .stat-card { background: white; padding: 14px; text-align: center; border: 2px solid #E0E0E0; border-radius: 8px; }
@@ -50,13 +48,11 @@
     .stat-label { font-size: 9px; color: #64748b; margin-top: 4px; text-transform: uppercase; font-weight: 700; }
     
     .section-card { background: white; border: 2px solid #E0E0E0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
     .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
     .header-buttons { display: flex; align-items: center; gap: 12px; }
     .add-team-small { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; box-shadow: 0 2px 0 #B0B0B0; }
-    .add-team-small:active { transform: translateY(1px); box-shadow: 0 1px 0 #B0B0B0; }
     .settings-icon { cursor: pointer; color: #64748b; transition: 0.1s; font-size: 20px; }
-    .settings-icon:hover { color: var(--vibrant-green); }
     
     .list-container { max-height: 220px; overflow-y: auto; }
     .list-container::-webkit-scrollbar { width: 3px; }
@@ -70,13 +66,16 @@
     .result-pending { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
     .result-upcoming { background: #f1f5f9; color: #64748b; border: 1px solid #D0D0D0; }
     
-    .team-follow-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eef2f6; }
-    .team-follow-name { font-weight: 600; font-size: 12px; text-transform: uppercase; }
-    .unfollow-btn { background: #F4433620; border: 1px solid #F44336; color: #c62828; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; }
+    .team-follow-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eef2f6; }
+    .team-follow-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .team-follow-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #f1f5f9; }
+    .team-follow-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+    .follow-action-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 0 #6B9E00; transition: 0.1s; }
+    .follow-action-btn.unfollow { background: #F44336; box-shadow: 0 2px 0 #c62828; color: white; }
     
     .empty-state { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
     
-    /* Modal Popup - custom, no browser alerts */
+    /* Modal Popup */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
     .modal-content { background: white; width: 90%; max-width: 380px; border-radius: 12px; overflow: hidden; border: 2px solid var(--vibrant-green); }
     .modal-header { background: var(--header-bg); padding: 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -85,10 +84,10 @@
     .modal-body { padding: 16px; max-height: 400px; overflow-y: auto; }
     .search-teams-input { width: 100%; padding: 12px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
     .team-search-result { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eef2f6; }
-    .team-search-info { display: flex; align-items: center; gap: 12px; }
+    .team-search-info { display: flex; align-items: center; gap: 12px; flex: 1; }
     .team-search-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #f1f5f9; }
     .team-search-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
-    .follow-team-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+    .follow-modal-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; }
     
     .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
     .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--header-bg); display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid var(--vibrant-green); z-index: 100; height: var(--bottom-nav-height); }
@@ -101,7 +100,7 @@
 <body>
 <div class="mobile-container">
   <div class="toast-notify" id="notificationToast"><span class="iconify" data-icon="mdi:information-outline"></span><span id="toastMessage"></span></div>
-  <header class="main-header"><div class="header-left"><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div></div><div style="width:50px;"></div></header>
+  <header class="main-header"><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div><div style="width:50px;"></div></header>
   <div class="content-area" id="contentArea"><div id="authContainer"></div><div id="dashboardContainer" style="display:none;"></div></div>
   <div class="bottom-nav-float">
     <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
@@ -118,7 +117,14 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script>
 (function(){
-    const firebaseConfig = { apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+        authDomain: "orafut-58b5f.firebaseapp.com",
+        projectId: "orafut-58b5f",
+        storageBucket: "orafut-58b5f.firebasestorage.app",
+        messagingSenderId: "500581059835",
+        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
@@ -206,7 +212,7 @@
         }
     }
     async function loadAllMatches(){ const snap = await db.collection('matches').get(); allMatches = []; snap.forEach(doc => allMatches.push({ id: doc.id, ...doc.data() })); }
-    async function loadAllTeams(){ const snap = await db.collection('teams').get(); allTeams = []; snap.forEach(doc => allTeams.push({ id: doc.id, ...doc.data() })); }
+    async function loadAllTeams(){ const snap = await db.collection('teams').get(); allTeams = []; snap.forEach(doc => allTeams.push({ id: doc.id, ...doc.data(), logoUrl: doc.data().logoUrl || doc.data().logo || '' })); }
     async function loadLeaderboard(){ const snap = await db.collection('users').orderBy('points', 'desc').limit(20).get(); leaderboardUsers = []; snap.forEach(doc => leaderboardUsers.push({ id: doc.id, ...doc.data() })); }
     
     function calculateUserStats(){
@@ -228,8 +234,26 @@
     }
     
     async function updateUsername(newName){ if(!newName || newName.length < 2) return showToast("Too short", true); await auth.currentUser.updateProfile({ displayName: newName }); await db.collection('users').doc(currentUserData.uid).update({ username: newName, displayName: newName }); currentUserData.username = newName; showToast("Username updated!"); renderDashboard(); }
-    async function followTeam(teamId, teamName){ if(currentUserData.followedTeams.includes(teamId)){ showToast("Already following", true); return; } const newList = [...currentUserData.followedTeams, teamId]; await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Now following ${teamName}`); }
-    async function unfollowTeam(teamId, teamName){ const newList = currentUserData.followedTeams.filter(id => id !== teamId); await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Unfollowed ${teamName}`); }
+    
+    async function followTeam(teamId, teamName){
+        if(currentUserData.followedTeams.includes(teamId)){ showToast("Already following", true); return; }
+        const newList = [...currentUserData.followedTeams, teamId];
+        await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList });
+        currentUserData.followedTeams = newList;
+        await loadFollowedTeams();
+        renderDashboard();
+        showToast(`Now following ${teamName}`);
+    }
+    
+    async function unfollowTeam(teamId, teamName){
+        const newList = currentUserData.followedTeams.filter(id => id !== teamId);
+        await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList });
+        currentUserData.followedTeams = newList;
+        await loadFollowedTeams();
+        renderDashboard();
+        showToast(`Unfollowed ${teamName}`);
+    }
+    
     async function logout(){ await auth.signOut(); currentUserData = null; renderAuthScreen(); showToast("Logged out successfully"); }
     
     function renderDashboard(){
@@ -240,22 +264,19 @@
         const rankPoints = getUserRank('points');
         const rankScore = getUserRank('totalScore');
         
-        // PENDING MATCHES (voted but not ended)
         const pendingMatches = userVotes.map(vote => {
             const match = allMatches.find(m => m.id === vote.matchId);
             if(!match || match.status === 'ended') return null;
             return { match, voteType: vote.voteType };
         }).filter(v => v).slice(0, 4);
         
-        // PAST PREDICTIONS (ended with result)
         const pastMatches = userVotes.map(vote => {
             const match = allMatches.find(m => m.id === vote.matchId);
             if(!match || match.status !== 'ended') return null;
             const isWin = match.winner === vote.voteType;
-            return { match, voteType: vote.voteType, isWin, result: match.winner };
+            return { match, isWin };
         }).filter(v => v).slice(0, 4);
         
-        // TEAMS FOLLOWED with upcoming matches (not voted yet)
         const followedTeamIds = new Set(followedTeams.map(t => t.id));
         const teamUpcomingMatches = allMatches.filter(m => m.status !== 'ended' && (followedTeamIds.has(m.teamAId) || followedTeamIds.has(m.teamBId) || followedTeams.some(t => t.name === m.teamAName || t.name === m.teamBName))).slice(0, 4);
         
@@ -283,16 +304,12 @@
             </div>
             
             <div class="section-card">
-                <div class="section-header">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div>
-                </div>
+                <div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div></div>
                 <div class="list-container">${pendingMatches.length === 0 ? '<div class="empty-state">No pending matches</div>' : pendingMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result result-pending">PENDING</div></div>`).join('')}</div>
             </div>
             
             <div class="section-card">
-                <div class="section-header">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div>
-                </div>
+                <div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div></div>
                 <div class="list-container">${pastMatches.length === 0 ? '<div class="empty-state">No past predictions</div>' : pastMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result ${v.isWin ? 'result-win' : 'result-loss'}">${v.isWin ? 'WON +10' : 'LOST'}</div></div>`).join('')}</div>
             </div>
             
@@ -321,26 +338,26 @@
         const resultsDiv = document.getElementById('teamSearchResults');
         modal.style.display = 'flex';
         searchInput.value = '';
-        resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">Type to search teams...</div>';
+        resultsDiv.innerHTML = '<div class="empty-state">Type to search teams...</div>';
         
         let searchTimeout;
         searchInput.oninput = (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(async () => {
                 const term = e.target.value.toLowerCase().trim();
-                if(term.length < 2){ resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">Type at least 2 characters</div>'; return; }
+                if(term.length < 2){ resultsDiv.innerHTML = '<div class="empty-state">Type at least 2 characters</div>'; return; }
                 const filtered = allTeams.filter(t => t.name?.toLowerCase().includes(term)).slice(0, 15);
-                if(filtered.length === 0){ resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">No teams found</div>'; return; }
+                if(filtered.length === 0){ resultsDiv.innerHTML = '<div class="empty-state">No teams found</div>'; return; }
                 resultsDiv.innerHTML = filtered.map(team => `
                     <div class="team-search-result">
                         <div class="team-search-info">
-                            <img src="${team.logo || team.imageUrl || 'https://placehold.co/40'}" class="team-search-logo" onerror="this.src='https://placehold.co/40'">
+                            <img src="${team.logoUrl || 'https://placehold.co/40'}" class="team-search-logo" onerror="this.src='https://placehold.co/40'">
                             <span class="team-search-name">${escapeHtml(team.name)}</span>
                         </div>
-                        <button class="follow-team-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">FOLLOW</button>
+                        <button class="follow-modal-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">FOLLOW</button>
                     </div>
                 `).join('');
-                document.querySelectorAll('.follow-team-btn').forEach(btn => {
+                document.querySelectorAll('.follow-modal-btn').forEach(btn => {
                     btn.addEventListener('click', async () => { await followTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; });
                 });
             }, 300);
@@ -354,11 +371,14 @@
         else {
             listDiv.innerHTML = followedTeams.map(team => `
                 <div class="team-follow-row">
-                    <span class="team-follow-name">⚽ ${escapeHtml(team.name)}</span>
-                    <button class="unfollow-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">UNFOLLOW</button>
+                    <div class="team-follow-info">
+                        <img src="${team.logoUrl || team.logo || 'https://placehold.co/40'}" class="team-follow-logo" onerror="this.src='https://placehold.co/40'">
+                        <span class="team-follow-name">${escapeHtml(team.name)}</span>
+                    </div>
+                    <button class="follow-action-btn unfollow" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">UNFOLLOW</button>
                 </div>
             `).join('');
-            document.querySelectorAll('.unfollow-btn').forEach(btn => {
+            document.querySelectorAll('.follow-action-btn').forEach(btn => {
                 btn.addEventListener('click', async () => { await unfollowTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; renderDashboard(); });
             });
         }

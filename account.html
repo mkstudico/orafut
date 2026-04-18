@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>ORAFUT · Team Profile</title>
+  <title>ORAFUT · My Account</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
@@ -18,52 +18,92 @@
     .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; padding-bottom: calc(var(--bottom-nav-height) + 16px); }
     .content-area::-webkit-scrollbar { width: 3px; }
     
-    /* Team Hero */
-    .team-hero { background: linear-gradient(135deg, #0a0e14 0%, #1a1f2a 100%); padding: 24px 16px; display: flex; flex-direction: column; align-items: center; border-radius: 8px; margin-bottom: 16px; }
-    .team-logo-large { width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 3px solid #9CE800; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-    .team-logo-large img { width: 90%; height: 90%; object-fit: contain; border-radius: 50%; }
-    .team-name-large { font-size: 22px; font-weight: 800; color: white; text-align: center; text-transform: uppercase; }
-    .team-league { font-size: 12px; color: #9CE800; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
-    .follow-btn { margin-top: 12px; background: #9CE800; border: none; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; box-shadow: 0 3px 0 #6B9E00; transition: 0.1s; }
-    .follow-btn.following { background: #F44336; box-shadow: 0 3px 0 #c62828; color: white; }
-    .follow-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #6B9E00; }
-    .login-prompt { margin-top: 12px; font-size: 10px; color: #aaa; text-align: center; }
+    /* Auth Forms */
+    .auth-container { display: flex; flex-direction: column; gap: 24px; }
+    .auth-tabs { display: flex; gap: 32px; justify-content: center; margin-bottom: 8px; border-bottom: 2px solid #E0E0E0; }
+    .auth-tab { text-align: center; padding: 12px 0; font-weight: 700; font-size: 16px; cursor: pointer; background: transparent; color: #888; position: relative; text-transform: uppercase; }
+    .auth-tab.active { color: var(--vibrant-green); }
+    .auth-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--vibrant-green); }
+    .auth-card { background: white; padding: 24px 20px; border: 2px solid #E0E0E0; border-radius: 8px; }
+    .input-group { margin-bottom: 20px; }
+    .input-group label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+    .input-group input { width: 100%; padding: 14px 16px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; background: white; }
+    .input-group input:focus { border-color: var(--vibrant-green); }
+    .auth-btn { width: 100%; background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 8px; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; transition: 0.1s; }
+    .auth-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #B0B0B0; }
+    .auth-switch-text { text-align: center; margin-top: 16px; font-size: 12px; color: #64748b; }
+    .auth-switch-text span { color: var(--vibrant-green); font-weight: 800; cursor: pointer; text-transform: uppercase; }
     
-    .stats-row { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; }
-    .stat-badge { background: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; border: 2px solid #E0E0E0; }
+    /* Dashboard */
+    .dashboard-header { display: flex; align-items: center; gap: 16px; background: white; padding: 16px; border: 2px solid #E0E0E0; border-radius: 8px; margin-bottom: 12px; }
+    .avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #9CE800, #6B9E00); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .avatar .iconify { font-size: 32px; color: white; }
+    .user-info { flex: 1; }
+    .user-info h2 { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .user-info p { font-size: 11px; color: #64748b; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 0 #B0B0B0; }
+    .edit-name-container { margin-top: 8px; display: none; align-items: center; gap: 8px; }
+    .edit-name-container.active { display: flex; }
+    .edit-name-input { flex: 1; padding: 8px 12px; border: 2px solid var(--vibrant-green); border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; }
+    .save-name-btn { background: var(--vibrant-green); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 0 #6B9E00; }
+    .cancel-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     
-    /* Tabs */
-    .tab-bar { display: flex; background: white; border-bottom: 2px solid #E0E0E0; margin-bottom: 16px; gap: 8px; }
-    .tab-item { flex: 1; text-align: center; padding: 12px 0; font-weight: 700; font-size: 12px; color: #64748b; cursor: pointer; position: relative; text-transform: uppercase; }
-    .tab-item.active { color: #9CE800; }
-    .tab-item.active::after { content: ''; position: absolute; bottom: -2px; left: 20%; width: 60%; height: 3px; background: #9CE800; }
-    
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .stat-card { background: white; padding: 14px; text-align: center; border: 2px solid #E0E0E0; border-radius: 8px; }
+    .stat-value { font-size: 24px; font-weight: 800; color: var(--vibrant-green); }
+    .stat-label { font-size: 9px; color: #64748b; margin-top: 4px; text-transform: uppercase; font-weight: 700; }
     
     .section-card { background: white; border: 2px solid #E0E0E0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; text-transform: uppercase; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+    .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .header-buttons { display: flex; align-items: center; gap: 12px; }
+    .add-team-small { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; box-shadow: 0 2px 0 #B0B0B0; }
+    .settings-icon { cursor: pointer; color: #64748b; transition: 0.1s; font-size: 20px; display: flex; align-items: center; }
     
-    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f6; cursor: pointer; }
+    .list-container { max-height: 220px; overflow-y: auto; }
+    .list-container::-webkit-scrollbar { width: 3px; }
+    .rank-item, .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f6; }
+    .match-row { cursor: pointer; }
     .match-row:active { background: #f8fafc; }
     .match-team { font-weight: 600; font-size: 12px; text-transform: uppercase; flex: 1; }
-    .match-result { font-size: 9px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
+    .match-result { font-size: 9px; font-weight: 700; padding: 4px 10px; border-radius: 8px; white-space: nowrap; margin-left: 8px; }
     .result-win { background: #9CE80020; color: #5a8a00; border: 1px solid #9CE800; }
     .result-loss { background: #F4433620; color: #c62828; border: 1px solid #F44336; }
-    .result-draw { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
+    .result-pending { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
     .result-upcoming { background: #f1f5f9; color: #64748b; border: 1px solid #D0D0D0; }
     
-    .info-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eef2f6; font-size: 13px; font-weight: 500; }
-    .empty-state { text-align: center; padding: 30px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .team-follow-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eef2f6; }
+    .team-follow-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .team-follow-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #f1f5f9; }
+    .team-follow-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+    .follow-action-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 0 #6B9E00; transition: 0.1s; }
+    .follow-action-btn.unfollow { background: #F44336; box-shadow: 0 2px 0 #c62828; color: white; }
     
-    .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid #9CE800; z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
-    .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #252A2D; display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid #9CE800; z-index: 100; height: var(--bottom-nav-height); }
+    .logout-bottom-btn { background: #F44336; border: 2px solid #c62828; color: white; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 8px; margin-bottom: 8px; box-shadow: 0 3px 0 #b71c1c; transition: 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .logout-bottom-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b71c1c; }
+    
+    .empty-state { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    
+    /* Modal Popup */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 90%; max-width: 380px; border-radius: 12px; overflow: hidden; border: 2px solid var(--vibrant-green); }
+    .modal-header { background: var(--header-bg); padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { color: white; font-size: 16px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+    .close-modal { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+    .modal-body { padding: 16px; max-height: 400px; overflow-y: auto; }
+    .search-teams-input { width: 100%; padding: 12px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .team-search-result { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eef2f6; }
+    .team-search-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .team-search-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #f1f5f9; }
+    .team-search-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+    .follow-modal-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 0 #6B9E00; }
+    
+    .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
+    .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--header-bg); display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid var(--vibrant-green); z-index: 100; height: var(--bottom-nav-height); }
     .nav-item-float { display: flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; color: #999; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
     .nav-item-float .iconify { font-size: 22px; }
     .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
-    .nav-item-float.active { background: #9CE800; color: #000; }
-    
-    .loading-spinner { text-align: center; padding: 40px; color: #9CE800; }
+    .nav-item-float.active { background: var(--vibrant-green); color: #000; }
   </style>
 </head>
 <body>
@@ -75,14 +115,18 @@
     <div style="width: 50px;"></div>
   </header>
   <div class="content-area" id="contentArea">
-    <div id="teamContent"></div>
+    <div id="authContainer"></div>
+    <div id="dashboardContainer" style="display:none;"></div>
   </div>
   <div class="bottom-nav-float">
     <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
     <button class="nav-item-float" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span><span>GAMES</span></button>
-    <button class="nav-item-float" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>ACCOUNT</span></button>
+    <button class="nav-item-float active" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>ACCOUNT</span></button>
   </div>
 </div>
+
+<div id="addTeamModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h3><span class="iconify" data-icon="mdi:plus"></span> ADD TEAM</h3><button class="close-modal" id="closeModalBtn">✕</button></div><div class="modal-body"><input type="text" id="teamSearchInput" class="search-teams-input" placeholder="🔍 Search teams..."><div id="teamSearchResults"></div></div></div></div>
+<div id="unfollowModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h3><span class="iconify" data-icon="mdi:cog"></span> MANAGE TEAMS</h3><button class="close-modal" id="closeUnfollowModalBtn">✕</button></div><div class="modal-body" id="unfollowTeamsList"></div></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -101,15 +145,13 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
     
-    const urlParams = new URLSearchParams(window.location.search);
-    const teamId = urlParams.get('id');
-    
-    let teamData = null;
+    let currentUserData = null;
+    let userVotes = [];
+    let followedTeams = [];
     let allMatches = [];
-    let leagues = [];
-    let currentUser = null;
-    let isFollowing = false;
-    let currentTab = 'info';
+    let allTeams = [];
+    let leaderboardUsers = [];
+    let isEditMode = false;
     
     function showToast(msg, isError = false){
         const toast = document.getElementById('notificationToast');
@@ -120,273 +162,287 @@
         setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
     
-    async function loadLeagues(){
-        const snap = await db.collection('leagues').get();
-        leagues = [];
-        snap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
+    function phoneToEmail(phone){ return phone.replace(/[^0-9]/g, '') + '@orafut.user'; }
+    function emailToPhone(email){ return email.replace('@orafut.user', ''); }
+    function generateRandomUsername(){
+        const prefixes = ['user', 'fan', 'ora', 'fut', 'soccer', 'goal', 'legend', 'pro', 'winner', 'champ'];
+        const randomNum = Math.floor(Math.random() * 10000);
+        return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${randomNum}`;
     }
     
-    async function loadTeam(){
-        if(!teamId){
-            showToast("Team not specified", true);
-            document.getElementById('teamContent').innerHTML = '<div class="empty-state">Team not found</div>';
-            return;
+    function renderAuthScreen(){
+        const container = document.getElementById('authContainer');
+        container.style.display = 'block';
+        document.getElementById('dashboardContainer').style.display = 'none';
+        let activeTab = 'signup';
+        function renderForm(){
+            const isSignup = activeTab === 'signup';
+            container.innerHTML = `<div class="auth-container"><div class="auth-tabs"><div class="auth-tab ${activeTab === 'signup' ? 'active' : ''}" data-tab="signup">SIGN UP</div><div class="auth-tab ${activeTab === 'login' ? 'active' : ''}" data-tab="login">LOGIN</div></div><div class="auth-card"><div class="input-group"><label>📱 PHONE NUMBER</label><input type="tel" id="authPhone" placeholder="e.g., 0712345678"></div><div class="input-group"><label>🔒 PIN (4-6 DIGITS)</label><input type="password" id="authPin" placeholder="Enter PIN" maxlength="6" inputmode="numeric"></div><button id="authSubmitBtn" class="auth-btn">${isSignup ? '🚀 CREATE ACCOUNT' : '🔐 LOGIN'}</button><div class="auth-switch-text">${isSignup ? 'Already have an account?' : 'New to ORAFUT?'} <span id="switchTabBtn">${isSignup ? 'LOGIN' : 'SIGN UP'}</span></div></div></div>`;
+            document.querySelectorAll('.auth-tab').forEach(tab => { tab.addEventListener('click', () => { activeTab = tab.dataset.tab; renderForm(); }); });
+            document.getElementById('switchTabBtn')?.addEventListener('click', () => { activeTab = activeTab === 'signup' ? 'login' : 'signup'; renderForm(); });
+            document.getElementById('authSubmitBtn')?.addEventListener('click', handleAuth);
         }
-        
-        try{
+        async function handleAuth(){
+            const phone = document.getElementById('authPhone').value.trim();
+            const pin = document.getElementById('authPin').value.trim();
+            if(!phone || !pin){ showToast("Please enter phone number and PIN", true); return; }
+            if(pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin)){ showToast("PIN must be 4-6 digits", true); return; }
+            const email = phoneToEmail(phone);
+            if(activeTab === 'signup'){
+                const username = generateRandomUsername();
+                try{
+                    const userCred = await auth.createUserWithEmailAndPassword(email, pin);
+                    await userCred.user.updateProfile({ displayName: username });
+                    await db.collection('users').doc(userCred.user.uid).set({ uid: userCred.user.uid, phoneNumber: phone, username: username, displayName: username, points: 0, totalScore: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp(), followedTeams: [] });
+                    showToast("Account created successfully!");
+                    loadUserDashboard();
+                } catch(e){ if(e.code === 'auth/email-already-in-use') showToast("Phone already registered. Login instead.", true); else showToast("Signup failed", true); }
+            } else {
+                try{ await auth.signInWithEmailAndPassword(email, pin); showToast("Login successful!"); loadUserDashboard(); } catch(e){ showToast("Invalid phone or PIN", true); }
+            }
+        }
+        renderForm();
+    }
+    
+    async function loadUserDashboard(){
+        const user = auth.currentUser;
+        if(!user){ renderAuthScreen(); return; }
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if(!userDoc.exists){
+            const randomName = generateRandomUsername();
+            await db.collection('users').doc(user.uid).set({ uid: user.uid, phoneNumber: emailToPhone(user.email || ''), username: randomName, displayName: randomName, points: 0, totalScore: 0, followedTeams: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        }
+        currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email };
+        if(!currentUserData.username) currentUserData.username = currentUserData.displayName || generateRandomUsername();
+        if(!currentUserData.followedTeams) currentUserData.followedTeams = [];
+        await Promise.all([loadUserVotes(), loadFollowedTeams(), loadAllMatches(), loadAllTeams(), loadLeaderboard()]);
+        renderDashboard();
+    }
+    
+    async function loadUserVotes(){ const snap = await db.collection('votes').where('userId', '==', currentUserData.uid).get(); userVotes = []; snap.forEach(doc => userVotes.push({ id: doc.id, ...doc.data() })); }
+    async function loadFollowedTeams(){
+        const teams = currentUserData.followedTeams || [];
+        followedTeams = [];
+        for(const teamId of teams){
             const teamDoc = await db.collection('teams').doc(teamId).get();
-            if(!teamDoc.exists){
-                showToast("Team not found", true);
-                document.getElementById('teamContent').innerHTML = '<div class="empty-state">Team not found</div>';
-                return;
-            }
-            teamData = { id: teamDoc.id, ...teamDoc.data() };
-            
-            await loadMatches();
-            await checkFollowStatus();
-            renderTeamPage();
-        } catch(e){
-            showToast("Error loading team", true);
-            console.error(e);
+            if(teamDoc.exists) followedTeams.push({ id: teamDoc.id, ...teamDoc.data() });
         }
     }
+    async function loadAllMatches(){ const snap = await db.collection('matches').get(); allMatches = []; snap.forEach(doc => allMatches.push({ id: doc.id, ...doc.data() })); }
+    async function loadAllTeams(){ const snap = await db.collection('teams').get(); allTeams = []; snap.forEach(doc => allTeams.push({ id: doc.id, ...doc.data(), logoUrl: doc.data().logoUrl || doc.data().logo || '' })); }
+    async function loadLeaderboard(){ const snap = await db.collection('users').orderBy('points', 'desc').limit(20).get(); leaderboardUsers = []; snap.forEach(doc => leaderboardUsers.push({ id: doc.id, ...doc.data() })); }
     
-    async function loadMatches(){
-        const snap = await db.collection('matches').get();
-        allMatches = [];
-        snap.forEach(doc => {
-            const match = { id: doc.id, ...doc.data() };
-            if(match.teamAName === teamData.name || match.teamBName === teamData.name ||
-               match.teamAId === teamId || match.teamBId === teamId){
-                allMatches.push(match);
+    function calculateUserStats(){
+        let correct = 0, total = userVotes.length, points = 0;
+        userVotes.forEach(vote => {
+            const match = allMatches.find(m => m.id === vote.matchId);
+            if(match && match.status === 'ended' && match.winner){
+                if(vote.voteType === match.winner) { correct++; points += 10; }
             }
         });
-        allMatches.sort((a,b) => {
-            const dateA = a.startTime?.toDate() || new Date(0);
-            const dateB = b.startTime?.toDate() || new Date(0);
-            return dateA - dateB;
-        });
+        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+        return { points: Math.max(currentUserData.points || 0, points), accuracy, totalScore: currentUserData.totalScore || 0 };
     }
     
-    async function checkFollowStatus(){
-        if(!currentUser) { isFollowing = false; return; }
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const followedTeams = userDoc.data()?.followedTeams || [];
-        isFollowing = followedTeams.includes(teamId);
+    function getUserRank(type){
+        const sorted = [...leaderboardUsers].sort((a,b) => (type === 'points' ? (b.points || 0) - (a.points || 0) : (b.totalScore || 0) - (a.totalScore || 0)));
+        const index = sorted.findIndex(u => u.uid === currentUserData.uid);
+        return index !== -1 ? `#${index + 1}` : '#--';
     }
     
-    async function toggleFollow(){
-        if(!currentUser){
-            showToast("Please login to follow teams", true);
-            setTimeout(() => window.location.href = 'profile.html', 1500);
-            return;
-        }
-        
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        let followedTeams = userDoc.data()?.followedTeams || [];
-        
-        if(isFollowing){
-            followedTeams = followedTeams.filter(id => id !== teamId);
-            showToast(`Unfollowed ${teamData.name}`);
-        } else {
-            if(!followedTeams.includes(teamId)){
-                followedTeams.push(teamId);
-                showToast(`Now following ${teamData.name}`);
-            }
-        }
-        
-        await db.collection('users').doc(currentUser.uid).update({ followedTeams: followedTeams });
-        isFollowing = !isFollowing;
-        renderTeamPage();
+    async function updateUsername(newName){
+        if(!newName || newName.length < 2) return showToast("Username too short (min 2 characters)", true);
+        await auth.currentUser.updateProfile({ displayName: newName });
+        await db.collection('users').doc(currentUserData.uid).update({ username: newName, displayName: newName });
+        currentUserData.username = newName;
+        currentUserData.displayName = newName;
+        showToast("Username updated!");
+        renderDashboard();
     }
     
-    function getMatchResult(match){
-        const isTeamA = (match.teamAName === teamData.name || match.teamAId === teamId);
-        if(match.status !== 'ended' || !match.winner){
-            return { class: 'result-upcoming', text: match.status === 'live' ? 'LIVE' : 'UPCOMING' };
-        }
-        if(match.winner === 'draw'){
-            return { class: 'result-draw', text: 'DRAW' };
-        }
-        if((match.winner === 'team1' && isTeamA) || (match.winner === 'team2' && !isTeamA)){
-            return { class: 'result-win', text: 'WIN' };
-        }
-        return { class: 'result-loss', text: 'LOSS' };
+    async function followTeam(teamId, teamName){
+        if(currentUserData.followedTeams.includes(teamId)){ showToast("Already following", true); return; }
+        const newList = [...currentUserData.followedTeams, teamId];
+        await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList });
+        currentUserData.followedTeams = newList;
+        await loadFollowedTeams();
+        renderDashboard();
+        showToast(`Now following ${teamName}`);
     }
     
-    function formatDate(match){
-        if(match.status === 'live') return 'LIVE NOW';
-        if(match.startTime){
-            const date = match.startTime.toDate();
-            const now = new Date();
-            if(date > now){
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
-            }
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-        return 'TBD';
+    async function unfollowTeam(teamId, teamName){
+        const newList = currentUserData.followedTeams.filter(id => id !== teamId);
+        await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList });
+        currentUserData.followedTeams = newList;
+        await loadFollowedTeams();
+        renderDashboard();
+        showToast(`Unfollowed ${teamName}`);
     }
     
-    function calculateStats(){
-        let wins = 0, draws = 0, losses = 0;
-        let goalsFor = 0, goalsAgainst = 0;
-        
-        allMatches.forEach(match => {
-            if(match.status === 'ended'){
-                const isTeamA = (match.teamAName === teamData.name || match.teamAId === teamId);
-                const scoreTeamA = parseInt(match.scoreTeam1 || match.scoreTeamA) || 0;
-                const scoreTeamB = parseInt(match.scoreTeam2 || match.scoreTeamB) || 0;
-                
-                if(isTeamA){
-                    goalsFor += scoreTeamA;
-                    goalsAgainst += scoreTeamB;
-                    if(match.winner === 'team1') wins++;
-                    else if(match.winner === 'team2') losses++;
-                    else if(match.winner === 'draw') draws++;
-                } else {
-                    goalsFor += scoreTeamB;
-                    goalsAgainst += scoreTeamA;
-                    if(match.winner === 'team2') wins++;
-                    else if(match.winner === 'team1') losses++;
-                    else if(match.winner === 'draw') draws++;
-                }
-            }
-        });
-        
-        return { wins, draws, losses, goalsFor, goalsAgainst, totalMatches: wins + draws + losses };
+    async function logout(){ await auth.signOut(); currentUserData = null; renderAuthScreen(); showToast("Logged out successfully"); }
+    
+    function toggleEditMode(){
+        isEditMode = !isEditMode;
+        renderDashboard();
     }
     
-    function renderTeamPage(){
-        const container = document.getElementById('teamContent');
-        const stats = calculateStats();
-        const leagueObj = leagues.find(l => l.id === teamData.league);
-        const leagueName = leagueObj?.name || teamData.leagueName || 'Unknown League';
+    function renderDashboard(){
+        const container = document.getElementById('dashboardContainer');
+        document.getElementById('authContainer').style.display = 'none';
+        container.style.display = 'block';
+        const stats = calculateUserStats();
+        const rankPoints = getUserRank('points');
+        const rankScore = getUserRank('totalScore');
         
-        const upcomingMatches = allMatches.filter(m => m.status !== 'ended').slice(0, 10);
-        const pastMatches = allMatches.filter(m => m.status === 'ended').slice(0, 10);
+        const pendingMatches = userVotes.map(vote => {
+            const match = allMatches.find(m => m.id === vote.matchId);
+            if(!match || match.status === 'ended') return null;
+            return { match, voteType: vote.voteType };
+        }).filter(v => v).slice(0, 4);
+        
+        const pastMatches = userVotes.map(vote => {
+            const match = allMatches.find(m => m.id === vote.matchId);
+            if(!match || match.status !== 'ended') return null;
+            const isWin = match.winner === vote.voteType;
+            return { match, isWin };
+        }).filter(v => v).slice(0, 4);
+        
+        const followedTeamIds = new Set(followedTeams.map(t => t.id));
+        const teamUpcomingMatches = allMatches.filter(m => m.status !== 'ended' && (followedTeamIds.has(m.teamAId) || followedTeamIds.has(m.teamBId) || followedTeams.some(t => t.name === m.teamAName || t.name === m.teamBName))).slice(0, 4);
         
         container.innerHTML = `
-            <div class="team-hero">
-                <div class="team-logo-large"><img src="${teamData.logoUrl || teamData.logo || 'https://placehold.co/100?text=Logo'}" onerror="this.src='https://placehold.co/100?text=Logo'"></div>
-                <div class="team-name-large">${escapeHtml(teamData.name)}</div>
-                <div class="team-league"><span class="iconify" data-icon="mdi:trophy-outline"></span> ${escapeHtml(leagueName)}</div>
-                <button class="follow-btn ${isFollowing ? 'following' : ''}" id="followTeamBtn">
-                    <span class="iconify" data-icon="${isFollowing ? 'mdi:heart-broken' : 'mdi:heart-plus'}"></span>
-                    ${isFollowing ? 'UNFOLLOW' : 'FOLLOW'}
-                </button>
-                ${!currentUser ? '<div class="login-prompt"><span class="iconify" data-icon="mdi:login"></span> Login to follow this team</div>' : ''}
-            </div>
-            
-            <div class="stats-row">
-                <div class="stat-badge"><span class="iconify" data-icon="mdi:trophy"></span> ${stats.wins} W</div>
-                <div class="stat-badge"><span class="iconify" data-icon="mdi:handshake"></span> ${stats.draws} D</div>
-                <div class="stat-badge"><span class="iconify" data-icon="mdi:close"></span> ${stats.losses} L</div>
-            </div>
-            
-            <div class="tab-bar">
-                <div class="tab-item ${currentTab === 'info' ? 'active' : ''}" data-tab="info">INFO</div>
-                <div class="tab-item ${currentTab === 'matches' ? 'active' : ''}" data-tab="matches">MATCHES</div>
-                <div class="tab-item ${currentTab === 'stats' ? 'active' : ''}" data-tab="stats">STATS</div>
-            </div>
-            
-            <div id="infoPane" class="tab-pane ${currentTab === 'info' ? 'active' : ''}">
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:information-outline"></span> Team Information</div>
-                    <div class="info-line"><span>Team Name</span><strong>${escapeHtml(teamData.name)}</strong></div>
-                    <div class="info-line"><span>League</span><strong>${escapeHtml(leagueName)}</strong></div>
-                    <div class="info-line"><span>Country</span><strong>${escapeHtml(teamData.country || '—')}</strong></div>
-                    <div class="info-line"><span>Founded</span><strong>${escapeHtml(teamData.founded || '—')}</strong></div>
-                    <div class="info-line"><span>Stadium</span><strong>${escapeHtml(teamData.stadium || '—')}</strong></div>
-                </div>
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-line"></span> Season Summary</div>
-                    <div class="info-line"><span>Matches Played</span><strong>${stats.totalMatches}</strong></div>
-                    <div class="info-line"><span>Goals Scored</span><strong>${stats.goalsFor}</strong></div>
-                    <div class="info-line"><span>Goals Conceded</span><strong>${stats.goalsAgainst}</strong></div>
-                    <div class="info-line"><span>Goal Difference</span><strong style="color:${(stats.goalsFor - stats.goalsAgainst) >= 0 ? '#9CE800' : '#F44336'}">${stats.goalsFor - stats.goalsAgainst >= 0 ? '+' : ''}${stats.goalsFor - stats.goalsAgainst}</strong></div>
+            <div class="dashboard-header">
+                <div class="avatar"><span class="iconify" data-icon="mdi:account-circle"></span></div>
+                <div class="user-info">
+                    <h2>
+                        ${!isEditMode ? `<span>${escapeHtml(currentUserData.username)}</span>` : `<input type="text" id="editUsernameInput" class="edit-name-input" value="${escapeHtml(currentUserData.username)}" placeholder="New username">`}
+                        <button class="edit-name-btn" id="editNameBtn"><span class="iconify" data-icon="mdi:pencil"></span> ${isEditMode ? 'CANCEL' : 'EDIT'}</button>
+                    </h2>
+                    ${isEditMode ? `<div class="edit-name-container active"><button id="saveNameBtn" class="save-name-btn"><span class="iconify" data-icon="mdi:check"></span> SAVE</button></div>` : ''}
+                    <p><span class="iconify" data-icon="mdi:phone"></span> ${currentUserData.phoneNumber || emailToPhone(currentUserData.email || '')}</p>
                 </div>
             </div>
             
-            <div id="matchesPane" class="tab-pane ${currentTab === 'matches' ? 'active' : ''}">
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> Upcoming Matches</div>
-                    ${upcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches</div>' : upcomingMatches.map(m => {
-                        const isTeamA = (m.teamAName === teamData.name || m.teamAId === teamId);
-                        const opponent = isTeamA ? m.teamBName : m.teamAName;
-                        return `<div class="match-row" data-match-id="${m.id}">
-                            <div class="match-team">vs ${escapeHtml(opponent)}</div>
-                            <div class="match-result result-upcoming">${formatDate(m)}</div>
-                        </div>`;
-                    }).join('')}
-                </div>
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:history"></span> Recent Matches</div>
-                    ${pastMatches.length === 0 ? '<div class="empty-state">No past matches</div>' : pastMatches.map(m => {
-                        const isTeamA = (m.teamAName === teamData.name || m.teamAId === teamId);
-                        const opponent = isTeamA ? m.teamBName : m.teamAName;
-                        const result = getMatchResult(m);
-                        const score = (m.scoreTeam1 || m.scoreTeamA) && (m.scoreTeam2 || m.scoreTeamB) ? `${m.scoreTeam1 || m.scoreTeamA} - ${m.scoreTeam2 || m.scoreTeamB}` : '';
-                        return `<div class="match-row" data-match-id="${m.id}">
-                            <div class="match-team">vs ${escapeHtml(opponent)} ${score ? `(${score})` : ''}</div>
-                            <div class="match-result ${result.class}">${result.text}</div>
-                        </div>`;
-                    }).join('')}
-                </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value">${stats.points}</div><div class="stat-label">POINTS</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.totalScore}</div><div class="stat-label">SCORE</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">ACCURACY</div></div>
             </div>
             
-            <div id="statsPane" class="tab-pane ${currentTab === 'stats' ? 'active' : ''}">
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-bar"></span> Detailed Statistics</div>
-                    <div class="info-line"><span>Win Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.wins / stats.totalMatches) * 100) : 0}%</strong></div>
-                    <div class="info-line"><span>Draw Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.draws / stats.totalMatches) * 100) : 0}%</strong></div>
-                    <div class="info-line"><span>Loss Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.losses / stats.totalMatches) * 100) : 0}%</strong></div>
-                    <div class="info-line"><span>Goals per Match</span><strong>${stats.totalMatches > 0 ? (stats.goalsFor / stats.totalMatches).toFixed(1) : 0}</strong></div>
-                    <div class="info-line"><span>Clean Sheets</span><strong>${allMatches.filter(m => m.status === 'ended' && ((m.teamAName === teamData.name && (parseInt(m.scoreTeamB) || 0) === 0) || (m.teamBName === teamData.name && (parseInt(m.scoreTeamA) || 0) === 0))).length}</strong></div>
-                </div>
-                <div class="section-card">
-                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-line"></span> Form Guide</div>
-                    <div class="stats-row" style="justify-content: center; gap: 8px; flex-wrap: wrap;">
-                        ${pastMatches.slice(0, 5).map(m => {
-                            const result = getMatchResult(m);
-                            const icon = result.text === 'WIN' ? 'mdi:check-circle' : (result.text === 'DRAW' ? 'mdi:minus-circle' : 'mdi:close-circle');
-                            const color = result.text === 'WIN' ? '#9CE800' : (result.text === 'DRAW' ? '#FF9800' : '#F44336');
-                            return `<div style="text-align:center;"><span class="iconify" data-icon="${icon}" style="font-size:24px; color:${color}"></span><div style="font-size:9px;">${result.text}</div></div>`;
-                        }).join('')}
-                        ${pastMatches.length === 0 ? '<div class="empty-state">No recent matches</div>' : ''}
+            <div class="section-card">
+                <div class="section-title"><span class="iconify" data-icon="mdi:trophy"></span> RANKINGS</div>
+                <div class="rank-item"><span class="rank-name"><span class="iconify" data-icon="mdi:crown"></span> ORAFUT GURU (POINTS)</span><span class="rank-value">${rankPoints}</span></div>
+                <div class="rank-item"><span class="rank-name"><span class="iconify" data-icon="mdi:gamepad-variant"></span> ORAFUT GAMER (SCORE)</span><span class="rank-value">${rankScore}</span></div>
+                <div class="rank-item"><span class="rank-name"><span class="iconify" data-icon="mdi:chart-line"></span> PREDICTION ACCURACY</span><span class="rank-value">${stats.accuracy}%</span></div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div></div>
+                <div class="list-container">${pendingMatches.length === 0 ? '<div class="empty-state">No pending matches</div>' : pendingMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result result-pending">PENDING</div></div>`).join('')}</div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div></div>
+                <div class="list-container">${pastMatches.length === 0 ? '<div class="empty-state">No past predictions</div>' : pastMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result ${v.isWin ? 'result-win' : 'result-loss'}">${v.isWin ? 'WON +10' : 'LOST'}</div></div>`).join('')}</div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:shield-star"></span> TEAMS YOU FOLLOW</div>
+                    <div class="header-buttons">
+                        <button id="addTeamSmallBtn" class="add-team-small"><span class="iconify" data-icon="mdi:plus"></span> ADD</button>
+                        <span id="openSettingsBtn" class="settings-icon"><span class="iconify" data-icon="mdi:cog"></span></span>
                     </div>
                 </div>
+                <div class="list-container">${teamUpcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches for followed teams</div>' : teamUpcomingMatches.map(m => `<div class="match-row" data-match-id="${m.id}"><div class="match-team"><span class="iconify" data-icon="mdi:soccer"></span> ${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div><div class="match-result result-upcoming">UPCOMING</div></div>`).join('')}</div>
             </div>
+            
+            <button id="logoutBottomBtn" class="logout-bottom-btn"><span class="iconify" data-icon="mdi:logout"></span> LOGOUT</button>
         `;
         
-        document.getElementById('followTeamBtn')?.addEventListener('click', toggleFollow);
-        document.querySelectorAll('.tab-item').forEach(tab => {
-            tab.addEventListener('click', () => {
-                currentTab = tab.dataset.tab;
-                renderTeamPage();
+        if(isEditMode){
+            document.getElementById('saveNameBtn')?.addEventListener('click', async () => {
+                const newName = document.getElementById('editUsernameInput')?.value.trim();
+                if(newName && newName !== currentUserData.username){
+                    await updateUsername(newName);
+                }
+                isEditMode = false;
+                renderDashboard();
             });
-        });
-        document.querySelectorAll('.match-row[data-match-id]').forEach(el => {
-            el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`);
-        });
+        }
+        document.getElementById('editNameBtn')?.addEventListener('click', toggleEditMode);
+        document.getElementById('logoutBottomBtn')?.addEventListener('click', logout);
+        document.getElementById('addTeamSmallBtn')?.addEventListener('click', () => openAddTeamModal());
+        document.getElementById('openSettingsBtn')?.addEventListener('click', () => openUnfollowModal());
+        document.querySelectorAll('.match-row[data-match-id]').forEach(el => { el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`); });
     }
+    
+    function openAddTeamModal(){
+        const modal = document.getElementById('addTeamModal');
+        const searchInput = document.getElementById('teamSearchInput');
+        const resultsDiv = document.getElementById('teamSearchResults');
+        modal.style.display = 'flex';
+        searchInput.value = '';
+        resultsDiv.innerHTML = '<div class="empty-state">Type to search teams...</div>';
+        
+        let searchTimeout;
+        searchInput.oninput = (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const term = e.target.value.toLowerCase().trim();
+                if(term.length < 2){ resultsDiv.innerHTML = '<div class="empty-state">Type at least 2 characters</div>'; return; }
+                const filtered = allTeams.filter(t => t.name?.toLowerCase().includes(term)).slice(0, 15);
+                if(filtered.length === 0){ resultsDiv.innerHTML = '<div class="empty-state">No teams found</div>'; return; }
+                resultsDiv.innerHTML = filtered.map(team => `
+                    <div class="team-search-result">
+                        <div class="team-search-info">
+                            <img src="${team.logoUrl || 'https://placehold.co/40'}" class="team-search-logo" onerror="this.src='https://placehold.co/40'">
+                            <span class="team-search-name">${escapeHtml(team.name)}</span>
+                        </div>
+                        <button class="follow-modal-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">FOLLOW</button>
+                    </div>
+                `).join('');
+                document.querySelectorAll('.follow-modal-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => { await followTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; });
+                });
+            }, 300);
+        };
+    }
+    
+    function openUnfollowModal(){
+        const modal = document.getElementById('unfollowModal');
+        const listDiv = document.getElementById('unfollowTeamsList');
+        if(followedTeams.length === 0){ listDiv.innerHTML = '<div class="empty-state">No teams followed</div>'; }
+        else {
+            listDiv.innerHTML = followedTeams.map(team => `
+                <div class="team-follow-row">
+                    <div class="team-follow-info">
+                        <img src="${team.logoUrl || team.logo || 'https://placehold.co/40'}" class="team-follow-logo" onerror="this.src='https://placehold.co/40'">
+                        <span class="team-follow-name">${escapeHtml(team.name)}</span>
+                    </div>
+                    <button class="follow-action-btn unfollow" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">UNFOLLOW</button>
+                </div>
+            `).join('');
+            document.querySelectorAll('.follow-action-btn').forEach(btn => {
+                btn.addEventListener('click', async () => { await unfollowTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; renderDashboard(); });
+            });
+        }
+        modal.style.display = 'flex';
+    }
+    
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('addTeamModal').style.display = 'none');
+    document.getElementById('closeUnfollowModalBtn')?.addEventListener('click', () => document.getElementById('unfollowModal').style.display = 'none');
+    window.onclick = (e) => { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; };
     
     function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
     
+    document.querySelectorAll('.nav-item-float').forEach(item => { item.addEventListener('click', () => { const nav = item.dataset.nav; if(nav === 'home') window.location.href = 'index.html'; else if(nav === 'games') window.location.href = 'game.html'; }); });
+    
     document.getElementById('backBtn')?.addEventListener('click', () => window.location.href = 'index.html');
     
-    document.querySelectorAll('.nav-item-float').forEach(item => {
-        item.addEventListener('click', () => {
-            const nav = item.dataset.nav;
-            if(nav === 'home') window.location.href = 'index.html';
-            else if(nav === 'games') window.location.href = 'game.html';
-            else if(nav === 'account') window.location.href = 'profile.html';
-        });
-    });
-    
     auth.onAuthStateChanged(async (user) => {
-        currentUser = user;
-        await loadLeagues();
-        await loadTeam();
+        if(user){ const userDoc = await db.collection('users').doc(user.uid).get(); currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email }; if(!currentUserData.username) currentUserData.username = user.displayName || generateRandomUsername(); if(!currentUserData.followedTeams) currentUserData.followedTeams = []; await loadUserVotes(); await loadFollowedTeams(); await loadAllMatches(); await loadAllTeams(); await loadLeaderboard(); renderDashboard(); }
+        else { renderAuthScreen(); }
     });
 })();
 </script>

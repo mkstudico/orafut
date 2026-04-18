@@ -751,6 +751,29 @@
     localStorage.setItem('anonymousId', anonymousId);
   }
 
+  // Navigate to game - supports paths with directories like "games/logo.html"
+  function navigateToGame(gameLocation) {
+    if (!gameLocation) {
+      showToast('Game location not found');
+      return;
+    }
+    
+    // Ensure the location has .html extension if not present
+    let targetUrl = gameLocation;
+    if (!targetUrl.endsWith('.html')) {
+      targetUrl = targetUrl + '.html';
+    }
+    
+    // Check if the path contains a directory separator
+    if (targetUrl.includes('/')) {
+      // Path already has directory structure, use as-is
+      window.location.href = targetUrl;
+    } else {
+      // Simple filename, assume in same directory
+      window.location.href = targetUrl;
+    }
+  }
+
   // Track game click (increment plays whether signed in or not)
   async function trackGameClick(gameId, gameLocation) {
     try {
@@ -911,7 +934,7 @@
         const gameLocation = card.dataset.gameLocation;
         if (gameId && gameLocation) {
           trackGameClick(gameId, gameLocation);
-          window.location.href = gameLocation + '.html';
+          navigateToGame(gameLocation);
         }
       });
     });
@@ -923,7 +946,7 @@
         const gameLocation = btn.dataset.gameLocation;
         if (gameId && gameLocation) {
           trackGameClick(gameId, gameLocation);
-          window.location.href = gameLocation + '.html';
+          navigateToGame(gameLocation);
         }
       });
     });
@@ -965,7 +988,7 @@
           const gameLocation = item.dataset.gameLocation;
           if (gameId && gameLocation) {
             trackGameClick(gameId, gameLocation);
-            window.location.href = gameLocation + '.html';
+            navigateToGame(gameLocation);
           }
           searchDropdown.classList.remove('active');
           searchInput.value = '';

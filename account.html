@@ -9,98 +9,98 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #293136; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Poppins', sans-serif; }
-    
-    /* Sharp corners - no border radius on phone frame */
     .mobile-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
-    
-    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --left-tab-bg: #2D3337; --white: #FFFFFF; --black: #1A1A1A; --bottom-nav-height: 70px; }
-    
+    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --bottom-nav-height: 70px; }
     .main-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); flex-shrink: 0; }
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .menu-btn { background: transparent; border: 2px solid var(--vibrant-green); color: var(--vibrant-green); font-size: 18px; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
     .brand { font-size: 24px; font-weight: 800; font-style: italic; text-transform: uppercase; }
-    .brand .ora { color: var(--white); } .brand .fut { color: var(--vibrant-green); }
-    
+    .brand .ora { color: white; } .brand .fut { color: var(--vibrant-green); }
     .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; scrollbar-width: thin; }
     .content-area::-webkit-scrollbar { width: 3px; }
     
-    /* Auth Forms - Text tabs with underline */
+    /* Auth Forms */
     .auth-container { display: flex; flex-direction: column; gap: 24px; }
     .auth-tabs { display: flex; gap: 32px; justify-content: center; margin-bottom: 8px; border-bottom: 2px solid #E0E0E0; }
-    .auth-tab { text-align: center; padding: 12px 0; font-weight: 700; font-size: 16px; cursor: pointer; background: transparent; color: #888; position: relative; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+    .auth-tab { text-align: center; padding: 12px 0; font-weight: 700; font-size: 16px; cursor: pointer; background: transparent; color: #888; position: relative; text-transform: uppercase; }
     .auth-tab.active { color: var(--vibrant-green); }
     .auth-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--vibrant-green); }
     .auth-card { background: white; padding: 24px 20px; border: 2px solid #E0E0E0; border-radius: 8px; }
     .input-group { margin-bottom: 20px; }
-    .input-group label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .input-group input { width: 100%; padding: 14px 16px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; background: white; font-weight: 500; }
+    .input-group label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+    .input-group input { width: 100%; padding: 14px 16px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; background: white; }
     .input-group input:focus { border-color: var(--vibrant-green); }
     .auth-btn { width: 100%; background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 8px; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; transition: 0.1s; }
     .auth-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #B0B0B0; }
-    .auth-switch-text { text-align: center; margin-top: 16px; font-size: 12px; color: #64748b; font-weight: 500; }
+    .auth-switch-text { text-align: center; margin-top: 16px; font-size: 12px; color: #64748b; }
     .auth-switch-text span { color: var(--vibrant-green); font-weight: 800; cursor: pointer; text-transform: uppercase; }
     
-    /* Dashboard Styles */
+    /* Dashboard */
     .dashboard-header { display: flex; align-items: center; gap: 16px; background: white; padding: 16px; border: 2px solid #E0E0E0; border-radius: 8px; margin-bottom: 16px; }
     .avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #9CE800, #6B9E00); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .avatar .iconify { font-size: 32px; color: white; }
     .user-info h2 { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
     .user-info p { font-size: 11px; color: #64748b; margin-top: 4px; }
-    .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-left: 8px; cursor: pointer; box-shadow: 0 2px 0 #B0B0B0; text-transform: uppercase; }
-    .edit-name-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #B0B0B0; }
+    .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-left: 8px; cursor: pointer; box-shadow: 0 2px 0 #B0B0B0; }
     
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
     .stat-card { background: white; padding: 14px; text-align: center; border: 2px solid #E0E0E0; border-radius: 8px; }
     .stat-value { font-size: 24px; font-weight: 800; color: var(--vibrant-green); }
-    .stat-label { font-size: 9px; color: #64748b; margin-top: 4px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .stat-label { font-size: 9px; color: #64748b; margin-top: 4px; text-transform: uppercase; font-weight: 700; }
     
     .section-card { background: white; border: 2px solid #E0E0E0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .settings-icon { cursor: pointer; color: #64748b; transition: 0.1s; }
+    .settings-icon:hover { color: var(--vibrant-green); }
     
-    .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eef2f6; }
-    .rank-name { font-weight: 600; font-size: 12px; }
-    .rank-value { font-weight: 800; color: var(--vibrant-green); font-size: 14px; }
-    
-    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f6; cursor: pointer; }
+    .list-container { max-height: 220px; overflow-y: auto; }
+    .list-container::-webkit-scrollbar { width: 3px; }
+    .rank-item, .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f6; }
+    .match-row { cursor: pointer; }
     .match-row:active { background: #f8fafc; }
     .match-team { font-weight: 600; font-size: 12px; text-transform: uppercase; flex: 1; }
     .match-result { font-size: 9px; font-weight: 700; padding: 4px 10px; border-radius: 8px; white-space: nowrap; margin-left: 8px; }
     .result-win { background: #9CE80020; color: #5a8a00; border: 1px solid #9CE800; }
     .result-loss { background: #F4433620; color: #c62828; border: 1px solid #F44336; }
-    .result-draw { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
+    .result-pending { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
     .result-upcoming { background: #f1f5f9; color: #64748b; border: 1px solid #D0D0D0; }
+    
+    .team-follow-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eef2f6; }
+    .team-follow-name { font-weight: 600; font-size: 12px; text-transform: uppercase; }
+    .unfollow-btn { background: #F4433620; border: 1px solid #F44336; color: #c62828; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; }
     
     .logout-btn { background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; transition: 0.1s; margin-top: 8px; }
     .logout-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #B0B0B0; }
     
-    .empty-state { text-align: center; padding: 30px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .loading-spinner { text-align: center; padding: 40px; color: var(--vibrant-green); }
+    .empty-state { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
     
-    /* Bottom Navigation */
+    /* Modal Popup */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 90%; max-width: 380px; border-radius: 12px; overflow: hidden; border: 2px solid var(--vibrant-green); }
+    .modal-header { background: var(--header-bg); padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { color: white; font-size: 16px; font-weight: 800; text-transform: uppercase; }
+    .close-modal { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+    .modal-body { padding: 16px; max-height: 400px; overflow-y: auto; }
+    .search-teams-input { width: 100%; padding: 12px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .team-search-result { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eef2f6; }
+    .team-search-info { display: flex; align-items: center; gap: 12px; }
+    .team-search-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #f1f5f9; }
+    .team-search-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+    .follow-team-btn { background: var(--vibrant-green); border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+    
+    .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
     .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--header-bg); display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid var(--vibrant-green); z-index: 100; height: var(--bottom-nav-height); }
     .nav-item-float { display: flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; color: #999; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
     .nav-item-float .iconify { font-size: 22px; }
-    .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+    .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
     .nav-item-float.active { background: var(--vibrant-green); color: #000; }
   </style>
 </head>
 <body>
 <div class="mobile-container">
   <div class="toast-notify" id="notificationToast"><span class="iconify" data-icon="mdi:information-outline"></span><span id="toastMessage"></span></div>
-  
-  <header class="main-header">
-    <div class="header-left">
-      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
-    </div>
-    <div style="width: 50px;"></div>
-  </header>
-  
-  <div class="content-area" id="contentArea">
-    <div id="authContainer"></div>
-    <div id="dashboardContainer" style="display:none;"></div>
-  </div>
-  
+  <header class="main-header"><div class="header-left"><div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div></div><div style="width:50px;"></div></header>
+  <div class="content-area" id="contentArea"><div id="authContainer"></div><div id="dashboardContainer" style="display:none;"></div></div>
   <div class="bottom-nav-float">
     <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
     <button class="nav-item-float" data-nav="debate"><span class="iconify" data-icon="mdi:chat-outline"></span><span>DEBATE</span></button>
@@ -108,19 +108,15 @@
   </div>
 </div>
 
+<div id="addTeamModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h3>➕ ADD TEAM</h3><button class="close-modal" id="closeModalBtn">✕</button></div><div class="modal-body"><input type="text" id="teamSearchInput" class="search-teams-input" placeholder="🔍 Search teams..."><div id="teamSearchResults"></div></div></div></div>
+<div id="unfollowModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h3>⚙️ MANAGE TEAMS</h3><button class="close-modal" id="closeUnfollowModalBtn">✕</button></div><div class="modal-body" id="unfollowTeamsList"></div></div></div>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script>
 (function(){
-    const firebaseConfig = {
-        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
-        authDomain: "orafut-58b5f.firebaseapp.com",
-        projectId: "orafut-58b5f",
-        storageBucket: "orafut-58b5f.firebasestorage.app",
-        messagingSenderId: "500581059835",
-        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc", authDomain: "orafut-58b5f.firebaseapp.com", projectId: "orafut-58b5f", storageBucket: "orafut-58b5f.firebasestorage.app", messagingSenderId: "500581059835", appId: "1:500581059835:web:7be0994b65ff21dae0b45e" };
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
@@ -143,84 +139,41 @@
     
     function phoneToEmail(phone){ return phone.replace(/[^0-9]/g, '') + '@orafut.user'; }
     function emailToPhone(email){ return email.replace('@orafut.user', ''); }
-    
     function generateRandomUsername(){
-        const prefixes = ['user', 'fan', 'ora', 'fut', 'soccer', 'goal', 'legend', 'pro', 'winner', 'champ', 'ace', 'elite'];
+        const prefixes = ['user', 'fan', 'ora', 'fut', 'soccer', 'goal', 'legend', 'pro', 'winner', 'champ'];
         const randomNum = Math.floor(Math.random() * 10000);
-        const randomSuffix = Math.random().toString(36).substr(2, 3);
-        return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${randomNum}${randomSuffix}`;
+        return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${randomNum}`;
     }
     
-    // Render Auth Screen - Text tabs with underline
     function renderAuthScreen(){
         const container = document.getElementById('authContainer');
         container.style.display = 'block';
         document.getElementById('dashboardContainer').style.display = 'none';
-        
         let activeTab = 'signup';
-        
         function renderForm(){
             const isSignup = activeTab === 'signup';
-            container.innerHTML = `
-                <div class="auth-container">
-                    <div class="auth-tabs">
-                        <div class="auth-tab ${activeTab === 'signup' ? 'active' : ''}" data-tab="signup">SIGN UP</div>
-                        <div class="auth-tab ${activeTab === 'login' ? 'active' : ''}" data-tab="login">LOGIN</div>
-                    </div>
-                    <div class="auth-card">
-                        <div class="input-group"><label>📱 PHONE NUMBER</label><input type="tel" id="authPhone" placeholder="e.g., 0712345678" value="" autocomplete="off"></div>
-                        <div class="input-group"><label>🔒 PIN (4-6 DIGITS)</label><input type="password" id="authPin" placeholder="Enter PIN" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></div>
-                        <button id="authSubmitBtn" class="auth-btn">${isSignup ? '🚀 CREATE ACCOUNT' : '🔐 LOGIN'}</button>
-                        <div class="auth-switch-text">${isSignup ? 'Already have an account?' : 'New to ORAFUT?'} <span id="switchTabBtn">${isSignup ? 'LOGIN' : 'SIGN UP'}</span></div>
-                    </div>
-                </div>
-            `;
-            
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.addEventListener('click', () => { activeTab = tab.dataset.tab; renderForm(); });
-            });
+            container.innerHTML = `<div class="auth-container"><div class="auth-tabs"><div class="auth-tab ${activeTab === 'signup' ? 'active' : ''}" data-tab="signup">SIGN UP</div><div class="auth-tab ${activeTab === 'login' ? 'active' : ''}" data-tab="login">LOGIN</div></div><div class="auth-card"><div class="input-group"><label>📱 PHONE NUMBER</label><input type="tel" id="authPhone" placeholder="e.g., 0712345678"></div><div class="input-group"><label>🔒 PIN (4-6 DIGITS)</label><input type="password" id="authPin" placeholder="Enter PIN" maxlength="6" inputmode="numeric"></div><button id="authSubmitBtn" class="auth-btn">${isSignup ? '🚀 CREATE ACCOUNT' : '🔐 LOGIN'}</button><div class="auth-switch-text">${isSignup ? 'Already have an account?' : 'New to ORAFUT?'} <span id="switchTabBtn">${isSignup ? 'LOGIN' : 'SIGN UP'}</span></div></div></div>`;
+            document.querySelectorAll('.auth-tab').forEach(tab => { tab.addEventListener('click', () => { activeTab = tab.dataset.tab; renderForm(); }); });
             document.getElementById('switchTabBtn')?.addEventListener('click', () => { activeTab = activeTab === 'signup' ? 'login' : 'signup'; renderForm(); });
             document.getElementById('authSubmitBtn')?.addEventListener('click', handleAuth);
         }
-        
         async function handleAuth(){
             const phone = document.getElementById('authPhone').value.trim();
             const pin = document.getElementById('authPin').value.trim();
             if(!phone || !pin){ showToast("Please enter phone number and PIN", true); return; }
             if(pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin)){ showToast("PIN must be 4-6 digits", true); return; }
             const email = phoneToEmail(phone);
-            
             if(activeTab === 'signup'){
                 const username = generateRandomUsername();
                 try{
                     const userCred = await auth.createUserWithEmailAndPassword(email, pin);
                     await userCred.user.updateProfile({ displayName: username });
-                    await db.collection('users').doc(userCred.user.uid).set({
-                        uid: userCred.user.uid,
-                        phoneNumber: phone,
-                        username: username,
-                        displayName: username,
-                        points: 0,
-                        totalScore: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        followedTeams: [],
-                        rankPoints: 0,
-                        rankScore: 0
-                    });
+                    await db.collection('users').doc(userCred.user.uid).set({ uid: userCred.user.uid, phoneNumber: phone, username: username, displayName: username, points: 0, totalScore: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp(), followedTeams: [] });
                     showToast("Account created successfully!");
                     loadUserDashboard();
-                } catch(e){
-                    if(e.code === 'auth/email-already-in-use') showToast("Phone number already registered. Login instead.", true);
-                    else showToast(e.message || "Signup failed", true);
-                }
+                } catch(e){ if(e.code === 'auth/email-already-in-use') showToast("Phone already registered. Login instead.", true); else showToast("Signup failed", true); }
             } else {
-                try{
-                    const userCred = await auth.signInWithEmailAndPassword(email, pin);
-                    showToast("Login successful!");
-                    loadUserDashboard();
-                } catch(e){
-                    showToast("Invalid phone number or PIN", true);
-                }
+                try{ await auth.signInWithEmailAndPassword(email, pin); showToast("Login successful!"); loadUserDashboard(); } catch(e){ showToast("Invalid phone or PIN", true); }
             }
         }
         renderForm();
@@ -229,40 +182,19 @@
     async function loadUserDashboard(){
         const user = auth.currentUser;
         if(!user){ renderAuthScreen(); return; }
-        
         const userDoc = await db.collection('users').doc(user.uid).get();
         if(!userDoc.exists){
             const randomName = generateRandomUsername();
-            await db.collection('users').doc(user.uid).set({
-                uid: user.uid,
-                phoneNumber: emailToPhone(user.email || ''),
-                username: randomName,
-                displayName: randomName,
-                points: 0,
-                totalScore: 0,
-                followedTeams: [],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            await db.collection('users').doc(user.uid).set({ uid: user.uid, phoneNumber: emailToPhone(user.email || ''), username: randomName, displayName: randomName, points: 0, totalScore: 0, followedTeams: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         }
         currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email };
         if(!currentUserData.username) currentUserData.username = currentUserData.displayName || generateRandomUsername();
-        
-        await Promise.all([
-            loadUserVotes(),
-            loadFollowedTeams(),
-            loadAllMatches(),
-            loadAllTeams(),
-            loadLeaderboard()
-        ]);
+        if(!currentUserData.followedTeams) currentUserData.followedTeams = [];
+        await Promise.all([loadUserVotes(), loadFollowedTeams(), loadAllMatches(), loadAllTeams(), loadLeaderboard()]);
         renderDashboard();
     }
     
-    async function loadUserVotes(){
-        const snap = await db.collection('votes').where('userId', '==', currentUserData.uid).get();
-        userVotes = [];
-        snap.forEach(doc => userVotes.push({ id: doc.id, ...doc.data() }));
-    }
-    
+    async function loadUserVotes(){ const snap = await db.collection('votes').where('userId', '==', currentUserData.uid).get(); userVotes = []; snap.forEach(doc => userVotes.push({ id: doc.id, ...doc.data() })); }
     async function loadFollowedTeams(){
         const teams = currentUserData.followedTeams || [];
         followedTeams = [];
@@ -271,196 +203,129 @@
             if(teamDoc.exists) followedTeams.push({ id: teamDoc.id, ...teamDoc.data() });
         }
     }
-    
-    async function loadAllMatches(){
-        const snap = await db.collection('matches').get();
-        allMatches = [];
-        snap.forEach(doc => allMatches.push({ id: doc.id, ...doc.data() }));
-    }
-    
-    async function loadAllTeams(){
-        const snap = await db.collection('teams').limit(30).get();
-        allTeams = [];
-        snap.forEach(doc => allTeams.push({ id: doc.id, ...doc.data() }));
-    }
-    
-    async function loadLeaderboard(){
-        const snap = await db.collection('users').orderBy('points', 'desc').limit(20).get();
-        leaderboardUsers = [];
-        snap.forEach(doc => leaderboardUsers.push({ id: doc.id, ...doc.data() }));
-    }
+    async function loadAllMatches(){ const snap = await db.collection('matches').get(); allMatches = []; snap.forEach(doc => allMatches.push({ id: doc.id, ...doc.data() })); }
+    async function loadAllTeams(){ const snap = await db.collection('teams').get(); allTeams = []; snap.forEach(doc => allTeams.push({ id: doc.id, ...doc.data() })); }
+    async function loadLeaderboard(){ const snap = await db.collection('users').orderBy('points', 'desc').limit(20).get(); leaderboardUsers = []; snap.forEach(doc => leaderboardUsers.push({ id: doc.id, ...doc.data() })); }
     
     function calculateUserStats(){
-        let correctPredictions = 0;
-        let totalPredictions = userVotes.length;
-        let totalPoints = 0;
-        
+        let correct = 0, total = userVotes.length, points = 0;
         userVotes.forEach(vote => {
             const match = allMatches.find(m => m.id === vote.matchId);
             if(match && match.status === 'ended' && match.winner){
-                const isCorrect = vote.voteType === match.winner;
-                if(isCorrect) { correctPredictions++; totalPoints += 10; }
+                if(vote.voteType === match.winner) { correct++; points += 10; }
             }
         });
-        
-        const points = Math.max(currentUserData.points || 0, totalPoints);
-        const accuracy = totalPredictions > 0 ? Math.round((correctPredictions / totalPredictions) * 100) : 0;
-        return { points, accuracy, correctPredictions, totalPredictions, totalScore: currentUserData.totalScore || 0 };
+        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+        return { points: Math.max(currentUserData.points || 0, points), accuracy, totalScore: currentUserData.totalScore || 0 };
     }
     
-    function getUserRank(type){
-        const sorted = [...leaderboardUsers].sort((a,b) => (type === 'points' ? (b.points || 0) - (a.points || 0) : (b.totalScore || 0) - (a.totalScore || 0)));
-        const index = sorted.findIndex(u => u.uid === currentUserData.uid);
-        return index !== -1 ? `#${index + 1}` : '#--';
-    }
-    
-    async function updateUsername(newName){
-        if(!newName || newName.length < 2) return showToast("Username too short", true);
-        const user = auth.currentUser;
-        await user.updateProfile({ displayName: newName });
-        await db.collection('users').doc(currentUserData.uid).update({ username: newName, displayName: newName });
-        currentUserData.username = newName;
-        currentUserData.displayName = newName;
-        showToast("Username updated!");
-        renderDashboard();
-    }
+    async function updateUsername(newName){ if(!newName || newName.length < 2) return showToast("Too short", true); await auth.currentUser.updateProfile({ displayName: newName }); await db.collection('users').doc(currentUserData.uid).update({ username: newName, displayName: newName }); currentUserData.username = newName; showToast("Username updated!"); renderDashboard(); }
+    async function followTeam(teamId, teamName){ if(currentUserData.followedTeams.includes(teamId)){ showToast("Already following", true); return; } const newList = [...currentUserData.followedTeams, teamId]; await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Now following ${teamName}`); }
+    async function unfollowTeam(teamId, teamName){ const newList = currentUserData.followedTeams.filter(id => id !== teamId); await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Unfollowed ${teamName}`); }
+    async function logout(){ await auth.signOut(); currentUserData = null; renderAuthScreen(); showToast("Logged out successfully"); }
     
     function renderDashboard(){
         const container = document.getElementById('dashboardContainer');
-        const authContainer = document.getElementById('authContainer');
-        authContainer.style.display = 'none';
+        document.getElementById('authContainer').style.display = 'none';
         container.style.display = 'block';
-        
         const stats = calculateUserStats();
-        const rankPoints = getUserRank('points');
-        const rankScore = getUserRank('totalScore');
         
-        const votedMatches = userVotes.map(vote => {
+        // PENDING MATCHES (voted but not ended)
+        const pendingMatches = userVotes.map(vote => {
             const match = allMatches.find(m => m.id === vote.matchId);
-            if(!match) return null;
-            const isCorrect = match.status === 'ended' && match.winner === vote.voteType;
-            return { match, voteType: vote.voteType, isCorrect, points: isCorrect ? 10 : 0 };
-        }).filter(v => v);
+            if(!match || match.status === 'ended') return null;
+            return { match, voteType: vote.voteType };
+        }).filter(v => v).slice(0, 4);
         
-        const upcomingMatches = votedMatches.filter(v => v.match.status !== 'ended').slice(0, 5);
-        const pastMatches = votedMatches.filter(v => v.match.status === 'ended').slice(0, 5);
+        // PAST PREDICTIONS (ended with result)
+        const pastMatches = userVotes.map(vote => {
+            const match = allMatches.find(m => m.id === vote.matchId);
+            if(!match || match.status !== 'ended') return null;
+            const isWin = match.winner === vote.voteType;
+            return { match, voteType: vote.voteType, isWin, result: match.winner };
+        }).filter(v => v).slice(0, 4);
         
-        function getResultClass(v){
-            if(v.match.status !== 'ended') return 'result-upcoming';
-            if(v.isCorrect) return 'result-win';
-            if(v.match.winner === 'draw') return 'result-draw';
-            return 'result-loss';
-        }
-        
-        function getResultText(v){
-            if(v.match.status !== 'ended') return `Pick: ${v.voteType === 'team1' ? v.match.teamAName : (v.voteType === 'team2' ? v.match.teamBName : 'Draw')}`;
-            if(v.isCorrect) return '✓ WIN +10';
-            if(v.match.winner === 'draw') return 'DRAW';
-            return '✗ LOSS';
-        }
+        // TEAMS FOLLOWED with upcoming matches (not voted yet)
+        const followedTeamIds = new Set(followedTeams.map(t => t.id));
+        const teamUpcomingMatches = allMatches.filter(m => m.status !== 'ended' && (followedTeamIds.has(m.teamAId) || followedTeamIds.has(m.teamBId) || followedTeams.some(t => t.name === m.teamAName || t.name === m.teamBName))).slice(0, 4);
         
         container.innerHTML = `
-            <div class="dashboard-header">
-                <div class="avatar"><span class="iconify" data-icon="mdi:account-circle"></span></div>
-                <div class="user-info">
-                    <h2>${escapeHtml(currentUserData.username || 'User')} <button class="edit-name-btn" id="editNameBtn">✏️ EDIT</button></h2>
-                    <p>📱 ${currentUserData.phoneNumber || emailToPhone(currentUserData.email || '')}</p>
-                </div>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value">${stats.points}</div><div class="stat-label">POINTS</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.totalScore}</div><div class="stat-label">SCORE</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">ACCURACY</div></div>
-            </div>
-            
-            <div class="section-card">
-                <div class="section-title"><span class="iconify" data-icon="mdi:trophy"></span> RANKINGS</div>
-                <div class="rank-item"><span class="rank-name">🏆 ORAFUT GURU (POINTS)</span><span class="rank-value">${rankPoints}</span></div>
-                <div class="rank-item"><span class="rank-name">🎮 ORAFUT GAMER (SCORE)</span><span class="rank-value">${rankScore}</span></div>
-                <div class="rank-item"><span class="rank-name">📊 PREDICTION ACCURACY</span><span class="rank-value">${stats.accuracy}%</span></div>
-            </div>
-            
-            <div class="section-card">
-                <div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div>
-                ${upcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches you voted on</div>' : 
-                    upcomingMatches.map(v => `
-                        <div class="match-row" data-match-id="${v.match.id}">
-                            <div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div>
-                            <div class="match-result ${getResultClass(v)}">${getResultText(v)}</div>
-                        </div>
-                    `).join('')}
-            </div>
-            
-            <div class="section-card">
-                <div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div>
-                ${pastMatches.length === 0 ? '<div class="empty-state">No past predictions yet</div>' : 
-                    pastMatches.map(v => `
-                        <div class="match-row" data-match-id="${v.match.id}">
-                            <div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div>
-                            <div class="match-result ${getResultClass(v)}">${getResultText(v)}</div>
-                        </div>
-                    `).join('')}
-            </div>
-            
-            <div class="section-card">
-                <div class="section-title"><span class="iconify" data-icon="mdi:shield-star"></span> TEAMS YOU FOLLOW</div>
-                ${followedTeams.length === 0 ? '<div class="empty-state">No teams followed yet. Follow teams from their profile!</div>' : 
-                    followedTeams.map(team => `
-                        <div class="match-row" data-team-id="${team.id}">
-                            <div class="match-team">⚽ ${escapeHtml(team.name || 'Unknown')}</div>
-                            <div class="match-result result-upcoming">VIEW →</div>
-                        </div>
-                    `).join('')}
-            </div>
-            
+            <div class="dashboard-header"><div class="avatar"><span class="iconify" data-icon="mdi:account-circle"></span></div><div class="user-info"><h2>${escapeHtml(currentUserData.username)} <button class="edit-name-btn" id="editNameBtn">✏️ EDIT</button></h2><p>📱 ${currentUserData.phoneNumber || emailToPhone(currentUserData.email || '')}</p></div></div>
+            <div class="stats-grid"><div class="stat-card"><div class="stat-value">${stats.points}</div><div class="stat-label">POINTS</div></div><div class="stat-card"><div class="stat-value">${stats.totalScore}</div><div class="stat-label">SCORE</div></div><div class="stat-card"><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">ACCURACY</div></div></div>
+            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div></div><div class="list-container">${pendingMatches.length === 0 ? '<div class="empty-state">No pending matches</div>' : pendingMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result result-pending">PENDING</div></div>`).join('')}</div></div>
+            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div></div><div class="list-container">${pastMatches.length === 0 ? '<div class="empty-state">No past predictions</div>' : pastMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result ${v.isWin ? 'result-win' : 'result-loss'}">${v.isWin ? 'WON +10' : 'LOST'}</div></div>`).join('')}</div></div>
+            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:shield-star"></span> TEAMS YOU FOLLOW</div><span class="settings-icon" id="openSettingsBtn"><span class="iconify" data-icon="mdi:cog"></span></span></div><div class="list-container">${teamUpcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches for followed teams</div>' : teamUpcomingMatches.map(m => `<div class="match-row" data-match-id="${m.id}"><div class="match-team">⚽ ${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div><div class="match-result result-upcoming">UPCOMING</div></div>`).join('')}</div><button id="addTeamBtn" style="margin-top:12px; width:100%; background:#F0F0F0; border:2px solid #D0D0D0; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">➕ ADD TEAM</button></div>
             <button id="logoutBtn" class="logout-btn">🚪 LOGOUT</button>
         `;
         
-        document.getElementById('editNameBtn')?.addEventListener('click', async () => {
-            const newName = prompt("Enter new username:", currentUserData.username);
-            if(newName && newName.trim()) await updateUsername(newName.trim());
-        });
-        
-        document.querySelectorAll('.match-row[data-match-id]').forEach(el => {
-            el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`);
-        });
-        document.querySelectorAll('.match-row[data-team-id]').forEach(el => {
-            el.addEventListener('click', () => window.location.href = `profile.html?id=${el.dataset.teamId}`);
-        });
-        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-            await auth.signOut();
-            currentUserData = null;
-            renderAuthScreen();
-        });
+        document.getElementById('editNameBtn')?.addEventListener('click', async () => { const newName = prompt("Enter new username:", currentUserData.username); if(newName) await updateUsername(newName.trim()); });
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        document.getElementById('addTeamBtn')?.addEventListener('click', () => openAddTeamModal());
+        document.getElementById('openSettingsBtn')?.addEventListener('click', () => openUnfollowModal());
+        document.querySelectorAll('.match-row[data-match-id]').forEach(el => { el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`); });
     }
+    
+    function openAddTeamModal(){
+        const modal = document.getElementById('addTeamModal');
+        const searchInput = document.getElementById('teamSearchInput');
+        const resultsDiv = document.getElementById('teamSearchResults');
+        modal.style.display = 'flex';
+        searchInput.value = '';
+        resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">Type to search teams...</div>';
+        
+        let searchTimeout;
+        searchInput.oninput = (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const term = e.target.value.toLowerCase().trim();
+                if(term.length < 2){ resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">Type at least 2 characters</div>'; return; }
+                const filtered = allTeams.filter(t => t.name?.toLowerCase().includes(term)).slice(0, 15);
+                if(filtered.length === 0){ resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;">No teams found</div>'; return; }
+                resultsDiv.innerHTML = filtered.map(team => `
+                    <div class="team-search-result">
+                        <div class="team-search-info">
+                            <img src="${team.logo || team.imageUrl || 'https://placehold.co/40'}" class="team-search-logo" onerror="this.src='https://placehold.co/40'">
+                            <span class="team-search-name">${escapeHtml(team.name)}</span>
+                        </div>
+                        <button class="follow-team-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">FOLLOW</button>
+                    </div>
+                `).join('');
+                document.querySelectorAll('.follow-team-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => { await followTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; });
+                });
+            }, 300);
+        };
+    }
+    
+    function openUnfollowModal(){
+        const modal = document.getElementById('unfollowModal');
+        const listDiv = document.getElementById('unfollowTeamsList');
+        if(followedTeams.length === 0){ listDiv.innerHTML = '<div class="empty-state">No teams followed</div>'; }
+        else {
+            listDiv.innerHTML = followedTeams.map(team => `
+                <div class="team-follow-row">
+                    <span class="team-follow-name">⚽ ${escapeHtml(team.name)}</span>
+                    <button class="unfollow-btn" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name)}">UNFOLLOW</button>
+                </div>
+            `).join('');
+            document.querySelectorAll('.unfollow-btn').forEach(btn => {
+                btn.addEventListener('click', async () => { await unfollowTeam(btn.dataset.teamId, btn.dataset.teamName); modal.style.display = 'none'; renderDashboard(); });
+            });
+        }
+        modal.style.display = 'flex';
+    }
+    
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('addTeamModal').style.display = 'none');
+    document.getElementById('closeUnfollowModalBtn')?.addEventListener('click', () => document.getElementById('unfollowModal').style.display = 'none');
+    window.onclick = (e) => { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; };
     
     function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
     
-    // Bottom navigation
-    document.querySelectorAll('.nav-item-float').forEach(item => {
-        item.addEventListener('click', () => {
-            const nav = item.dataset.nav;
-            if(nav === 'home') window.location.href = 'index.html';
-            else if(nav === 'debate') window.location.href = 'debate.html';
-            else if(nav === 'account') { /* already on account page */ }
-        });
-    });
+    document.querySelectorAll('.nav-item-float').forEach(item => { item.addEventListener('click', () => { const nav = item.dataset.nav; if(nav === 'home') window.location.href = 'index.html'; else if(nav === 'debate') window.location.href = 'debate.html'; }); });
     
     auth.onAuthStateChanged(async (user) => {
-        if(user){
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email };
-            if(!currentUserData.username) currentUserData.username = user.displayName || generateRandomUsername();
-            await loadUserVotes();
-            await loadFollowedTeams();
-            await loadAllMatches();
-            await loadAllTeams();
-            await loadLeaderboard();
-            renderDashboard();
-        } else {
-            renderAuthScreen();
-        }
+        if(user){ const userDoc = await db.collection('users').doc(user.uid).get(); currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email }; if(!currentUserData.username) currentUserData.username = user.displayName || generateRandomUsername(); if(!currentUserData.followedTeams) currentUserData.followedTeams = []; await loadUserVotes(); await loadFollowedTeams(); await loadAllMatches(); await loadAllTeams(); await loadLeaderboard(); renderDashboard(); }
+        else { renderAuthScreen(); }
     });
 })();
 </script>

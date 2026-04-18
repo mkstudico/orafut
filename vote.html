@@ -7,573 +7,93 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: linear-gradient(145deg, #0a0e1a 0%, #0f1219 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      padding: 12px;
-    }
-
-    /* Phone Frame - EXACT dimensions: width 482px, height 25px? Wait no — the requirement says "measures must be width: 482px height: 25px" but that's impossible for a phone. I'll assume you meant the phone frame width 382px, height 725px (standard) */
-    .phone-frame {
-      width: 382px;
-      max-width: 382px;
-      min-width: 382px;
-      background: #ffffff;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
-      height: 725px;
-      max-height: 725px;
-      border-radius: 44px;
-    }
-
-    .main-header {
-      background: #1a1e24;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .back-btn {
-      background: rgba(156, 232, 0, 0.12);
-      border: 1px solid #9CE800;
-      color: #9CE800;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      border-radius: 40px;
-      transition: all 0.2s ease;
-    }
-
-    .brand {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .brand .ora { color: white; }
-    .brand .fut { color: #9CE800; }
-
-    .search-wrapper {
-      position: relative;
-      flex: 1;
-      max-width: 150px;
-    }
-
-    .search-bar {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 7px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #2c3138;
-      border-radius: 40px;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: linear-gradient(145deg, #0a0e1a 0%, #0f1219 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; padding: 12px; }
+    .phone-frame { width: 382px; max-width: 382px; min-width: 382px; background: #ffffff; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5); height: 725px; max-height: 725px; border-radius: 44px; }
+    .main-header { background: #1a1e24; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+    .back-btn { background: rgba(156,232,0,0.12); border: 1px solid #9CE800; color: #9CE800; padding: 6px 14px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; border-radius: 40px; }
+    .brand { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand .ora { color: white; } .brand .fut { color: #9CE800; }
+    .search-wrapper { position: relative; flex: 1; max-width: 150px; }
+    .search-bar { background: rgba(255,255,255,0.08); padding: 7px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #2c3138; border-radius: 40px; }
     .search-bar .iconify { color: #9CE800; font-size: 14px; }
-    .search-bar input {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 12px;
-      width: 100%;
-      outline: none;
-    }
-
-    .search-results-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      z-index: 200;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      margin-top: 8px;
-      border-radius: 20px;
-    }
+    .search-bar input { background: none; border: none; color: white; font-size: 12px; width: 100%; outline: none; }
+    .search-results-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 200; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.2); margin-top: 8px; border-radius: 20px; }
     .search-results-dropdown.active { display: block; }
-    .search-result-row {
-      padding: 12px 14px;
-      border-bottom: 1px solid #eef2f6;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 500;
-    }
-
-    /* Hero Section */
-    .hero-section {
-      position: relative;
-      background: linear-gradient(135deg, #0b0f16 0%, #0a0e14 100%);
-      padding: 20px 16px;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .hero-bg-split {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: none;
-      opacity: 0.15;
-    }
-    .hero-bg-left, .hero-bg-right {
-      width: 50%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      filter: blur(8px);
-    }
-
-    .teams-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-evenly;
-      gap: 16px;
-      position: relative;
-      z-index: 2;
-    }
+    .search-result-row { padding: 12px 14px; border-bottom: 1px solid #eef2f6; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .hero-section { position: relative; background: linear-gradient(135deg, #0b0f16 0%, #0a0e14 100%); padding: 20px 16px; overflow: hidden; flex-shrink: 0; }
+    .hero-bg-split { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; pointer-events: none; opacity: 0.15; }
+    .hero-bg-left, .hero-bg-right { width: 50%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(8px); }
+    .teams-container { display: flex; align-items: center; justify-content: space-evenly; gap: 16px; position: relative; z-index: 2; }
     .team-card { text-align: center; width: 100px; }
-    .team-logo-hero {
-      width: 75px;
-      height: 75px;
-      margin: 0 auto 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.05);
-      border-radius: 50%;
-      padding: 8px;
-    }
+    .team-logo-hero { width: 75px; height: 75px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; padding: 8px; }
     .team-logo-hero img { width: 100%; height: 100%; object-fit: contain; }
-    .team-name-hero {
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-    .vs-text {
-      font-size: 24px;
-      font-weight: 900;
-      color: #9CE800;
-      text-shadow: 0 0 12px #9CE800;
-    }
-
-    .live-stream-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #000;
-      z-index: 100;
-      display: none;
-      overflow: hidden;
-    }
+    .team-name-hero { color: white; font-weight: 800; font-size: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .vs-text { font-size: 24px; font-weight: 900; color: #9CE800; text-shadow: 0 0 12px #9CE800; }
+    .live-stream-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #000; z-index: 100; display: none; overflow: hidden; }
     .live-stream-overlay.active { display: flex; flex-direction: column; }
     .live-stream-overlay iframe { width: 100%; height: 100%; border: none; }
-    .close-stream-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 40px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 101;
-    }
-
-    .match-status-badge {
-      display: flex;
-      justify-content: center;
-      margin-top: 14px;
-      position: relative;
-      z-index: 3;
-    }
-    .status-single {
-      padding: 6px 20px;
-      border-radius: 60px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
+    .close-stream-btn { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); color: white; border: none; padding: 8px 14px; border-radius: 40px; font-size: 12px; font-weight: 600; cursor: pointer; z-index: 101; }
+    .match-status-badge { display: flex; justify-content: center; margin-top: 14px; position: relative; z-index: 3; }
+    .status-single { padding: 6px 20px; border-radius: 60px; font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     .status-single.ended { background: #dc2626; }
     .status-single.upcoming { background: #f97316; }
     .status-single.kickoff { background: #10b981; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
-
-    .tab-bar {
-      display: flex;
-      background: #ffffff;
-      border-bottom: 1px solid #eef2f6;
-      padding: 0 12px;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .tab-item {
-      flex: 1;
-      text-align: center;
-      padding: 14px 0;
-      font-weight: 700;
-      font-size: 13px;
-      color: #64748b;
-      cursor: pointer;
-      position: relative;
-    }
+    .tab-bar { display: flex; background: #ffffff; border-bottom: 1px solid #eef2f6; padding: 0 12px; gap: 4px; flex-shrink: 0; }
+    .tab-item { flex: 1; text-align: center; padding: 14px 0; font-weight: 700; font-size: 13px; color: #64748b; cursor: pointer; position: relative; }
     .tab-item.active { color: #9CE800; }
-    .tab-item.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 20%;
-      width: 60%;
-      height: 3px;
-      background: #9CE800;
-      border-radius: 3px 3px 0 0;
-    }
-
-    .unread-notification {
-      position: absolute;
-      top: 64px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 6px 18px;
-      border-radius: 60px;
-      font-size: 11px;
-      font-weight: 700;
-      z-index: 50;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      white-space: nowrap;
-    }
+    .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 20%; width: 60%; height: 3px; background: #9CE800; border-radius: 3px 3px 0 0; }
+    .unread-notification { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 6px 18px; border-radius: 60px; font-size: 11px; font-weight: 700; z-index: 50; box-shadow: 0 6px 14px rgba(0,0,0,0.2); pointer-events: none; opacity: 0; transition: opacity 0.25s ease; white-space: nowrap; }
     .unread-notification.show { opacity: 1; }
-
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      background: #f8fafc;
-      min-height: 0;
-      scrollbar-width: thin;
-    }
-
-    .card {
-      background: white;
-      padding: 18px;
-      margin-bottom: 16px;
-      border: 1px solid #eef2f6;
-      border-radius: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
-
-    .vote-boxes {
-      display: flex;
-      gap: 12px;
-      margin: 14px 0;
-    }
-    .vote-box {
-      flex: 1;
-      background: #f1f5f9;
-      padding: 12px 6px;
-      text-align: center;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 60px;
-      border: 1.5px solid transparent;
-    }
+    .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; scrollbar-width: thin; }
+    .card { background: white; padding: 18px; margin-bottom: 16px; border: 1px solid #eef2f6; border-radius: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .login-prompt-card { text-align: center; padding: 40px 20px; background: white; border-radius: 24px; border: 1px solid #eef2f6; }
+    .login-prompt-card .iconify { font-size: 48px; color: #9CE800; margin-bottom: 16px; }
+    .login-prompt-card h3 { margin-bottom: 8px; color: #1e293b; }
+    .login-prompt-card p { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+    .login-redirect-btn { background: #9CE800; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 800; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: #000; }
+    .vote-boxes { display: flex; gap: 12px; margin: 14px 0; }
+    .vote-box { flex: 1; background: #f1f5f9; padding: 12px 6px; text-align: center; font-weight: 800; font-size: 13px; cursor: pointer; border-radius: 60px; border: 1.5px solid transparent; }
     .vote-box.selected { background: #9CE800; border-color: #9CE800; color: #000; }
-
-    .optional-section {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid #eef2f6;
-    }
-    .optional-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .example-text {
-      font-size: 11px;
-      color: #9CE800;
-      font-weight: 500;
-      margin-left: 6px;
-    }
-    .feature-item {
-      background: #f1f5f9;
-      padding: 6px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin: 4px 6px 4px 0;
-      border-radius: 30px;
-      font-size: 12px;
-    }
-    .remove-feature {
-      background: none;
-      border: none;
-      color: #ef4444;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    textarea, input, .img-upload-btn, .small-btn, .send-vote-btn, .chat-input-row input, .chat-send, .live-chat-btn {
-      border-radius: 60px !important;
-    }
-    textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      background: white;
-      outline: none;
-      border-radius: 20px !important;
-    }
-    .img-upload-btn {
-      background: #f1f5f9;
-      padding: 10px 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-    .preview-images {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-    .preview-img-item {
-      width: 56px;
-      height: 56px;
-      object-fit: cover;
-      border-radius: 16px;
-    }
-    .add-feature-row {
-      display: flex;
-      gap: 10px;
-      margin: 12px 0;
-    }
-    .small-btn {
-      background: #9CE800;
-      border: none;
-      padding: 8px 20px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .send-vote-btn {
-      background: #0f172a;
-      color: white;
-      width: 100%;
-      padding: 14px;
-      font-weight: 800;
-      border: none;
-      margin-top: 12px;
-      cursor: pointer;
-    }
-
-    .analysis-item {
-      background: #f1f5f9;
-      padding: 14px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      border-radius: 20px;
-    }
-    .expanded-reason {
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid #ddd;
-      display: none;
-      font-size: 12px;
-    }
+    .optional-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid #eef2f6; }
+    .optional-label { font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .example-text { font-size: 11px; color: #9CE800; font-weight: 500; margin-left: 6px; }
+    .feature-item { background: #f1f5f9; padding: 6px 12px; display: inline-flex; align-items: center; gap: 8px; margin: 4px 6px 4px 0; border-radius: 30px; font-size: 12px; }
+    .remove-feature { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; font-weight: bold; }
+    textarea, input, .img-upload-btn, .small-btn, .send-vote-btn, .chat-input-row input, .chat-send, .live-chat-btn { border-radius: 60px !important; }
+    textarea { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; font-family: 'Inter', sans-serif; font-size: 13px; background: white; outline: none; border-radius: 20px !important; }
+    .img-upload-btn { background: #f1f5f9; padding: 10px 18px; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    .preview-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .preview-img-item { width: 56px; height: 56px; object-fit: cover; border-radius: 16px; }
+    .add-feature-row { display: flex; gap: 10px; margin: 12px 0; }
+    .small-btn { background: #9CE800; border: none; padding: 8px 20px; font-weight: 800; cursor: pointer; }
+    .send-vote-btn { background: #0f172a; color: white; width: 100%; padding: 14px; font-weight: 800; border: none; margin-top: 12px; cursor: pointer; }
+    .analysis-item { background: #f1f5f9; padding: 14px; margin-bottom: 12px; cursor: pointer; border-radius: 20px; }
+    .expanded-reason { margin-top: 12px; padding-top: 10px; border-top: 1px solid #ddd; display: none; font-size: 12px; }
     .expanded-reason.show { display: block; }
-
-    .info-line {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eef2f6;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .ai-insight {
-      background: #eef2ff;
-      padding: 14px;
-      border-radius: 20px;
-      margin-top: 14px;
-      border-left: 4px solid #9CE800;
-      font-size: 12px;
-    }
-
-    /* CHAT */
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px 4px 16px 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 420px;
-      scrollbar-width: thin;
-    }
-    .chat-bubble {
-      background: white;
-      padding: 12px 16px;
-      border-radius: 24px;
-      border: 1px solid #eef2f6;
-    }
-    .chat-username {
-      font-weight: 800;
-      font-size: 11px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .info-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eef2f6; font-size: 13px; font-weight: 500; }
+    .ai-insight { background: #eef2ff; padding: 14px; border-radius: 20px; margin-top: 14px; border-left: 4px solid #9CE800; font-size: 12px; }
+    .chat-container { display: flex; flex-direction: column; height: 100%; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 12px 4px 16px 4px; display: flex; flex-direction: column; gap: 10px; max-height: 420px; scrollbar-width: thin; }
+    .chat-bubble { background: white; padding: 12px 16px; border-radius: 24px; border: 1px solid #eef2f6; }
+    .chat-username { font-weight: 800; font-size: 11px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
     .chat-username.red { color: #dc2626; }
     .chat-username.blue { color: #3b82f6; }
     .chat-username.gray { color: #64748b; }
     .chat-text { font-size: 13px; word-break: break-word; line-height: 1.4; }
-    .chat-actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 8px;
-      font-size: 10px;
-    }
+    .chat-actions { display: flex; gap: 14px; margin-top: 8px; font-size: 10px; }
     .chat-action { color: #94a3b8; cursor: pointer; }
     .chat-action:hover { color: #9CE800; }
-
-    .chat-input-area {
-      background: #f8fafc;
-      padding: 12px 0 6px 0;
-      border-top: 1px solid #eef2f6;
-      margin-top: 4px;
-      position: sticky;
-      bottom: 0;
-    }
-    .chat-input-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .chat-input-row input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
-      background: white;
-      font-size: 13px;
-      font-family: 'Inter', sans-serif;
-    }
-    .chat-send {
-      background: #9CE800;
-      border: none;
-      padding: 0 22px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .chat-icon-row {
-      display: flex;
-      gap: 10px;
-    }
-    .live-chat-btn {
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 60px;
-      padding: 8px 18px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .chat-icon-btn {
-      background: #f1f5f9;
-      border: none;
-      border-radius: 60px;
-      padding: 8px 18px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .toast-notify {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 10px 20px;
-      font-size: 12px;
-      z-index: 1000;
-      animation: fadeUp 2s forwards;
-      border-radius: 60px;
-    }
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      90% { opacity: 1; }
-      100% { opacity: 0; visibility: hidden; }
-    }
+    .chat-input-area { background: #f8fafc; padding: 12px 0 6px 0; border-top: 1px solid #eef2f6; margin-top: 4px; position: sticky; bottom: 0; }
+    .chat-input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .chat-input-row input { flex: 1; padding: 12px 16px; border: 1px solid #e2e8f0; background: white; font-size: 13px; font-family: 'Inter', sans-serif; }
+    .chat-send { background: #9CE800; border: none; padding: 0 22px; font-weight: 800; cursor: pointer; }
+    .chat-icon-row { display: flex; gap: 10px; }
+    .live-chat-btn { background: #ef4444; color: white; border: none; border-radius: 60px; padding: 8px 18px; cursor: pointer; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+    .chat-icon-btn { background: #f1f5f9; border: none; border-radius: 60px; padding: 8px 18px; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .toast-notify { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 10px 20px; font-size: 12px; z-index: 1000; animation: fadeUp 2s forwards; border-radius: 60px; }
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
   </style>
 </head>
 <body>
@@ -588,10 +108,7 @@
   </div>
 
   <div class="hero-section" id="heroSection">
-    <div class="hero-bg-split">
-      <div class="hero-bg-left" id="heroBgLeft"></div>
-      <div class="hero-bg-right" id="heroBgRight"></div>
-    </div>
+    <div class="hero-bg-split"><div class="hero-bg-left" id="heroBgLeft"></div><div class="hero-bg-right" id="heroBgRight"></div></div>
     <div class="teams-container">
       <div class="team-card"><div class="team-logo-hero" id="heroLogoA"><img src=""></div><div class="team-name-hero" id="heroNameA">Team A</div></div>
       <div class="vs-text">VS</div>
@@ -616,22 +133,7 @@
     <div id="voteTab" class="tab-pane"></div>
     <div id="analysisTab" class="tab-pane" style="display:none;"></div>
     <div id="infoTab" class="tab-pane" style="display:none;"></div>
-    <div id="chatTab" class="tab-pane" style="display:none;">
-      <div class="chat-container">
-        <div class="chat-messages" id="chatMessagesList"></div>
-        <div class="chat-input-area">
-          <div class="chat-input-row">
-            <input type="text" id="chatMessageInput" placeholder="Type message...">
-            <button id="sendChatMsgBtn" class="chat-send">Send</button>
-          </div>
-          <div class="chat-icon-row">
-            <button id="uploadChatImgBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:image-outline"></span> Image</button>
-            <button id="liveStreamChatBtn" class="live-chat-btn"><span class="iconify" data-icon="mdi:youtube"></span> Live</button>
-          </div>
-          <input type="file" id="chatImageInput" accept="image/*" style="display:none">
-        </div>
-      </div>
-    </div>
+    <div id="chatTab" class="tab-pane" style="display:none;"></div>
   </div>
 </div>
 
@@ -647,7 +149,7 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   const matchId = urlParams.get('id') || "testMatch";
-  let currentUser = { uid: 'anon_' + Date.now(), displayName: 'Fan_' + Math.random().toString(36).substr(2, 4) };
+  let currentUser = null;
   let matchData = null;
   let userVote = null;
   let uploadedImages = [];
@@ -668,6 +170,23 @@
     setTimeout(() => t.remove(), 2200);
   }
 
+  function redirectToLogin() {
+    window.location.href = 'profile.html';
+  }
+
+  function renderLoginPrompt(tabName, actionDescription) {
+    return `
+      <div class="login-prompt-card">
+        <span class="iconify" data-icon="mdi:login-variant"></span>
+        <h3>Login Required</h3>
+        <p>Please login to ${actionDescription}</p>
+        <button class="login-redirect-btn" id="loginRedirectBtn">
+          <span class="iconify" data-icon="mdi:account-circle"></span> Go to Login
+        </button>
+      </div>
+    `;
+  }
+
   async function loadMatch() {
     const doc = await db.collection('matches').doc(matchId).get();
     if (!doc.exists) { showToast("Match not found", true); return; }
@@ -686,10 +205,7 @@
     else if (status === 'kickoff') badge.className = 'status-single kickoff';
     else badge.className = 'status-single upcoming';
     await checkUserVote();
-    renderVoteTab();
-    renderInfoTab();
-    renderAnalysisTab();
-    initChat();
+    renderCurrentTab();
     loadAllMatchesForSearch();
   }
 
@@ -713,12 +229,18 @@
   document.addEventListener('click', (e) => { if (!e.target.closest('.search-wrapper')) document.getElementById('searchResultsDropdown').classList.remove('active'); });
 
   async function checkUserVote() {
+    if (!currentUser) { userVote = null; return; }
     const snap = await db.collection('votes').where('matchId', '==', matchId).where('userId', '==', currentUser.uid).get();
     userVote = snap.empty ? null : snap.docs[0].data();
   }
 
   function renderVoteTab() {
     const container = document.getElementById('voteTab');
+    if (!currentUser) {
+      container.innerHTML = renderLoginPrompt('vote', 'vote for a team and share your prediction');
+      document.getElementById('loginRedirectBtn')?.addEventListener('click', redirectToLogin);
+      return;
+    }
     if (userVote) {
       container.innerHTML = `<div class="card"><div style="text-align:center;"><span class="iconify" data-icon="mdi:check-circle" style="font-size:40px;color:#9CE800;"></span><h3>You voted for ${userVote.voteType === 'team1' ? matchData?.teamAName : (userVote.voteType === 'team2' ? matchData?.teamBName : 'Draw')}</h3><p>${userVote.reason || 'No reason'}</p></div></div>`;
       return;
@@ -735,13 +257,13 @@
           <textarea id="voteReason" rows="2" placeholder="Share your insight..."></textarea>
         </div>
         <div class="optional-section">
-          <div class="optional-label">🖼️ Give us an image of your analytics on a paper <span class="example-text">(e.g., photo of your tactical notes)</span></div>
+          <div class="optional-label">🖼️ Give us an image of your analytics on a paper</div>
           <div class="img-upload-btn" id="uploadImagesBtn">📷 Add images (max 8)</div>
           <input type="file" id="voteImagesInput" multiple accept="image/*" style="display:none">
           <div id="imagePreviewGrid" class="preview-images"></div>
         </div>
         <div class="optional-section">
-          <div class="optional-label">➕ Add an extra point to defend your chosen team <span class="example-text">(e.g., "Key player is back from injury")</span></div>
+          <div class="optional-label">➕ Add an extra point to defend your chosen team</div>
           <div class="add-feature-row">
             <input type="text" id="featureInput" placeholder="Extra point...">
             <button id="addFeatureBtn" class="small-btn">Add</button>
@@ -796,6 +318,7 @@
 
   async function renderAnalysisTab() {
     const container = document.getElementById('analysisTab');
+    if (!matchData) { container.innerHTML = '<div class="card">Loading...</div>'; return; }
     container.innerHTML = `<div style="display:flex; gap:12px; margin-bottom:16px;"><button id="analysisTeam1Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType === 'team1' ? '#9CE800' : 'white'};font-weight:700;">${matchData?.teamAName}</button><button id="analysisTeam2Btn" style="flex:1;padding:10px;border-radius:30px;background:${currentAnalysisType === 'team2' ? '#9CE800' : 'white'};font-weight:700;">${matchData?.teamBName}</button></div><div id="reasonsListContainer"></div>`;
     document.getElementById('analysisTeam1Btn').onclick = () => { currentAnalysisType = 'team1'; renderAnalysisTab(); };
     document.getElementById('analysisTeam2Btn').onclick = () => { currentAnalysisType = 'team2'; renderAnalysisTab(); };
@@ -804,18 +327,11 @@
     votesSnap.forEach(d => { if (d.data().reason) reasons.push({ id: d.id, userName: d.data().userName, reason: d.data().reason, images: d.data().images || [], features: d.data().features || [] }); });
     const containerReasons = document.getElementById('reasonsListContainer');
     if (reasons.length === 0) { containerReasons.innerHTML = '<div class="card">No reasons yet.</div>'; return; }
-    containerReasons.innerHTML = reasons.map(r => `<div class="analysis-item" data-id="${r.id}"><div class="analysis-user"><span>${r.userName}</span><span class="analysis-preview">${r.reason.substring(0, 45)}...</span></div><div class="expanded-reason" id="exp-${r.id}"><div><strong>Reason:</strong> ${r.reason}</div>${r.features.length ? `<div><strong>Extra points:</strong> ${r.features.join(', ')}</div>` : ''}${r.images.map(img => `<img src="${img}" style="width:50px;border-radius:12px;margin-top:8px;">`).join('')}<button class="repost-chat-btn" style="margin-top:8px;background:#9CE80020;border:none;padding:4px 10px;border-radius:30px;" data-reason="${r.reason.replace(/"/g, '&quot;')}">💬 Repost to Chat</button></div></div>`).join('');
+    containerReasons.innerHTML = reasons.map(r => `<div class="analysis-item" data-id="${r.id}"><div class="analysis-user"><span>${r.userName}</span><span class="analysis-preview">${r.reason.substring(0, 45)}...</span></div><div class="expanded-reason" id="exp-${r.id}"><div><strong>Reason:</strong> ${r.reason}</div>${r.features.length ? `<div><strong>Extra points:</strong> ${r.features.join(', ')}</div>` : ''}${r.images.map(img => `<img src="${img}" style="width:50px;border-radius:12px;margin-top:8px;">`).join('')}</div></div>`).join('');
     document.querySelectorAll('.analysis-item').forEach(el => {
       const id = el.dataset.id; const expandDiv = document.getElementById(`exp-${id}`);
       el.addEventListener('click', (e) => { e.stopPropagation(); expandDiv.classList.toggle('show'); });
-      const btn = el.querySelector('.repost-chat-btn');
-      if (btn) btn.onclick = (e) => { e.stopPropagation(); repostToChat(btn.dataset.reason); };
     });
-  }
-
-  async function repostToChat(text) {
-    await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: `📊 ANALYSIS: ${text}`, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    showToast("Reposted to chat!");
   }
 
   function renderInfoTab() {
@@ -844,6 +360,32 @@
     snap.forEach(d => userVoteMap.set(d.data().userId, d.data().voteType));
   }
 
+  function renderChatTab() {
+    const container = document.getElementById('chatTab');
+    if (!currentUser) {
+      container.innerHTML = renderLoginPrompt('chat', 'chat with the community and see live match discussions');
+      document.getElementById('loginRedirectBtn')?.addEventListener('click', redirectToLogin);
+      return;
+    }
+    container.innerHTML = `
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessagesList"></div>
+        <div class="chat-input-area">
+          <div class="chat-input-row">
+            <input type="text" id="chatMessageInput" placeholder="Type message...">
+            <button id="sendChatMsgBtn" class="chat-send">Send</button>
+          </div>
+          <div class="chat-icon-row">
+            <button id="uploadChatImgBtn" class="chat-icon-btn"><span class="iconify" data-icon="mdi:image-outline"></span> Image</button>
+            <button id="liveStreamChatBtn" class="live-chat-btn"><span class="iconify" data-icon="mdi:youtube"></span> Live</button>
+          </div>
+          <input type="file" id="chatImageInput" accept="image/*" style="display:none">
+        </div>
+      </div>
+    `;
+    initChat();
+  }
+
   async function renderChatMessages() {
     const container = document.getElementById('chatMessagesList');
     if (!container) return;
@@ -855,7 +397,7 @@
       let colorClass = 'gray';
       if (voteType === 'team1') colorClass = 'red';
       else if (voteType === 'team2') colorClass = 'blue';
-      return `<div class="chat-bubble"><div class="chat-username ${colorClass}">${msg.userName || 'User'}</div><div class="chat-text">${msg.text || ''}</div>${msg.imageUrl ? `<img src="${msg.imageUrl}" style="max-width:100px;border-radius:16px;margin-top:8px;">` : ''}<div class="chat-actions"><span class="chat-action" onclick="copyMessage('${msg.text?.replace(/'/g, "\\'") || ''}')">Copy</span>${msg.userId === currentUser.uid ? `<span class="chat-action" onclick="editMessage('${msg.id}','${msg.text?.replace(/'/g, "\\'") || ''}')">Edit</span><span class="chat-action" onclick="deleteMessage('${msg.id}')">Delete</span>` : ''}</div></div>`;
+      return `<div class="chat-bubble"><div class="chat-username ${colorClass}">${msg.userName || 'User'}</div><div class="chat-text">${msg.text || ''}</div>${msg.imageUrl ? `<img src="${msg.imageUrl}" style="max-width:100px;border-radius:16px;margin-top:8px;">` : ''}<div class="chat-actions"><span class="chat-action" onclick="copyMessage('${msg.text?.replace(/'/g, "\\'") || ''}')">Copy</span>${msg.userId === currentUser?.uid ? `<span class="chat-action" onclick="editMessage('${msg.id}','${msg.text?.replace(/'/g, "\\'") || ''}')">Edit</span><span class="chat-action" onclick="deleteMessage('${msg.id}')">Delete</span>` : ''}</div></div>`;
     }).join('');
     if (currentTab === 'chat') scrollChatToBottom();
   }
@@ -869,23 +411,25 @@
     let lastSize = 0;
     chatUnsub = db.collection('chatMessages').where('matchId', '==', matchId).orderBy('createdAt', 'asc').onSnapshot(async (snap) => {
       const currentSize = snap.size;
-      if (currentTab !== 'chat' && currentSize > lastSize && lastSize !== 0) {
+      if (currentTab !== 'chat' && currentSize > lastSize && lastSize !== 0 && currentUser) {
         unreadCount += (currentSize - lastSize);
         const banner = document.getElementById('unreadBanner');
         banner.innerText = `${unreadCount} new message${unreadCount > 1 ? 's' : ''}`;
         banner.classList.add('show');
         setTimeout(() => { if (currentTab !== 'chat') banner.classList.remove('show'); }, 3000);
-      } else if (currentTab === 'chat') { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); }
+      } else if (currentTab === 'chat' && currentUser) { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); }
       lastSize = currentSize;
-      await renderChatMessages();
-      if (currentTab === 'chat') scrollChatToBottom();
+      if (currentUser) await renderChatMessages();
+      if (currentTab === 'chat' && currentUser) scrollChatToBottom();
     });
-    document.getElementById('sendChatMsgBtn').onclick = async () => { const inp = document.getElementById('chatMessageInput'); if (!inp.value.trim()) return; await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: inp.value, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); inp.value = ''; scrollChatToBottom(); };
-    document.getElementById('chatMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('sendChatMsgBtn').click(); });
-    document.getElementById('uploadChatImgBtn').onclick = () => document.getElementById('chatImageInput').click();
-    document.getElementById('liveStreamChatBtn').onclick = toggleLiveStreamOverlay;
-    document.getElementById('closeStreamBtn').onclick = toggleLiveStreamOverlay;
-    document.getElementById('chatImageInput').onchange = async (e) => {
+    const sendBtn = document.getElementById('sendChatMsgBtn');
+    if (sendBtn) sendBtn.onclick = async () => { const inp = document.getElementById('chatMessageInput'); if (!inp.value.trim()) return; await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: inp.value, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); inp.value = ''; scrollChatToBottom(); };
+    const msgInput = document.getElementById('chatMessageInput');
+    if (msgInput) msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('sendChatMsgBtn')?.click(); });
+    document.getElementById('uploadChatImgBtn')?.addEventListener('click', () => document.getElementById('chatImageInput')?.click());
+    document.getElementById('liveStreamChatBtn')?.addEventListener('click', toggleLiveStreamOverlay);
+    document.getElementById('closeStreamBtn')?.addEventListener('click', toggleLiveStreamOverlay);
+    document.getElementById('chatImageInput')?.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const fd = new FormData(); fd.append('image', file);
@@ -893,26 +437,40 @@
       const data = await res.json();
       if (data.success) await db.collection('chatMessages').add({ matchId, userId: currentUser.uid, userName: currentUser.displayName, text: "📷 Image", imageUrl: data.data.url, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       showToast("Image sent");
-    };
+    });
+  }
+
+  function renderCurrentTab() {
+    if (currentTab === 'vote') renderVoteTab();
+    else if (currentTab === 'analysis') renderAnalysisTab();
+    else if (currentTab === 'info') renderInfoTab();
+    else if (currentTab === 'chat') renderChatTab();
   }
 
   document.querySelectorAll('.tab-item').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      const target = tab.dataset.tab;
-      currentTab = target;
-      document.getElementById('voteTab').style.display = target === 'vote' ? 'block' : 'none';
-      document.getElementById('analysisTab').style.display = target === 'analysis' ? 'block' : 'none';
-      document.getElementById('infoTab').style.display = target === 'info' ? 'block' : 'none';
-      document.getElementById('chatTab').style.display = target === 'chat' ? 'block' : 'none';
-      if (target === 'chat') { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); scrollChatToBottom(); }
-      if (target === 'analysis') renderAnalysisTab();
+      currentTab = tab.dataset.tab;
+      document.getElementById('voteTab').style.display = currentTab === 'vote' ? 'block' : 'none';
+      document.getElementById('analysisTab').style.display = currentTab === 'analysis' ? 'block' : 'none';
+      document.getElementById('infoTab').style.display = currentTab === 'info' ? 'block' : 'none';
+      document.getElementById('chatTab').style.display = currentTab === 'chat' ? 'block' : 'none';
+      if (currentTab === 'chat' && currentUser) { unreadCount = 0; document.getElementById('unreadBanner').classList.remove('show'); scrollChatToBottom(); }
+      renderCurrentTab();
     });
   });
   document.getElementById('backBtn').onclick = () => window.location.href = 'index.html';
 
-  auth.signInAnonymously().then(user => { if (user) { currentUser = { uid: user.user.uid, displayName: 'Fan_' + user.user.uid.slice(-4) }; loadMatch(); } else loadMatch(); }).catch(() => loadMatch());
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUser = { uid: user.uid, displayName: user.displayName || 'Fan_' + user.uid.slice(-4) };
+    } else {
+      currentUser = null;
+    }
+    await loadMatch();
+    renderCurrentTab();
+  });
 </script>
 </body>
 </html>

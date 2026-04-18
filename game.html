@@ -573,7 +573,6 @@
   <div class="main-content">
     <div class="games-header">
       <div class="games-title">GAMES <span>HUB</span></div>
-      <a href="admin-add-game.html" style="background:#9CE800; padding:6px 12px; border-radius:40px; font-size:11px; font-weight:800; text-decoration:none; color:#000;">+ ADD GAME</a>
     </div>
 
     <div class="trending-section">
@@ -712,12 +711,24 @@
       const gamesGrid = document.getElementById('gamesGrid');
       const trendingList = document.getElementById('trendingList');
 
+      // Show loading state
+      gamesGrid.innerHTML = '<div class="loading" style="grid-column: span 2;">Loading games...</div>';
+      trendingList.innerHTML = '<div class="loading">Loading...</div>';
+
       const snap = await db.collection('games').orderBy('plays', 'desc').get();
       
       if (!snap.empty) {
         games = [];
         snap.forEach(doc => {
-          games.push({ id: doc.id, ...doc.data() });
+          const gameData = doc.data();
+          games.push({ 
+            id: doc.id, 
+            name: gameData.name || 'Unnamed Game',
+            imageUrl: gameData.imageUrl || '',
+            location: gameData.location || '',
+            plays: gameData.plays || 0,
+            createdAt: gameData.createdAt
+          });
         });
         renderGames(games, gamesGrid, trendingList);
       } else {
@@ -725,7 +736,7 @@
           <div class="empty-state">
             <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
             <p>No games available yet</p>
-            <p style="font-size:11px;margin-top:5px;">Use the ADD GAME button to create games</p>
+            <p style="font-size:11px;margin-top:5px;">Games will appear here once added via admin panel</p>
           </div>
         `;
         trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
@@ -737,15 +748,17 @@
         <div class="empty-state">
           <span class="iconify" data-icon="mdi:alert-circle-outline"></span>
           <p>Error loading games</p>
-          <p style="font-size:11px;margin-top:5px;">Please refresh</p>
+          <p style="font-size:11px;margin-top:5px;">Please check your connection and refresh</p>
         </div>
       `;
+      const trendingList = document.getElementById('trendingList');
+      trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">!</div><div class="trending-info"><div class="trending-name">Failed to load</div></div></div>';
     }
   }
 
   function renderGames(gamesList, grid, trending) {
     // Render trending (top 3 by plays)
-    const topGames = gamesList.slice(0, 3);
+    const topGames = [...gamesList].sort((a, b) => (b.plays || 0) - (a.plays || 0)).slice(0, 3);
     
     let trendingHtml = '';
     if (topGames.length > 0) {
@@ -771,7 +784,7 @@
         <div class="empty-state">
           <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
           <p>No games available yet</p>
-          <p style="font-size:11px;margin-top:5px;">Click + ADD GAME to create one</p>
+          <p style="font-size:11px;margin-top:5px;">Games will appear here once added</p>
         </div>
       `;
       return;
@@ -806,15 +819,14 @@
   }
 
   window.openGame = function(location) {
-    if (location) {
-      // Increment play count in Firestore
-      db.collection('games').where('location', '==', location).get().then(snap => {
-        snap.forEach(doc => {
-          db.collection('games').doc(doc.id).update({
-            plays: firebase.firestore.FieldValue.increment(1)
-          }).catch(err => console.error('Error updating plays:', err));
-        });
-      }).catch(err => console.error('Error finding game:', err));
+    if (location && location.trim() !== '') {
+      // Find the game to increment play count
+      const gameToUpdate = games.find(g => g.location === location);
+      if (gameToUpdate) {
+        db.collection('games').doc(gameToUpdate.id).update({
+          plays: firebase.firestore.FieldValue.increment(1)
+        }).catch(err => console.error('Error updating plays:', err));
+      }
       
       // Navigate to game page
       window.location.href = location + '.html';
@@ -896,9 +908,12 @@
   }
 
   // Search functionality
-  document.getElementById('leaderboardSearch').addEventListener('input', () => {
-    renderLeaderboard(document.getElementById('leaderboardList'));
-  });
+  const searchInput = document.getElementById('leaderboardSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      renderLeaderboard(document.getElementById('leaderboardList'));
+    });
+  }
 
   // Tab switching
   document.querySelectorAll('.leaderboard-tab').forEach(tab => {
@@ -906,13 +921,35 @@
       document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentTab = tab.dataset.tab;
-      // For demo, just re-render same data (would filter in real app)
       renderLeaderboard(document.getElementById('leaderboardList'));
     });
   });
 
   // Initialize everything
   loadGamesFromDB();
+
+  // Set up real-time listener for games updates
+  db.collection('games').onSnapshot((snapshot) => {
+    if (!snapshot.empty) {
+      const newGames = [];
+      snapshot.forEach(doc => {
+        const gameData = doc.data();
+        newGames.push({ 
+          id: doc.id, 
+          name: gameData.name || 'Unnamed Game',
+          imageUrl: gameData.imageUrl || '',
+          location: gameData.location || '',
+          plays: gameData.plays || 0
+        });
+      });
+      games = newGames;
+      const gamesGrid = document.getElementById('gamesGrid');
+      const trendingList = document.getElementById('trendingList');
+      renderGames(games, gamesGrid, trendingList);
+    }
+  }, (error) => {
+    console.error('Realtime listener error:', error);
+  });
 
 })();
 </script>

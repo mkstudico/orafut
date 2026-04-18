@@ -35,12 +35,14 @@
     .auth-switch-text span { color: var(--vibrant-green); font-weight: 800; cursor: pointer; text-transform: uppercase; }
     
     /* Dashboard */
-    .dashboard-header { display: flex; align-items: center; gap: 16px; background: white; padding: 16px; border: 2px solid #E0E0E0; border-radius: 8px; margin-bottom: 16px; }
+    .dashboard-header { display: flex; align-items: center; gap: 16px; background: white; padding: 16px; border: 2px solid #E0E0E0; border-radius: 8px; margin-bottom: 12px; }
     .avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #9CE800, #6B9E00); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .avatar .iconify { font-size: 32px; color: white; }
     .user-info h2 { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
     .user-info p { font-size: 11px; color: #64748b; margin-top: 4px; }
     .edit-name-btn { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-left: 8px; cursor: pointer; box-shadow: 0 2px 0 #B0B0B0; }
+    .logout-red-btn { background: #F44336; border: 2px solid #c62828; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 12px; box-shadow: 0 3px 0 #b71c1c; transition: 0.1s; }
+    .logout-red-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b71c1c; }
     
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
     .stat-card { background: white; padding: 14px; text-align: center; border: 2px solid #E0E0E0; border-radius: 8px; }
@@ -50,7 +52,10 @@
     .section-card { background: white; border: 2px solid #E0E0E0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
-    .settings-icon { cursor: pointer; color: #64748b; transition: 0.1s; }
+    .header-buttons { display: flex; align-items: center; gap: 12px; }
+    .add-team-small { background: #F0F0F0; border: 2px solid #D0D0D0; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; text-transform: uppercase; box-shadow: 0 2px 0 #B0B0B0; }
+    .add-team-small:active { transform: translateY(1px); box-shadow: 0 1px 0 #B0B0B0; }
+    .settings-icon { cursor: pointer; color: #64748b; transition: 0.1s; font-size: 20px; }
     .settings-icon:hover { color: var(--vibrant-green); }
     
     .list-container { max-height: 220px; overflow-y: auto; }
@@ -69,12 +74,9 @@
     .team-follow-name { font-weight: 600; font-size: 12px; text-transform: uppercase; }
     .unfollow-btn { background: #F4433620; border: 1px solid #F44336; color: #c62828; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; }
     
-    .logout-btn { background: #F0F0F0; border: 2px solid #D0D0D0; color: #555; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; text-transform: uppercase; box-shadow: 0 3px 0 #B0B0B0; transition: 0.1s; margin-top: 8px; }
-    .logout-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #B0B0B0; }
-    
     .empty-state { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
     
-    /* Modal Popup */
+    /* Modal Popup - custom, no browser alerts */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
     .modal-content { background: white; width: 90%; max-width: 380px; border-radius: 12px; overflow: hidden; border: 2px solid var(--vibrant-green); }
     .modal-header { background: var(--header-bg); padding: 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -103,7 +105,7 @@
   <div class="content-area" id="contentArea"><div id="authContainer"></div><div id="dashboardContainer" style="display:none;"></div></div>
   <div class="bottom-nav-float">
     <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
-    <button class="nav-item-float" data-nav="debate"><span class="iconify" data-icon="mdi:chat-outline"></span><span>DEBATE</span></button>
+    <button class="nav-item-float" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span><span>GAMES</span></button>
     <button class="nav-item-float active" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>ACCOUNT</span></button>
   </div>
 </div>
@@ -219,6 +221,12 @@
         return { points: Math.max(currentUserData.points || 0, points), accuracy, totalScore: currentUserData.totalScore || 0 };
     }
     
+    function getUserRank(type){
+        const sorted = [...leaderboardUsers].sort((a,b) => (type === 'points' ? (b.points || 0) - (a.points || 0) : (b.totalScore || 0) - (a.totalScore || 0)));
+        const index = sorted.findIndex(u => u.uid === currentUserData.uid);
+        return index !== -1 ? `#${index + 1}` : '#--';
+    }
+    
     async function updateUsername(newName){ if(!newName || newName.length < 2) return showToast("Too short", true); await auth.currentUser.updateProfile({ displayName: newName }); await db.collection('users').doc(currentUserData.uid).update({ username: newName, displayName: newName }); currentUserData.username = newName; showToast("Username updated!"); renderDashboard(); }
     async function followTeam(teamId, teamName){ if(currentUserData.followedTeams.includes(teamId)){ showToast("Already following", true); return; } const newList = [...currentUserData.followedTeams, teamId]; await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Now following ${teamName}`); }
     async function unfollowTeam(teamId, teamName){ const newList = currentUserData.followedTeams.filter(id => id !== teamId); await db.collection('users').doc(currentUserData.uid).update({ followedTeams: newList }); currentUserData.followedTeams = newList; await loadFollowedTeams(); renderDashboard(); showToast(`Unfollowed ${teamName}`); }
@@ -229,6 +237,8 @@
         document.getElementById('authContainer').style.display = 'none';
         container.style.display = 'block';
         const stats = calculateUserStats();
+        const rankPoints = getUserRank('points');
+        const rankScore = getUserRank('totalScore');
         
         // PENDING MATCHES (voted but not ended)
         const pendingMatches = userVotes.map(vote => {
@@ -250,17 +260,57 @@
         const teamUpcomingMatches = allMatches.filter(m => m.status !== 'ended' && (followedTeamIds.has(m.teamAId) || followedTeamIds.has(m.teamBId) || followedTeams.some(t => t.name === m.teamAName || t.name === m.teamBName))).slice(0, 4);
         
         container.innerHTML = `
-            <div class="dashboard-header"><div class="avatar"><span class="iconify" data-icon="mdi:account-circle"></span></div><div class="user-info"><h2>${escapeHtml(currentUserData.username)} <button class="edit-name-btn" id="editNameBtn">✏️ EDIT</button></h2><p>📱 ${currentUserData.phoneNumber || emailToPhone(currentUserData.email || '')}</p></div></div>
-            <div class="stats-grid"><div class="stat-card"><div class="stat-value">${stats.points}</div><div class="stat-label">POINTS</div></div><div class="stat-card"><div class="stat-value">${stats.totalScore}</div><div class="stat-label">SCORE</div></div><div class="stat-card"><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">ACCURACY</div></div></div>
-            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div></div><div class="list-container">${pendingMatches.length === 0 ? '<div class="empty-state">No pending matches</div>' : pendingMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result result-pending">PENDING</div></div>`).join('')}</div></div>
-            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div></div><div class="list-container">${pastMatches.length === 0 ? '<div class="empty-state">No past predictions</div>' : pastMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result ${v.isWin ? 'result-win' : 'result-loss'}">${v.isWin ? 'WON +10' : 'LOST'}</div></div>`).join('')}</div></div>
-            <div class="section-card"><div class="section-header"><div class="section-title"><span class="iconify" data-icon="mdi:shield-star"></span> TEAMS YOU FOLLOW</div><span class="settings-icon" id="openSettingsBtn"><span class="iconify" data-icon="mdi:cog"></span></span></div><div class="list-container">${teamUpcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches for followed teams</div>' : teamUpcomingMatches.map(m => `<div class="match-row" data-match-id="${m.id}"><div class="match-team">⚽ ${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div><div class="match-result result-upcoming">UPCOMING</div></div>`).join('')}</div><button id="addTeamBtn" style="margin-top:12px; width:100%; background:#F0F0F0; border:2px solid #D0D0D0; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">➕ ADD TEAM</button></div>
-            <button id="logoutBtn" class="logout-btn">🚪 LOGOUT</button>
+            <div class="dashboard-header">
+                <div class="avatar"><span class="iconify" data-icon="mdi:account-circle"></span></div>
+                <div class="user-info">
+                    <h2>${escapeHtml(currentUserData.username)} <button class="edit-name-btn" id="editNameBtn">✏️ EDIT</button></h2>
+                    <p>📱 ${currentUserData.phoneNumber || emailToPhone(currentUserData.email || '')}</p>
+                </div>
+            </div>
+            <button id="logoutRedBtn" class="logout-red-btn">🚪 LOGOUT</button>
+            
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value">${stats.points}</div><div class="stat-label">POINTS</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.totalScore}</div><div class="stat-label">SCORE</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">ACCURACY</div></div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-title"><span class="iconify" data-icon="mdi:trophy"></span> RANKINGS</div>
+                <div class="rank-item"><span class="rank-name">🏆 ORAFUT GURU (POINTS)</span><span class="rank-value">${rankPoints}</span></div>
+                <div class="rank-item"><span class="rank-name">🎮 ORAFUT GAMER (SCORE)</span><span class="rank-value">${rankScore}</span></div>
+                <div class="rank-item"><span class="rank-name">📊 PREDICTION ACCURACY</span><span class="rank-value">${stats.accuracy}%</span></div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> YOUR UPCOMING MATCHES</div>
+                </div>
+                <div class="list-container">${pendingMatches.length === 0 ? '<div class="empty-state">No pending matches</div>' : pendingMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result result-pending">PENDING</div></div>`).join('')}</div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:history"></span> YOUR PAST PREDICTIONS</div>
+                </div>
+                <div class="list-container">${pastMatches.length === 0 ? '<div class="empty-state">No past predictions</div>' : pastMatches.map(v => `<div class="match-row" data-match-id="${v.match.id}"><div class="match-team">${escapeHtml(v.match.teamAName)} vs ${escapeHtml(v.match.teamBName)}</div><div class="match-result ${v.isWin ? 'result-win' : 'result-loss'}">${v.isWin ? 'WON +10' : 'LOST'}</div></div>`).join('')}</div>
+            </div>
+            
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:shield-star"></span> TEAMS YOU FOLLOW</div>
+                    <div class="header-buttons">
+                        <button id="addTeamSmallBtn" class="add-team-small"><span class="iconify" data-icon="mdi:plus"></span> ADD</button>
+                        <span class="settings-icon" id="openSettingsBtn"><span class="iconify" data-icon="mdi:cog"></span></span>
+                    </div>
+                </div>
+                <div class="list-container">${teamUpcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches for followed teams</div>' : teamUpcomingMatches.map(m => `<div class="match-row" data-match-id="${m.id}"><div class="match-team">⚽ ${escapeHtml(m.teamAName)} vs ${escapeHtml(m.teamBName)}</div><div class="match-result result-upcoming">UPCOMING</div></div>`).join('')}</div>
+            </div>
         `;
         
         document.getElementById('editNameBtn')?.addEventListener('click', async () => { const newName = prompt("Enter new username:", currentUserData.username); if(newName) await updateUsername(newName.trim()); });
-        document.getElementById('logoutBtn')?.addEventListener('click', logout);
-        document.getElementById('addTeamBtn')?.addEventListener('click', () => openAddTeamModal());
+        document.getElementById('logoutRedBtn')?.addEventListener('click', logout);
+        document.getElementById('addTeamSmallBtn')?.addEventListener('click', () => openAddTeamModal());
         document.getElementById('openSettingsBtn')?.addEventListener('click', () => openUnfollowModal());
         document.querySelectorAll('.match-row[data-match-id]').forEach(el => { el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`); });
     }
@@ -321,7 +371,7 @@
     
     function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
     
-    document.querySelectorAll('.nav-item-float').forEach(item => { item.addEventListener('click', () => { const nav = item.dataset.nav; if(nav === 'home') window.location.href = 'index.html'; else if(nav === 'debate') window.location.href = 'debate.html'; }); });
+    document.querySelectorAll('.nav-item-float').forEach(item => { item.addEventListener('click', () => { const nav = item.dataset.nav; if(nav === 'home') window.location.href = 'index.html'; else if(nav === 'games') window.location.href = 'game.html'; }); });
     
     auth.onAuthStateChanged(async (user) => {
         if(user){ const userDoc = await db.collection('users').doc(user.uid).get(); currentUserData = { uid: user.uid, ...userDoc.data(), email: user.email }; if(!currentUserData.username) currentUserData.username = user.displayName || generateRandomUsername(); if(!currentUserData.followedTeams) currentUserData.followedTeams = []; await loadUserVotes(); await loadFollowedTeams(); await loadAllMatches(); await loadAllTeams(); await loadLeaderboard(); renderDashboard(); }

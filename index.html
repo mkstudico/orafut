@@ -45,22 +45,126 @@
     .filter-bar-mobile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #F8F8F8; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; border: 2px solid #E0E0E0; }
     .filter-group-mobile select, .filter-group-mobile input { background: white; border: 2px solid #D0D0D0; color: #333; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; outline: none; }
     .filter-btn-mobile { background: var(--vibrant-green); border: none; color: #000; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 3px 0 #6B9E00; }
-    .match-card-mobile { background: white; padding: 16px 12px; border-radius: 16px; border: 2px solid #E8E8E8; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+    /* IMPROVED MATCH CARD for small screens - names & logos perfectly aligned */
+    .match-card-mobile { 
+      background: white; 
+      padding: 12px 8px; 
+      border-radius: 20px; 
+      border: 2px solid #E8E8E8; 
+      margin-bottom: 12px; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
     .match-card-mobile:active { transform: scale(0.98); background: #FAFAFA; }
-    .match-teams-mobile { display: flex; align-items: center; justify-content: space-between; }
-    .team-mobile { display: flex; align-items: center; gap: 8px; flex: 1; }
-    .team-mobile:last-child { justify-content: flex-end; }
-    .team-logo-mobile img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; }
-    .team-logo-mobile .iconify { font-size: 36px; color: #333; }
-    .team-info-mobile { display: flex; flex-direction: column; }
-    .team-name-mobile { font-weight: 800; font-size: 14px; color: #1A1A1A; text-transform: uppercase; }
-    .team-odds-mobile { font-size: 9px; color: #777; }
-    .match-center { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 16px; }
-    .match-vs-mobile { font-weight: 800; font-size: 14px; color: #666; }
-    .arrow-indicators { display: flex; gap: 12px; margin-top: 4px; }
-    .arrow-up { color: var(--arrow-up); font-size: 18px; }
-    .arrow-down { color: var(--arrow-down); font-size: 18px; }
-    .arrow-draw { color: var(--arrow-draw); font-size: 18px; transform: rotate(90deg); }
+    .match-teams-mobile { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 8px;
+      width: 100%;
+    }
+    .team-mobile { 
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+      flex: 1; 
+      min-width: 0; /* allows text truncation */
+    }
+    .team-mobile:last-child { 
+      justify-content: flex-end; 
+      text-align: right;
+    }
+    .team-logo-mobile {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F5F5F5;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .team-logo-mobile img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: contain; 
+      border-radius: 50%;
+    }
+    .team-logo-mobile .iconify { 
+      font-size: 34px; 
+      color: #3A4146;
+    }
+    .team-info-mobile { 
+      display: flex; 
+      flex-direction: column; 
+      overflow: hidden;
+      max-width: 100%;
+    }
+    .team-name-mobile { 
+      font-weight: 800; 
+      font-size: 13px; 
+      color: #1A1A1A; 
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 110px;
+      line-height: 1.3;
+    }
+    .team-odds-mobile { 
+      font-size: 8px; 
+      color: #777;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+    .match-center { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center;
+      gap: 2px; 
+      padding: 0 4px;
+      flex-shrink: 0;
+      min-width: 52px;
+    }
+    .match-vs-mobile { 
+      font-weight: 800; 
+      font-size: 12px; 
+      color: #666;
+      background: #F0F0F0;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .arrow-indicators { 
+      display: flex; 
+      gap: 8px; 
+      margin-top: 2px; 
+      justify-content: center;
+    }
+    .arrow-up { color: var(--arrow-up); font-size: 14px; }
+    .arrow-down { color: var(--arrow-down); font-size: 14px; }
+    .arrow-draw { color: var(--arrow-draw); font-size: 14px; transform: rotate(90deg); }
+    /* responsive tweaks for extremely narrow screens (<=360px) */
+    @media (max-width: 380px) {
+      .team-logo-mobile { width: 38px; height: 38px; }
+      .team-logo-mobile .iconify { font-size: 28px; }
+      .team-name-mobile { font-size: 11px; max-width: 85px; }
+      .team-odds-mobile { font-size: 7px; max-width: 80px; }
+      .match-vs-mobile { font-size: 10px; padding: 2px 6px; }
+      .arrow-indicators { gap: 4px; }
+      .match-center { min-width: 46px; }
+      .match-card-mobile { padding: 10px 6px; }
+    }
+    /* for screens 320px and below */
+    @media (max-width: 340px) {
+      .team-name-mobile { max-width: 70px; font-size: 10px; }
+      .team-logo-mobile { width: 34px; height: 34px; }
+    }
     .promo-banner-mobile { background: linear-gradient(135deg, #1A1A1A 0%, #2D3337 100%); border: 2px solid var(--vibrant-green); border-radius: 10px; padding: 14px; margin-bottom: 16px; color: white; display: block; }
     .promo-banner-mobile h4 { font-size: 14px; font-weight: 800; color: var(--vibrant-green); text-transform: uppercase; margin-bottom: 10px; }
     .promo-features-mobile { display: flex; flex-direction: column; gap: 5px; }
@@ -132,7 +236,6 @@
     let anonymousId = localStorage.getItem('anonymousId');
     if(!anonymousId){ anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('anonymousId', anonymousId); }
     
-    // DOM elements
     const searchInput = document.getElementById('searchInputMobile');
     const mainSearchInput = document.getElementById('mainSearchInput');
     const searchResultsBox = document.getElementById('searchResultsBox');
@@ -163,28 +266,17 @@
     function showNotification(msg, isError = false){ toastMsg.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = isError ? '#F44336' : '#9CE800'; setTimeout(() => { toast.style.display = 'none'; }, 3000); }
     function showLoading(show){ if(show) dynamicList.innerHTML = '<div class="loading-spinner"><span class="iconify" data-icon="mdi:loading" style="font-size:32px; animation:spin 1s linear infinite;"></span><br>Loading...</div>'; }
     
-    // Improved menu closing: click outside, close button, or overlay
-    function closeMenuGlobal(){ 
-        sideMenu.classList.remove('open'); 
-        overlay.classList.remove('show'); 
-    }
-    function openMenu(){ 
-        sideMenu.classList.add('open'); 
-        overlay.classList.add('show'); 
-    }
+    function closeMenuGlobal(){ sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
+    function openMenu(){ sideMenu.classList.add('open'); overlay.classList.add('show'); }
     
     menuToggleBtn?.addEventListener('click', openMenu);
     closeMenuBtn?.addEventListener('click', closeMenuGlobal);
     overlay?.addEventListener('click', closeMenuGlobal);
-    
-    // Close menu when clicking outside (on main content area)
     document.addEventListener('click', function(event) {
         const isMenuOpen = sideMenu.classList.contains('open');
         const isClickInsideMenu = sideMenu.contains(event.target);
         const isClickOnMenuBtn = menuToggleBtn.contains(event.target);
-        if(isMenuOpen && !isClickInsideMenu && !isClickOnMenuBtn) {
-            closeMenuGlobal();
-        }
+        if(isMenuOpen && !isClickInsideMenu && !isClickOnMenuBtn) closeMenuGlobal();
     });
     
     if(pireactiveLink) pireactiveLink.addEventListener('click', () => window.open('https://pireactive.vercel.app', '_blank'));
@@ -249,9 +341,7 @@
         if(p1 > p2 && p1 > pDraw) return { left: 'arrow-up', right: 'arrow-down', showLeft: true, showRight: true };
         if(p2 > p1 && p2 > pDraw) return { left: 'arrow-down', right: 'arrow-up', showLeft: true, showRight: true };
         if(pDraw > p1 && pDraw > p2) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
-        if(p1 === p2 && p1 === pDraw) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
-        if(p1 === p2) return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
-        return { left: 'arrow-up', right: 'arrow-down', showLeft: true, showRight: true };
+        return { left: 'arrow-draw', right: 'arrow-draw', showLeft: true, showRight: true };
     }
     
     function renderList(){
@@ -280,7 +370,31 @@
             const leagueName = leagues.find(l => l.id === m.league)?.name || 'Unknown';
             const arrows = getArrowStatus(m.percentages.team1, m.percentages.team2, m.percentages.draw);
             const timeStr = m.status === 'live' ? 'LIVE' : (m.startTime?.toDate().toLocaleString('en-US', { weekday: 'short', hour:'2-digit', minute:'2-digit' }) || 'TBD');
-            html += `<div class="match-card-mobile" data-match-id="${m.id}"><div class="match-teams-mobile"><div class="team-mobile"><div class="team-logo-mobile">${m.teamALogo ? `<img src="${m.teamALogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div><div class="team-info-mobile"><span class="team-name-mobile">${m.teamAName}</span><span class="team-odds-mobile">${leagueName}</span></div></div><div class="match-center"><div class="match-vs-mobile">VS</div><div class="arrow-indicators"><span class="iconify ${arrows.left}" data-icon="mdi:arrow-up-bold"></span><span class="iconify ${arrows.right}" data-icon="mdi:arrow-down-bold"></span></div></div><div class="team-mobile"><div class="team-info-mobile" style="text-align:right;"><span class="team-name-mobile">${m.teamBName}</span><span class="team-odds-mobile">${timeStr}</span></div><div class="team-logo-mobile">${m.teamBLogo ? `<img src="${m.teamBLogo}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div></div></div></div>`;
+            html += `<div class="match-card-mobile" data-match-id="${m.id}">
+                        <div class="match-teams-mobile">
+                            <div class="team-mobile">
+                                <div class="team-logo-mobile">${m.teamALogo ? `<img src="${m.teamALogo}" loading="lazy" alt="${m.teamAName}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
+                                <div class="team-info-mobile">
+                                    <span class="team-name-mobile">${m.teamAName}</span>
+                                    <span class="team-odds-mobile">${leagueName}</span>
+                                </div>
+                            </div>
+                            <div class="match-center">
+                                <div class="match-vs-mobile">VS</div>
+                                <div class="arrow-indicators">
+                                    <span class="iconify ${arrows.left}" data-icon="mdi:arrow-up-bold"></span>
+                                    <span class="iconify ${arrows.right}" data-icon="mdi:arrow-down-bold"></span>
+                                </div>
+                            </div>
+                            <div class="team-mobile">
+                                <div class="team-info-mobile" style="text-align:right;">
+                                    <span class="team-name-mobile">${m.teamBName}</span>
+                                    <span class="team-odds-mobile">${timeStr}</span>
+                                </div>
+                                <div class="team-logo-mobile">${m.teamBLogo ? `<img src="${m.teamBLogo}" loading="lazy" alt="${m.teamBName}">` : '<span class="iconify" data-icon="mdi:shield-half-full"></span>'}</div>
+                            </div>
+                        </div>
+                      </div>`;
         });
         dynamicList.innerHTML = html;
         document.querySelectorAll('.match-card-mobile').forEach(card => { card.addEventListener('click', () => { window.location.href = `vote.html?id=${card.dataset.matchId}`; }); });
@@ -288,7 +402,6 @@
     
     function populateLeagueFilter(){ filterLeague.innerHTML = '<option value="all">All Leagues</option>'; leagues.forEach(l => { filterLeague.innerHTML += `<option value="${l.id}">${l.name}</option>`; }); }
     
-    // Main Search Bar with 300ms debounce - filters match cards directly
     if(mainSearchInput){
         mainSearchInput.addEventListener('input', (e) => {
             if(mainSearchTimeout) clearTimeout(mainSearchTimeout);
@@ -299,7 +412,6 @@
         });
     }
     
-    // Top-right search with 300ms debounce - shows dropdown for matches and teams
     if(searchInput){
         searchInput.addEventListener('input', (e) => {
             if(searchTimeout) clearTimeout(searchTimeout);

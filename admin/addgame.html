@@ -34,6 +34,15 @@
         .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px 14px; border: 2px solid #D0D0D0; border-radius: 8px; font-size: 13px; font-family: 'Poppins', sans-serif; outline: none; background: white; }
         .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--vibrant-green); }
         
+        /* Image Upload */
+        .upload-area { border: 2px dashed #D0D0D0; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: all 0.2s; margin-bottom: 16px; }
+        .upload-area:hover { border-color: var(--vibrant-green); background: rgba(156,232,0,0.05); }
+        .upload-area .iconify { font-size: 32px; color: #64748b; margin-bottom: 8px; }
+        .image-preview { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; margin-top: 12px; border: 2px solid var(--vibrant-green); }
+        .current-image { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px; background: #f1f5f9; border-radius: 8px; }
+        .current-image img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .remove-image-btn { background: #F44336; border: none; padding: 4px 12px; border-radius: 20px; color: white; font-size: 10px; cursor: pointer; }
+        
         .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; text-transform: uppercase; transition: 0.1s; }
         .btn-primary { background: var(--vibrant-green); color: #000; box-shadow: 0 3px 0 #6B9E00; }
         .btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 #6B9E00; }
@@ -44,7 +53,9 @@
         
         /* Game List */
         .game-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-bottom: 1px solid #eef2f6; }
-        .game-info { flex: 1; }
+        .game-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .game-thumb { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #f1f5f9; }
+        .game-details { flex: 1; }
         .game-name { font-weight: 800; font-size: 14px; text-transform: uppercase; }
         .game-path { font-size: 10px; color: #64748b; margin-top: 4px; font-family: monospace; }
         .game-actions { display: flex; gap: 8px; }
@@ -59,7 +70,7 @@
         .modal-header { background: var(--header-bg); padding: 16px; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { color: white; font-size: 16px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
         .close-modal { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
-        .modal-body { padding: 16px; max-height: 400px; overflow-y: auto; }
+        .modal-body { padding: 16px; max-height: 500px; overflow-y: auto; }
         .modal-footer { padding: 16px; border-top: 1px solid #eef2f6; display: flex; gap: 12px; justify-content: flex-end; }
         
         .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--vibrant-green); z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
@@ -105,10 +116,13 @@
     <div class="modal-content">
         <div class="modal-header"><h3><span class="iconify" data-icon="mdi:pencil"></span> EDIT GAME</h3><button class="close-modal" id="closeEditModalBtn">✕</button></div>
         <div class="modal-body">
-            <div class="input-group"><label>GAME NAME</label><input type="text" id="editGameName" placeholder="e.g., Soccer Challenge"></div>
-            <div class="input-group"><label>FILE PATH</label><input type="text" id="editGamePath" placeholder="e.g., games/soccer.html"><div class="path-hint">📁 Place HTML files in the "games" folder</div></div>
-            <div class="input-group"><label>ICON (OPTIONAL)</label><input type="text" id="editGameIcon" placeholder="e.g., mdi:soccer"></div>
-            <div class="input-group"><label>DESCRIPTION</label><textarea id="editGameDesc" rows="2" placeholder="Game description..."></textarea></div>
+            <div class="input-group"><label>🎮 GAME NAME</label><input type="text" id="editGameName" placeholder="e.g., Soccer Challenge"></div>
+            <div class="input-group"><label>📁 FILE PATH</label><input type="text" id="editGamePath" placeholder="e.g., games/soccer.html"><div class="path-hint">📁 Place HTML files in the "games" folder</div></div>
+            <div class="input-group"><label>🖼️ GAME THUMBNAIL</label></div>
+            <div class="upload-area" id="editUploadArea"><span class="iconify" data-icon="mdi:cloud-upload"></span><br>Click to upload image</div>
+            <input type="file" id="editImageInput" accept="image/*" style="display:none">
+            <div id="editImagePreview" style="display:none;" class="current-image"></div>
+            <div class="input-group"><label>📝 DESCRIPTION</label><textarea id="editGameDesc" rows="2" placeholder="Game description..."></textarea></div>
         </div>
         <div class="modal-footer"><button class="btn btn-secondary" id="cancelEditBtn">CANCEL</button><button class="btn btn-primary" id="saveEditBtn">SAVE CHANGES</button></div>
     </div>
@@ -128,10 +142,13 @@
     };
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const IMGBB_KEY = "0f248e70fc4e7dffde307dd772823379";
     
     let gamesList = [];
     let currentTab = 'games';
     let editingGameId = null;
+    let currentImageFile = null;
+    let currentEditImageFile = null;
     
     function showToast(msg, isError = false){
         const toast = document.getElementById('notificationToast');
@@ -142,7 +159,15 @@
         setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
     
-    // Load games from Firestore
+    async function uploadImage(file){
+        const fd = new FormData();
+        fd.append('image', file);
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
+        const data = await res.json();
+        if(data.success) return data.data.url;
+        throw new Error("Upload failed");
+    }
+    
     async function loadGames(){
         try{
             const snap = await db.collection('games').orderBy('createdAt', 'desc').get();
@@ -155,7 +180,6 @@
         }
     }
     
-    // Render games list
     function renderGamesList(){
         const container = document.getElementById('gamesTab');
         if(gamesList.length === 0){
@@ -174,9 +198,12 @@
         listContainer.innerHTML = gamesList.map(game => `
             <div class="game-item">
                 <div class="game-info">
-                    <div class="game-name"><span class="iconify" data-icon="${game.icon || 'mdi:gamepad-variant'}" style="font-size:14px; margin-right:6px;"></span> ${escapeHtml(game.name)}</div>
-                    <div class="game-path">📁 ${escapeHtml(game.filePath || 'games/unknown.html')}</div>
-                    ${game.description ? `<div style="font-size:10px; color:#888; margin-top:4px;">${escapeHtml(game.description.substring(0, 60))}</div>` : ''}
+                    ${game.imageUrl ? `<img src="${game.imageUrl}" class="game-thumb" onerror="this.src='https://placehold.co/50'">` : '<div class="game-thumb" style="display:flex;align-items:center;justify-content:center;background:#f1f5f9;"><span class="iconify" data-icon="mdi:gamepad-variant" style="font-size:24px;color:#94a3b8;"></span></div>'}
+                    <div class="game-details">
+                        <div class="game-name">${escapeHtml(game.name)}</div>
+                        <div class="game-path">📁 ${escapeHtml(game.filePath || 'games/unknown.html')}</div>
+                        ${game.description ? `<div style="font-size:10px; color:#888; margin-top:4px;">${escapeHtml(game.description.substring(0, 50))}</div>` : ''}
+                    </div>
                 </div>
                 <div class="game-actions">
                     <div class="action-icon edit" data-id="${game.id}"><span class="iconify" data-icon="mdi:pencil"></span> Edit</div>
@@ -193,7 +220,6 @@
         });
     }
     
-    // Render add game form
     function renderAddForm(){
         const container = document.getElementById('addTab');
         container.innerHTML = `
@@ -201,7 +227,10 @@
                 <div class="section-title"><span class="iconify" data-icon="mdi:plus-circle"></span> ADD NEW GAME</div>
                 <div class="input-group"><label>🎮 GAME NAME *</label><input type="text" id="gameName" placeholder="e.g., Soccer Challenge"></div>
                 <div class="input-group"><label>📁 FILE PATH *</label><input type="text" id="gamePath" placeholder="e.g., games/soccer.html"><div class="path-hint">💡 Tip: Place your HTML files in the "games" folder. Example: "games/mojang.html"</div></div>
-                <div class="input-group"><label>🎨 ICON (Iconify icon)</label><input type="text" id="gameIcon" placeholder="e.g., mdi:soccer, mdi:basketball, mdi:gamepad-variant"><div class="path-hint">Browse icons at https://iconify.design</div></div>
+                <div class="input-group"><label>🖼️ GAME THUMBNAIL</label></div>
+                <div class="upload-area" id="addUploadArea"><span class="iconify" data-icon="mdi:cloud-upload"></span><br>Click to upload image</div>
+                <input type="file" id="addImageInput" accept="image/*" style="display:none">
+                <div id="addImagePreview" style="display:none;" class="current-image"></div>
                 <div class="input-group"><label>📝 DESCRIPTION</label><textarea id="gameDesc" rows="2" placeholder="Describe your game..."></textarea></div>
                 <button class="btn btn-primary" id="saveGameBtn" style="width:100%;"><span class="iconify" data-icon="mdi:content-save"></span> SAVE GAME</button>
             </div>
@@ -211,29 +240,63 @@
                     <p>1. Create your HTML game file (e.g., <strong>mygame.html</strong>)</p>
                     <p>2. Upload it to the <strong>"games"</strong> folder on your server</p>
                     <p>3. Enter the file path as <strong>"games/mygame.html"</strong></p>
-                    <p>4. Click SAVE GAME - users can now play it!</p>
+                    <p>4. Upload a thumbnail image for your game</p>
+                    <p>5. Click SAVE GAME - users can now play it!</p>
                 </div>
             </div>
         `;
         
+        setupImageUpload('add');
         document.getElementById('saveGameBtn')?.addEventListener('click', addGame);
     }
     
-    // Add new game
+    function setupImageUpload(context){
+        const uploadArea = document.getElementById(`${context}UploadArea`);
+        const imageInput = document.getElementById(`${context}ImageInput`);
+        const previewContainer = document.getElementById(`${context}ImagePreview`);
+        
+        if(uploadArea){
+            uploadArea.onclick = () => imageInput.click();
+            imageInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if(file){
+                    if(context === 'add') currentImageFile = file;
+                    else currentEditImageFile = file;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        previewContainer.innerHTML = `
+                            <img src="${event.target.result}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">
+                            <span style="flex:1; font-size:12px;">${file.name}</span>
+                            <button class="remove-image-btn" onclick="document.getElementById('${context}ImageInput').value=''; document.getElementById('${context}ImagePreview').style.display='none'; if('${context}'==='add') currentImageFile=null; else currentEditImageFile=null;">Remove</button>
+                        `;
+                        previewContainer.style.display = 'flex';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+    }
+    
     async function addGame(){
         const name = document.getElementById('gameName').value.trim();
         const filePath = document.getElementById('gamePath').value.trim();
-        const icon = document.getElementById('gameIcon').value.trim() || 'mdi:gamepad-variant';
         const description = document.getElementById('gameDesc').value.trim();
         
         if(!name){ showToast("Please enter game name", true); return; }
         if(!filePath){ showToast("Please enter file path", true); return; }
         
+        let imageUrl = '';
+        if(currentImageFile){
+            try{
+                imageUrl = await uploadImage(currentImageFile);
+            } catch(e){ showToast("Image upload failed", true); return; }
+        }
+        
         try{
             await db.collection('games').add({
                 name: name,
                 filePath: filePath,
-                icon: icon,
+                imageUrl: imageUrl,
                 description: description,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -241,8 +304,9 @@
             showToast(`Game "${name}" added successfully!`);
             document.getElementById('gameName').value = '';
             document.getElementById('gamePath').value = '';
-            document.getElementById('gameIcon').value = '';
             document.getElementById('gameDesc').value = '';
+            document.getElementById('addImagePreview').style.display = 'none';
+            currentImageFile = null;
             await loadGames();
             switchTab('games');
         } catch(e){
@@ -251,36 +315,70 @@
         }
     }
     
-    // Open edit modal
     function openEditModal(gameId){
         const game = gamesList.find(g => g.id === gameId);
         if(!game) return;
         editingGameId = gameId;
         document.getElementById('editGameName').value = game.name || '';
         document.getElementById('editGamePath').value = game.filePath || '';
-        document.getElementById('editGameIcon').value = game.icon || 'mdi:gamepad-variant';
         document.getElementById('editGameDesc').value = game.description || '';
+        
+        const previewContainer = document.getElementById('editImagePreview');
+        if(game.imageUrl){
+            previewContainer.innerHTML = `
+                <img src="${game.imageUrl}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">
+                <span style="flex:1; font-size:12px;">Current image</span>
+                <button class="remove-image-btn" id="removeCurrentImageBtn">Remove</button>
+            `;
+            previewContainer.style.display = 'flex';
+        } else {
+            previewContainer.style.display = 'none';
+        }
+        
+        currentEditImageFile = null;
+        document.getElementById('editImageInput').value = '';
+        
+        const removeBtn = document.getElementById('removeCurrentImageBtn');
+        if(removeBtn){
+            removeBtn.onclick = () => {
+                previewContainer.style.display = 'none';
+                currentEditImageFile = 'REMOVE';
+            };
+        }
+        
+        setupImageUpload('edit');
         document.getElementById('editModal').style.display = 'flex';
     }
     
-    // Save edited game
     async function saveEditedGame(){
         const newName = document.getElementById('editGameName').value.trim();
         const newPath = document.getElementById('editGamePath').value.trim();
-        const newIcon = document.getElementById('editGameIcon').value.trim();
         const newDesc = document.getElementById('editGameDesc').value.trim();
         
         if(!newName){ showToast("Please enter game name", true); return; }
         if(!newPath){ showToast("Please enter file path", true); return; }
         
+        let imageUrl = null;
+        const game = gamesList.find(g => g.id === editingGameId);
+        
+        if(currentEditImageFile === 'REMOVE'){
+            imageUrl = '';
+        } else if(currentEditImageFile){
+            try{
+                imageUrl = await uploadImage(currentEditImageFile);
+            } catch(e){ showToast("Image upload failed", true); return; }
+        }
+        
         try{
-            await db.collection('games').doc(editingGameId).update({
+            const updateData = {
                 name: newName,
                 filePath: newPath,
-                icon: newIcon || 'mdi:gamepad-variant',
                 description: newDesc,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
+            if(imageUrl !== null) updateData.imageUrl = imageUrl;
+            
+            await db.collection('games').doc(editingGameId).update(updateData);
             showToast(`Game updated successfully!`);
             document.getElementById('editModal').style.display = 'none';
             await loadGames();
@@ -290,7 +388,6 @@
         }
     }
     
-    // Delete game
     async function deleteGame(gameId){
         if(!confirm("Are you sure you want to delete this game?")) return;
         try{
@@ -303,7 +400,6 @@
         }
     }
     
-    // Tab switching
     function switchTab(tab){
         currentTab = tab;
         document.querySelectorAll('.tab-item').forEach(t => {
@@ -318,7 +414,6 @@
     
     function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
     
-    // Event listeners
     document.querySelectorAll('.tab-item').forEach(tab => {
         tab.addEventListener('click', () => switchTab(tab.dataset.tab));
     });
@@ -337,7 +432,6 @@
         });
     });
     
-    // Initialize
     loadGames();
     renderAddForm();
 })();

@@ -3,917 +3,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>ORAFUT · Games Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <title>ORAFUT · Team Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #293136;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    .mobile-container {
-      width: 100%;
-      max-width: 480px;
-      background-color: #ffffff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    :root {
-      --vibrant-green: #9CE800;
-      --header-bg: #252A2D;
-      --section-bg: #353B40;
-      --white: #FFFFFF;
-      --black: #1A1A1A;
-      --bottom-nav-height: 70px;
-    }
-
-    .main-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: var(--header-bg);
-      flex-shrink: 0;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .back-btn {
-      background: transparent;
-      border: 2px solid var(--vibrant-green);
-      color: var(--vibrant-green);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 40px;
-      transition: all 0.2s;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      text-decoration: none;
-    }
-
-    .brand {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-    .brand .ora { color: var(--white); }
-    .brand .fut { color: var(--vibrant-green); }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .leaderboard-btn {
-      background: transparent;
-      border: 2px solid var(--vibrant-green);
-      color: var(--vibrant-green);
-      padding: 6px 10px;
-      border-radius: 40px;
-      font-weight: 700;
-      font-size: 11px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      text-transform: uppercase;
-    }
-
-    .banner-ad {
-      background: var(--section-bg);
-      padding: 6px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 2px solid #252A2D;
-      flex-shrink: 0;
-    }
-    #mobile-banner {
-      width: 320px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #2D3337;
-      border-radius: 6px;
-    }
-
-    .social-bar {
-      background: var(--section-bg);
-      padding: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 2px solid #252A2D;
-      flex-shrink: 0;
-    }
-
-    .breadcrumb-section {
-      background: var(--section-bg);
-      padding: 6px 16px;
-      border-bottom: 1px solid #252A2D;
-      flex-shrink: 0;
-    }
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.5);
-      flex-wrap: wrap;
-    }
-    .breadcrumb a {
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .breadcrumb .iconify { font-size: 10px; color: rgba(255,255,255,0.3); }
-    .breadcrumb .current { color: var(--vibrant-green); font-weight: 700; }
-
-    .main-content {
-      flex: 1;
-      padding: 16px 16px 0 16px;
-      background: var(--white);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--vibrant-green) #E0E0E0;
-      padding-bottom: calc(var(--bottom-nav-height) + 16px);
-    }
-    .main-content::-webkit-scrollbar { width: 4px; }
-    .main-content::-webkit-scrollbar-track { background: #E0E0E0; }
-    .main-content::-webkit-scrollbar-thumb { background: var(--vibrant-green); border-radius: 4px; }
-
-    .games-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .games-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #1A1A1A;
-      text-transform: uppercase;
-    }
-    .games-title span { color: var(--vibrant-green); }
-
-    .trending-section {
-      background: #F8F9FA;
-      border-radius: 20px;
-      padding: 14px;
-      margin-bottom: 16px;
-      border: 2px solid #E8E8E8;
-    }
-    .trending-title {
-      font-weight: 800;
-      font-size: 14px;
-      color: #1A1A1A;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .trending-title .iconify { color: var(--vibrant-green); }
-    .trending-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .trending-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .trending-rank {
-      width: 24px;
-      height: 24px;
-      background: var(--vibrant-green);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 12px;
-      color: #000;
-    }
-    .trending-info { font-size: 12px; }
-    .trending-name { font-weight: 700; color: #1A1A1A; }
-    .trending-plays { font-size: 10px; color: #888; }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .game-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 2px solid #E8E8E8;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .game-card:active { transform: scale(0.98); }
-    .game-image {
-      width: 100%;
-      height: 100px;
-      background: linear-gradient(135deg, #2D3337, #1A1A1A);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .game-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .game-image .iconify {
-      font-size: 40px;
-      color: var(--vibrant-green);
-    }
-    .game-badge {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: var(--vibrant-green);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 8px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-    .game-info { padding: 10px; }
-    .game-name {
-      font-weight: 800;
-      font-size: 13px;
-      color: #1A1A1A;
-      margin-bottom: 3px;
-      text-transform: uppercase;
-    }
-    .game-desc {
-      font-size: 10px;
-      color: #888;
-      margin-bottom: 8px;
-    }
-    .play-btn {
-      background: var(--vibrant-green);
-      border: none;
-      color: #000;
-      padding: 8px 10px;
-      border-radius: 40px;
-      font-weight: 700;
-      font-size: 11px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      width: 100%;
-      text-transform: uppercase;
-      box-shadow: 0 3px 0 #6B9E00;
-    }
-
-    .bottom-nav-float {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
-      background: var(--header-bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 10px 8px;
-      border-top: 3px solid var(--vibrant-green);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-      z-index: 100;
-      height: var(--bottom-nav-height);
-    }
-    .nav-item-float {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      background: transparent;
-      border: none;
-      color: #999;
-      cursor: pointer;
-      transition: 0.15s;
-      padding: 6px 10px;
-      border-radius: 30px;
-      text-decoration: none;
-      flex: 1;
-    }
+    body { background: #293136; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Poppins', sans-serif; }
+    .mobile-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+    :root { --vibrant-green: #9CE800; --header-bg: #252A2D; --section-bg: #353B40; --bottom-nav-height: 70px; }
+    .main-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); flex-shrink: 0; }
+    .back-btn { background: rgba(156,232,0,0.12); border: 1.5px solid #9CE800; color: #9CE800; padding: 6px 12px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer; border-radius: 8px; }
+    .brand { font-size: 20px; font-weight: 800; font-style: italic; }
+    .brand .ora { color: white; } .brand .fut { color: #9CE800; }
+    .content-area { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; min-height: 0; padding-bottom: calc(var(--bottom-nav-height) + 16px); }
+    .content-area::-webkit-scrollbar { width: 3px; }
+    
+    /* Team Hero */
+    .team-hero { background: linear-gradient(135deg, #0a0e14 0%, #1a1f2a 100%); padding: 24px 16px; display: flex; flex-direction: column; align-items: center; border-radius: 8px; margin-bottom: 16px; }
+    .team-logo-large { width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 3px solid #9CE800; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .team-logo-large img { width: 90%; height: 90%; object-fit: contain; border-radius: 50%; }
+    .team-name-large { font-size: 22px; font-weight: 800; color: white; text-align: center; text-transform: uppercase; }
+    .team-league { font-size: 12px; color: #9CE800; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+    .follow-btn { margin-top: 12px; background: #9CE800; border: none; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; box-shadow: 0 3px 0 #6B9E00; transition: 0.1s; }
+    .follow-btn.following { background: #F44336; box-shadow: 0 3px 0 #c62828; color: white; }
+    .follow-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #6B9E00; }
+    .login-prompt { margin-top: 12px; font-size: 10px; color: #aaa; text-align: center; }
+    
+    .stats-row { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; }
+    .stat-badge { background: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; border: 2px solid #E0E0E0; }
+    
+    /* Tabs */
+    .tab-bar { display: flex; background: white; border-bottom: 2px solid #E0E0E0; margin-bottom: 16px; gap: 8px; }
+    .tab-item { flex: 1; text-align: center; padding: 12px 0; font-weight: 700; font-size: 12px; color: #64748b; cursor: pointer; position: relative; text-transform: uppercase; }
+    .tab-item.active { color: #9CE800; }
+    .tab-item.active::after { content: ''; position: absolute; bottom: -2px; left: 20%; width: 60%; height: 3px; background: #9CE800; }
+    
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    
+    .section-card { background: white; border: 2px solid #E0E0E0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .section-title { font-size: 14px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; text-transform: uppercase; }
+    
+    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f6; cursor: pointer; }
+    .match-row:active { background: #f8fafc; }
+    .match-team { font-weight: 600; font-size: 12px; text-transform: uppercase; flex: 1; }
+    .match-result { font-size: 9px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
+    .result-win { background: #9CE80020; color: #5a8a00; border: 1px solid #9CE800; }
+    .result-loss { background: #F4433620; color: #c62828; border: 1px solid #F44336; }
+    .result-draw { background: #FF980020; color: #e65100; border: 1px solid #FF9800; }
+    .result-upcoming { background: #f1f5f9; color: #64748b; border: 1px solid #D0D0D0; }
+    
+    .info-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eef2f6; font-size: 13px; font-weight: 500; }
+    .empty-state { text-align: center; padding: 30px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    
+    .toast-notify { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 12px 20px; border-radius: 8px; border-left: 4px solid #9CE800; z-index: 200; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; max-width: 90%; }
+    .bottom-nav-float { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #252A2D; display: flex; align-items: center; justify-content: space-around; padding: 10px 8px; border-top: 3px solid #9CE800; z-index: 100; height: var(--bottom-nav-height); }
+    .nav-item-float { display: flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; color: #999; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
     .nav-item-float .iconify { font-size: 22px; }
-    .nav-item-float span {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .nav-item-float.active {
-      background: var(--vibrant-green);
-      color: #000;
-    }
-    .nav-item-float.active .iconify { color: #000; }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: flex-end;
-      z-index: 1000;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: white;
-      border-radius: 28px 28px 0 0;
-      width: 100%;
-      max-width: 480px;
-      max-height: 85vh;
-      overflow: hidden;
-    }
-    .modal-header {
-      padding: 16px 20px;
-      border-bottom: 2px solid #E8E8E8;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #1A1A1A;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: #999;
-      cursor: pointer;
-    }
-    .modal-content {
-      padding: 16px 20px;
-      max-height: calc(85vh - 70px);
-      overflow-y: auto;
-    }
-    .leaderboard-search {
-      display: flex;
-      align-items: center;
-      background: #F0F0F0;
-      padding: 10px 16px;
-      border-radius: 40px;
-      margin-bottom: 16px;
-      border: 2px solid #E0E0E0;
-    }
-    .leaderboard-search .iconify { color: #999; margin-right: 10px; }
-    .leaderboard-search input {
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 14px;
-      width: 100%;
-    }
-    .leaderboard-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .leaderboard-tab {
-      background: #F0F0F0;
-      border: 2px solid #E0E0E0;
-      color: #666;
-      padding: 8px 12px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .leaderboard-tab.active {
-      background: var(--vibrant-green);
-      border-color: var(--vibrant-green);
-      color: #000;
-    }
-    .leaderboard-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .leaderboard-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: #F8F9FA;
-      border-radius: 16px;
-      border-left: 4px solid var(--vibrant-green);
-    }
-    .leaderboard-rank {
-      width: 28px;
-      height: 28px;
-      background: var(--vibrant-green);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: #000;
-      font-size: 12px;
-    }
-    .leaderboard-avatar {
-      width: 36px;
-      height: 36px;
-      background: #2D3337;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 14px;
-    }
-    .leaderboard-info { flex: 1; }
-    .leaderboard-name {
-      font-weight: 700;
-      color: #1A1A1A;
-      font-size: 13px;
-    }
-    .leaderboard-stats {
-      display: flex;
-      gap: 10px;
-      font-size: 10px;
-      color: #888;
-      margin-top: 2px;
-    }
-    .leaderboard-score {
-      font-weight: 800;
-      color: var(--vibrant-green);
-      font-size: 16px;
-    }
-
-    .hint-text-mobile {
-      margin-top: 14px;
-      margin-bottom: 8px;
-      color: #999;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-align: center;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #999;
-    }
+    .nav-item-float span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .nav-item-float.active { background: #9CE800; color: #000; }
     
-    .empty-state {
-      grid-column: span 2;
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-    }
-    .empty-state .iconify {
-      font-size: 48px;
-      color: #D0D0D0;
-      margin-bottom: 12px;
-    }
-    
-    .toast-notify {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 10px 20px;
-      font-size: 12px;
-      z-index: 1000;
-      animation: fadeUp 2s forwards;
-      border-radius: 60px;
-      font-weight: 600;
-    }
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      90% { opacity: 1; }
-      100% { opacity: 0; visibility: hidden; }
-    }
+    .loading-spinner { text-align: center; padding: 40px; color: #9CE800; }
   </style>
 </head>
 <body>
 <div class="mobile-container">
+  <div class="toast-notify" id="notificationToast"><span class="iconify" data-icon="mdi:information-outline"></span><span id="toastMessage"></span></div>
   <header class="main-header">
-    <div class="header-left">
-      <a href="match.html" class="back-btn">
-        <span class="iconify" data-icon="mdi:arrow-left"></span> BACK
-      </a>
-      <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
-    </div>
-    <div class="header-right">
-      <button class="leaderboard-btn" id="leaderboardBtn">
-        <span class="iconify" data-icon="mdi:podium-gold"></span> RANK
-      </button>
-    </div>
+    <button class="back-btn" id="backBtn"><span class="iconify" data-icon="mdi:arrow-left"></span> Back</button>
+    <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
+    <div style="width: 50px;"></div>
   </header>
-
-  <div class="banner-ad">
-    <div id="mobile-banner">
-      <script type="text/javascript">atOptions={'key':'84b968fa543d8c4d3957f1b6b0a1d07f','format':'iframe','height':50,'width':320,'params':{}};</script>
-      <script src="https://www.highperformanceformat.com/84b968fa543d8c4d3957f1b6b0a1d07f/invoke.js"></script>
-    </div>
+  <div class="content-area" id="contentArea">
+    <div id="teamContent"></div>
   </div>
-
-  <div class="social-bar">
-    <script src="https://pl29146904.profitablecpmratenetwork.com/f8/f9/de/f8f9de6535798d5ac13b06f62414b261.js"></script>
-  </div>
-
-  <div class="breadcrumb-section">
-    <div class="breadcrumb">
-      <a href="match.html">Home</a>
-      <span class="iconify" data-icon="mdi:chevron-right"></span>
-      <span class="current">Games Hub</span>
-    </div>
-  </div>
-
-  <div class="main-content">
-    <div class="games-header">
-      <div class="games-title">GAMES <span>HUB</span></div>
-      <a href="admin-add-game.html" style="background:#9CE800; padding:6px 12px; border-radius:40px; font-size:11px; font-weight:800; text-decoration:none; color:#000;">+ ADD GAME</a>
-    </div>
-
-    <div class="trending-section">
-      <div class="trending-title">
-        <span class="iconify" data-icon="mdi:fire"></span> Trending This Week
-      </div>
-      <div class="trending-list" id="trendingList">
-        <div class="loading">Loading...</div>
-      </div>
-    </div>
-
-    <div class="games-grid" id="gamesGrid">
-      <div class="loading" style="grid-column: span 2;">Loading games...</div>
-    </div>
-    <div class="hint-text-mobile">⚡ TAP ANY GAME TO PLAY ⚡</div>
-  </div>
-
   <div class="bottom-nav-float">
-    <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>Home</span></button>
-    <button class="nav-item-float active" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant-outline"></span><span>Games</span></button>
-    <button class="nav-item-float" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>Account</span></button>
-  </div>
-
-  <div class="modal-overlay" id="leaderboardModal">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title"><span class="iconify" data-icon="mdi:podium-gold"></span> LEADERBOARD</div>
-        <button class="modal-close" id="closeModalBtn"><span class="iconify" data-icon="mdi:close"></span></button>
-      </div>
-      <div class="modal-content">
-        <div class="leaderboard-search">
-          <span class="iconify" data-icon="mdi:magnify"></span>
-          <input type="text" id="leaderboardSearch" placeholder="Search players...">
-        </div>
-        <div class="leaderboard-tabs">
-          <button class="leaderboard-tab active" data-tab="all">ALL TIME</button>
-          <button class="leaderboard-tab" data-tab="weekly">THIS WEEK</button>
-          <button class="leaderboard-tab" data-tab="daily">TODAY</button>
-        </div>
-        <div class="leaderboard-list" id="leaderboardList">
-          <div style="text-align:center;padding:20px;color:#999;">Loading...</div>
-        </div>
-      </div>
-    </div>
+    <button class="nav-item-float" data-nav="home"><span class="iconify" data-icon="mdi:home-outline"></span><span>HOME</span></button>
+    <button class="nav-item-float" data-nav="games"><span class="iconify" data-icon="mdi:gamepad-variant"></span><span>GAMES</span></button>
+    <button class="nav-item-float" data-nav="account"><span class="iconify" data-icon="mdi:account-circle-outline"></span><span>ACCOUNT</span></button>
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
 <script>
 (function(){
-  "use strict";
-
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
-    authDomain: "orafut-58b5f.firebaseapp.com",
-    projectId: "orafut-58b5f",
-    storageBucket: "orafut-58b5f.firebasestorage.app",
-    messagingSenderId: "500581059835",
-    appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
-  };
-
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const db = firebase.firestore();
-  const auth = firebase.auth();
-
-  let games = [];
-  let leaderboardData = [];
-  let currentTab = 'all';
-
-  function showToast(msg) {
-    const t = document.createElement('div');
-    t.className = 'toast-notify';
-    t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2200);
-  }
-
-  // DOM Elements
-  const leaderboardBtn = document.getElementById('leaderboardBtn');
-  const leaderboardModal = document.getElementById('leaderboardModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const bottomNavItems = document.querySelectorAll('.nav-item-float');
-
-  // Initialize anonymous user
-  let anonymousId = localStorage.getItem('anonymousId');
-  if (!anonymousId) {
-    anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('anonymousId', anonymousId);
-  }
-
-  // Track user activity
-  db.collection('anonymous_users').doc(anonymousId).set({
-    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-    lastPage: 'games.html'
-  }, { merge: true }).catch(err => console.error('Error tracking user:', err));
-
-  // Leaderboard functions
-  function openLeaderboard() { 
-    leaderboardModal.classList.add('active'); 
-    loadLeaderboard(); 
-  }
-  
-  function closeLeaderboard() { 
-    leaderboardModal.classList.remove('active'); 
-  }
-
-  leaderboardBtn.addEventListener('click', openLeaderboard);
-  closeModalBtn.addEventListener('click', closeLeaderboard);
-  leaderboardModal.addEventListener('click', (e) => { 
-    if (e.target === leaderboardModal) closeLeaderboard(); 
-  });
-
-  // Bottom navigation
-  bottomNavItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const nav = item.dataset.nav;
-      if (nav === 'home') {
-        window.location.href = 'match.html';
-      } else if (nav === 'account') {
-        window.location.href = 'account.html';
-      }
-      // games stays on same page
-    });
-  });
-
-  // Load games from Firestore
-  async function loadGamesFromDB() {
-    try {
-      const gamesGrid = document.getElementById('gamesGrid');
-      const trendingList = document.getElementById('trendingList');
-
-      const snap = await db.collection('games').orderBy('plays', 'desc').get();
-      
-      if (!snap.empty) {
-        games = [];
-        snap.forEach(doc => {
-          games.push({ id: doc.id, ...doc.data() });
-        });
-        renderGames(games, gamesGrid, trendingList);
-      } else {
-        gamesGrid.innerHTML = `
-          <div class="empty-state">
-            <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
-            <p>No games available yet</p>
-            <p style="font-size:11px;margin-top:5px;">Use the ADD GAME button to create games</p>
-          </div>
-        `;
-        trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
-      }
-    } catch (error) {
-      console.error('Error loading games:', error);
-      const gamesGrid = document.getElementById('gamesGrid');
-      gamesGrid.innerHTML = `
-        <div class="empty-state">
-          <span class="iconify" data-icon="mdi:alert-circle-outline"></span>
-          <p>Error loading games</p>
-          <p style="font-size:11px;margin-top:5px;">Please refresh</p>
-        </div>
-      `;
-    }
-  }
-
-  function renderGames(gamesList, grid, trending) {
-    // Render trending (top 3 by plays)
-    const topGames = gamesList.slice(0, 3);
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMzQe4_sHxVX2rgbgCF5E9DDWbbp9m7tc",
+        authDomain: "orafut-58b5f.firebaseapp.com",
+        projectId: "orafut-58b5f",
+        storageBucket: "orafut-58b5f.firebasestorage.app",
+        messagingSenderId: "500581059835",
+        appId: "1:500581059835:web:7be0994b65ff21dae0b45e"
+    };
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
     
-    let trendingHtml = '';
-    if (topGames.length > 0) {
-      topGames.forEach((game, i) => {
-        trendingHtml += `
-          <div class="trending-item">
-            <div class="trending-rank">${i+1}</div>
-            <div class="trending-info">
-              <div class="trending-name">${escapeHtml(game.name || 'Unknown Game')}</div>
-              <div class="trending-plays">${game.plays || 0} plays</div>
-            </div>
-          </div>
-        `;
-      });
-    } else {
-      trendingHtml = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
+    const urlParams = new URLSearchParams(window.location.search);
+    const teamId = urlParams.get('id');
+    
+    let teamData = null;
+    let allMatches = [];
+    let leagues = [];
+    let currentUser = null;
+    let isFollowing = false;
+    let currentTab = 'info';
+    
+    function showToast(msg, isError = false){
+        const toast = document.getElementById('notificationToast');
+        const toastMsg = document.getElementById('toastMessage');
+        toastMsg.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = isError ? '#F44336' : '#9CE800';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
-    trending.innerHTML = trendingHtml;
-
-    // Render game cards
-    if (gamesList.length === 0) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
-          <p>No games available yet</p>
-          <p style="font-size:11px;margin-top:5px;">Click + ADD GAME to create one</p>
-        </div>
-      `;
-      return;
+    
+    async function loadLeagues(){
+        const snap = await db.collection('leagues').get();
+        leagues = [];
+        snap.forEach(doc => leagues.push({ id: doc.id, ...doc.data() }));
     }
-
-    let cardsHtml = '';
-    gamesList.forEach(game => {
-      const imageUrl = game.imageUrl || '';
-      const name = escapeHtml(game.name || 'Game');
-      const location = game.location || '';
-      const plays = game.plays || 0;
-      
-      cardsHtml += `
-        <div class="game-card" onclick="openGame('${escapeHtml(location)}')">
-          <div class="game-image">
-            ${imageUrl ? 
-              `<img src="${imageUrl}" alt="${name}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:gamepad-variant\\'></span>'">` : 
-              '<span class="iconify" data-icon="mdi:gamepad-variant"></span>'
+    
+    async function loadTeam(){
+        if(!teamId){
+            showToast("Team not specified", true);
+            document.getElementById('teamContent').innerHTML = '<div class="empty-state">Team not found</div>';
+            return;
+        }
+        
+        try{
+            const teamDoc = await db.collection('teams').doc(teamId).get();
+            if(!teamDoc.exists){
+                showToast("Team not found", true);
+                document.getElementById('teamContent').innerHTML = '<div class="empty-state">Team not found</div>';
+                return;
             }
-          </div>
-          <div class="game-info">
-            <div class="game-name">${name}</div>
-            <div class="game-desc">${plays} plays</div>
-            <button class="play-btn" onclick="event.stopPropagation();openGame('${escapeHtml(location)}')">
-              <span class="iconify" data-icon="mdi:play"></span> PLAY
-            </button>
-          </div>
-        </div>
-      `;
-    });
-    grid.innerHTML = cardsHtml;
-  }
-
-  window.openGame = function(location) {
-    if (location) {
-      // Increment play count in Firestore
-      db.collection('games').where('location', '==', location).get().then(snap => {
+            teamData = { id: teamDoc.id, ...teamDoc.data() };
+            
+            await loadMatches();
+            await checkFollowStatus();
+            renderTeamPage();
+        } catch(e){
+            showToast("Error loading team", true);
+            console.error(e);
+        }
+    }
+    
+    async function loadMatches(){
+        const snap = await db.collection('matches').get();
+        allMatches = [];
         snap.forEach(doc => {
-          db.collection('games').doc(doc.id).update({
-            plays: firebase.firestore.FieldValue.increment(1)
-          }).catch(err => console.error('Error updating plays:', err));
+            const match = { id: doc.id, ...doc.data() };
+            if(match.teamAName === teamData.name || match.teamBName === teamData.name ||
+               match.teamAId === teamId || match.teamBId === teamId){
+                allMatches.push(match);
+            }
         });
-      }).catch(err => console.error('Error finding game:', err));
-      
-      // Navigate to game page
-      window.location.href = location + '.html';
-    } else {
-      showToast('Game location not found');
-    }
-  };
-
-  // Load leaderboard from Firestore
-  async function loadLeaderboard() {
-    try {
-      const leaderboardList = document.getElementById('leaderboardList');
-      leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">Loading...</div>';
-
-      const scoresSnap = await db.collection('leaderboard_scores')
-        .orderBy('totalScore', 'desc')
-        .limit(50)
-        .get();
-
-      if (!scoresSnap.empty) {
-        leaderboardData = [];
-        scoresSnap.forEach(doc => {
-          leaderboardData.push({ id: doc.id, ...doc.data() });
+        allMatches.sort((a,b) => {
+            const dateA = a.startTime?.toDate() || new Date(0);
+            const dateB = b.startTime?.toDate() || new Date(0);
+            return dateA - dateB;
         });
-      } else {
-        leaderboardData = [];
-      }
-
-      renderLeaderboard(leaderboardList);
-    } catch (error) {
-      console.error('Error loading leaderboard:', error);
-      const leaderboardList = document.getElementById('leaderboardList');
-      leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No scores yet</div>';
     }
-  }
-
-  function renderLeaderboard(list) {
-    const searchInput = document.getElementById('leaderboardSearch');
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-
-    let filtered = leaderboardData.filter(p => 
-      !searchTerm || (p.playerName && p.playerName.toLowerCase().includes(searchTerm))
-    );
-
-    if (filtered.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No players found</div>';
-      return;
+    
+    async function checkFollowStatus(){
+        if(!currentUser) { isFollowing = false; return; }
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        const followedTeams = userDoc.data()?.followedTeams || [];
+        isFollowing = followedTeams.includes(teamId);
     }
-
-    let html = '';
-    filtered.forEach((player, index) => {
-      const playerName = player.playerName || 'Anonymous';
-      html += `
-        <div class="leaderboard-item">
-          <div class="leaderboard-rank">${index + 1}</div>
-          <div class="leaderboard-avatar">${playerName.charAt(0)}</div>
-          <div class="leaderboard-info">
-            <div class="leaderboard-name">${escapeHtml(playerName)}</div>
-            <div class="leaderboard-stats">
-              <span><span class="iconify" data-icon="mdi:gamepad-variant"></span> ${player.gamesPlayed || 0}</span>
-              <span><span class="iconify" data-icon="mdi:trophy"></span> ${player.wins || 0} wins</span>
+    
+    async function toggleFollow(){
+        if(!currentUser){
+            showToast("Please login to follow teams", true);
+            setTimeout(() => window.location.href = 'profile.html', 1500);
+            return;
+        }
+        
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        let followedTeams = userDoc.data()?.followedTeams || [];
+        
+        if(isFollowing){
+            followedTeams = followedTeams.filter(id => id !== teamId);
+            showToast(`Unfollowed ${teamData.name}`);
+        } else {
+            if(!followedTeams.includes(teamId)){
+                followedTeams.push(teamId);
+                showToast(`Now following ${teamData.name}`);
+            }
+        }
+        
+        await db.collection('users').doc(currentUser.uid).update({ followedTeams: followedTeams });
+        isFollowing = !isFollowing;
+        renderTeamPage();
+    }
+    
+    function getMatchResult(match){
+        const isTeamA = (match.teamAName === teamData.name || match.teamAId === teamId);
+        if(match.status !== 'ended' || !match.winner){
+            return { class: 'result-upcoming', text: match.status === 'live' ? 'LIVE' : 'UPCOMING' };
+        }
+        if(match.winner === 'draw'){
+            return { class: 'result-draw', text: 'DRAW' };
+        }
+        if((match.winner === 'team1' && isTeamA) || (match.winner === 'team2' && !isTeamA)){
+            return { class: 'result-win', text: 'WIN' };
+        }
+        return { class: 'result-loss', text: 'LOSS' };
+    }
+    
+    function formatDate(match){
+        if(match.status === 'live') return 'LIVE NOW';
+        if(match.startTime){
+            const date = match.startTime.toDate();
+            const now = new Date();
+            if(date > now){
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+            }
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        return 'TBD';
+    }
+    
+    function calculateStats(){
+        let wins = 0, draws = 0, losses = 0;
+        let goalsFor = 0, goalsAgainst = 0;
+        
+        allMatches.forEach(match => {
+            if(match.status === 'ended'){
+                const isTeamA = (match.teamAName === teamData.name || match.teamAId === teamId);
+                const scoreTeamA = parseInt(match.scoreTeam1 || match.scoreTeamA) || 0;
+                const scoreTeamB = parseInt(match.scoreTeam2 || match.scoreTeamB) || 0;
+                
+                if(isTeamA){
+                    goalsFor += scoreTeamA;
+                    goalsAgainst += scoreTeamB;
+                    if(match.winner === 'team1') wins++;
+                    else if(match.winner === 'team2') losses++;
+                    else if(match.winner === 'draw') draws++;
+                } else {
+                    goalsFor += scoreTeamB;
+                    goalsAgainst += scoreTeamA;
+                    if(match.winner === 'team2') wins++;
+                    else if(match.winner === 'team1') losses++;
+                    else if(match.winner === 'draw') draws++;
+                }
+            }
+        });
+        
+        return { wins, draws, losses, goalsFor, goalsAgainst, totalMatches: wins + draws + losses };
+    }
+    
+    function renderTeamPage(){
+        const container = document.getElementById('teamContent');
+        const stats = calculateStats();
+        const leagueObj = leagues.find(l => l.id === teamData.league);
+        const leagueName = leagueObj?.name || teamData.leagueName || 'Unknown League';
+        
+        const upcomingMatches = allMatches.filter(m => m.status !== 'ended').slice(0, 10);
+        const pastMatches = allMatches.filter(m => m.status === 'ended').slice(0, 10);
+        
+        container.innerHTML = `
+            <div class="team-hero">
+                <div class="team-logo-large"><img src="${teamData.logoUrl || teamData.logo || 'https://placehold.co/100?text=Logo'}" onerror="this.src='https://placehold.co/100?text=Logo'"></div>
+                <div class="team-name-large">${escapeHtml(teamData.name)}</div>
+                <div class="team-league"><span class="iconify" data-icon="mdi:trophy-outline"></span> ${escapeHtml(leagueName)}</div>
+                <button class="follow-btn ${isFollowing ? 'following' : ''}" id="followTeamBtn">
+                    <span class="iconify" data-icon="${isFollowing ? 'mdi:heart-broken' : 'mdi:heart-plus'}"></span>
+                    ${isFollowing ? 'UNFOLLOW' : 'FOLLOW'}
+                </button>
+                ${!currentUser ? '<div class="login-prompt"><span class="iconify" data-icon="mdi:login"></span> Login to follow this team</div>' : ''}
             </div>
-          </div>
-          <div class="leaderboard-score">${(player.totalScore || 0).toLocaleString()}</div>
-        </div>
-      `;
+            
+            <div class="stats-row">
+                <div class="stat-badge"><span class="iconify" data-icon="mdi:trophy"></span> ${stats.wins} W</div>
+                <div class="stat-badge"><span class="iconify" data-icon="mdi:handshake"></span> ${stats.draws} D</div>
+                <div class="stat-badge"><span class="iconify" data-icon="mdi:close"></span> ${stats.losses} L</div>
+            </div>
+            
+            <div class="tab-bar">
+                <div class="tab-item ${currentTab === 'info' ? 'active' : ''}" data-tab="info">INFO</div>
+                <div class="tab-item ${currentTab === 'matches' ? 'active' : ''}" data-tab="matches">MATCHES</div>
+                <div class="tab-item ${currentTab === 'stats' ? 'active' : ''}" data-tab="stats">STATS</div>
+            </div>
+            
+            <div id="infoPane" class="tab-pane ${currentTab === 'info' ? 'active' : ''}">
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:information-outline"></span> Team Information</div>
+                    <div class="info-line"><span>Team Name</span><strong>${escapeHtml(teamData.name)}</strong></div>
+                    <div class="info-line"><span>League</span><strong>${escapeHtml(leagueName)}</strong></div>
+                    <div class="info-line"><span>Country</span><strong>${escapeHtml(teamData.country || '—')}</strong></div>
+                    <div class="info-line"><span>Founded</span><strong>${escapeHtml(teamData.founded || '—')}</strong></div>
+                    <div class="info-line"><span>Stadium</span><strong>${escapeHtml(teamData.stadium || '—')}</strong></div>
+                </div>
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-line"></span> Season Summary</div>
+                    <div class="info-line"><span>Matches Played</span><strong>${stats.totalMatches}</strong></div>
+                    <div class="info-line"><span>Goals Scored</span><strong>${stats.goalsFor}</strong></div>
+                    <div class="info-line"><span>Goals Conceded</span><strong>${stats.goalsAgainst}</strong></div>
+                    <div class="info-line"><span>Goal Difference</span><strong style="color:${(stats.goalsFor - stats.goalsAgainst) >= 0 ? '#9CE800' : '#F44336'}">${stats.goalsFor - stats.goalsAgainst >= 0 ? '+' : ''}${stats.goalsFor - stats.goalsAgainst}</strong></div>
+                </div>
+            </div>
+            
+            <div id="matchesPane" class="tab-pane ${currentTab === 'matches' ? 'active' : ''}">
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:calendar-clock"></span> Upcoming Matches</div>
+                    ${upcomingMatches.length === 0 ? '<div class="empty-state">No upcoming matches</div>' : upcomingMatches.map(m => {
+                        const isTeamA = (m.teamAName === teamData.name || m.teamAId === teamId);
+                        const opponent = isTeamA ? m.teamBName : m.teamAName;
+                        return `<div class="match-row" data-match-id="${m.id}">
+                            <div class="match-team">vs ${escapeHtml(opponent)}</div>
+                            <div class="match-result result-upcoming">${formatDate(m)}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:history"></span> Recent Matches</div>
+                    ${pastMatches.length === 0 ? '<div class="empty-state">No past matches</div>' : pastMatches.map(m => {
+                        const isTeamA = (m.teamAName === teamData.name || m.teamAId === teamId);
+                        const opponent = isTeamA ? m.teamBName : m.teamAName;
+                        const result = getMatchResult(m);
+                        const score = (m.scoreTeam1 || m.scoreTeamA) && (m.scoreTeam2 || m.scoreTeamB) ? `${m.scoreTeam1 || m.scoreTeamA} - ${m.scoreTeam2 || m.scoreTeamB}` : '';
+                        return `<div class="match-row" data-match-id="${m.id}">
+                            <div class="match-team">vs ${escapeHtml(opponent)} ${score ? `(${score})` : ''}</div>
+                            <div class="match-result ${result.class}">${result.text}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+            
+            <div id="statsPane" class="tab-pane ${currentTab === 'stats' ? 'active' : ''}">
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-bar"></span> Detailed Statistics</div>
+                    <div class="info-line"><span>Win Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.wins / stats.totalMatches) * 100) : 0}%</strong></div>
+                    <div class="info-line"><span>Draw Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.draws / stats.totalMatches) * 100) : 0}%</strong></div>
+                    <div class="info-line"><span>Loss Rate</span><strong>${stats.totalMatches > 0 ? Math.round((stats.losses / stats.totalMatches) * 100) : 0}%</strong></div>
+                    <div class="info-line"><span>Goals per Match</span><strong>${stats.totalMatches > 0 ? (stats.goalsFor / stats.totalMatches).toFixed(1) : 0}</strong></div>
+                    <div class="info-line"><span>Clean Sheets</span><strong>${allMatches.filter(m => m.status === 'ended' && ((m.teamAName === teamData.name && (parseInt(m.scoreTeamB) || 0) === 0) || (m.teamBName === teamData.name && (parseInt(m.scoreTeamA) || 0) === 0))).length}</strong></div>
+                </div>
+                <div class="section-card">
+                    <div class="section-title"><span class="iconify" data-icon="mdi:chart-line"></span> Form Guide</div>
+                    <div class="stats-row" style="justify-content: center; gap: 8px; flex-wrap: wrap;">
+                        ${pastMatches.slice(0, 5).map(m => {
+                            const result = getMatchResult(m);
+                            const icon = result.text === 'WIN' ? 'mdi:check-circle' : (result.text === 'DRAW' ? 'mdi:minus-circle' : 'mdi:close-circle');
+                            const color = result.text === 'WIN' ? '#9CE800' : (result.text === 'DRAW' ? '#FF9800' : '#F44336');
+                            return `<div style="text-align:center;"><span class="iconify" data-icon="${icon}" style="font-size:24px; color:${color}"></span><div style="font-size:9px;">${result.text}</div></div>`;
+                        }).join('')}
+                        ${pastMatches.length === 0 ? '<div class="empty-state">No recent matches</div>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('followTeamBtn')?.addEventListener('click', toggleFollow);
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', () => {
+                currentTab = tab.dataset.tab;
+                renderTeamPage();
+            });
+        });
+        document.querySelectorAll('.match-row[data-match-id]').forEach(el => {
+            el.addEventListener('click', () => window.location.href = `vote.html?id=${el.dataset.matchId}`);
+        });
+    }
+    
+    function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
+    
+    document.getElementById('backBtn')?.addEventListener('click', () => window.location.href = 'index.html');
+    
+    document.querySelectorAll('.nav-item-float').forEach(item => {
+        item.addEventListener('click', () => {
+            const nav = item.dataset.nav;
+            if(nav === 'home') window.location.href = 'index.html';
+            else if(nav === 'games') window.location.href = 'game.html';
+            else if(nav === 'account') window.location.href = 'profile.html';
+        });
     });
-    list.innerHTML = html;
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
+    
+    auth.onAuthStateChanged(async (user) => {
+        currentUser = user;
+        await loadLeagues();
+        await loadTeam();
     });
-  }
-
-  // Search functionality
-  document.getElementById('leaderboardSearch').addEventListener('input', () => {
-    renderLeaderboard(document.getElementById('leaderboardList'));
-  });
-
-  // Tab switching
-  document.querySelectorAll('.leaderboard-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      currentTab = tab.dataset.tab;
-      // For demo, just re-render same data (would filter in real app)
-      renderLeaderboard(document.getElementById('leaderboardList'));
-    });
-  });
-
-  // Initialize everything
-  loadGamesFromDB();
-
 })();
 </script>
 </body>

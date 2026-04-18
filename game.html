@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>ORAFUT · Games Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +16,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
     }
 
     .mobile-container {
@@ -63,7 +63,7 @@
       font-size: 14px;
       cursor: pointer;
       padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: 40px;
       transition: all 0.2s;
       font-weight: bold;
       display: flex;
@@ -73,12 +73,9 @@
     }
 
     .brand {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
-      font-style: italic;
-      font-family: 'Poppins', sans-serif;
       letter-spacing: -0.5px;
-      text-transform: uppercase;
     }
     .brand .ora { color: var(--white); }
     .brand .fut { color: var(--vibrant-green); }
@@ -94,7 +91,7 @@
       border: 2px solid var(--vibrant-green);
       color: var(--vibrant-green);
       padding: 6px 10px;
-      border-radius: 8px;
+      border-radius: 40px;
       font-weight: 700;
       font-size: 11px;
       cursor: pointer;
@@ -185,7 +182,7 @@
 
     .trending-section {
       background: #F8F9FA;
-      border-radius: 10px;
+      border-radius: 20px;
       padding: 14px;
       margin-bottom: 16px;
       border: 2px solid #E8E8E8;
@@ -233,7 +230,7 @@
     }
     .game-card {
       background: white;
-      border-radius: 10px;
+      border-radius: 20px;
       overflow: hidden;
       border: 2px solid #E8E8E8;
       cursor: pointer;
@@ -288,7 +285,7 @@
       border: none;
       color: #000;
       padding: 8px 10px;
-      border-radius: 8px;
+      border-radius: 40px;
       font-weight: 700;
       font-size: 11px;
       cursor: pointer;
@@ -361,7 +358,7 @@
     .modal-overlay.active { display: flex; }
     .modal {
       background: white;
-      border-radius: 20px 20px 0 0;
+      border-radius: 28px 28px 0 0;
       width: 100%;
       max-width: 480px;
       max-height: 85vh;
@@ -399,7 +396,7 @@
       align-items: center;
       background: #F0F0F0;
       padding: 10px 16px;
-      border-radius: 30px;
+      border-radius: 40px;
       margin-bottom: 16px;
       border: 2px solid #E0E0E0;
     }
@@ -421,7 +418,7 @@
       border: 2px solid #E0E0E0;
       color: #666;
       padding: 8px 12px;
-      border-radius: 20px;
+      border-radius: 40px;
       font-weight: 600;
       font-size: 11px;
       cursor: pointer;
@@ -442,7 +439,7 @@
       gap: 10px;
       padding: 12px;
       background: #F8F9FA;
-      border-radius: 10px;
+      border-radius: 16px;
       border-left: 4px solid var(--vibrant-green);
     }
     .leaderboard-rank {
@@ -515,13 +512,34 @@
       color: #D0D0D0;
       margin-bottom: 12px;
     }
+    
+    .toast-notify {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 10px 20px;
+      font-size: 12px;
+      z-index: 1000;
+      animation: fadeUp 2s forwards;
+      border-radius: 60px;
+      font-weight: 600;
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
   </style>
 </head>
 <body>
 <div class="mobile-container">
   <header class="main-header">
     <div class="header-left">
-      <a href="index.html" class="back-btn">
+      <a href="match.html" class="back-btn">
         <span class="iconify" data-icon="mdi:arrow-left"></span> BACK
       </a>
       <div class="brand"><span class="ora">ORA</span><span class="fut">FUT</span></div>
@@ -546,7 +564,7 @@
 
   <div class="breadcrumb-section">
     <div class="breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="match.html">Home</a>
       <span class="iconify" data-icon="mdi:chevron-right"></span>
       <span class="current">Games Hub</span>
     </div>
@@ -555,6 +573,7 @@
   <div class="main-content">
     <div class="games-header">
       <div class="games-title">GAMES <span>HUB</span></div>
+      <a href="admin-add-game.html" style="background:#9CE800; padding:6px 12px; border-radius:40px; font-size:11px; font-weight:800; text-decoration:none; color:#000;">+ ADD GAME</a>
     </div>
 
     <div class="trending-section">
@@ -604,6 +623,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
 (function(){
@@ -624,10 +644,19 @@
     firebase.initializeApp(firebaseConfig);
   }
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
   let games = [];
   let leaderboardData = [];
   let currentTab = 'all';
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast-notify';
+    t.innerText = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
 
   // DOM Elements
   const leaderboardBtn = document.getElementById('leaderboardBtn');
@@ -645,7 +674,7 @@
   // Track user activity
   db.collection('anonymous_users').doc(anonymousId).set({
     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-    lastPage: 'game.html'
+    lastPage: 'games.html'
   }, { merge: true }).catch(err => console.error('Error tracking user:', err));
 
   // Leaderboard functions
@@ -668,14 +697,12 @@
   bottomNavItems.forEach(item => {
     item.addEventListener('click', () => {
       const nav = item.dataset.nav;
-      const pages = { 
-        home: 'index.html', 
-        games: 'game.html', 
-        account: 'account.html' 
-      };
-      if (pages[nav] && nav !== 'games') {
-        window.location.href = pages[nav];
+      if (nav === 'home') {
+        window.location.href = 'match.html';
+      } else if (nav === 'account') {
+        window.location.href = 'account.html';
       }
+      // games stays on same page
     });
   });
 
@@ -694,12 +721,11 @@
         });
         renderGames(games, gamesGrid, trendingList);
       } else {
-        // Show empty state
         gamesGrid.innerHTML = `
           <div class="empty-state">
             <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
             <p>No games available yet</p>
-            <p style="font-size:11px;margin-top:5px;">Check back soon!</p>
+            <p style="font-size:11px;margin-top:5px;">Use the ADD GAME button to create games</p>
           </div>
         `;
         trendingList.innerHTML = '<div class="trending-item"><div class="trending-rank">-</div><div class="trending-info"><div class="trending-name">No games yet</div></div></div>';
@@ -728,7 +754,7 @@
           <div class="trending-item">
             <div class="trending-rank">${i+1}</div>
             <div class="trending-info">
-              <div class="trending-name">${game.name || 'Unknown Game'}</div>
+              <div class="trending-name">${escapeHtml(game.name || 'Unknown Game')}</div>
               <div class="trending-plays">${game.plays || 0} plays</div>
             </div>
           </div>
@@ -745,6 +771,7 @@
         <div class="empty-state">
           <span class="iconify" data-icon="mdi:gamepad-variant-outline"></span>
           <p>No games available yet</p>
+          <p style="font-size:11px;margin-top:5px;">Click + ADD GAME to create one</p>
         </div>
       `;
       return;
@@ -753,12 +780,12 @@
     let cardsHtml = '';
     gamesList.forEach(game => {
       const imageUrl = game.imageUrl || '';
-      const name = game.name || 'Game';
+      const name = escapeHtml(game.name || 'Game');
       const location = game.location || '';
       const plays = game.plays || 0;
       
       cardsHtml += `
-        <div class="game-card" onclick="openGame('${location}')">
+        <div class="game-card" onclick="openGame('${escapeHtml(location)}')">
           <div class="game-image">
             ${imageUrl ? 
               `<img src="${imageUrl}" alt="${name}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'iconify\\' data-icon=\\'mdi:gamepad-variant\\'></span>'">` : 
@@ -768,7 +795,7 @@
           <div class="game-info">
             <div class="game-name">${name}</div>
             <div class="game-desc">${plays} plays</div>
-            <button class="play-btn" onclick="event.stopPropagation();openGame('${location}')">
+            <button class="play-btn" onclick="event.stopPropagation();openGame('${escapeHtml(location)}')">
               <span class="iconify" data-icon="mdi:play"></span> PLAY
             </button>
           </div>
@@ -785,12 +812,14 @@
         snap.forEach(doc => {
           db.collection('games').doc(doc.id).update({
             plays: firebase.firestore.FieldValue.increment(1)
-          });
+          }).catch(err => console.error('Error updating plays:', err));
         });
-      }).catch(err => console.error('Error updating plays:', err));
+      }).catch(err => console.error('Error finding game:', err));
       
-      // Navigate to game
+      // Navigate to game page
       window.location.href = location + '.html';
+    } else {
+      showToast('Game location not found');
     }
   };
 
@@ -843,7 +872,7 @@
           <div class="leaderboard-rank">${index + 1}</div>
           <div class="leaderboard-avatar">${playerName.charAt(0)}</div>
           <div class="leaderboard-info">
-            <div class="leaderboard-name">${playerName}</div>
+            <div class="leaderboard-name">${escapeHtml(playerName)}</div>
             <div class="leaderboard-stats">
               <span><span class="iconify" data-icon="mdi:gamepad-variant"></span> ${player.gamesPlayed || 0}</span>
               <span><span class="iconify" data-icon="mdi:trophy"></span> ${player.wins || 0} wins</span>
@@ -854,6 +883,16 @@
       `;
     });
     list.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
   // Search functionality
@@ -867,6 +906,7 @@
       document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentTab = tab.dataset.tab;
+      // For demo, just re-render same data (would filter in real app)
       renderLeaderboard(document.getElementById('leaderboardList'));
     });
   });
